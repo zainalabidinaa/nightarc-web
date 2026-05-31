@@ -1,14 +1,14 @@
 'use client';
 
-import { useEffect, useState, use } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../../../AuthProvider';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Sidebar } from '@/components/Sidebar';
 import { updateWatchProgress } from '@/lib/services/api';
 import Script from 'next/script';
 
-export default function WatchPage({ params }: { params: Promise<{ type: string; id: string }> }) {
-  const resolved = use(params);
+export default function WatchPage({ params }: { params: { type: string; id: string } }) {
+  const resolved = params;
   const searchParams = useSearchParams();
   const { currentProfile, user, isLoading } = useAuth();
   const router = useRouter();

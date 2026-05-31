@@ -13,7 +13,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 export const TMDB_API_KEY = '1e818317d3086727eceecf0571621527';
 
 export const DEFAULT_ADDONS = [
+  'https://aiometadata.elfhosted.com/stremio/d67da46b-f48e-4efa-a9e2-21ac1a6c3a4a/manifest.json',
   'https://v3-cinemeta.strem.io/manifest.json',
   'https://opensubtitles-v3.strem.io/manifest.json',
-  'https://v3-cyberflix.strem.fun/manifest.json'
 ];

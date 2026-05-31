@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, use } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../../../AuthProvider';
 import { useRouter } from 'next/navigation';
 import { Sidebar } from '@/components/Sidebar';
@@ -20,8 +20,8 @@ const BookmarkIcon = ({ filled }: { filled: boolean }) => (
   </svg>
 );
 
-export default function DetailPage({ params }: { params: Promise<{ type: string; id: string }> }) {
-  const resolved = use(params);
+export default function DetailPage({ params }: { params: { type: string; id: string } }) {
+  const resolved = params;
   const { currentProfile, addons, user, isLoading } = useAuth();
   const router = useRouter();
   const [detail, setDetail] = useState<MetaDetail | null>(null);
