@@ -41,7 +41,7 @@ export default function DetailPage({ params }: { params: { type: string; id: str
   async function loadAll() {
     setLoading(true);
     try {
-      const metaAddons = addons.filter(a => a.resources?.some(r => r.name === 'meta'));
+      const metaAddons = addons.filter(a => a.resources?.some(r => (typeof r === 'string' ? r : r.name) === 'meta'));
       let found: MetaDetail | null = null;
       for (const addon of metaAddons) {
         if (!addon.transportUrl) continue;

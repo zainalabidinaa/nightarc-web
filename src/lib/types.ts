@@ -80,7 +80,7 @@ export interface AddonManifest {
   version: string;
   description?: string;
   types?: string[];
-  resources?: { name: string; types?: string[] }[];
+  resources?: (string | { name: string; types?: string[] })[];
   catalogs?: { type: string; id: string; name?: string }[];
   transportUrl?: string;
   logo?: string;

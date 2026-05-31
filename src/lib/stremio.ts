@@ -102,6 +102,10 @@ export async function fetchStreams(
   }
 }
 
+function hasResource(addon: AddonManifest, name: string): boolean {
+  return !!addon.resources?.some(r => (typeof r === 'string' ? r : r.name) === name);
+}
+
 export async function fetchStreamsFromAll(
   type: string,
   id: string,
@@ -109,7 +113,7 @@ export async function fetchStreamsFromAll(
 ): Promise<StreamItem[]> {
   const results = await Promise.allSettled(
     addons
-      .filter(a => a.transportUrl && a.resources?.some(r => r.name === 'stream') && a.types?.includes(type))
+      .filter(a => a.transportUrl && hasResource(a, 'stream') && a.types?.includes(type))
       .map(async addon => {
         const streams = await fetchStreams(addon.transportUrl!, type, id);
         return streams.map(s => ({ ...s, addonName: addon.name, addonId: addon.id }));
@@ -126,7 +130,7 @@ export async function fetchAllCatalogs(
 ): Promise<{ id: string; title: string; items: MetaPreview[] }[]> {
   const results = await Promise.allSettled(
     addons
-      .filter(a => a.transportUrl && a.catalogs)
+      .filter(a => a.transportUrl && a.catalogs && hasResource(a, 'catalog'))
       .flatMap(addon =>
         (addon.catalogs || []).map(async catalog => {
           const items = await fetchCatalog(addon.transportUrl!, catalog.type, catalog.id);
