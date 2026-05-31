@@ -1,0 +1,137 @@
+export interface MetaPreview {
+  id: string;
+  type: string;
+  name: string;
+  poster?: string;
+  banner?: string;
+  logo?: string;
+  posterShape?: string;
+  description?: string;
+  releaseInfo?: string;
+  imdbRating?: string;
+  genres?: string[];
+  popularity?: number;
+}
+
+export interface MetaDetail {
+  id: string;
+  type: string;
+  name: string;
+  poster?: string;
+  background?: string;
+  logo?: string;
+  description?: string;
+  releaseInfo?: string;
+  status?: string;
+  imdbRating?: string;
+  runtime?: string;
+  genres?: string[];
+  director?: string[];
+  cast?: Person[];
+  trailers?: Trailer[];
+  videos?: MetaVideo[];
+  seasons?: Season[];
+}
+
+export interface Person {
+  id: string;
+  name: string;
+  photo?: string;
+}
+
+export interface Trailer {
+  id: string;
+  title?: string;
+  thumbnail?: string;
+  youtubeId?: string;
+}
+
+export interface MetaVideo {
+  id: string;
+  title: string;
+  season?: number;
+  episode?: number;
+  thumbnail?: string;
+  overview?: string;
+}
+
+export interface Season {
+  id: string;
+  number: number;
+  name?: string;
+  poster?: string;
+  episodes?: MetaVideo[];
+}
+
+export interface StreamItem {
+  name?: string;
+  title?: string;
+  description?: string;
+  url?: string;
+  infoHash?: string;
+  addonName?: string;
+  addonId?: string;
+  behaviorHints?: { notWebReady?: boolean; bingeGroup?: string; proxyHeaders?: { request?: Record<string, string> } };
+}
+
+export interface AddonManifest {
+  id: string;
+  name: string;
+  version: string;
+  description?: string;
+  types?: string[];
+  resources?: { name: string; types?: string[] }[];
+  catalogs?: { type: string; id: string; name?: string }[];
+  transportUrl?: string;
+  logo?: string;
+}
+
+export interface LunaProfile {
+  id: string;
+  user_id: string;
+  name: string;
+  avatar_color?: string;
+  avatar_id?: number;
+  profile_index: number;
+  role: string;
+  isAdmin: boolean;
+}
+
+export interface WatchProgressEntry {
+  id: string;
+  profile_id: string;
+  media_id: string;
+  media_type: string;
+  position_seconds: number;
+  duration_seconds: number;
+  completed: boolean;
+  updated_at: string;
+}
+
+export interface LibraryItem {
+  id: string;
+  profile_id: string;
+  media_id: string;
+  media_type: string;
+  name?: string;
+  poster?: string;
+  saved_at: string;
+}
+
+export interface InviteCode {
+  code: string;
+  created_by: string;
+  used_by?: string;
+  created_at: string;
+  max_uses: number;
+  is_active: boolean;
+}
+
+export interface AdminStats {
+  totalUsers: number;
+  totalProfiles: number;
+  activeInviteCodes: number;
+  totalWatchlistItems: number;
+  totalWatchedItems: number;
+  activeUsers: number;
+}
