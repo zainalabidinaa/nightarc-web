@@ -1,0 +1,153 @@
+import Foundation
+
+public struct AddonResource: Codable, Sendable, Identifiable {
+    public let name: String
+    public let types: [String]?
+    public let idPrefixes: [String]?
+
+    public var id: String { name }
+
+    public init(name: String, types: [String]? = nil, idPrefixes: [String]? = nil) {
+        self.name = name
+        self.types = types
+        self.idPrefixes = idPrefixes
+    }
+}
+
+public struct AddonCatalog: Codable, Sendable, Identifiable {
+    public let type: String
+    public let id: String
+    public let name: String?
+    public let extra: [AddonCatalogExtra]?
+
+    public init(type: String, id: String, name: String? = nil, extra: [AddonCatalogExtra]? = nil) {
+        self.type = type
+        self.id = id
+        self.name = name
+        self.extra = extra
+    }
+}
+
+public struct AddonCatalogExtra: Codable, Sendable {
+    public let name: String
+    public let isRequired: Bool?
+    public let options: [String]?
+    public let optionsLimit: Int?
+
+    public init(
+        name: String,
+        isRequired: Bool? = nil,
+        options: [String]? = nil,
+        optionsLimit: Int? = nil
+    ) {
+        self.name = name
+        self.isRequired = isRequired
+        self.options = options
+        self.optionsLimit = optionsLimit
+    }
+}
+
+public struct AddonBehaviorHints: Codable, Sendable {
+    public let adult: Bool?
+    public let configurable: Bool?
+    public let configurationRequired: Bool?
+
+    public init(adult: Bool? = nil, configurable: Bool? = nil, configurationRequired: Bool? = nil) {
+        self.adult = adult
+        self.configurable = configurable
+        self.configurationRequired = configurationRequired
+    }
+}
+
+public struct AddonManifest: Codable, Sendable, Identifiable {
+    public let id: String
+    public let name: String
+    public let version: String
+    public let description: String?
+    public let types: [String]?
+    public let resources: [AddonResource]?
+    public let catalogs: [AddonCatalog]?
+    public let behaviorHints: AddonBehaviorHints?
+    public let transportUrl: String?
+    public let logo: String?
+    public let background: String?
+
+    public init(
+        id: String,
+        name: String,
+        version: String,
+        description: String? = nil,
+        types: [String]? = nil,
+        resources: [AddonResource]? = nil,
+        catalogs: [AddonCatalog]? = nil,
+        behaviorHints: AddonBehaviorHints? = nil,
+        transportUrl: String? = nil,
+        logo: String? = nil,
+        background: String? = nil
+    ) {
+        self.id = id
+        self.name = name
+        self.version = version
+        self.description = description
+        self.types = types
+        self.resources = resources
+        self.catalogs = catalogs
+        self.behaviorHints = behaviorHints
+        self.transportUrl = transportUrl
+        self.logo = logo
+        self.background = background
+    }
+
+    public func baseURL(manifestUrl: String) -> String {
+        if let transportUrl = transportUrl, !transportUrl.isEmpty {
+            return transportUrl.hasSuffix("/") ? String(transportUrl.dropLast()) : transportUrl
+        }
+        if let lastSlash = manifestUrl.lastIndex(of: "/") {
+            var base = String(manifestUrl[..<lastSlash])
+            if base.hasSuffix("/manifest") {
+                base = String(base.dropLast("/manifest".count))
+            }
+            return base
+        }
+        return manifestUrl
+    }
+
+    public func hasResource(_ name: String) -> Bool {
+        resources?.contains(where: { $0.name == name }) ?? false
+    }
+}
+
+public struct ManagedAddon: Codable, Sendable, Identifiable {
+    public var manifest: AddonManifest
+    public var manifestUrl: String
+    public var enabled: Bool
+    public var sortOrder: Int
+    public var refreshing: Bool
+    public var errorMessage: String?
+    public var userSetName: String?
+
+    public var id: String { manifestUrl }
+
+    public var displayName: String {
+        if let name = userSetName, !name.isEmpty { return name }
+        return manifest.name
+    }
+
+    public init(
+        manifest: AddonManifest,
+        manifestUrl: String,
+        enabled: Bool = true,
+        sortOrder: Int = 0,
+        refreshing: Bool = false,
+        errorMessage: String? = nil,
+        userSetName: String? = nil
+    ) {
+        self.manifest = manifest
+        self.manifestUrl = manifestUrl
+        self.enabled = enabled
+        self.sortOrder = sortOrder
+        self.refreshing = refreshing
+        self.errorMessage = errorMessage
+        self.userSetName = userSetName
+    }
+}

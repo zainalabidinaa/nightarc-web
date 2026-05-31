@@ -1,0 +1,244 @@
+import Foundation
+
+public actor SyncService {
+    public static let shared = SyncService()
+    private let client = SupabaseClient.shared
+
+    public func pushProfiles(profiles: [LunaProfile]) async throws {
+        for profile in profiles {
+            try await client.upsert(
+                into: "profiles",
+                onConflict: "id",
+                value: profile
+            )
+        }
+    }
+
+    public func pullProfiles(userId: String) async throws -> [LunaProfile] {
+        let profiles: [LunaProfile] = try await client.select(
+            from: "profiles",
+            where: ["user_id": userId],
+            order: "profile_index.asc"
+        )
+        return profiles
+    }
+
+    public func pushAddons(profileId: String, addonUrls: [String]) async throws {
+        struct AddonRow: Codable {
+            let profile_id: String
+            let addon_url: String
+            let enabled: Bool
+            let sort_order: Int
+        }
+
+        try await client.delete(from: "installed_addons", where: ["profile_id": profileId])
+
+        for (index, url) in addonUrls.enumerated() {
+            let row = AddonRow(
+                profile_id: profileId,
+                addon_url: url,
+                enabled: true,
+                sort_order: index
+            )
+            _ = try await client.insert(into: "installed_addons", value: row) as [AddonRow]
+        }
+    }
+
+    public func pullAddons(profileId: String) async throws -> [String] {
+        struct AddonRow: Codable {
+            let addon_url: String
+            let enabled: Bool
+        }
+        let rows: [AddonRow] = try await client.select(
+            from: "installed_addons",
+            where: ["profile_id": profileId],
+            order: "sort_order.asc"
+        )
+        return rows.filter { $0.enabled }.map { $0.addon_url }
+    }
+
+    public func pushWatchProgress(entry: WatchProgressEntry) async throws {
+        struct ProgressRow: Codable {
+            let id: String
+            let profile_id: String
+            let media_id: String
+            let media_type: String
+            let position_seconds: Double
+            let duration_seconds: Double
+            let completed: Bool
+            let updated_at: String
+        }
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSZZZZZ"
+
+        let row = ProgressRow(
+            id: entry.id,
+            profile_id: entry.profileId,
+            media_id: entry.mediaId,
+            media_type: entry.mediaType,
+            position_seconds: entry.positionSeconds,
+            duration_seconds: entry.durationSeconds,
+            completed: entry.completed,
+            updated_at: dateFormatter.string(from: entry.updatedAt)
+        )
+        try await client.upsert(into: "watch_progress", onConflict: "profile_id,media_id", value: row)
+    }
+
+    public func pullWatchProgress(profileId: String) async throws -> [WatchProgressEntry] {
+        struct ProgressRow: Codable {
+            let id: String
+            let profile_id: String
+            let media_id: String
+            let media_type: String
+            let position_seconds: Double
+            let duration_seconds: Double
+            let completed: Bool
+            let updated_at: String
+        }
+        let rows: [ProgressRow] = try await client.select(
+            from: "watch_progress",
+            where: ["profile_id": profileId]
+        )
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSZZZZZ"
+
+        return rows.map { row in
+            WatchProgressEntry(
+                id: row.id,
+                profileId: row.profile_id,
+                mediaId: row.media_id,
+                mediaType: row.media_type,
+                positionSeconds: row.position_seconds,
+                durationSeconds: row.duration_seconds,
+                completed: row.completed,
+                updatedAt: dateFormatter.date(from: row.updated_at) ?? Date()
+            )
+        }
+    }
+
+    public func pushWatchedItem(item: WatchedItem) async throws {
+        struct WatchedRow: Codable {
+            let id: String
+            let profile_id: String
+            let media_id: String
+            let media_type: String
+            let name: String?
+            let season: Int?
+            let episode: Int?
+            let marked_at: String
+        }
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSZZZZZ"
+
+        let row = WatchedRow(
+            id: item.id,
+            profile_id: item.profileId,
+            media_id: item.mediaId,
+            media_type: item.mediaType,
+            name: item.name,
+            season: item.season,
+            episode: item.episode,
+            marked_at: dateFormatter.string(from: item.markedAt)
+        )
+        _ = try await client.insert(into: "watched_items", value: row) as [WatchedRow]
+    }
+
+    public func pullWatchedItems(profileId: String) async throws -> [WatchedItem] {
+        struct WatchedRow: Codable {
+            let id: String
+            let profile_id: String
+            let media_id: String
+            let media_type: String
+            let name: String?
+            let season: Int?
+            let episode: Int?
+            let marked_at: String
+        }
+        let rows: [WatchedRow] = try await client.select(
+            from: "watched_items",
+            where: ["profile_id": profileId],
+            order: "marked_at.desc"
+        )
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSZZZZZ"
+
+        return rows.map { row in
+            WatchedItem(
+                id: row.id,
+                profileId: row.profile_id,
+                mediaId: row.media_id,
+                mediaType: row.media_type,
+                name: row.name,
+                season: row.season,
+                episode: row.episode,
+                markedAt: dateFormatter.date(from: row.marked_at) ?? Date()
+            )
+        }
+    }
+
+    public func pushLibraryItem(item: LibraryItem) async throws {
+        struct LibraryRow: Codable {
+            let id: String
+            let profile_id: String
+            let media_id: String
+            let media_type: String
+            let name: String?
+            let poster: String?
+            let saved_at: String
+        }
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSZZZZZ"
+
+        let row = LibraryRow(
+            id: item.id,
+            profile_id: item.profileId,
+            media_id: item.mediaId,
+            media_type: item.mediaType,
+            name: item.name,
+            poster: item.poster,
+            saved_at: dateFormatter.string(from: item.savedAt)
+        )
+        try await client.upsert(into: "library_items", onConflict: "profile_id,media_id", value: row)
+    }
+
+    public func pullLibraryItems(profileId: String) async throws -> [LibraryItem] {
+        struct LibraryRow: Codable {
+            let id: String
+            let profile_id: String
+            let media_id: String
+            let media_type: String
+            let name: String?
+            let poster: String?
+            let saved_at: String
+        }
+        let rows: [LibraryRow] = try await client.select(
+            from: "library_items",
+            where: ["profile_id": profileId],
+            order: "saved_at.desc"
+        )
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSZZZZZ"
+
+        return rows.map { row in
+            LibraryItem(
+                id: row.id,
+                profileId: row.profile_id,
+                mediaId: row.media_id,
+                mediaType: row.media_type,
+                name: row.name,
+                poster: row.poster,
+                savedAt: dateFormatter.date(from: row.saved_at) ?? Date()
+            )
+        }
+    }
+
+    public func deleteLibraryItem(profileId: String, mediaId: String) async throws {
+        try await client.delete(
+            from: "library_items",
+            where: ["profile_id": profileId, "media_id": mediaId]
+        )
+    }
+}

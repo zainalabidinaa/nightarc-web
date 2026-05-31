@@ -1,0 +1,31 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Xcode
+*.xcuserdata/
+*.xcscmblueprint
+DerivedData/
+*.moved-aside
+*.hmap
+*.ipa
+*.xcarchive
+xcuserdata/
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# Node / Next.js (LunaWeb is its own repo — excluded below)
+node_modules/
+
+# Supabase
+supabase/.temp/
+
+# Misc
+*.log
+*.tmp
+
+# Separate repos / submodules
+LunaWeb/
