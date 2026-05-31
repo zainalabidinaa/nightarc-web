@@ -33,7 +33,7 @@ export default function SearchPage() {
     setLoading(true);
     const allResults: MetaPreview[] = [];
     for (const addon of addons) {
-      if (!addon.transportUrl || !addon.resources?.some(r => r.name === 'catalog')) continue;
+      if (!addon.transportUrl || !addon.resources?.some(r => (typeof r === 'string' ? r : r.name) === 'catalog')) continue;
       try {
         const items = await fetchCatalog(addon.transportUrl, 'movie', 'top', { search: query });
         allResults.push(...items);
