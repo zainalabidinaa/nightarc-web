@@ -10,7 +10,7 @@ import Script from 'next/script';
 export default function WatchPage({ params }: { params: Promise<{ type: string; id: string }> }) {
   const resolved = use(params);
   const searchParams = useSearchParams();
-  const { currentProfile, user } = useAuth();
+  const { currentProfile, user, isLoading } = useAuth();
   const router = useRouter();
   const streamUrl = searchParams.get('url');
   const headersStr = searchParams.get('headers');
@@ -20,6 +20,7 @@ export default function WatchPage({ params }: { params: Promise<{ type: string; 
   const [playing, setPlaying] = useState(false);
 
   useEffect(() => {
+    if (isLoading) return;
     if (!user) { router.replace('/auth'); return; }
     if (!currentProfile) { router.replace('/profiles'); return; }
     if (!streamUrl) { router.back(); return; }

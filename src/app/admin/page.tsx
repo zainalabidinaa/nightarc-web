@@ -8,7 +8,7 @@ import { getInviteCodes, generateInviteCode, revokeInviteCode } from '@/lib/serv
 import { InviteCode } from '@/lib/types';
 
 export default function AdminPage() {
-  const { currentProfile, user } = useAuth();
+  const { currentProfile, user, isLoading } = useAuth();
   const router = useRouter();
   const [codes, setCodes] = useState<InviteCode[]>([]);
   const [maxUses, setMaxUses] = useState(1);
@@ -16,6 +16,7 @@ export default function AdminPage() {
   const [section, setSection] = useState<'codes' | 'stats'>('codes');
 
   useEffect(() => {
+    if (isLoading) return;
     if (!user) { router.replace('/auth'); return; }
     if (!currentProfile) { router.replace('/profiles'); return; }
     if (currentProfile.role !== 'admin') { router.replace('/home'); return; }

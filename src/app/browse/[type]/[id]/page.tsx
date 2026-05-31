@@ -22,7 +22,7 @@ const BookmarkIcon = ({ filled }: { filled: boolean }) => (
 
 export default function DetailPage({ params }: { params: Promise<{ type: string; id: string }> }) {
   const resolved = use(params);
-  const { currentProfile, addons, user } = useAuth();
+  const { currentProfile, addons, user, isLoading } = useAuth();
   const router = useRouter();
   const [detail, setDetail] = useState<MetaDetail | null>(null);
   const [streams, setStreams] = useState<StreamItem[]>([]);
@@ -32,6 +32,7 @@ export default function DetailPage({ params }: { params: Promise<{ type: string;
   const [loadingStreams, setLoadingStreams] = useState(false);
 
   useEffect(() => {
+    if (isLoading) return;
     if (!user) { router.replace('/auth'); return; }
     if (!currentProfile) { router.replace('/profiles'); return; }
     loadAll();

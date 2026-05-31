@@ -10,7 +10,7 @@ import { DEFAULT_ADDONS } from '@/lib/supabase';
 import { AddonManifest } from '@/lib/types';
 
 export default function SettingsPage() {
-  const { currentProfile, user, signOut } = useAuth();
+  const { currentProfile, user, signOut, isLoading } = useAuth();
   const router = useRouter();
   const [addonUrls, setAddonUrls] = useState<string[]>([]);
   const [manifestCache, setManifestCache] = useState<Record<string, AddonManifest>>({});
@@ -18,6 +18,7 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (isLoading) return;
     if (!user) { router.replace('/auth'); return; }
     if (!currentProfile) { router.replace('/profiles'); return; }
     loadAddons();

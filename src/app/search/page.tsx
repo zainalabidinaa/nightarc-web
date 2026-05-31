@@ -15,16 +15,17 @@ const FilmIcon = () => (
 );
 
 export default function SearchPage() {
-  const { addons, user, currentProfile } = useAuth();
+  const { addons, user, currentProfile, isLoading } = useAuth();
   const router = useRouter();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<MetaPreview[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    if (isLoading) return;
     if (!user) { router.replace('/auth'); return; }
     if (!currentProfile) { router.replace('/profiles'); return; }
-  }, []);
+  }, [isLoading, user, currentProfile]);
 
   async function handleSearch(e: React.FormEvent) {
     e.preventDefault();

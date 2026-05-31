@@ -21,12 +21,13 @@ const XIcon = () => (
 );
 
 export default function LibraryPage() {
-  const { currentProfile, user } = useAuth();
+  const { currentProfile, user, isLoading } = useAuth();
   const router = useRouter();
   const [items, setItems] = useState<LibraryItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (isLoading) return;
     if (!user) { router.replace('/auth'); return; }
     if (!currentProfile) { router.replace('/profiles'); return; }
     loadLibrary();

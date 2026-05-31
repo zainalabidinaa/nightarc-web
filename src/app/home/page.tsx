@@ -29,13 +29,14 @@ const TvIcon = () => (
 );
 
 export default function HomePage() {
-  const { currentProfile, addons, user } = useAuth();
+  const { currentProfile, addons, user, isLoading } = useAuth();
   const router = useRouter();
   const [rows, setRows] = useState<CatalogRow[]>([]);
   const [continueWatching, setContinueWatching] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (isLoading) return;
     if (!user) { router.replace('/auth'); return; }
     if (!currentProfile) { router.replace('/profiles'); return; }
     loadData();
