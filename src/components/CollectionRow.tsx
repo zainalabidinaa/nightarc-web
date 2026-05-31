@@ -14,7 +14,7 @@ export function CollectionRow({ collection }: CollectionRowProps) {
         <h2 className="text-base font-semibold text-white">{collection.name}</h2>
       </div>
       <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-        {collection.folders
+        {[...collection.folders]
           .sort((a, b) => a.sort_order - b.sort_order)
           .map(folder => (
             <FolderTile key={folder.id} folder={folder} />

@@ -249,7 +249,7 @@ export async function getSystemAddon(): Promise<SystemAddon | null> {
     .select('*')
     .order('updated_at', { ascending: false })
     .limit(1)
-    .single();
+    .maybeSingle();
   return data || null;
 }
 
@@ -260,7 +260,7 @@ export async function upsertSystemAddon(manifestUrl: string, name: string): Prom
     .from('system_addon')
     .select('id')
     .limit(1)
-    .single();
+    .maybeSingle();
 
   if (existing) {
     await supabase

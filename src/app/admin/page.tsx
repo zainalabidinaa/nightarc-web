@@ -53,16 +53,19 @@ export default function AdminPage() {
 
   async function loadAll() {
     setLoading(true);
-    const [c, cols, addon] = await Promise.all([
-      getInviteCodes(),
-      getCollections(),
-      getSystemAddon()
-    ]);
-    setCodes(c);
-    setCollections(cols);
-    setSystemAddon(addon);
-    if (addon) setAddonUrlInput(addon.manifest_url);
-    setLoading(false);
+    try {
+      const [c, cols, addon] = await Promise.all([
+        getInviteCodes(),
+        getCollections(),
+        getSystemAddon()
+      ]);
+      setCodes(c);
+      setCollections(cols);
+      setSystemAddon(addon);
+      if (addon) setAddonUrlInput(addon.manifest_url);
+    } finally {
+      setLoading(false);
+    }
   }
 
   // ---- Invite code handlers ----
@@ -97,7 +100,7 @@ export default function AdminPage() {
   // ---- Collection row handlers ----
   async function handleAddRow() {
     if (!newRowName.trim()) return;
-    const next = collections.length;
+    const next = collections.length === 0 ? 0 : Math.max(...collections.map(c => c.sort_order)) + 1;
     const col = await createCollection(newRowName.trim(), next);
     setCollections(prev => [...prev, { ...col, folders: [] }]);
     setNewRowName('');
