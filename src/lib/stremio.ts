@@ -61,6 +61,34 @@ export async function fetchMeta(
 
     if (!m) return null;
 
+    const videos = (m.videos || []).map((v: any) => ({
+      id: v.id,
+      title: v.name || v.title || `Episode ${v.episode}`,
+      season: v.season,
+      episode: v.episode || v.number,
+      thumbnail: v.thumbnail,
+      overview: v.overview || v.description,
+    }));
+
+    // Build seasons from videos if seasons not provided
+    let seasons = m.seasons || null;
+    if ((!seasons || seasons.length === 0) && videos.length > 0) {
+      const seasonMap = new Map<number, typeof videos>();
+      for (const v of videos) {
+        if (!v.season) continue;
+        if (!seasonMap.has(v.season)) seasonMap.set(v.season, []);
+        seasonMap.get(v.season)!.push(v);
+      }
+      seasons = Array.from(seasonMap.entries())
+        .sort(([a], [b]) => a - b)
+        .map(([num, eps]) => ({
+          id: `${id}:${num}`,
+          number: num,
+          name: `Season ${num}`,
+          episodes: eps.sort((a: any, b: any) => (a.episode || 0) - (b.episode || 0)),
+        }));
+    }
+
     return {
       id: m.id || id,
       type: m.type || type,
@@ -77,10 +105,8 @@ export async function fetchMeta(
       director: m.director,
       cast: (m.cast || []).map((c: any) => ({ id: c.id, name: c.name, photo: c.photo })),
       trailers: m.trailers,
-      videos: (m.videos || []).map((v: any) => ({
-        id: v.id, title: v.title, season: v.season, episode: v.episode, thumbnail: v.thumbnail, overview: v.overview
-      })),
-      seasons: m.seasons
+      videos,
+      seasons,
     };
   } catch {
     return null;
