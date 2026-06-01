@@ -3,11 +3,19 @@ import LunaCore
 
 struct ContentCard: View {
     let item: MetaPreview
+    let row: CatalogRow?
+    let index: Int?
     @State private var imageFailed = false
+
+    init(item: MetaPreview, row: CatalogRow? = nil, index: Int? = nil) {
+        self.item = item
+        self.row = row
+        self.index = index
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            ZStack {
+            ZStack(alignment: .topLeading) {
                 RoundedRectangle(cornerRadius: 8)
                     .fill(LunaTheme.surfaceElevated)
                     .frame(width: cardWidth, height: cardHeight)
@@ -32,6 +40,17 @@ struct ContentCard: View {
                     }
                 } else {
                     placeholderView
+                }
+
+                if let glowEnabled = row?.focusGlowEnabled, glowEnabled {
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(LunaTheme.accent.opacity(0.3), lineWidth: 2)
+                        .frame(width: cardWidth, height: cardHeight)
+                }
+
+                ForEach(item.derivedBadges(index: index)) { badge in
+                    BadgeView(badge: badge)
+                        .padding(4)
                 }
             }
 
@@ -64,11 +83,40 @@ struct ContentCard: View {
         .frame(width: cardWidth, height: cardHeight)
     }
 
+    private var resolvedShape: PosterShape? {
+        if let rowShape = row?.tileShape {
+            return PosterShape(rawValue: rowShape)
+        }
+        return item.posterShape
+    }
+
     private var cardWidth: CGFloat {
-        item.posterShape == .landscape ? 200 : 120
+        resolvedShape == .landscape ? 200 : 120
     }
 
     private var cardHeight: CGFloat {
-        item.posterShape == .landscape ? 112 : 180
+        resolvedShape == .landscape ? 112 : 180
+    }
+}
+
+struct BadgeView: View {
+    let badge: ContentBadge
+
+    var body: some View {
+        Text(badge.text)
+            .font(.system(size: 10, weight: .bold))
+            .foregroundColor(.white)
+            .padding(.horizontal, 6)
+            .padding(.vertical, 2)
+            .background(badgeColor.opacity(0.85))
+            .cornerRadius(4)
+    }
+
+    private var badgeColor: Color {
+        switch badge.style {
+        case .accent: return LunaTheme.accent
+        case .warning: return .orange
+        case .info: return .blue
+        }
     }
 }

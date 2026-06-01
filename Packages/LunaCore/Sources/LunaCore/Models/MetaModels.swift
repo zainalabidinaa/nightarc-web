@@ -22,6 +22,10 @@ public struct MetaPreview: Codable, Sendable, Identifiable, Hashable {
     public let voteCount: Int?
     public let imdbRating: String?
     public let genres: [String]?
+    public let released: String?
+    public let status: String?
+    public let behaviorHints: BehaviorHints?
+    public let rankHint: Int?
 
     public init(
         id: String,
@@ -37,7 +41,11 @@ public struct MetaPreview: Codable, Sendable, Identifiable, Hashable {
         popularity: Double? = nil,
         voteCount: Int? = nil,
         imdbRating: String? = nil,
-        genres: [String]? = nil
+        genres: [String]? = nil,
+        released: String? = nil,
+        status: String? = nil,
+        behaviorHints: BehaviorHints? = nil,
+        rankHint: Int? = nil
     ) {
         self.id = id
         self.type = type
@@ -53,6 +61,80 @@ public struct MetaPreview: Codable, Sendable, Identifiable, Hashable {
         self.voteCount = voteCount
         self.imdbRating = imdbRating
         self.genres = genres
+        self.released = released
+        self.status = status
+        self.behaviorHints = behaviorHints
+        self.rankHint = rankHint
+    }
+}
+
+public struct BehaviorHints: Codable, Sendable, Hashable {
+    public let defaultVideoId: String?
+    public let hasScheduledVideos: Bool?
+}
+
+public struct ContentBadge: Codable, Sendable, Identifiable, Hashable {
+    public let id: String
+    public let text: String
+    public let style: BadgeStyle
+
+    public init(text: String, style: BadgeStyle) {
+        self.id = text
+        self.text = text
+        self.style = style
+    }
+}
+
+public enum BadgeStyle: String, Codable, Sendable {
+    case accent
+    case warning
+    case info
+}
+
+public extension MetaPreview {
+    func derivedBadges(index: Int? = nil) -> [ContentBadge] {
+        var badges: [ContentBadge] = []
+
+        if let released = released {
+            let formatter = ISO8601DateFormatter()
+            formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            if let date = formatter.date(from: released) {
+                let now = Date()
+                if date > now {
+                    let display = DateFormatter()
+                    display.dateFormat = "d MMM"
+                    badges.append(ContentBadge(
+                        text: "Coming \(display.string(from: date))",
+                        style: .accent
+                    ))
+                }
+            }
+        }
+
+        if let status = status?.lowercased() {
+            if status == "pilot" {
+                badges.append(ContentBadge(text: "Pilot", style: .accent))
+            } else if status == "continuing" || status == "returning series" {
+                if let released = released {
+                    let formatter = ISO8601DateFormatter()
+                    formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+                    if let date = formatter.date(from: released) {
+                        let weekAgo = Calendar.current.date(byAdding: .day, value: -14, to: Date()) ?? Date()
+                        if date > weekAgo {
+                            badges.append(ContentBadge(text: "New Series", style: .accent))
+                        }
+                    }
+                }
+            } else if status == "ended" {
+                badges.append(ContentBadge(text: "Complete", style: .info))
+            }
+        }
+
+        if let idx = index, idx < 5 {
+            badges.append(ContentBadge(text: "#\(idx + 1) Today", style: .warning))
+        }
+
+        return badges
     }
 }
 
@@ -236,13 +318,40 @@ public struct CatalogRow: Codable, Sendable, Identifiable {
     public var page: Int
     public var hasMore: Bool
 
+    public let tileShape: String?
+    public let coverImage: String?
+    public let focusGif: String?
+    public let focusGifEnabled: Bool?
+    public let titleLogo: String?
+    public let heroBackdrop: String?
+    public let heroVideoURL: String?
+    public let hideTitle: Bool?
+    public let focusGlowEnabled: Bool?
+    public let viewMode: String?
+    public let showAllTab: Bool?
+    public let pinToTop: Bool?
+    public let backdropImage: String?
+
     public init(
         id: String,
         title: String,
         items: [MetaPreview],
         addonName: String? = nil,
         page: Int = 0,
-        hasMore: Bool = false
+        hasMore: Bool = false,
+        tileShape: String? = nil,
+        coverImage: String? = nil,
+        focusGif: String? = nil,
+        focusGifEnabled: Bool? = nil,
+        titleLogo: String? = nil,
+        heroBackdrop: String? = nil,
+        heroVideoURL: String? = nil,
+        hideTitle: Bool? = nil,
+        focusGlowEnabled: Bool? = nil,
+        viewMode: String? = nil,
+        showAllTab: Bool? = nil,
+        pinToTop: Bool? = nil,
+        backdropImage: String? = nil
     ) {
         self.id = id
         self.title = title
@@ -250,5 +359,18 @@ public struct CatalogRow: Codable, Sendable, Identifiable {
         self.addonName = addonName
         self.page = page
         self.hasMore = hasMore
+        self.tileShape = tileShape
+        self.coverImage = coverImage
+        self.focusGif = focusGif
+        self.focusGifEnabled = focusGifEnabled
+        self.titleLogo = titleLogo
+        self.heroBackdrop = heroBackdrop
+        self.heroVideoURL = heroVideoURL
+        self.hideTitle = hideTitle
+        self.focusGlowEnabled = focusGlowEnabled
+        self.viewMode = viewMode
+        self.showAllTab = showAllTab
+        self.pinToTop = pinToTop
+        self.backdropImage = backdropImage
     }
 }

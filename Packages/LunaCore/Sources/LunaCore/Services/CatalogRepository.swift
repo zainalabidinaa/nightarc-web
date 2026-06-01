@@ -72,29 +72,20 @@ public class CatalogRepository: ObservableObject {
 
         for collection in collectionRepo.collections {
             for folder in collectionRepo.folders(for: collection) {
-                let sources = collectionRepo.catalogs(for: folder)
-                guard !sources.isEmpty else { continue }
+                let normalizedSources = collectionRepo.catalogs(for: folder)
+                let rawSources = collectionRepo.sources(for: folder)
+                guard !normalizedSources.isEmpty || !rawSources.isEmpty else { continue }
 
                 var items: [MetaPreview] = []
                 await withTaskGroup(of: [MetaPreview].self) { group in
-                    for source in sources {
+                    for source in normalizedSources {
                         group.addTask {
-                            do {
-                                let type = source.media_type == "all" ? "movie" : source.media_type
-                                var extras: [String: String] = [:]
-                                if let genre = source.genre, genre != "None" {
-                                    extras["genre"] = genre
-                                }
-                                let query = CatalogService.StremioCatalogQuery(
-                                    type: type,
-                                    id: source.catalog_id,
-                                    baseURL: baseURL,
-                                    extras: extras
-                                )
-                                return try await self.catalogService.fetchCatalog(query: query)
-                            } catch {
-                                return []
-                            }
+                            await self.fetchNormalizedSource(source, baseURL: baseURL)
+                        }
+                    }
+                    for source in rawSources {
+                        group.addTask {
+                            await self.fetchRawSource(source, baseURL: baseURL)
                         }
                     }
                     for await result in group {
@@ -110,12 +101,137 @@ public class CatalogRepository: ObservableObject {
                     items: items,
                     addonName: "AIOMetadata",
                     page: 0,
-                    hasMore: false
+                    hasMore: false,
+                    tileShape: folder.tile_shape,
+                    coverImage: folder.cover_image,
+                    focusGif: folder.focus_gif,
+                    focusGifEnabled: folder.focus_gif_enabled,
+                    titleLogo: folder.title_logo,
+                    heroBackdrop: folder.hero_backdrop,
+                    heroVideoURL: folder.hero_video_url,
+                    hideTitle: folder.hide_title,
+                    focusGlowEnabled: collection.focus_glow_enabled,
+                    viewMode: collection.view_mode,
+                    showAllTab: collection.show_all_tab,
+                    pinToTop: collection.pin_to_top,
+                    backdropImage: collection.backdrop_image
                 ))
             }
         }
 
         self.catalogRows = rows
+    }
+
+    private func genreExtras(_ genre: String?) -> [String: String] {
+        guard let genre, genre != "None" else { return [:] }
+        return ["genre": genre]
+    }
+
+    private func fetchNormalizedSource(
+        _ source: DBFolderCatalog,
+        baseURL: String
+    ) async -> [MetaPreview] {
+        do {
+            let extras = genreExtras(source.genre)
+            if source.media_type == "all" {
+                var results: [MetaPreview] = []
+                let movieQuery = CatalogService.StremioCatalogQuery(
+                    type: "movie", id: source.catalog_id, baseURL: baseURL, extras: extras
+                )
+                let seriesQuery = CatalogService.StremioCatalogQuery(
+                    type: "series", id: source.catalog_id, baseURL: baseURL, extras: extras
+                )
+                if let movieResult = try? await catalogService.fetchCatalog(query: movieQuery) {
+                    results.append(contentsOf: movieResult)
+                }
+                if let seriesResult = try? await catalogService.fetchCatalog(query: seriesQuery) {
+                    results.append(contentsOf: seriesResult)
+                }
+                return results
+            }
+            let query = CatalogService.StremioCatalogQuery(
+                type: source.media_type,
+                id: source.catalog_id,
+                baseURL: baseURL,
+                extras: extras
+            )
+            return try await catalogService.fetchCatalog(query: query)
+        } catch {
+            return []
+        }
+    }
+
+    private func fetchRawSource(
+        _ source: DBFolderSource,
+        baseURL: String
+    ) async -> [MetaPreview] {
+        do {
+            guard let query = resolveRawQuery(from: source, baseURL: baseURL) else {
+                return []
+            }
+            return try await catalogService.fetchCatalog(query: query)
+        } catch {
+            return []
+        }
+    }
+
+    private func resolveRawQuery(
+        from source: DBFolderSource,
+        baseURL: String
+    ) -> CatalogService.StremioCatalogQuery? {
+        let mediaType = source.media_type ?? "movie"
+        let extras: [String: String] = [:]
+
+        switch source.provider.lowercased() {
+        case "trakt":
+            guard let tmdbId = source.tmdb_id else { return nil }
+            return CatalogService.StremioCatalogQuery(
+                type: mediaType,
+                id: "trakt.list.\(tmdbId)",
+                baseURL: baseURL,
+                extras: extras
+            )
+        case "tmdb":
+            if source.tmdb_source_type?.uppercased() == "COLLECTION" {
+                return nil
+            }
+            guard let tmdbId = source.tmdb_id else { return nil }
+            let catalogId = source.tmdb_source_type?.lowercased() == "discover"
+                ? "tmdb.discover.\(mediaType).\(tmdbId)"
+                : "tmdb.\(tmdbId)"
+            return CatalogService.StremioCatalogQuery(
+                type: mediaType,
+                id: catalogId,
+                baseURL: baseURL,
+                extras: extras
+            )
+        case "mdblist":
+            guard let tmdbId = source.tmdb_id else { return nil }
+            return CatalogService.StremioCatalogQuery(
+                type: mediaType,
+                id: "mdblist.\(tmdbId)",
+                baseURL: baseURL,
+                extras: extras
+            )
+        case "tvdb":
+            guard let tmdbId = source.tmdb_id else { return nil }
+            return CatalogService.StremioCatalogQuery(
+                type: mediaType,
+                id: "tvdb.discover.\(mediaType).\(tmdbId)",
+                baseURL: baseURL,
+                extras: extras
+            )
+        case "streaming":
+            guard let tmdbId = source.tmdb_id else { return nil }
+            return CatalogService.StremioCatalogQuery(
+                type: mediaType,
+                id: "streaming.\(tmdbId)",
+                baseURL: baseURL,
+                extras: extras
+            )
+        default:
+            return nil
+        }
     }
 
     public func loadMore(rowId: String, addons: [AddonManifest]) async {

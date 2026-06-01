@@ -47,6 +47,9 @@ public actor CatalogService {
             let voteCount: Int?
             let imdbRating: String?
             let genres: [String]?
+            let released: String?
+            let status: String?
+            let behaviorHints: BehaviorHints?
         }
         struct CatalogResponse: Codable {
             let metas: [RawMeta]?
@@ -69,7 +72,10 @@ public actor CatalogService {
                     popularity: raw.popularity,
                     voteCount: raw.voteCount,
                     imdbRating: raw.imdbRating,
-                    genres: raw.genres
+                    genres: raw.genres,
+                    released: raw.released,
+                    status: raw.status,
+                    behaviorHints: raw.behaviorHints
                 )
             }
         } catch {

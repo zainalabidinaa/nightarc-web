@@ -35,3 +35,18 @@ public struct DBFolderCatalog: Codable, Identifiable, Sendable {
     public let media_type: String
     public let genre: String?
 }
+
+public struct DBFolderSource: Codable, Identifiable, Sendable {
+    public let id: String
+    public let folder_id: String
+    public let provider: String
+    public let title: String?
+    public let tmdb_id: String?
+    public let media_type: String?
+    public let tmdb_source_type: String?
+    public let sort_by: String?
+    public let filters_json: String?
+    public let raw_json: String?
+    public let sort_order: Int?
+    public let created_at: Date?
+}

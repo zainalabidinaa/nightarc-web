@@ -98,17 +98,28 @@ struct CatalogRowView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text(row.title)
-                    .font(.headline)
-                    .foregroundColor(.white)
+                if let titleLogo = row.titleLogo, let url = URL(string: titleLogo) {
+                    AsyncImage(url: url) { phase in
+                        if case .success(let image) = phase {
+                            image
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: 24)
+                        }
+                    }
+                } else if !(row.hideTitle ?? false) {
+                    Text(row.title)
+                        .font(.headline)
+                        .foregroundColor(.white)
+                }
                 Spacer()
             }
             .padding(.horizontal)
 
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 12) {
-                    ForEach(row.items) { item in
-                        ContentCard(item: item)
+                    ForEach(Array(row.items.enumerated()), id: \.element.id) { index, item in
+                        ContentCard(item: item, row: row, index: index)
                             .onTapGesture { onTap(item) }
                     }
                 }
