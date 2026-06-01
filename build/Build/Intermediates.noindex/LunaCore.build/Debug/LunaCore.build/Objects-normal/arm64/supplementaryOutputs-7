@@ -1,0 +1,30 @@
+{
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Stremio/StreamService.swift" : {
+    "const-values" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/StreamService.swiftconstvalues",
+    "dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/StreamService.d",
+    "diagnostics" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/StreamService.dia",
+    "object" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/StreamService.o",
+    "swift-dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/StreamService.swiftdeps"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Stremio/StremioHTTPClient.swift" : {
+    "const-values" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/StremioHTTPClient.swiftconstvalues",
+    "dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/StremioHTTPClient.d",
+    "diagnostics" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/StremioHTTPClient.dia",
+    "object" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/StremioHTTPClient.o",
+    "swift-dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/StremioHTTPClient.swiftdeps"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Stremio/SubtitleService.swift" : {
+    "const-values" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/SubtitleService.swiftconstvalues",
+    "dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/SubtitleService.d",
+    "diagnostics" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/SubtitleService.dia",
+    "object" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/SubtitleService.o",
+    "swift-dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/SubtitleService.swiftdeps"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Supabase/SupabaseAuth.swift" : {
+    "const-values" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/SupabaseAuth.swiftconstvalues",
+    "dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/SupabaseAuth.d",
+    "diagnostics" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/SupabaseAuth.dia",
+    "object" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/SupabaseAuth.o",
+    "swift-dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/SupabaseAuth.swiftdeps"
+  }
+}

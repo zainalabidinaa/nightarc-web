@@ -1,0 +1,30 @@
+{
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Supabase/SupabaseClient.swift" : {
+    "const-values" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/SupabaseClient.swiftconstvalues",
+    "dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/SupabaseClient.d",
+    "diagnostics" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/SupabaseClient.dia",
+    "object" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/SupabaseClient.o",
+    "swift-dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/SupabaseClient.swiftdeps"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Supabase/SupabaseConfig.swift" : {
+    "const-values" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/SupabaseConfig.swiftconstvalues",
+    "dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/SupabaseConfig.d",
+    "diagnostics" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/SupabaseConfig.dia",
+    "object" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/SupabaseConfig.o",
+    "swift-dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/SupabaseConfig.swiftdeps"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Supabase/SyncService.swift" : {
+    "const-values" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/SyncService.swiftconstvalues",
+    "dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/SyncService.d",
+    "diagnostics" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/SyncService.dia",
+    "object" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/SyncService.o",
+    "swift-dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/SyncService.swiftdeps"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Theme/LunaTheme.swift" : {
+    "const-values" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/LunaTheme.swiftconstvalues",
+    "dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/LunaTheme.d",
+    "diagnostics" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/LunaTheme.dia",
+    "object" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/LunaTheme.o",
+    "swift-dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/LunaTheme.swiftdeps"
+  }
+}

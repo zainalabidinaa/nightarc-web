@@ -1,0 +1,30 @@
+{
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Models/AddonModels.swift" : {
+    "const-values" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/AddonModels.swiftconstvalues",
+    "dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/AddonModels.d",
+    "diagnostics" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/AddonModels.dia",
+    "object" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/AddonModels.o",
+    "swift-dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/AddonModels.swiftdeps"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Models/CollectionModels.swift" : {
+    "const-values" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/CollectionModels.swiftconstvalues",
+    "dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/CollectionModels.d",
+    "diagnostics" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/CollectionModels.dia",
+    "object" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/CollectionModels.o",
+    "swift-dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/CollectionModels.swiftdeps"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Models/MetaModels.swift" : {
+    "const-values" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/MetaModels.swiftconstvalues",
+    "dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/MetaModels.d",
+    "diagnostics" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/MetaModels.dia",
+    "object" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/MetaModels.o",
+    "swift-dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/MetaModels.swiftdeps"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Models/ProfileModels.swift" : {
+    "const-values" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/ProfileModels.swiftconstvalues",
+    "dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/ProfileModels.d",
+    "diagnostics" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/ProfileModels.dia",
+    "object" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/ProfileModels.o",
+    "swift-dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/ProfileModels.swiftdeps"
+  }
+}

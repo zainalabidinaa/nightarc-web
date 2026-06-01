@@ -1,0 +1,30 @@
+{
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Services/ProfileManager.swift" : {
+    "const-values" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/ProfileManager.swiftconstvalues",
+    "dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/ProfileManager.d",
+    "diagnostics" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/ProfileManager.dia",
+    "object" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/ProfileManager.o",
+    "swift-dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/ProfileManager.swiftdeps"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Services/RoleManager.swift" : {
+    "const-values" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/RoleManager.swiftconstvalues",
+    "dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/RoleManager.d",
+    "diagnostics" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/RoleManager.dia",
+    "object" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/RoleManager.o",
+    "swift-dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/RoleManager.swiftdeps"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Services/SearchRepository.swift" : {
+    "const-values" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/SearchRepository.swiftconstvalues",
+    "dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/SearchRepository.d",
+    "diagnostics" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/SearchRepository.dia",
+    "object" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/SearchRepository.o",
+    "swift-dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/SearchRepository.swiftdeps"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Services/StreamRepository.swift" : {
+    "const-values" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/StreamRepository.swiftconstvalues",
+    "dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/StreamRepository.d",
+    "diagnostics" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/StreamRepository.dia",
+    "object" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/StreamRepository.o",
+    "swift-dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/StreamRepository.swiftdeps"
+  }
+}

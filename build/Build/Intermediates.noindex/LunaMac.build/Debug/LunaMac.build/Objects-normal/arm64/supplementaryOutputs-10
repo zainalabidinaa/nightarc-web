@@ -1,0 +1,23 @@
+{
+  "/Users/zain/projects/Luna/Apps/LunaMac/Sources/LunaMacApp.swift" : {
+    "const-values" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/LunaMacApp.swiftconstvalues",
+    "dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/LunaMacApp.d",
+    "diagnostics" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/LunaMacApp.dia",
+    "object" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/LunaMacApp.o",
+    "swift-dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/LunaMacApp.swiftdeps"
+  },
+  "/Users/zain/projects/Luna/Apps/LunaMac/Sources/Screens/MacAdminView.swift" : {
+    "const-values" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacAdminView.swiftconstvalues",
+    "dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacAdminView.d",
+    "diagnostics" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacAdminView.dia",
+    "object" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacAdminView.o",
+    "swift-dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacAdminView.swiftdeps"
+  },
+  "/Users/zain/projects/Luna/Apps/LunaMac/Sources/Screens/MacAuthView.swift" : {
+    "const-values" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacAuthView.swiftconstvalues",
+    "dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacAuthView.d",
+    "diagnostics" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacAuthView.dia",
+    "object" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacAuthView.o",
+    "swift-dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacAuthView.swiftdeps"
+  }
+}

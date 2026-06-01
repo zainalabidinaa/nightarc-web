@@ -1,0 +1,23 @@
+{
+  "/Users/zain/projects/Luna/Apps/LunaMac/Sources/Components/ContinueWatchingCard.swift" : {
+    "const-values" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/ContinueWatchingCard.swiftconstvalues",
+    "dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/ContinueWatchingCard.d",
+    "diagnostics" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/ContinueWatchingCard.dia",
+    "object" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/ContinueWatchingCard.o",
+    "swift-dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/ContinueWatchingCard.swiftdeps"
+  },
+  "/Users/zain/projects/Luna/Apps/LunaMac/Sources/Components/FolderTile.swift" : {
+    "const-values" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/FolderTile.swiftconstvalues",
+    "dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/FolderTile.d",
+    "diagnostics" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/FolderTile.dia",
+    "object" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/FolderTile.o",
+    "swift-dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/FolderTile.swiftdeps"
+  },
+  "/Users/zain/projects/Luna/Apps/LunaMac/Sources/Components/HomeHero.swift" : {
+    "const-values" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/HomeHero.swiftconstvalues",
+    "dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/HomeHero.d",
+    "diagnostics" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/HomeHero.dia",
+    "object" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/HomeHero.o",
+    "swift-dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/HomeHero.swiftdeps"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Models/StreamMetadata.swift" : {
+    "const-values" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/StreamMetadata.swiftconstvalues",
+    "dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/StreamMetadata.d",
+    "diagnostics" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/StreamMetadata.dia",
+    "object" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/StreamMetadata.o",
+    "swift-dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/StreamMetadata.swiftdeps"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Models/StreamModels.swift" : {
+    "const-values" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/StreamModels.swiftconstvalues",
+    "dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/StreamModels.d",
+    "diagnostics" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/StreamModels.dia",
+    "object" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/StreamModels.o",
+    "swift-dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/StreamModels.swiftdeps"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Models/WatchModels.swift" : {
+    "const-values" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/WatchModels.swiftconstvalues",
+    "dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/WatchModels.d",
+    "diagnostics" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/WatchModels.dia",
+    "object" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/WatchModels.o",
+    "swift-dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/WatchModels.swiftdeps"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Player/PlayerControlsModel.swift" : {
+    "const-values" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/PlayerControlsModel.swiftconstvalues",
+    "dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/PlayerControlsModel.d",
+    "diagnostics" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/PlayerControlsModel.dia",
+    "object" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/PlayerControlsModel.o",
+    "swift-dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaCore.build/Debug/LunaCore.build/Objects-normal/arm64/PlayerControlsModel.swiftdeps"
+  }
+}

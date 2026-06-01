@@ -19,14 +19,13 @@ public class ProfileManager: ObservableObject {
     public func signIn(email: String, password: String) async throws {
         let session = try await auth.signIn(email: email, password: password)
         self.currentSession = session
-        self.isAuthenticated = true
         try await loadProfiles(userId: session.userId)
+        self.isAuthenticated = true
     }
 
     public func signUp(email: String, password: String, inviteCode: String) async throws {
         let session = try await auth.signUp(email: email, password: password, inviteCode: inviteCode)
         self.currentSession = session
-        self.isAuthenticated = true
 
         let profile = LunaProfile(
             id: UUID().uuidString,
@@ -38,6 +37,7 @@ public class ProfileManager: ObservableObject {
         _ = try await client.insert(into: "profiles", value: profile) as [LunaProfile]
         self.profiles = [profile]
         self.currentProfile = profile
+        self.isAuthenticated = true
     }
 
     public func signOut() async {

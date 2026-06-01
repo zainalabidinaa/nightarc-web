@@ -1,0 +1,23 @@
+{
+  "/Users/zain/projects/Luna/Apps/LunaMac/Sources/MacContentView.swift" : {
+    "const-values" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacContentView.swiftconstvalues",
+    "dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacContentView.d",
+    "diagnostics" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacContentView.dia",
+    "object" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacContentView.o",
+    "swift-dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacContentView.swiftdeps"
+  },
+  "/Users/zain/projects/Luna/Apps/LunaMac/Sources/Screens/MacDetailView.swift" : {
+    "const-values" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacDetailView.swiftconstvalues",
+    "dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacDetailView.d",
+    "diagnostics" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacDetailView.dia",
+    "object" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacDetailView.o",
+    "swift-dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacDetailView.swiftdeps"
+  },
+  "/Users/zain/projects/Luna/Apps/LunaMac/Sources/Screens/MacHomeView.swift" : {
+    "const-values" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacHomeView.swiftconstvalues",
+    "dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacHomeView.d",
+    "diagnostics" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacHomeView.dia",
+    "object" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacHomeView.o",
+    "swift-dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacHomeView.swiftdeps"
+  }
+}

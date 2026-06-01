@@ -91,6 +91,8 @@ struct MacCreateProfile: View {
     @EnvironmentObject var profileManager: ProfileManager
     @Environment(\.dismiss) var dismiss
     @State private var name = ""
+    @State private var isLoading = false
+    @State private var errorMessage: String?
 
     var body: some View {
         VStack(spacing: 24) {
@@ -117,21 +119,49 @@ struct MacCreateProfile: View {
                 .frame(width: 300)
                 .foregroundColor(.white)
 
-            Button("Create Profile") {
-                Task {
-                    try await profileManager.createProfile(name: name)
-                    dismiss()
-                }
+            if let error = errorMessage {
+                Text(error)
+                    .foregroundColor(.red)
+                    .font(.caption)
             }
-            .frame(width: 300, height: 40)
-            .background(name.isEmpty ? LunaTheme.surface : LunaTheme.accent)
-            .foregroundColor(.white)
-            .cornerRadius(20)
-            .disabled(name.isEmpty)
+
+            Button {
+                createProfile()
+            } label: {
+                HStack(spacing: 8) {
+                    if isLoading {
+                        ProgressView()
+                            .scaleEffect(0.7)
+                            .tint(.white)
+                    }
+                    Text("Create Profile")
+                        .fontWeight(.semibold)
+                }
+                .frame(width: 300, height: 40)
+                .background((name.isEmpty || isLoading) ? LunaTheme.surface : LunaTheme.accent)
+                .foregroundColor(.white)
+                .cornerRadius(20)
+            }
+            .buttonStyle(.plain)
+            .disabled(name.isEmpty || isLoading)
 
             Spacer()
         }
         .frame(width: 400, height: 350)
         .background(LunaTheme.background)
+    }
+
+    private func createProfile() {
+        isLoading = true
+        errorMessage = nil
+        Task {
+            do {
+                try await profileManager.createProfile(name: name)
+                dismiss()
+            } catch {
+                errorMessage = error.localizedDescription
+            }
+            isLoading = false
+        }
     }
 }

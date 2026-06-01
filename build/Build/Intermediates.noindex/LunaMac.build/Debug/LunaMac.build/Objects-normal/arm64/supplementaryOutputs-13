@@ -1,0 +1,23 @@
+{
+  "/Users/zain/projects/Luna/Apps/LunaMac/Sources/Screens/MacProfilePicker.swift" : {
+    "const-values" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacProfilePicker.swiftconstvalues",
+    "dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacProfilePicker.d",
+    "diagnostics" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacProfilePicker.dia",
+    "object" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacProfilePicker.o",
+    "swift-dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacProfilePicker.swiftdeps"
+  },
+  "/Users/zain/projects/Luna/Apps/LunaMac/Sources/Screens/MacSearchView.swift" : {
+    "const-values" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacSearchView.swiftconstvalues",
+    "dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacSearchView.d",
+    "diagnostics" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacSearchView.dia",
+    "object" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacSearchView.o",
+    "swift-dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacSearchView.swiftdeps"
+  },
+  "/Users/zain/projects/Luna/Apps/LunaMac/Sources/Screens/MacSettingsView.swift" : {
+    "const-values" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacSettingsView.swiftconstvalues",
+    "dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacSettingsView.d",
+    "diagnostics" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacSettingsView.dia",
+    "object" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacSettingsView.o",
+    "swift-dependencies" : "/Users/zain/projects/Luna/build/Build/Intermediates.noindex/LunaMac.build/Debug/LunaMac.build/Objects-normal/arm64/MacSettingsView.swiftdeps"
+  }
+}
