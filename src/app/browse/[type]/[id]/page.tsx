@@ -151,7 +151,11 @@ export default function DetailPage({ params }: { params: { type: string; id: str
             </div>
           )}
           <div className="flex-1 min-w-0">
-            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-2 text-white">{title}</h1>
+            {detail?.logo ? (
+              <img src={detail.logo} alt={title} className="h-12 sm:h-16 object-contain object-left mb-2" />
+            ) : (
+              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-2 text-white">{title}</h1>
+            )}
             <div className="flex items-center gap-3 text-sm text-luna-muted mb-3 flex-wrap">
               {(detail as any)?.year && <span>{(detail as any).year}</span>}
               {detail?.runtime && <span>{detail.runtime}</span>}
