@@ -172,6 +172,7 @@ export interface Collection {
   id: string;
   name: string;
   sort_order: number;
+  focus_glow_enabled?: boolean;
   created_at: string;
   folders?: Folder[];
 }
@@ -182,6 +183,7 @@ export interface Folder {
   name: string;
   cover_image: string | null;
   focus_gif: string | null;
+  focus_gif_enabled?: boolean;
   tile_shape: 'LANDSCAPE' | 'PORTRAIT' | null;
   sort_order: number;
   created_at: string;
