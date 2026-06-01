@@ -102,19 +102,19 @@ public class CatalogRepository: ObservableObject {
                     addonName: "AIOMetadata",
                     page: 0,
                     hasMore: false,
-                    tileShape: folder.tile_shape,
-                    coverImage: folder.cover_image,
-                    focusGif: folder.focus_gif,
-                    focusGifEnabled: folder.focus_gif_enabled,
-                    titleLogo: folder.title_logo,
-                    heroBackdrop: folder.hero_backdrop,
-                    heroVideoURL: folder.hero_video_url,
-                    hideTitle: folder.hide_title,
-                    focusGlowEnabled: collection.focus_glow_enabled,
-                    viewMode: collection.view_mode,
-                    showAllTab: collection.show_all_tab,
-                    pinToTop: collection.pin_to_top,
-                    backdropImage: collection.backdrop_image
+                    tileShape: folder.tileShape,
+                    coverImage: folder.coverImage,
+                    focusGif: folder.focusGif,
+                    focusGifEnabled: folder.focusGifEnabled,
+                    titleLogo: folder.titleLogo,
+                    heroBackdrop: folder.heroBackdrop,
+                    heroVideoURL: folder.heroVideoUrl,
+                    hideTitle: folder.hideTitle,
+                    focusGlowEnabled: collection.focusGlowEnabled,
+                    viewMode: collection.viewMode,
+                    showAllTab: collection.showAllTab,
+                    pinToTop: collection.pinToTop,
+                    backdropImage: collection.backdropImage
                 ))
             }
         }
@@ -133,13 +133,13 @@ public class CatalogRepository: ObservableObject {
     ) async -> [MetaPreview] {
         do {
             let extras = genreExtras(source.genre)
-            if source.media_type == "all" {
+            if source.mediaType == "all" {
                 var results: [MetaPreview] = []
                 let movieQuery = CatalogService.StremioCatalogQuery(
-                    type: "movie", id: source.catalog_id, baseURL: baseURL, extras: extras
+                    type: "movie", id: source.catalogId, baseURL: baseURL, extras: extras
                 )
                 let seriesQuery = CatalogService.StremioCatalogQuery(
-                    type: "series", id: source.catalog_id, baseURL: baseURL, extras: extras
+                    type: "series", id: source.catalogId, baseURL: baseURL, extras: extras
                 )
                 if let movieResult = try? await catalogService.fetchCatalog(query: movieQuery) {
                     results.append(contentsOf: movieResult)
@@ -150,8 +150,8 @@ public class CatalogRepository: ObservableObject {
                 return results
             }
             let query = CatalogService.StremioCatalogQuery(
-                type: source.media_type,
-                id: source.catalog_id,
+                type: source.mediaType,
+                id: source.catalogId,
                 baseURL: baseURL,
                 extras: extras
             )
@@ -179,12 +179,12 @@ public class CatalogRepository: ObservableObject {
         from source: DBFolderSource,
         baseURL: String
     ) -> CatalogService.StremioCatalogQuery? {
-        let mediaType = source.media_type ?? "movie"
+        let mediaType = source.mediaType ?? "movie"
         let extras: [String: String] = [:]
 
         switch source.provider.lowercased() {
         case "trakt":
-            guard let tmdbId = source.tmdb_id else { return nil }
+            guard let tmdbId = source.tmdbId else { return nil }
             return CatalogService.StremioCatalogQuery(
                 type: mediaType,
                 id: "trakt.list.\(tmdbId)",
@@ -192,11 +192,11 @@ public class CatalogRepository: ObservableObject {
                 extras: extras
             )
         case "tmdb":
-            if source.tmdb_source_type?.uppercased() == "COLLECTION" {
+            if source.tmdbSourceType?.uppercased() == "COLLECTION" {
                 return nil
             }
-            guard let tmdbId = source.tmdb_id else { return nil }
-            let catalogId = source.tmdb_source_type?.lowercased() == "discover"
+            guard let tmdbId = source.tmdbId else { return nil }
+            let catalogId = source.tmdbSourceType?.lowercased() == "discover"
                 ? "tmdb.discover.\(mediaType).\(tmdbId)"
                 : "tmdb.\(tmdbId)"
             return CatalogService.StremioCatalogQuery(
@@ -206,7 +206,7 @@ public class CatalogRepository: ObservableObject {
                 extras: extras
             )
         case "mdblist":
-            guard let tmdbId = source.tmdb_id else { return nil }
+            guard let tmdbId = source.tmdbId else { return nil }
             return CatalogService.StremioCatalogQuery(
                 type: mediaType,
                 id: "mdblist.\(tmdbId)",
@@ -214,7 +214,7 @@ public class CatalogRepository: ObservableObject {
                 extras: extras
             )
         case "tvdb":
-            guard let tmdbId = source.tmdb_id else { return nil }
+            guard let tmdbId = source.tmdbId else { return nil }
             return CatalogService.StremioCatalogQuery(
                 type: mediaType,
                 id: "tvdb.discover.\(mediaType).\(tmdbId)",
@@ -222,7 +222,7 @@ public class CatalogRepository: ObservableObject {
                 extras: extras
             )
         case "streaming":
-            guard let tmdbId = source.tmdb_id else { return nil }
+            guard let tmdbId = source.tmdbId else { return nil }
             return CatalogService.StremioCatalogQuery(
                 type: mediaType,
                 id: "streaming.\(tmdbId)",

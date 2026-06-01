@@ -1,0 +1,6 @@
+Target dependency graph (3 targets)
+Target 'LunaMac' in project 'LunaMac'
+➜ Explicit dependency on target 'LunaCore' in project 'LunaCore'
+Target 'LunaCore' in project 'LunaCore'
+➜ Explicit dependency on target 'LunaCore' in project 'LunaCore'
+Target 'LunaCore' in project 'LunaCore' (no dependencies)

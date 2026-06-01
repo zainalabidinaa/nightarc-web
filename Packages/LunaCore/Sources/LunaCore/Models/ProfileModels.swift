@@ -12,6 +12,17 @@ public struct LunaProfile: Codable, Sendable, Identifiable, Equatable {
     public let role: String
     public let createdAt: Date
 
+    enum CodingKeys: String, CodingKey {
+        case id, name, role
+        case userId = "user_id"
+        case avatarColor = "avatar_color"
+        case avatarId = "avatar_id"
+        case profileIndex = "profile_index"
+        case usesPrimaryAddons = "uses_primary_addons"
+        case pinEnabled = "pin_enabled"
+        case createdAt = "created_at"
+    }
+
     public init(
         id: String,
         userId: String,

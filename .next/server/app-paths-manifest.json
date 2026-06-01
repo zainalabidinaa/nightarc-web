@@ -1,14 +1,14 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
-  "/admin/page": "app/admin/page.js",
-  "/collections/[folderId]/page": "app/collections/[folderId]/page.js",
   "/auth/page": "app/auth/page.js",
-  "/library/page": "app/library/page.js",
   "/home/page": "app/home/page.js",
-  "/page": "app/page.js",
+  "/collections/[folderId]/page": "app/collections/[folderId]/page.js",
+  "/admin/page": "app/admin/page.js",
   "/search/page": "app/search/page.js",
-  "/settings/page": "app/settings/page.js",
   "/watch/[type]/[id]/page": "app/watch/[type]/[id]/page.js",
+  "/library/page": "app/library/page.js",
+  "/page": "app/page.js",
   "/profiles/page": "app/profiles/page.js",
+  "/settings/page": "app/settings/page.js",
   "/browse/[type]/[id]/page": "app/browse/[type]/[id]/page.js"
 }

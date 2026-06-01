@@ -6,6 +6,48 @@
 	<integer>12</integer>
 	<key>logs</key>
 	<dict>
+		<key>4F676B83-381B-43C0-9071-5449F9ACBEFE</key>
+		<dict>
+			<key>className</key>
+			<string>IDECommandLineBuildLog</string>
+			<key>documentTypeString</key>
+			<string>&lt;nil&gt;</string>
+			<key>domainType</key>
+			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
+			<key>fileName</key>
+			<string>4F676B83-381B-43C0-9071-5449F9ACBEFE.xcactivitylog</string>
+			<key>hasPrimaryLog</key>
+			<true/>
+			<key>primaryObservable</key>
+			<dict>
+				<key>highLevelStatus</key>
+				<string>W</string>
+				<key>totalNumberOfAnalyzerIssues</key>
+				<integer>0</integer>
+				<key>totalNumberOfErrors</key>
+				<integer>0</integer>
+				<key>totalNumberOfTestFailures</key>
+				<integer>0</integer>
+				<key>totalNumberOfWarnings</key>
+				<integer>5</integer>
+			</dict>
+			<key>schemeIdentifier-containerName</key>
+			<string>LunaMac project</string>
+			<key>schemeIdentifier-schemeName</key>
+			<string>LunaMac</string>
+			<key>schemeIdentifier-sharedScheme</key>
+			<integer>1</integer>
+			<key>signature</key>
+			<string>Building project LunaMac with scheme LunaMac</string>
+			<key>timeStartedRecording</key>
+			<real>802046168.225389</real>
+			<key>timeStoppedRecording</key>
+			<real>802046181.72102904</real>
+			<key>title</key>
+			<string>Building project LunaMac with scheme LunaMac</string>
+			<key>uniqueIdentifier</key>
+			<string>4F676B83-381B-43C0-9071-5449F9ACBEFE</string>
+		</dict>
 		<key>540A076B-F09A-4DAF-9952-EA0878D821E7</key>
 		<dict>
 			<key>className</key>
@@ -48,7 +90,7 @@
 			<key>uniqueIdentifier</key>
 			<string>540A076B-F09A-4DAF-9952-EA0878D821E7</string>
 		</dict>
-		<key>6D83334A-37D2-4E07-B436-78F2FEC9D030</key>
+		<key>7E5A444D-7CBB-402F-AA6F-B111FD703C30</key>
 		<dict>
 			<key>className</key>
 			<string>IDECommandLineBuildLog</string>
@@ -57,21 +99,21 @@
 			<key>domainType</key>
 			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
 			<key>fileName</key>
-			<string>6D83334A-37D2-4E07-B436-78F2FEC9D030.xcactivitylog</string>
+			<string>7E5A444D-7CBB-402F-AA6F-B111FD703C30.xcactivitylog</string>
 			<key>hasPrimaryLog</key>
 			<true/>
 			<key>primaryObservable</key>
 			<dict>
 				<key>highLevelStatus</key>
-				<string>W</string>
+				<string>E</string>
 				<key>totalNumberOfAnalyzerIssues</key>
 				<integer>0</integer>
 				<key>totalNumberOfErrors</key>
-				<integer>0</integer>
+				<integer>26</integer>
 				<key>totalNumberOfTestFailures</key>
 				<integer>0</integer>
 				<key>totalNumberOfWarnings</key>
-				<integer>6</integer>
+				<integer>0</integer>
 			</dict>
 			<key>schemeIdentifier-containerName</key>
 			<string>LunaMac project</string>
@@ -82,13 +124,55 @@
 			<key>signature</key>
 			<string>Building project LunaMac with scheme LunaMac</string>
 			<key>timeStartedRecording</key>
-			<real>802045374.07669902</real>
+			<real>802045993.38904798</real>
 			<key>timeStoppedRecording</key>
-			<real>802045381.32283604</real>
+			<real>802045999.28739595</real>
 			<key>title</key>
 			<string>Building project LunaMac with scheme LunaMac</string>
 			<key>uniqueIdentifier</key>
-			<string>6D83334A-37D2-4E07-B436-78F2FEC9D030</string>
+			<string>7E5A444D-7CBB-402F-AA6F-B111FD703C30</string>
+		</dict>
+		<key>B59F1BED-B47A-42DD-B151-9ACB9E28E37A</key>
+		<dict>
+			<key>className</key>
+			<string>IDECommandLineBuildLog</string>
+			<key>documentTypeString</key>
+			<string>&lt;nil&gt;</string>
+			<key>domainType</key>
+			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
+			<key>fileName</key>
+			<string>B59F1BED-B47A-42DD-B151-9ACB9E28E37A.xcactivitylog</string>
+			<key>hasPrimaryLog</key>
+			<true/>
+			<key>primaryObservable</key>
+			<dict>
+				<key>highLevelStatus</key>
+				<string>E</string>
+				<key>totalNumberOfAnalyzerIssues</key>
+				<integer>0</integer>
+				<key>totalNumberOfErrors</key>
+				<integer>13</integer>
+				<key>totalNumberOfTestFailures</key>
+				<integer>0</integer>
+				<key>totalNumberOfWarnings</key>
+				<integer>0</integer>
+			</dict>
+			<key>schemeIdentifier-containerName</key>
+			<string>LunaMac project</string>
+			<key>schemeIdentifier-schemeName</key>
+			<string>LunaMac</string>
+			<key>schemeIdentifier-sharedScheme</key>
+			<integer>1</integer>
+			<key>signature</key>
+			<string>Building project LunaMac with scheme LunaMac</string>
+			<key>timeStartedRecording</key>
+			<real>802046041.00266302</real>
+			<key>timeStoppedRecording</key>
+			<real>802046046.63214195</real>
+			<key>title</key>
+			<string>Building project LunaMac with scheme LunaMac</string>
+			<key>uniqueIdentifier</key>
+			<string>B59F1BED-B47A-42DD-B151-9ACB9E28E37A</string>
 		</dict>
 	</dict>
 </dict>

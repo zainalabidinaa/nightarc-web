@@ -34,4 +34,4 @@ targets:
         INFOPLIST_KEY_LSMinimumSystemVersion: "14.0"
         INFOPLIST_KEY_NSAppTransportSecurity:
           NSAllowsArbitraryLoads: true
-        INFOPLIST_KEY_CFBundleIconFile: "Luna"
+        INFOPLIST_KEY_CFBundleIconFile: "AppIcon"

@@ -10,6 +10,16 @@ public struct WatchProgressEntry: Codable, Sendable, Identifiable {
     public let completed: Bool
     public let updatedAt: Date
 
+    enum CodingKeys: String, CodingKey {
+        case id, completed
+        case profileId = "profile_id"
+        case mediaId = "media_id"
+        case mediaType = "media_type"
+        case positionSeconds = "position_seconds"
+        case durationSeconds = "duration_seconds"
+        case updatedAt = "updated_at"
+    }
+
     public var progressFraction: Double {
         guard durationSeconds > 0 else { return 0 }
         return min(positionSeconds / durationSeconds, 1.0)
@@ -47,6 +57,18 @@ public struct ContinueWatchingItem: Codable, Sendable, Identifiable {
     public let seasonNumber: Int?
     public let episodeNumber: Int?
     public let episodeTitle: String?
+
+    enum CodingKeys: String, CodingKey {
+        case name, poster
+        case mediaId = "media_id"
+        case mediaType = "media_type"
+        case resumePositionMs = "resume_position_ms"
+        case durationMs = "duration_ms"
+        case progressFraction = "progress_fraction"
+        case seasonNumber = "season_number"
+        case episodeNumber = "episode_number"
+        case episodeTitle = "episode_title"
+    }
 
     public var id: String { mediaId }
 
@@ -86,6 +108,14 @@ public struct WatchedItem: Codable, Sendable, Identifiable {
     public let episode: Int?
     public let markedAt: Date
 
+    enum CodingKeys: String, CodingKey {
+        case id, name, poster, season, episode
+        case profileId = "profile_id"
+        case mediaId = "media_id"
+        case mediaType = "media_type"
+        case markedAt = "marked_at"
+    }
+
     public init(
         id: String,
         profileId: String,
@@ -119,6 +149,14 @@ public struct LibraryItem: Codable, Sendable, Identifiable {
     public let banner: String?
     public let savedAt: Date
 
+    enum CodingKeys: String, CodingKey {
+        case id, name, poster, banner
+        case profileId = "profile_id"
+        case mediaId = "media_id"
+        case mediaType = "media_type"
+        case savedAt = "saved_at"
+    }
+
     public init(
         id: String,
         profileId: String,
@@ -148,6 +186,16 @@ public struct InviteCode: Codable, Sendable, Identifiable {
     public let createdAt: Date
     public let maxUses: Int
     public let isActive: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case code
+        case createdBy = "created_by"
+        case usedBy = "used_by"
+        case usedAt = "used_at"
+        case createdAt = "created_at"
+        case maxUses = "max_uses"
+        case isActive = "is_active"
+    }
 
     public var id: String { code }
 
@@ -179,6 +227,15 @@ public struct AdminStats: Codable, Sendable {
     public let totalWatchlistItems: Int
     public let totalWatchedItems: Int
     public let activeUsers: Int
+
+    enum CodingKeys: String, CodingKey {
+        case totalUsers = "total_users"
+        case totalProfiles = "total_profiles"
+        case activeInviteCodes = "active_invite_codes"
+        case totalWatchlistItems = "total_watchlist_items"
+        case totalWatchedItems = "total_watched_items"
+        case activeUsers = "active_users"
+    }
 
     public init(
         totalUsers: Int = 0,

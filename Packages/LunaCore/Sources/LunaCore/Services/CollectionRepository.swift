@@ -34,17 +34,17 @@ public class CollectionRepository: ObservableObject {
 
     public func folders(for collection: DBCollection) -> [DBFolder] {
         folders
-            .filter { $0.collection_id == collection.id }
-            .sorted { $0.sort_order < $1.sort_order }
+            .filter { $0.collectionId == collection.id }
+            .sorted { $0.sortOrder < $1.sortOrder }
     }
 
     public func catalogs(for folder: DBFolder) -> [DBFolderCatalog] {
-        folderCatalogs.filter { $0.folder_id == folder.id }
+        folderCatalogs.filter { $0.folderId == folder.id }
     }
 
     public func sources(for folder: DBFolder) -> [DBFolderSource] {
         folderSources
-            .filter { $0.folder_id == folder.id }
-            .sorted { ($0.sort_order ?? 0) < ($1.sort_order ?? 0) }
+            .filter { $0.folderId == folder.id }
+            .sorted { ($0.sortOrder ?? 0) < ($1.sortOrder ?? 0) }
     }
 }
