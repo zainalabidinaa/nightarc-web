@@ -107,11 +107,17 @@ export default function HomePage() {
       // Fetch catalog rows
       const initialCatalogs = selectInitialCatalogs(manifest);
       const catalogResults = await Promise.allSettled(
-        initialCatalogs.map(async (catalog) => ({
-          key: `${catalog.type}:${catalog.id}`,
-          fallbackKey: catalog.id,
-          items: await fetchCatalog(manifest.transportUrl!, catalog.type, catalog.id),
-        }))
+        initialCatalogs.map(async (catalog) => {
+          const extras: Record<string, string> = {};
+          for (const e of catalog.extra ?? []) {
+            if (e.options?.length) extras[e.name] = e.options[0];
+          }
+          return {
+            key: `${catalog.type}:${catalog.id}`,
+            fallbackKey: catalog.id,
+            items: await fetchCatalog(manifest.transportUrl!, catalog.type, catalog.id, extras),
+          };
+        })
       );
 
       const catalogItemsById: Record<string, HomeCatalogRow['items']> = {};
@@ -131,20 +137,25 @@ export default function HomePage() {
       setFeaturedIndex(0);
 
       // Prefetch meta for all 5 featured items in parallel
-      const metaResults = await Promise.allSettled(
-        nextFeaturedItems.map(async (fi) => {
-          const meta = await fetchMeta(manifest.transportUrl!, fi.item.type, fi.item.id);
-          return { id: fi.item.id, meta };
-        })
+      const canFetchMeta = manifest.resources?.some(
+        r => (typeof r === 'string' ? r : r.name) === 'meta'
       );
+      if (canFetchMeta && nextFeaturedItems.length > 0) {
+        const metaResults = await Promise.allSettled(
+          nextFeaturedItems.map(async (fi) => {
+            const meta = await fetchMeta(manifest.transportUrl!, fi.item.type, fi.item.id);
+            return { id: fi.item.id, meta };
+          })
+        );
 
-      const metas: Record<string, MetaDetail | null> = {};
-      for (const r of metaResults) {
-        if (r.status === 'fulfilled') {
-          metas[r.value.id] = r.value.meta;
+        const metas: Record<string, MetaDetail | null> = {};
+        for (const r of metaResults) {
+          if (r.status === 'fulfilled') {
+            metas[r.value.id] = r.value.meta;
+          }
         }
+        setFeaturedMetas(metas);
       }
-      setFeaturedMetas(metas);
     } catch (e) {
       console.error('Failed to load home data:', e);
       setError('Failed to load content. Please try again later.');
@@ -205,7 +216,7 @@ export default function HomePage() {
                   : 0;
                 return (
                   <Link
-                    key={item.media_id}
+                    key={item.id}
                     href={`/browse/${item.media_type}/${item.media_id}`}
                     className="flex-shrink-0 w-48 group cursor-pointer"
                   >
