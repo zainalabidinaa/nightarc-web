@@ -6,9 +6,8 @@ import { useRouter } from 'next/navigation';
 import { Sidebar } from '@/components/Sidebar';
 import { HomeHero } from '@/components/HomeHero';
 import { MediaRow } from '@/components/MediaRow';
-import { FolderGrid } from '@/components/FolderGrid';
-import { FeaturedHomeItem, HomeCatalogRow, MetaDetail, WatchProgressEntry } from '@/lib/types';
-import { getWatchProgress, getSystemAddon } from '@/lib/services/api';
+import { FeaturedHomeItem, HomeCatalogRow, MetaDetail, MetaPreview, WatchProgressEntry } from '@/lib/types';
+import { getWatchProgress, getSystemAddon, getCollections } from '@/lib/services/api';
 import { fetchCatalog, fetchManifest, fetchMeta } from '@/lib/stremio';
 import { buildHomeRows, pickFeaturedItems } from './home-data';
 import Link from 'next/link';
@@ -30,6 +29,8 @@ export default function HomePage() {
   const [hasSystemAddon, setHasSystemAddon] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [discoverRows, setDiscoverRows] = useState<HomeCatalogRow[]>([]);
+  const [collectionSections, setCollectionSections] = useState<{ id: string; name: string; folders: { id: string; name: string; cover_image: string | null }[] }[]>([]);
 
   const heroTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const heroPausedRef = useRef(false);
@@ -137,6 +138,65 @@ export default function HomePage() {
       setFeaturedItems(nextFeaturedItems);
       setFeaturedIndex(0);
 
+      // Load Supabase collections for organized display
+      try {
+        const collections = await getCollections();
+
+        // Discover collection → extra MediaRows
+        const discoverCol = collections.find(c => c.name.toLowerCase() === 'discover');
+        if (discoverCol?.folders && manifest.transportUrl) {
+          const discoverResults: HomeCatalogRow[] = [];
+          await Promise.allSettled(
+            (discoverCol.folders || []).map(async (folder) => {
+              // Skip folders that match main row names (already shown)
+              const MAIN_NAMES = ['Popular Movies', 'Popular TV Shows', 'Trending Movies', 'Trending TV Shows'];
+              if (MAIN_NAMES.some(n => n.toLowerCase() === folder.name.toLowerCase())) return;
+
+              const folderCatalogs = folder.folder_catalogs || [];
+              if (folderCatalogs.length === 0) return;
+
+              const items: MetaPreview[] = [];
+              await Promise.allSettled(
+                folderCatalogs.map(async (fc) => {
+                  try {
+                    const results = await fetchCatalog(manifest.transportUrl!, fc.media_type, fc.catalog_id);
+                    items.push(...results);
+                  } catch {}
+                })
+              );
+
+              if (items.length > 0) {
+                discoverResults.push({
+                  id: `discover_${folder.id}`,
+                  title: folder.name,
+                  type: folderCatalogs[0]?.media_type || 'movie',
+                  catalogId: folder.id,
+                  items: items.slice(0, 30),
+                  isMainRow: false,
+                  coverImage: folder.cover_image || undefined,
+                });
+              }
+            })
+          );
+          setDiscoverRows(discoverResults);
+        }
+
+        // Other collections → folder tile sections
+        const otherCollections = collections
+          .filter(c => c.name.toLowerCase() !== 'discover')
+          .map(c => ({
+            id: c.id,
+            name: c.name,
+            folders: (c.folders || [])
+              .filter((f) => (f.folder_catalogs?.length ?? 0) > 0 || f.cover_image)
+              .map((f) => ({ id: f.id, name: f.name, cover_image: f.cover_image || null }))
+          }))
+          .filter(c => c.folders.length > 0);
+        setCollectionSections(otherCollections);
+      } catch (e) {
+        console.error('Failed to load collections:', e);
+      }
+
       // Prefetch meta for all 5 featured items in parallel
       const canFetchMeta = manifest.resources?.some(
         r => (typeof r === 'string' ? r : r.name) === 'meta'
@@ -176,7 +236,6 @@ export default function HomePage() {
   }, [currentProfile, isLoading, user, loadData]);
 
   const mainRows = rows.filter((r) => r.isMainRow);
-  const folderRows = rows.filter((r) => !r.isMainRow);
 
   if (loading) {
     return (
@@ -273,10 +332,41 @@ export default function HomePage() {
           <MediaRow key={row.id} title={row.title} items={row.items} />
         ))}
 
-        {/* Folder grid for non-main rows */}
-        {folderRows.length > 0 && (
-          <FolderGrid collectionTitle="Browse" rows={folderRows} />
-        )}
+        {/* Discover extra rows */}
+        {discoverRows.map(row => (
+          <MediaRow key={row.id} title={row.title} items={row.items} />
+        ))}
+
+        {/* Collection sections — Franchises, Streaming, Decades, etc. */}
+        {collectionSections.map(section => (
+          <section key={section.id} className="mb-10">
+            <h2 className="text-base font-bold text-white mb-4">{section.name}</h2>
+            <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
+              {section.folders.map(folder => (
+                <Link
+                  key={folder.id}
+                  href={`/collections/${folder.id}`}
+                  className="group relative aspect-[2/3] rounded-lg overflow-hidden bg-luna-elevated cursor-pointer block"
+                >
+                  {folder.cover_image ? (
+                    <img
+                      src={folder.cover_image}
+                      alt={folder.name}
+                      loading="lazy"
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 rounded-lg"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-white/0" />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-2">
+                    <p className="text-[10px] font-bold text-white leading-tight line-clamp-2">{folder.name}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        ))}
       </div>
     </Sidebar>
   );
