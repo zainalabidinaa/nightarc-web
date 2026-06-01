@@ -43,14 +43,16 @@ export function buildHomeRows(
         n => title.toLowerCase() === n.toLowerCase()
       );
 
-      return {
+      const row = {
         id: `${manifest.id}_${catalog.type}_${catalog.id}`,
         title,
         type: catalog.type,
         catalogId: catalog.id,
         items,
         isMainRow,
-      } as HomeCatalogRow;
+      } satisfies HomeCatalogRow;
+
+      return row as HomeCatalogRow;
     })
     .filter((row): row is HomeCatalogRow => row !== null);
 }
@@ -81,9 +83,7 @@ export function pickFeaturedItem(rows: HomeCatalogRow[]): FeaturedHomeItem | nul
 }
 
 export function pickFeaturedItems(rows: HomeCatalogRow[]): FeaturedHomeItem[] {
-  const mainRows = rows.filter(r =>
-    MAIN_ROW_NAMES.some(n => r.title.toLowerCase() === n.toLowerCase())
-  );
+  const mainRows = rows.filter(r => r.isMainRow);
   const seen = new Set<string>();
   const candidates: FeaturedHomeItem[] = [];
   for (const row of mainRows) {

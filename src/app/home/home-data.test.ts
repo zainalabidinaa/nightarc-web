@@ -73,6 +73,7 @@ describe('buildHomeRows', () => {
         type: 'movie',
         catalogId: 'popular-movies',
         items: movieItems,
+        isMainRow: true,
       },
       {
         id: 'addon.test_series_trending-series',
@@ -80,6 +81,7 @@ describe('buildHomeRows', () => {
         type: 'series',
         catalogId: 'trending-series',
         items: seriesItems,
+        isMainRow: false,
       },
     ]);
   });
@@ -115,6 +117,7 @@ describe('buildHomeRows', () => {
         type: 'movie',
         catalogId: 'popular',
         items: movieItems,
+        isMainRow: true,
       },
       {
         id: 'addon.test_series_popular',
@@ -122,6 +125,7 @@ describe('buildHomeRows', () => {
         type: 'series',
         catalogId: 'popular',
         items: seriesItems,
+        isMainRow: false,
       },
     ]);
   });
