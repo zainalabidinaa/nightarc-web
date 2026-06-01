@@ -118,6 +118,7 @@ export default function Player({
   const [tooltipText, setTooltipText] = useState('0:00');
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [activeCueText, setActiveCueText] = useState('');
+  const [isHlsStream, setIsHlsStream] = useState(false);
 
   useEffect(() => { startPosRef.current = startPosition; }, [startPosition]);
 
@@ -137,6 +138,10 @@ export default function Player({
     const hasHeaders = proxyHeaders != null && Object.keys(proxyHeaders).length > 0;
     const isHls = streamUrl.includes('.m3u8') || streamUrl.includes('/manifest') || streamUrl.includes('/playlist');
     const tryHls = (isHls || hasHeaders) && Hls.isSupported();
+
+    console.log('[player] streamUrl:', streamUrl);
+    console.log('[player] isHls:', isHls, '| hasHeaders:', hasHeaders, '| tryHls:', tryHls);
+    setIsHlsStream(tryHls);
 
     if (tryHls) {
       let mediaErrCount = 0;
@@ -158,6 +163,8 @@ export default function Player({
         setAudioTracks(at); setSubTracks(st); setQualityLevels(ql);
         if (at.length > 0) setActiveAudio(hls.audioTrack);
         console.log('[hls] manifest parsed audio:', at.length, 'subs:', st.length, 'levels:', ql.length);
+        console.log('[hls] audio tracks:', hls.audioTracks.length, hls.audioTracks.map(t => `${t.name}(${t.lang})`));
+        console.log('[hls] subtitle tracks:', hls.subtitleTracks.length, hls.subtitleTracks.map(t => `${t.name}(${t.lang})`));
         video.play().catch(() => {});
       });
 
@@ -222,7 +229,7 @@ export default function Player({
     const video = videoRef.current;
     if (!video) return;
     const onCanPlay = () => {
-      setState('paused');
+      setState(video.paused ? 'paused' : 'playing');
       if (startPosRef.current && startPosRef.current > 0) {
         video.currentTime = startPosRef.current; startPosRef.current = undefined;
       }
@@ -235,6 +242,12 @@ export default function Player({
       if (isDragging) return;
       setPos(video.currentTime); setDur(video.duration || 0);
       if (video.buffered.length > 0) setBuf(video.buffered.end(video.buffered.length - 1));
+      // Sync play state from video element truth to avoid stale state after async play()
+      setState(prev => {
+        if (!video.paused && prev === 'paused') return 'playing';
+        if (video.paused && prev === 'playing') return 'paused';
+        return prev;
+      });
     };
     video.addEventListener('canplay', onCanPlay);
     video.addEventListener('play', onPlay);
@@ -654,7 +667,9 @@ export default function Player({
                         <span className={`w-1.5 h-1.5 rounded-full bg-luna-accent flex-shrink-0 ${t.id === activeAudio ? 'opacity-100' : 'opacity-0'}`} />
                       </button>
                     )) : (
-                      <div className="px-3 py-2 text-xs text-white/30">No audio tracks detected</div>
+                      <div className="px-3 py-2 text-xs text-white/30">
+                        {isHlsStream ? 'No audio tracks in this stream' : 'Tracks unavailable for direct streams'}
+                      </div>
                     )}
                     <div className="mx-2 my-1.5 h-px bg-white/6" />
                     <div className="px-3 pt-1 pb-1 text-[10px] font-semibold text-white/30 uppercase tracking-wider">Subtitles</div>
@@ -670,7 +685,9 @@ export default function Player({
                         <span className={`w-1.5 h-1.5 rounded-full bg-luna-accent flex-shrink-0 ${t.id === activeSub ? 'opacity-100' : 'opacity-0'}`} />
                       </button>
                     )) : (
-                      <div className="px-3 py-2 text-xs text-white/30">No subtitle tracks detected</div>
+                      <div className="px-3 py-2 text-xs text-white/30">
+                        {isHlsStream ? 'No subtitle tracks in this stream' : 'Subtitles unavailable for direct streams'}
+                      </div>
                     )}
                   </div>
                 )}
