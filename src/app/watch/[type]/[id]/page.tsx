@@ -15,8 +15,10 @@ export default function WatchPage({ params }: { params: { type: string; id: stri
 
   const streamUrlRaw = searchParams.get('url');
   const cacheId = searchParams.get('cid');
+  const titleRaw = searchParams.get('title');
 
   const streamUrl = streamUrlRaw ? decodeURIComponent(streamUrlRaw) : '';
+  const displayTitle = titleRaw ? decodeURIComponent(titleRaw) : decodeURIComponent(resolved.id);
   const allStreams: StreamItem[] = cacheId ? (getCachedStreams(cacheId) ?? []) : [];
   const cachedStream = cacheId && streamUrl ? getCachedStream(cacheId, streamUrl) : null;
   const fallbackStream: StreamItem = { url: streamUrl, addonName: 'Direct' };
@@ -25,7 +27,6 @@ export default function WatchPage({ params }: { params: { type: string; id: stri
   const [activeUrl, setActiveUrl] = useState(streamUrl);
   const savedPosition = useRef(0);
 
-  // Auth guard
   useEffect(() => {
     if (isLoading) return;
     if (!user) { router.replace('/auth'); return; }
@@ -48,7 +49,7 @@ export default function WatchPage({ params }: { params: { type: string; id: stri
       streamUrl={activeUrl}
       streams={allStreams}
       currentStream={activeStream}
-      title={decodeURIComponent(resolved.id)}
+      title={displayTitle}
       mediaId={resolved.id}
       mediaType={resolved.type}
       startPosition={savedPosition.current || undefined}
