@@ -61,6 +61,7 @@ export interface MetaVideo {
   episode?: number;
   thumbnail?: string;
   overview?: string;
+  released?: string;
 }
 
 export interface Season {

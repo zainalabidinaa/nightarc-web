@@ -16,6 +16,8 @@ const PlayIcon = () => (
   </svg>
 );
 
+const STREAILER_URL = 'https://9aa032f52161-streailer.baby-beamup.club/%7B%22language%22%3A%22en-US%22%2C%22externalLink%22%3Atrue%2C%22showRecap%22%3Atrue%7D';
+
 export default function DetailPage({ params }: { params: { type: string; id: string } }) {
   const resolved = params;
   const { currentProfile, addons, user, isLoading } = useAuth();
@@ -29,6 +31,7 @@ export default function DetailPage({ params }: { params: { type: string; id: str
   const [selectedSeason, setSelectedSeason] = useState<Season | null>(null);
   const [selectedEpisodeId, setSelectedEpisodeId] = useState<string | null>(null);
   const [autoPlaying, setAutoPlaying] = useState(false);
+  const [trailers, setTrailers] = useState<{ id: string; title: string; youtubeId: string }[]>([]);
 
   useEffect(() => {
     if (isLoading) return;
@@ -56,6 +59,29 @@ export default function DetailPage({ params }: { params: { type: string; id: str
         const lib = await isInLibrary(currentProfile.id, resolved.id);
         setInLibrary(lib);
       }
+
+      // Fetch trailers from Streailer
+      let streailerTrailers: { id: string; title: string; youtubeId: string }[] = [];
+      try {
+        const streailerRes = await fetch(`${STREAILER_URL}/stream/${resolved.type}/${resolved.id}.json`);
+        const streailerData = await streailerRes.json();
+        streailerTrailers = (streailerData.streams || [])
+          .filter((s: any) => s.externalUrl && s.externalUrl.includes('youtube'))
+          .map((s: any) => {
+            const url = s.externalUrl;
+            const match = url.match(/[?&]v=([^&]+)/) || url.match(/youtu\.be\/([^?]+)/);
+            const youtubeId = match ? match[1] : '';
+            return { id: youtubeId || s.name, title: s.title || s.name || 'Trailer', youtubeId };
+          })
+          .filter((t: any) => t.youtubeId);
+      } catch {}
+
+      setTrailers([
+        ...streailerTrailers,
+        ...(meta?.trailers || [])
+          .map((t: any) => ({ id: t.id, title: t.title || 'Trailer', youtubeId: t.youtubeId || '' }))
+          .filter((t: any) => t.youtubeId),
+      ]);
     } catch {}
     setLoading(false);
   }
@@ -126,13 +152,53 @@ export default function DetailPage({ params }: { params: { type: string; id: str
   const title = detail?.name || decodeURIComponent(resolved.id);
   const isSeries = resolved.type === 'series';
 
+  // Reusable trailers section JSX
+  const trailersSection = trailers.length > 0 ? (
+    <section className="mb-8">
+      <h3 className="text-sm font-bold text-white mb-4 px-6">Trailers &amp; Clips</h3>
+      <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide -mx-0 px-6">
+        {trailers.map(trailer => (
+          <a
+            key={trailer.id}
+            href={`https://www.youtube.com/watch?v=${trailer.youtubeId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-shrink-0 w-52 group cursor-pointer"
+          >
+            <div className="relative w-52 h-[117px] rounded-xl overflow-hidden bg-luna-elevated mb-2">
+              <img
+                src={`https://img.youtube.com/vi/${trailer.youtubeId}/mqdefault.jpg`}
+                alt={trailer.title}
+                className="absolute inset-0 w-full h-full object-cover"
+                loading="lazy"
+              />
+              {/* Play overlay */}
+              <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/25">
+                  <svg viewBox="0 0 24 24" fill="white" className="w-5 h-5 ml-0.5">
+                    <polygon points="6,4 20,12 6,20" />
+                  </svg>
+                </div>
+              </div>
+              {/* YouTube badge */}
+              <div className="absolute bottom-2 right-2 bg-red-600/90 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
+                YouTube
+              </div>
+            </div>
+            <p className="text-sm font-semibold text-white line-clamp-1">{trailer.title}</p>
+          </a>
+        ))}
+      </div>
+    </section>
+  ) : null;
+
   return (
     <Sidebar>
       {/* HBO Max-style hero */}
       <div className="relative min-h-[55vh] flex items-end">
         {backdropSrc && (
           <div className="absolute inset-0 overflow-hidden">
-            <img src={backdropSrc} alt="" className="w-full h-full object-cover object-top" aria-hidden="true" />
+            <img src={backdropSrc} alt="" className="w-full h-full object-cover object-[center_25%]" aria-hidden="true" />
           </div>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-luna-bg via-luna-bg/50 to-luna-bg/20" />
@@ -194,9 +260,9 @@ export default function DetailPage({ params }: { params: { type: string; id: str
                 </svg>
                 {inLibrary ? 'Saved' : 'Watchlist'}
               </button>
-              {detail?.trailers && detail.trailers.length > 0 && detail.trailers[0].youtubeId && (
+              {trailers.length > 0 && trailers[0].youtubeId && (
                 <a
-                  href={`https://www.youtube.com/watch?v=${detail.trailers[0].youtubeId}`}
+                  href={`https://www.youtube.com/watch?v=${trailers[0].youtubeId}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 px-5 py-2.5 rounded-md bg-white/8 border border-white/10 text-white font-semibold text-sm hover:bg-white/12 transition-all"
@@ -214,49 +280,8 @@ export default function DetailPage({ params }: { params: { type: string; id: str
 
       {/* Below fold — constrained content */}
       <div className="px-6 pb-12 max-w-5xl space-y-10">
-        {/* Trailers & Clips */}
-        {detail?.trailers && detail.trailers.length > 0 && (
-          <section className="mb-8">
-            <h3 className="text-sm font-bold text-white mb-4 px-6">Trailers &amp; Clips</h3>
-            <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide -mx-0 px-6">
-              {detail.trailers.map(trailer => (
-                <a
-                  key={trailer.id}
-                  href={`https://www.youtube.com/watch?v=${trailer.youtubeId}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-shrink-0 w-52 group cursor-pointer"
-                >
-                  <div className="relative w-52 h-[117px] rounded-xl overflow-hidden bg-luna-elevated mb-2">
-                    {trailer.youtubeId ? (
-                      <img
-                        src={`https://img.youtube.com/vi/${trailer.youtubeId}/mqdefault.jpg`}
-                        alt={trailer.title || 'Trailer'}
-                        className="absolute inset-0 w-full h-full object-cover"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 bg-luna-elevated" />
-                    )}
-                    {/* Play overlay */}
-                    <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/25">
-                        <svg viewBox="0 0 24 24" fill="white" className="w-5 h-5 ml-0.5">
-                          <polygon points="6,4 20,12 6,20" />
-                        </svg>
-                      </div>
-                    </div>
-                    {/* YouTube badge */}
-                    <div className="absolute bottom-2 right-2 bg-red-600/90 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
-                      YouTube
-                    </div>
-                  </div>
-                  <p className="text-sm font-semibold text-white line-clamp-1">{trailer.title || 'Trailer'}</p>
-                </a>
-              ))}
-            </div>
-          </section>
-        )}
+        {/* Trailers & Clips — movies: before cast; series: rendered after episodes below */}
+        {!isSeries && trailersSection}
 
         {/* Creator and Cast */}
         {detail?.cast && detail.cast.length > 0 && (
@@ -408,6 +433,11 @@ export default function DetailPage({ params }: { params: { type: string; id: str
                     </div>
                   </div>
                   <p className="text-[10px] text-white/40 mb-0.5">Episode {ep.episode}</p>
+                  {ep.released && (
+                    <p className="text-[10px] text-white/30 mb-0.5">
+                      {new Date(ep.released).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </p>
+                  )}
                   <p className="text-sm font-semibold text-white truncate">{ep.title}</p>
                   {ep.overview && (
                     <p className="text-xs text-white/40 mt-1 line-clamp-2 leading-relaxed">{ep.overview}</p>
@@ -417,6 +447,13 @@ export default function DetailPage({ params }: { params: { type: string; id: str
             </div>
           )}
         </section>
+      )}
+
+      {/* Trailers & Clips — series only: rendered AFTER episodes */}
+      {isSeries && (
+        <div className="px-6 pb-8 max-w-5xl">
+          {trailersSection}
+        </div>
       )}
 
       {/* Auto-play loading overlay */}
