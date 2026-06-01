@@ -13,6 +13,7 @@ struct DetailScreen: View {
     @StateObject private var addonRepo = AddonRepository.shared
 
     @State private var showStreamSelection = false
+    @State private var selectedSeasonId: String? = nil
 
     var body: some View {
         ScrollView {
@@ -203,45 +204,97 @@ struct DetailScreen: View {
                             .padding(.horizontal)
                         }
 
-                        if let seasons = detail.seasons, !seasons.isEmpty {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("Seasons")
-                                    .font(.headline)
-                                    .foregroundColor(.white)
-                                ForEach(seasons.sorted(by: { $0.number < $1.number })) { season in
-                                    NavigationLink {
-                                        SeasonDetailScreen(season: season, seriesName: detail.name)
-                                    } label: {
-                                        HStack {
-                                            if let poster = season.poster, let url = URL(string: poster) {
-                                                AsyncImage(url: url) { phase in
-                                                    if case .success(let image) = phase {
-                                                        image.resizable()
-                                                            .aspectRatio(contentMode: .fill)
-                                                            .frame(width: 40, height: 56)
-                                                            .cornerRadius(4)
-                                                            .clipped()
-                                                    } else {
-                                                        Color(LunaTheme.surfaceElevated).frame(width: 40, height: 56).cornerRadius(4)
+                        if let links = detail.links, !links.isEmpty {
+                            let networks = links.filter { $0.category?.lowercased() == "network" }
+                            let studios = links.filter { $0.category?.lowercased() == "production" }
+
+                            if !networks.isEmpty || !studios.isEmpty {
+                                VStack(alignment: .leading, spacing: 16) {
+                                    if !networks.isEmpty {
+                                        VStack(alignment: .leading, spacing: 8) {
+                                            Text("NETWORK")
+                                                .font(.system(size: 10, weight: .bold))
+                                                .foregroundColor(LunaTheme.textTertiary)
+                                                .tracking(1.5)
+                                            ScrollView(.horizontal, showsIndicators: false) {
+                                                HStack(spacing: 8) {
+                                                    ForEach(networks) { link in
+                                                        Text(link.name)
+                                                            .font(.caption).fontWeight(.semibold)
+                                                            .foregroundColor(LunaTheme.textSecondary)
+                                                            .padding(.horizontal, 12).padding(.vertical, 7)
+                                                            .background(LunaTheme.surface)
+                                                            .cornerRadius(8)
                                                     }
                                                 }
                                             }
-                                            VStack(alignment: .leading) {
-                                                Text("Season \(season.number)")
-                                                    .foregroundColor(.white)
-                                                Text("\(season.episodes?.count ?? 0) episodes")
-                                                    .font(.caption)
-                                                    .foregroundColor(LunaTheme.textSecondary)
-                                            }
-                                            Spacer()
-                                            Image(systemName: "chevron.right")
-                                                .foregroundColor(LunaTheme.textTertiary)
                                         }
-                                        .padding(.vertical, 4)
+                                    }
+
+                                    if !studios.isEmpty {
+                                        VStack(alignment: .leading, spacing: 8) {
+                                            Text("PRODUCTION")
+                                                .font(.system(size: 10, weight: .bold))
+                                                .foregroundColor(LunaTheme.textTertiary)
+                                                .tracking(1.5)
+                                            ScrollView(.horizontal, showsIndicators: false) {
+                                                HStack(spacing: 8) {
+                                                    ForEach(studios) { link in
+                                                        Text(link.name)
+                                                            .font(.caption).fontWeight(.semibold)
+                                                            .foregroundColor(LunaTheme.textSecondary)
+                                                            .padding(.horizontal, 12).padding(.vertical, 7)
+                                                            .background(LunaTheme.surface)
+                                                            .cornerRadius(8)
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                .padding(.horizontal)
+                            }
+                        }
+
+                        if let seasons = detail.seasons, !seasons.isEmpty {
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("Episodes")
+                                    .font(.headline)
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal)
+
+                                ScrollView(.horizontal, showsIndicators: false) {
+                                    HStack(spacing: 8) {
+                                        ForEach(seasons.sorted(by: { $0.number < $1.number })) { season in
+                                            Button {
+                                                selectedSeasonId = season.id
+                                            } label: {
+                                                Text("Season \(season.number)")
+                                                    .font(.subheadline).fontWeight(.medium)
+                                                    .padding(.horizontal, 16).padding(.vertical, 8)
+                                                    .background(selectedSeasonId == season.id || (selectedSeasonId == nil && seasons.sorted(by: { $0.number < $1.number }).first?.id == season.id) ? Color.white : LunaTheme.surface)
+                                                    .foregroundColor(selectedSeasonId == season.id || (selectedSeasonId == nil && seasons.sorted(by: { $0.number < $1.number }).first?.id == season.id) ? .black : LunaTheme.textSecondary)
+                                                    .clipShape(Capsule())
+                                            }
+                                        }
+                                    }
+                                    .padding(.horizontal)
+                                }
+
+                                if let activeSeason = seasons.first(where: { $0.id == (selectedSeasonId ?? seasons.sorted(by: { $0.number < $1.number }).first?.id) }),
+                                   let episodes = activeSeason.episodes {
+                                    ScrollView(.horizontal, showsIndicators: false) {
+                                        LazyHStack(spacing: 12) {
+                                            ForEach(episodes) { ep in
+                                                EpisodeCard(episode: ep) {
+                                                    showStreamSelection = true
+                                                }
+                                            }
+                                        }
+                                        .padding(.horizontal)
                                     }
                                 }
                             }
-                            .padding(.horizontal)
                         }
                     }
                     .padding(.top, 16)
@@ -278,6 +331,72 @@ struct DetailScreen: View {
             if let profile = profileManager.currentProfile {
                 await libraryRepo.loadLibrary(profileId: profile.id)
                 await watchedRepo.loadAll(profileId: profile.id)
+            }
+        }
+    }
+}
+
+struct EpisodeCard: View {
+    let episode: MetaVideo
+    let onPlay: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(LunaTheme.surfaceElevated)
+                    .frame(width: 208, height: 117)
+
+                if let thumb = episode.thumbnail, let url = URL(string: thumb) {
+                    AsyncImage(url: url) { phase in
+                        if case .success(let img) = phase {
+                            img.resizable().aspectRatio(contentMode: .fill)
+                        }
+                    }
+                    .frame(width: 208, height: 117)
+                    .clipped()
+                    .cornerRadius(10)
+                } else {
+                    Image(systemName: "play.rectangle.fill")
+                        .font(.title2)
+                        .foregroundColor(LunaTheme.textTertiary)
+                }
+
+                Color.black.opacity(0.3)
+                    .cornerRadius(10)
+                Button(action: onPlay) {
+                    Circle()
+                        .fill(Color.white.opacity(0.2))
+                        .frame(width: 40, height: 40)
+                        .overlay(
+                            Image(systemName: "play.fill")
+                                .font(.system(size: 16))
+                                .foregroundColor(.white)
+                                .offset(x: 1.5)
+                        )
+                }
+            }
+            .frame(width: 208, height: 117)
+
+            if let epNum = episode.episode {
+                Text("Episode \(epNum)")
+                    .font(.caption2)
+                    .foregroundColor(LunaTheme.textTertiary)
+            }
+
+            Text(episode.title)
+                .font(.caption)
+                .fontWeight(.semibold)
+                .foregroundColor(.white)
+                .lineLimit(1)
+                .frame(width: 208, alignment: .leading)
+
+            if let overview = episode.overview {
+                Text(overview)
+                    .font(.caption2)
+                    .foregroundColor(LunaTheme.textSecondary)
+                    .lineLimit(2)
+                    .frame(width: 208, alignment: .leading)
             }
         }
     }
