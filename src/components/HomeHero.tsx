@@ -44,7 +44,8 @@ export function HomeHero({ featuredItems, activeIndex, metas, onIndexChange }: H
       {bgImage ? (
         <img
           src={bgImage}
-          alt={title}
+          alt=""
+          fetchPriority="high"
           className="absolute inset-0 w-full h-full object-cover"
         />
       ) : (
