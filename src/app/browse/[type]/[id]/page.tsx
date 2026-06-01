@@ -9,7 +9,7 @@ import { MetaDetail, StreamItem, Season } from '@/lib/types';
 import { fetchMeta, fetchStreamsFromAll } from '@/lib/stremio';
 import { isInLibrary, toggleLibrary, getWatchProgress } from '@/lib/services/api';
 import { cacheStreams } from '@/lib/stream-cache';
-import { getPlayableStreamUrl } from '@/lib/player-utils';
+import { getPlayableStreamUrl, sortStreamsForBrowserPlayback } from '@/lib/player-utils';
 
 const PlayIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 ml-0.5">
@@ -137,7 +137,7 @@ export default function DetailPage({ params }: { params: { type: string; id: str
     const id = streamId || resolved.id;
     setAutoPlaying(true);
     const allStreams = await fetchStreamsFromAll(resolved.type, id, addons);
-    const playable = allStreams.filter(s => getPlayableStreamUrl(s) && !s.infoHash && !s.behaviorHints?.notWebReady);
+    const playable = sortStreamsForBrowserPlayback(allStreams);
     const picked = playable[0];
     if (picked) {
       const cacheKey = `${resolved.type}:${id}`;
