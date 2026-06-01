@@ -2,12 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import Hls from 'hls.js';
-import {
-  ChevronLeft, Play, Pause,
-  Volume2, VolumeX, Volume1,
-  Subtitles, Gauge, Maximize, Minimize,
-  Airplay, PictureInPicture2, MoreVertical,
-} from 'lucide-react';
+import { SFSymbol } from '@/components/SFSymbol';
 import { StreamItem } from '@/lib/types';
 import { updateWatchProgress } from '@/lib/services/api';
 import { useAuth } from '@/app/AuthProvider';
@@ -35,51 +30,12 @@ function fmt(seconds: number): string {
   return m + ':' + String(rs).padStart(2, '0');
 }
 
-// Liquid Glass style tokens
-const glassLight = {
-  background: 'rgba(255,255,255,0.08)',
-  backdropFilter: 'blur(32px) saturate(180%)',
-  WebkitBackdropFilter: 'blur(32px) saturate(180%)',
-  border: '1px solid rgba(255,255,255,0.12)',
-  boxShadow: '0 2px 16px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.15)',
-} as React.CSSProperties;
-
-const glassDark = {
-  background: 'rgba(0,0,0,0.45)',
-  backdropFilter: 'blur(40px) saturate(150%)',
-  WebkitBackdropFilter: 'blur(40px) saturate(150%)',
-  border: '1px solid rgba(255,255,255,0.08)',
-  boxShadow: '0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)',
-} as React.CSSProperties;
-
-const glassPlay = {
-  background: 'rgba(255,255,255,0.14)',
-  backdropFilter: 'blur(40px) saturate(200%)',
-  WebkitBackdropFilter: 'blur(40px) saturate(200%)',
-  border: '1.5px solid rgba(255,255,255,0.22)',
-  boxShadow: '0 4px 24px rgba(0,0,0,0.4), inset 0 1.5px 0 rgba(255,255,255,0.3), inset 0 -1.5px 0 rgba(0,0,0,0.15)',
-} as React.CSSProperties;
-
-// Skip back 15s SVG
-function SkipBack15() {
-  return (
-    <svg viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-7 h-7">
-      <path d="M18 6C11.4 6 6 11.4 6 18s5.4 12 12 12 12-5.4 12-12" strokeLinecap="round"/>
-      <path d="M24 4l4 4-4 4" strokeLinecap="round" strokeLinejoin="round"/>
-      <text x="50%" y="56%" dominantBaseline="middle" textAnchor="middle" fontSize="8" fontWeight="700" stroke="none" fill="currentColor">15</text>
-    </svg>
-  );
-}
-
-// Skip forward 15s SVG
-function SkipForward15() {
-  return (
-    <svg viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-7 h-7">
-      <path d="M18 6c6.6 0 12 5.4 12 12S24.6 30 18 30 6 24.6 6 18" strokeLinecap="round"/>
-      <path d="M12 4L8 8l4 4" strokeLinecap="round" strokeLinejoin="round"/>
-      <text x="50%" y="56%" dominantBaseline="middle" textAnchor="middle" fontSize="8" fontWeight="700" stroke="none" fill="currentColor">15</text>
-    </svg>
-  );
+function parseQuality(s: StreamItem): { label: string; color: string } {
+  const t = (s.title || s.name || s.description || '').toLowerCase();
+  if (t.includes('2160') || t.includes('4k') || t.includes('uhd')) return { label: '4K', color: 'text-yellow-400 bg-yellow-400/10' };
+  if (t.includes('1080')) return { label: '1080p', color: 'text-blue-400 bg-blue-400/10' };
+  if (t.includes('720')) return { label: '720p', color: 'text-slate-400 bg-slate-400/10' };
+  return { label: 'SD', color: 'text-slate-500 bg-slate-500/10' };
 }
 
 export default function Player({
@@ -462,8 +418,6 @@ export default function Player({
   const pct = dur > 0 ? (pos / dur) * 100 : 0;
   const bufPct = dur > 0 ? (buf / dur) * 100 : 0;
 
-  const VolumeIcon = muted || volume === 0 ? VolumeX : volume < 0.5 ? Volume1 : Volume2;
-
   return (
     <div ref={containerRef} className="fixed inset-0 bg-black z-50 select-none">
       <video ref={videoRef} className="absolute inset-0 w-full h-full" playsInline onClick={togglePlay} />
@@ -512,91 +466,78 @@ export default function Player({
 
       {/* Controls overlay */}
       <div className={`absolute inset-0 z-10 transition-opacity duration-300 ${showControls ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-        {/* Gradient top + bottom */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/70 pointer-events-none" />
 
         {/* TOP BAR */}
-        <div className="absolute top-0 left-0 right-0 px-5 pt-5 flex items-center justify-between gap-3">
-          {/* Back button — glass pill */}
+        <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-5 pt-5 bg-gradient-to-b from-black/60 to-transparent pointer-events-none">
+          {/* Back — plain text + icon, no pill */}
           <button
             onClick={onBack}
-            style={glassLight}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full text-white text-sm font-medium hover:brightness-125 transition-all flex-shrink-0"
+            className="flex items-center gap-1.5 text-white/85 hover:text-white text-sm font-medium pointer-events-auto"
             aria-label="Back"
           >
-            <ChevronLeft size={16} />
+            <SFSymbol name="chevron.left" size={14} opacity={0.85} />
             Back
           </button>
 
-          {/* Title — glass pill */}
-          <p
-            style={glassLight}
-            className="px-4 py-2 rounded-full text-white text-sm font-semibold truncate max-w-[40%]"
-          >
-            {title}
-          </p>
+          <p className="text-sm font-medium text-white/70 truncate max-w-[40%]">{title}</p>
 
-          {/* AirPlay + PiP */}
-          <div className="flex gap-2 flex-shrink-0">
+          <div className="flex gap-3 pointer-events-auto">
             <button
               onClick={triggerAirPlay}
-              style={glassLight}
-              className="w-9 h-9 rounded-full flex items-center justify-center text-white/80 hover:text-white hover:brightness-125 transition-all"
+              className="text-white/65 hover:text-white"
               aria-label="AirPlay"
             >
-              <Airplay size={18} />
+              <SFSymbol name="airplayvideo" size={20} opacity={0.7} />
             </button>
             <button
               onClick={triggerPiP}
-              style={glassLight}
-              className="w-9 h-9 rounded-full flex items-center justify-center text-white/80 hover:text-white hover:brightness-125 transition-all"
+              className="text-white/65 hover:text-white"
               aria-label="Picture in Picture"
             >
-              <PictureInPicture2 size={18} />
+              <SFSymbol name="rectangle.on.rectangle" size={20} opacity={0.7} />
             </button>
           </div>
         </div>
 
         {/* CENTER: Skip + Play/Pause */}
-        <div className="absolute inset-0 flex items-center justify-center gap-10 pointer-events-none">
+        <div className="absolute inset-0 flex items-center justify-center gap-12 pointer-events-none">
           {/* Skip back 15s */}
           <button
             onClick={() => skip(-15)}
-            style={glassLight}
-            className="w-14 h-14 rounded-full flex flex-col items-center justify-center text-white/85 hover:text-white hover:brightness-125 transition-all pointer-events-auto"
+            className="pointer-events-auto flex flex-col items-center gap-1.5 hover:opacity-80"
             aria-label="Skip back 15 seconds"
           >
-            <SkipBack15 />
+            <SFSymbol name="gobackward.15" size={36} opacity={0.8} />
+            <span className="text-[9px] tracking-widest text-white/35 font-semibold">BACK</span>
           </button>
 
-          {/* Play / Pause — heavy glass disc */}
+          {/* Play / Pause */}
           <button
             onClick={togglePlay}
-            style={glassPlay}
-            className="w-16 h-16 rounded-full flex items-center justify-center text-white hover:brightness-125 transition-all active:scale-95 pointer-events-auto"
+            className="pointer-events-auto w-16 h-16 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors"
             aria-label={state === 'playing' ? 'Pause' : 'Play'}
           >
             {state === 'playing'
-              ? <Pause size={24} fill="white" />
-              : <Play size={24} fill="white" className="ml-0.5" />}
+              ? <SFSymbol name="pause.fill" size={24} />
+              : <SFSymbol name="play.fill" size={24} />}
           </button>
 
           {/* Skip forward 15s */}
           <button
             onClick={() => skip(15)}
-            style={glassLight}
-            className="w-14 h-14 rounded-full flex flex-col items-center justify-center text-white/85 hover:text-white hover:brightness-125 transition-all pointer-events-auto"
+            className="pointer-events-auto flex flex-col items-center gap-1.5 hover:opacity-80"
             aria-label="Skip forward 15 seconds"
           >
-            <SkipForward15 />
+            <SFSymbol name="goforward.15" size={36} opacity={0.8} />
+            <span className="text-[9px] tracking-widest text-white/35 font-semibold">FWD</span>
           </button>
         </div>
 
-        {/* BOTTOM SHELF — floating dark glass panel */}
-        <div
-          style={glassDark}
-          className="absolute bottom-0 left-0 right-0 mx-4 mb-5 rounded-2xl px-5 py-4 space-y-3"
-        >
+        {/* BOTTOM SHELF — full-width gradient */}
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent px-6 pb-6 pt-20">
+          {/* Show title */}
+          <p className="text-sm font-semibold text-white mb-2">{title}</p>
+
           {/* Scrubber row */}
           <div className="flex items-center gap-3">
             <span className="text-xs text-white/50 w-10 text-right tabular-nums flex-shrink-0">{fmt(pos)}</span>
@@ -627,15 +568,19 @@ export default function Player({
           </div>
 
           {/* Controls row */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mt-2">
             {/* Left: Volume */}
-            <div className="flex items-center gap-1 group/vol">
+            <div className="flex items-center gap-2 group/vol">
               <button
-                onClick={() => setMuted(!muted)}
-                className="w-9 h-9 rounded-full flex items-center justify-center text-white/60 hover:text-white hover:bg-white/8 transition-colors"
+                onClick={() => setMuted(m => !m)}
+                className="flex items-center justify-center text-white/60 hover:text-white transition-colors"
                 aria-label={muted ? 'Unmute' : 'Mute'}
               >
-                <VolumeIcon size={20} />
+                {muted || volume === 0
+                  ? <SFSymbol name="speaker.slash.fill" size={18} opacity={0.7} />
+                  : volume < 0.5
+                  ? <SFSymbol name="speaker.1.fill" size={18} opacity={0.7} />
+                  : <SFSymbol name="speaker.3" size={18} opacity={0.7} />}
               </button>
               <div className="w-0 overflow-hidden group-hover/vol:w-[68px] transition-all duration-200 flex items-center">
                 <input
@@ -648,6 +593,15 @@ export default function Player({
 
             {/* Right: Subtitles, Speed, Quality, Sources, Fullscreen */}
             <div className="flex items-center gap-1">
+              {/* Sources */}
+              <button
+                onClick={() => setShowSources(true)}
+                className="w-9 h-9 rounded-full flex items-center justify-center text-white/60 hover:text-white hover:bg-white/8 transition-colors"
+                aria-label="Sources"
+              >
+                <SFSymbol name="ellipsis" size={18} opacity={0.7} />
+              </button>
+
               {/* Subtitles / Audio */}
               <div className="relative">
                 <button
@@ -655,10 +609,10 @@ export default function Player({
                   className="w-9 h-9 rounded-full flex items-center justify-center text-white/60 hover:text-white hover:bg-white/8 transition-colors"
                   aria-label="Subtitles and audio"
                 >
-                  <Subtitles size={20} />
+                  <SFSymbol name="captions.bubble.fill" size={18} opacity={activeSub >= 0 ? 1 : 0.65} />
                 </button>
                 {showSubPop && (
-                  <div className="absolute bottom-full right-0 mb-2 rounded-xl player-popover p-1.5 min-w-[260px] z-30" style={glassDark}>
+                  <div className="absolute bottom-full right-0 mb-2 rounded-xl player-popover p-1.5 min-w-[260px] z-30 bg-neutral-900 border border-white/10">
                     <div className="px-3 pt-2 pb-1 text-[10px] font-semibold text-white/30 uppercase tracking-wider">Audio</div>
                     {audioTracks.length > 0 ? audioTracks.map(t => (
                       <button key={t.id} onClick={() => switchAudio(t.id)}
@@ -700,10 +654,10 @@ export default function Player({
                   className="w-9 h-9 rounded-full flex items-center justify-center text-white/60 hover:text-white hover:bg-white/8 transition-colors"
                   aria-label="Speed"
                 >
-                  <Gauge size={20} />
+                  <SFSymbol name="speedometer" size={18} opacity={0.7} />
                 </button>
                 {showSpeedPop && (
-                  <div className="absolute bottom-full right-0 mb-2 rounded-xl player-popover p-1.5 min-w-[160px] z-30" style={glassDark}>
+                  <div className="absolute bottom-full right-0 mb-2 rounded-xl player-popover p-1.5 min-w-[160px] z-30 bg-neutral-900 border border-white/10">
                     <div className="px-3 pt-1 pb-1 text-[10px] font-semibold text-white/30 uppercase tracking-wider">Speed</div>
                     {[0.5, 0.75, 1, 1.25, 1.5, 2].map(s => (
                       <button key={s} onClick={() => switchSpeed(s)}
@@ -728,7 +682,7 @@ export default function Player({
                   </svg>
                 </button>
                 {showQualPop && (
-                  <div className="absolute bottom-full right-0 mb-2 rounded-xl player-popover p-1.5 min-w-[180px] z-30" style={glassDark}>
+                  <div className="absolute bottom-full right-0 mb-2 rounded-xl player-popover p-1.5 min-w-[180px] z-30 bg-neutral-900 border border-white/10">
                     <div className="px-3 pt-1 pb-1 text-[10px] font-semibold text-white/30 uppercase tracking-wider">Quality</div>
                     <button onClick={() => switchQuality(-1)}
                       className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center justify-between gap-2 ${activeQuality === -1 ? 'text-white' : 'text-white/65 hover:bg-white/6'}`}>
@@ -748,22 +702,15 @@ export default function Player({
                 )}
               </div>
 
-              {/* Sources */}
-              <button
-                onClick={() => setShowSources(true)}
-                className="w-9 h-9 rounded-full flex items-center justify-center text-white/60 hover:text-white hover:bg-white/8 transition-colors"
-                aria-label="Sources"
-              >
-                <MoreVertical size={20} />
-              </button>
-
               {/* Fullscreen */}
               <button
                 onClick={toggleFS}
                 className="w-9 h-9 rounded-full flex items-center justify-center text-white/60 hover:text-white hover:bg-white/8 transition-colors"
                 aria-label={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
               >
-                {isFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
+                {isFullscreen
+                  ? <SFSymbol name="arrow.down.right.and.arrow.up.left" size={17} opacity={0.7} />
+                  : <SFSymbol name="arrow.up.left.and.arrow.down.right" size={17} opacity={0.7} />}
               </button>
             </div>
           </div>
@@ -773,8 +720,8 @@ export default function Player({
       {/* Center pause hint (controls hidden) */}
       {!showControls && state === 'paused' && (
         <button onClick={togglePlay} className="absolute inset-0 z-10 flex items-center justify-center">
-          <div style={glassPlay} className="w-16 h-16 rounded-full flex items-center justify-center">
-            <Play size={24} fill="white" className="ml-0.5" />
+          <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center">
+            <SFSymbol name="play.fill" size={24} />
           </div>
         </button>
       )}
@@ -787,7 +734,7 @@ export default function Player({
             <div className="p-4 border-b border-white/8 flex items-center justify-between">
               <h3 className="text-sm font-semibold text-white">Sources</h3>
               <button onClick={() => setShowSources(false)} className="p-1 rounded-full hover:bg-white/8">
-                <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" className="w-5 h-5 text-white/40"><path d="M6 18L18 6M6 6l12 12"/></svg>
+                <SFSymbol name="xmark" size={14} opacity={0.5} />
               </button>
             </div>
             {(() => {
@@ -796,13 +743,23 @@ export default function Player({
               return Object.entries(grp).map(([name, items]) => (
                 <div key={name} className="border-b border-white/4 last:border-b-0">
                   <div className="px-4 pt-3 pb-1"><p className="text-[10px] font-semibold text-white/25 uppercase tracking-wider">{name}</p></div>
-                  {items.map((s, i) => (
-                    <button key={s.url || s.infoHash || s.externalUrl || `${s.addonName}-${i}`} onClick={() => switchSrc(s)}
-                      className={`w-full text-left px-4 py-3 hover:bg-white/4 flex items-center justify-between ${s.url === currentStream.url ? 'bg-luna-accent/10 border-l-2 border-luna-accent' : ''}`}>
-                      <div className="min-w-0 flex-1"><p className="text-sm text-white truncate">{s.title || s.name || s.description || 'Unknown'}</p></div>
-                      {s.url === currentStream.url && <div className="w-1.5 h-1.5 rounded-full bg-luna-accent flex-shrink-0 ml-2" />}
-                    </button>
-                  ))}
+                  {items.map((s, i) => {
+                    const isActive = s.url === currentStream.url;
+                    const quality = parseQuality(s);
+                    return (
+                      <button
+                        key={s.url || s.infoHash || s.externalUrl || `${s.addonName}-${i}`}
+                        onClick={() => switchSrc(s)}
+                        className={`w-full text-left px-4 py-3 hover:bg-white/5 flex items-center gap-3 ${isActive ? 'border-l-2 border-white bg-white/4' : ''}`}
+                      >
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded flex-shrink-0 ${quality.color}`}>{quality.label}</span>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-white/85 truncate">{s.title || s.name || 'Unknown'}</p>
+                          <p className="text-xs text-white/35 mt-0.5">{s.addonName}</p>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               ));
             })()}
