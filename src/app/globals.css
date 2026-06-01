@@ -19,6 +19,7 @@ body {
   color: var(--text);
   font-family: 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 @layer components {
@@ -65,4 +66,12 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--muted);
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }

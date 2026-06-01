@@ -17,6 +17,7 @@ export default function WatchPage({ params }: { params: { type: string; id: stri
   const streamUrlRaw = searchParams.get('url');
   const cacheId = searchParams.get('cid');
   const titleRaw = searchParams.get('title');
+  const posRaw = searchParams.get('pos');
 
   const streamUrl = streamUrlRaw ? decodeURIComponent(streamUrlRaw) : '';
   const displayTitle = titleRaw ? decodeURIComponent(titleRaw) : decodeURIComponent(resolved.id);
@@ -28,6 +29,8 @@ export default function WatchPage({ params }: { params: { type: string; id: stri
   const [activeUrl, setActiveUrl] = useState(streamUrl);
   const [subtitles, setSubtitles] = useState<SubtitleItem[]>([]);
   const savedPosition = useRef(0);
+  // Resume position: from URL param (initial load) or stream-switch (savedPosition ref)
+  const resumePosition = posRaw ? Number(posRaw) : undefined;
 
   useEffect(() => {
     if (isLoading) return;
@@ -62,7 +65,7 @@ export default function WatchPage({ params }: { params: { type: string; id: stri
       title={displayTitle}
       mediaId={resolved.id}
       mediaType={resolved.type}
-      startPosition={savedPosition.current || undefined}
+      startPosition={savedPosition.current > 0 ? savedPosition.current : resumePosition}
       subtitles={subtitles}
       onSwitchStream={handleSwitchStream}
       onBack={() => router.back()}

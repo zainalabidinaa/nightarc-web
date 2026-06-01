@@ -249,9 +249,10 @@ export default function HomePage() {
 
   return (
     <Sidebar>
-      {/* Hero — no horizontal padding, full width */}
+      {/* Hero — pull up behind navbar with -mt-14 to eliminate the black line */}
       {featuredItems.length > 0 && (
         <div
+          className="-mt-14"
           onMouseEnter={() => { heroPausedRef.current = true; }}
           onMouseLeave={() => { heroPausedRef.current = false; }}
         >
@@ -300,8 +301,15 @@ export default function HomePage() {
                         <div className="h-full bg-luna-accent" style={{ width: `${pct}%` }} />
                       </div>
                     </div>
-                    <p className="text-xs text-white font-medium truncate">{item.resolvedName || item.media_id}</p>
-                    <p className="text-xs text-luna-muted mt-0.5">{pct}% watched</p>
+                    <p className="text-xs text-white font-medium truncate">
+                      {item.resolvedName || decodeURIComponent(item.media_id.split(':')[0])}
+                    </p>
+                    <p className="text-xs text-luna-muted mt-0.5">
+                      {item.media_type === 'series' && (() => {
+                        const parts = item.media_id.split(':');
+                        return parts.length >= 3 ? `S${parts[1]} E${parts[2]} · ` : '';
+                      })()}{pct}% watched
+                    </p>
                   </Link>
                 );
               })}

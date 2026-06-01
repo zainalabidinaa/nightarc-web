@@ -46,12 +46,17 @@ export function HomeHero({ featuredItems, activeIndex, metas, onIndexChange }: H
           src={bgImage}
           alt=""
           fetchPriority="high"
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover object-[center_20%]"
         />
       ) : (
         <div className="absolute inset-0 bg-luna-elevated" />
       )}
 
+      {/* Top fade — blurs image into page bg, hides navbar overlap */}
+      <div
+        className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#080808] to-transparent"
+        style={{ pointerEvents: 'none' }}
+      />
       {/* Left-to-right gradient */}
       <div
         className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent"

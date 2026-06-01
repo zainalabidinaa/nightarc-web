@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { Sidebar } from '@/components/Sidebar';
 import { MetaDetail, StreamItem, Season } from '@/lib/types';
 import { fetchMeta, fetchStreamsFromAll } from '@/lib/stremio';
-import { isInLibrary, toggleLibrary } from '@/lib/services/api';
+import { isInLibrary, toggleLibrary, getWatchProgress } from '@/lib/services/api';
 import { cacheStreams } from '@/lib/stream-cache';
 
 const PlayIcon = () => (
@@ -32,6 +32,7 @@ export default function DetailPage({ params }: { params: { type: string; id: str
   const [selectedEpisodeId, setSelectedEpisodeId] = useState<string | null>(null);
   const [autoPlaying, setAutoPlaying] = useState(false);
   const [trailers, setTrailers] = useState<{ id: string; title: string; youtubeId: string }[]>([]);
+  const [savedPositionSeconds, setSavedPositionSeconds] = useState(0);
 
   useEffect(() => {
     if (isLoading) return;
@@ -56,8 +57,19 @@ export default function DetailPage({ params }: { params: { type: string; id: str
         setSelectedSeason(meta.seasons[0]);
       }
       if (currentProfile) {
-        const lib = await isInLibrary(currentProfile.id, resolved.id);
+        const [lib, progress] = await Promise.all([
+          isInLibrary(currentProfile.id, resolved.id),
+          getWatchProgress(currentProfile.id),
+        ]);
         setInLibrary(lib);
+        // Find saved position: exact match for movies, prefix match for series episodes
+        const entry = progress.find(p =>
+          p.media_id === resolved.id ||
+          p.media_id.startsWith(resolved.id + ':')
+        );
+        if (entry && entry.position_seconds > 0) {
+          setSavedPositionSeconds(entry.position_seconds);
+        }
       }
 
       // Fetch trailers from Streailer
@@ -109,12 +121,14 @@ export default function DetailPage({ params }: { params: { type: string; id: str
 
   function handlePlay(stream: StreamItem) {
     if (!stream.url) return;
-    const cacheKey = `${resolved.type}:${selectedEpisodeId || resolved.id}`;
+    const mediaId = selectedEpisodeId || resolved.id;
+    const cacheKey = `${resolved.type}:${mediaId}`;
     cacheStreams(cacheKey, streams);
     const encodedUrl = encodeURIComponent(stream.url);
     const ep = selectedEpisodeId && selectedSeason ? selectedSeason.episodes?.find(e => e.id === selectedEpisodeId) : null;
     const watchTitle = ep ? `${detail?.name || ''} — S${selectedSeason!.number}:E${ep.episode}: ${ep.title}` : (detail?.name || '');
-    router.push(`/watch/${resolved.type}/${selectedEpisodeId || resolved.id}?url=${encodedUrl}&cid=${encodeURIComponent(cacheKey)}&title=${encodeURIComponent(watchTitle)}`);
+    const posParam = savedPositionSeconds > 0 ? `&pos=${savedPositionSeconds}` : '';
+    router.push(`/watch/${resolved.type}/${mediaId}?url=${encodedUrl}&cid=${encodeURIComponent(cacheKey)}&title=${encodeURIComponent(watchTitle)}${posParam}`);
   }
 
   async function handleAutoPlay(streamId?: string) {
@@ -130,7 +144,8 @@ export default function DetailPage({ params }: { params: { type: string; id: str
       const encodedUrl = encodeURIComponent(streamUrl);
       const ep = streamId && selectedSeason ? selectedSeason.episodes?.find(e => e.id === streamId) : null;
       const watchTitle = ep ? `${detail?.name || ''} — S${selectedSeason!.number}:E${ep.episode}: ${ep.title}` : (detail?.name || '');
-      router.push(`/watch/${resolved.type}/${id}?url=${encodedUrl}&cid=${encodeURIComponent(cacheKey)}&title=${encodeURIComponent(watchTitle)}`);
+      const posParam = savedPositionSeconds > 0 ? `&pos=${savedPositionSeconds}` : '';
+      router.push(`/watch/${resolved.type}/${id}?url=${encodedUrl}&cid=${encodeURIComponent(cacheKey)}&title=${encodeURIComponent(watchTitle)}${posParam}`);
     } else {
       setAutoPlaying(false);
       setStreams(allStreams);
@@ -194,17 +209,19 @@ export default function DetailPage({ params }: { params: { type: string; id: str
 
   return (
     <Sidebar>
-      {/* HBO Max-style hero */}
-      <div className="relative min-h-[55vh] flex items-end">
+      {/* Cinematic full-bleed hero — pulled up behind navbar */}
+      <div className="-mt-14 relative min-h-[85vh] flex items-end">
         {backdropSrc && (
           <div className="absolute inset-0 overflow-hidden">
-            <img src={backdropSrc} alt="" className="w-full h-full object-cover object-[center_25%]" aria-hidden="true" />
+            <img src={backdropSrc} alt="" className="w-full h-full object-cover object-[center_20%]" aria-hidden="true" />
           </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-luna-bg via-luna-bg/50 to-luna-bg/20" />
-        <div className="absolute inset-0 bg-gradient-to-r from-luna-bg/70 via-transparent to-transparent" />
+        {/* Top fade — blurs image into page bg */}
+        <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#080808] to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-luna-bg via-luna-bg/30 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-luna-bg/60 via-transparent to-transparent" />
 
-        <div className="relative z-10 w-full px-6 pt-20 pb-10 max-w-5xl">
+        <div className="relative z-10 w-full px-6 pt-28 pb-10 max-w-5xl">
           <div className="max-w-xl">
             {detail?.logo ? (
               <img src={detail.logo} alt={title} className="h-14 sm:h-20 object-contain object-left mb-3" />
@@ -286,14 +303,20 @@ export default function DetailPage({ params }: { params: { type: string; id: str
         {/* Creator and Cast */}
         {detail?.cast && detail.cast.length > 0 && (
           <section>
-            <h3 className="text-sm font-bold text-white mb-4">Creator and Cast</h3>
+            <h3 className="text-sm font-bold text-white mb-4">Cast &amp; Creators</h3>
             <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
               {detail.cast.slice(0, 20).map(p => (
                 <div key={p.name} className="flex-shrink-0 text-center w-16">
-                  <div className="w-14 h-14 rounded-full bg-white/5 mx-auto mb-2 flex items-center justify-center text-sm font-semibold text-white/60 ring-1 ring-white/10">
-                    {p.name[0]}
+                  <div className="w-14 h-14 rounded-full bg-white/5 mx-auto mb-2 overflow-hidden ring-1 ring-white/10">
+                    {p.photo ? (
+                      <img src={p.photo} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-sm font-semibold text-white/60">
+                        {p.name[0]}
+                      </div>
+                    )}
                   </div>
-                  <p className="text-xs text-white/40 truncate">{p.name}</p>
+                  <p className="text-xs text-white/60 truncate">{p.name}</p>
                 </div>
               ))}
             </div>

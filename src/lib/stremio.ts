@@ -112,9 +112,17 @@ export async function fetchMeta(
       runtime: m.runtime,
       genres: m.genres,
       director: m.director,
-      cast: (m.cast || []).map((c: any) => ({ id: c.id, name: c.name, photo: c.photo })),
+      cast: (m.cast || []).map((c: any) =>
+        typeof c === 'string'
+          ? { id: c, name: c, photo: undefined }
+          : { id: c.id || c.name, name: c.name || String(c), photo: c.photo }
+      ).filter((c: any) => c.name),
       trailers: m.trailers,
       links: m.links,
+      moreLikeThis: (m.moreLikeThis || []).map((r: any) => ({
+        id: r.id, type: r.type || type, name: r.name,
+        poster: r.poster, releaseInfo: r.releaseInfo, imdbRating: r.imdbRating,
+      })),
       videos,
       seasons,
     };

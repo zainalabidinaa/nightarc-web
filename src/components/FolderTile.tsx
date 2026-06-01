@@ -15,11 +15,11 @@ export function FolderTile({ folder }: FolderTileProps) {
     <Link
       href={`/collections/${folder.id}`}
       className="flex-shrink-0 group cursor-pointer"
-      style={{ width: '130px' }}
+      style={{ width: '200px' }}
     >
       <div
-        className="relative overflow-hidden rounded-lg"
-        style={{ height: '75px', background: '#1a1a2e' }}
+        className="relative overflow-hidden rounded-xl"
+        style={{ height: '115px', background: '#1a1a2e' }}
         onMouseEnter={() => folder.focus_gif && setImgSrc(folder.focus_gif)}
         onMouseLeave={() => setImgSrc(folder.cover_image || '')}
       >
@@ -27,6 +27,7 @@ export function FolderTile({ folder }: FolderTileProps) {
           <img
             src={imgSrc}
             alt={folder.name}
+            loading="lazy"
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (

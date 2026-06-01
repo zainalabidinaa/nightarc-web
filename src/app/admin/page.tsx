@@ -188,21 +188,28 @@ export default function AdminPage() {
 
   return (
     <Sidebar>
-      <div className="p-6 pt-24 max-w-4xl">
-        <h1 className="text-2xl font-bold mb-6">Admin Panel</h1>
-
-        {/* Tab bar */}
-        <div className="flex gap-2 mb-8">
-          {(['collections', 'codes', 'stats'] as Section[]).map(s => (
-            <button
-              key={s}
-              onClick={() => setSection(s)}
-              className={`px-4 py-2 rounded-xl text-sm capitalize ${section === s ? 'bg-luna-accent' : 'bg-luna-elevated'}`}
-            >
-              {s === 'codes' ? 'Invite Codes' : s.charAt(0).toUpperCase() + s.slice(1)}
-            </button>
-          ))}
+      {/* Gradient header band */}
+      <div className="-mt-14 pt-14 pb-8 bg-gradient-to-b from-luna-elevated to-transparent">
+        <div className="px-6 pt-8 max-w-4xl">
+          <h1 className="text-2xl font-bold text-white mb-6">Admin Panel</h1>
+          {/* Pill tab bar */}
+          <div className="inline-flex items-center gap-1 p-1.5 bg-[#1e1e1e]/90 border border-white/10 rounded-full">
+            {(['collections', 'codes', 'stats'] as Section[]).map(s => (
+              <button
+                key={s}
+                onClick={() => setSection(s)}
+                className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                  section === s ? 'bg-white/12 text-white' : 'text-white/45 hover:text-white/70'
+                }`}
+              >
+                {s === 'codes' ? 'Invite Codes' : s.charAt(0).toUpperCase() + s.slice(1)}
+              </button>
+            ))}
+          </div>
         </div>
+      </div>
+
+      <div className="px-6 pb-12 max-w-4xl">
 
         {/* ===== COLLECTIONS ===== */}
         {section === 'collections' && (

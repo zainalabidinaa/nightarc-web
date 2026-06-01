@@ -84,19 +84,37 @@ export function pickFeaturedItem(rows: HomeCatalogRow[]): FeaturedHomeItem | nul
 
 export function pickFeaturedItems(rows: HomeCatalogRow[]): FeaturedHomeItem[] {
   const mainRows = rows.filter(r => r.isMainRow);
-  const seen = new Set<string>();
-  const candidates: FeaturedHomeItem[] = [];
-  for (const row of mainRows) {
-    for (const item of row.items) {
-      if (!seen.has(item.id)) {
-        seen.add(item.id);
-        candidates.push({ row, item });
+  const movieRows = mainRows.filter(r => r.type === 'movie');
+  const seriesRows = mainRows.filter(r => r.type === 'series');
+
+  function topItemsFromRows(targetRows: HomeCatalogRow[], limit: number): FeaturedHomeItem[] {
+    const seen = new Set<string>();
+    const out: FeaturedHomeItem[] = [];
+    for (const row of targetRows) {
+      for (const item of row.items) {
+        if (!seen.has(item.id)) {
+          seen.add(item.id);
+          out.push({ row, item });
+        }
       }
     }
+    return out
+      .sort((a, b) => (b.item.popularity ?? 0) - (a.item.popularity ?? 0))
+      .slice(0, limit);
   }
-  return candidates
-    .sort((a, b) => (b.item.popularity ?? 0) - (a.item.popularity ?? 0))
-    .slice(0, 5);
+
+  // Aim for a balanced mix: up to 3 movies + 2 shows (or 2 + 3 if movies are sparse)
+  const movies = topItemsFromRows(movieRows, 3);
+  const series = topItemsFromRows(seriesRows, 3);
+
+  // Interleave: movie, series, movie, series, movie
+  const result: FeaturedHomeItem[] = [];
+  const maxLen = Math.max(movies.length, series.length);
+  for (let i = 0; i < maxLen && result.length < 5; i++) {
+    if (i < movies.length) result.push(movies[i]);
+    if (result.length < 5 && i < series.length) result.push(series[i]);
+  }
+  return result;
 }
 
 function scoreRow(row: HomeCatalogRow): number {
