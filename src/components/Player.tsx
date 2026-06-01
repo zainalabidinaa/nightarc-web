@@ -138,99 +138,97 @@ export default function Player({
         <Controls.Root className="luna-controls absolute inset-0 flex flex-col justify-between pointer-events-none select-none">
 
           {/* ── TOP BAR ── */}
-          <Controls.Group className="flex items-center justify-between px-5 pt-5 pointer-events-auto"
-            style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.65) 0%, transparent 100%)' }}>
+          <Controls.Group className="flex items-center justify-between px-8 pt-6 pointer-events-auto"
+            style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.75) 0%, transparent 100%)' }}>
             <button
               onClick={onBack}
-              className="flex items-center gap-1.5 text-white/80 hover:text-white text-sm font-medium transition-colors"
+              className="flex items-center gap-2 text-white/85 hover:text-white text-base font-medium transition-colors"
             >
-              <SFSymbol name="chevron.left" size={14} opacity={0.8} />
+              <SFSymbol name="chevron.left" size={18} opacity={0.85} />
               Back
             </button>
 
-            <p className="text-sm font-semibold text-white/70 truncate max-w-[40%]">{title}</p>
+            <p className="text-base font-semibold text-white/75 truncate max-w-[40%]">{title}</p>
 
-            {/* Source switcher badge */}
             <button
               onClick={() => setShowSources(true)}
-              className="flex items-center gap-1.5 bg-white/8 hover:bg-white/12 border border-white/10 rounded-lg px-2.5 py-1.5 transition-colors"
+              className="flex items-center gap-2 bg-white/8 hover:bg-white/14 border border-white/10 rounded-xl px-3.5 py-2 transition-colors"
             >
               {!isWebCompatAudio(currentStream) && (
-                <span className="text-[10px] font-bold text-yellow-400">⚠</span>
+                <span className="text-xs font-bold text-yellow-400">⚠</span>
               )}
-              <span className="text-xs font-medium text-white/65">{currentStream.addonName || 'Source'}</span>
-              <SFSymbol name="chevron.left" size={9} opacity={0.35} className="rotate-270" />
+              <span className="text-sm font-medium text-white/65">{currentStream.addonName || 'Source'}</span>
             </button>
           </Controls.Group>
 
           {/* ── CENTER — skip + play ── */}
-          <Controls.Group className="flex items-center justify-center gap-10 pointer-events-auto">
-            <SeekButton seconds={-15} className="text-white/75 hover:text-white transition-opacity hover:opacity-100 opacity-80">
-              <SFSymbol name="gobackward.15" size={36} />
+          <Controls.Group className="flex items-center justify-center gap-16 pointer-events-auto">
+            <SeekButton seconds={-15} className="opacity-80 hover:opacity-100 transition-opacity active:scale-95">
+              <SFSymbol name="gobackward.15" size={52} />
             </SeekButton>
 
-            <PlayButton className="w-16 h-16 rounded-full bg-white/15 hover:bg-white/22 flex items-center justify-center transition-colors">
-              <SFSymbol name="play.fill" size={26} className="media-paused:block hidden" />
-              <SFSymbol name="pause.fill" size={26} className="media-paused:hidden block" />
+            <PlayButton className="flex items-center justify-center hover:scale-105 active:scale-95 transition-transform">
+              <SFSymbol name="play.fill" size={72} className="media-paused:block hidden" />
+              <SFSymbol name="pause.fill" size={72} className="media-paused:hidden block" />
             </PlayButton>
 
-            <SeekButton seconds={15} className="text-white/75 hover:text-white transition-opacity hover:opacity-100 opacity-80">
-              <SFSymbol name="goforward.15" size={36} />
+            <SeekButton seconds={15} className="opacity-80 hover:opacity-100 transition-opacity active:scale-95">
+              <SFSymbol name="goforward.15" size={52} />
             </SeekButton>
           </Controls.Group>
 
           {/* ── BOTTOM SHELF ── */}
-          <Controls.Group className="px-5 pb-6 pointer-events-auto"
-            style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.80) 0%, transparent 100%)' }}>
+          <Controls.Group className="px-8 pb-8 pointer-events-auto"
+            style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%)' }}>
 
-            <p className="text-sm font-semibold text-white/80 mb-3">{title}</p>
+            <p className="text-base font-bold text-white mb-4">{title}</p>
 
             {/* Scrubber */}
-            <TimeSlider.Root className="luna-slider group mb-2">
-              <TimeSlider.Track className="relative h-[3px] w-full rounded-full bg-white/15 group-hover:h-[5px] transition-all">
+            <TimeSlider.Root className="luna-slider group mb-3">
+              <TimeSlider.Track className="relative h-1 w-full rounded-full bg-white/20 group-hover:h-[5px] transition-all duration-150">
                 <TimeSlider.TrackFill className="absolute h-full rounded-full bg-white origin-left" />
-                <TimeSlider.Progress className="absolute h-full rounded-full bg-white/25 origin-left" />
+                <TimeSlider.Progress className="absolute h-full rounded-full bg-white/30 origin-left" />
               </TimeSlider.Track>
-              <TimeSlider.Thumb className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-white opacity-0 group-hover:opacity-100 transition-opacity -translate-x-1/2" />
+              <TimeSlider.Thumb className="absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-white shadow-lg opacity-0 group-hover:opacity-100 transition-opacity -translate-x-1/2" />
               <TimeSlider.Preview className="luna-slider-preview">
-                <TimeSlider.Value className="text-xs text-white bg-black/80 px-1.5 py-0.5 rounded font-medium" type="pointer" format="time" />
+                <TimeSlider.Value className="text-sm text-white bg-black/85 px-2 py-1 rounded-lg font-semibold" type="pointer" format="time" />
               </TimeSlider.Preview>
             </TimeSlider.Root>
 
             {/* Time + controls row */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1 text-xs text-white/40 font-medium tabular-nums">
+            <div className="flex items-center justify-between mt-1">
+              <div className="flex items-center gap-1.5 text-sm font-medium text-white/50 tabular-nums">
                 <Time type="current" />
-                <span>/</span>
+                <span className="text-white/25">·</span>
                 <Time type="duration" />
               </div>
 
               <div className="flex items-center gap-1">
                 <MuteButton className="player-btn">
-                  <SFSymbol name="speaker.slash.fill" size={18} opacity={0.7} className="media-muted:block hidden" />
-                  <SFSymbol name="speaker.1.fill" size={18} opacity={0.7} className="media-muted:hidden media-volume-low:block hidden" />
-                  <SFSymbol name="speaker.3" size={18} opacity={0.7} className="media-muted:hidden media-volume-high:block hidden" />
+                  <SFSymbol name="speaker.slash.fill" size={22} opacity={0.75} className="media-muted:block hidden" />
+                  <SFSymbol name="speaker.1.fill" size={22} opacity={0.75} className="media-muted:hidden media-volume-low:block hidden" />
+                  <SFSymbol name="speaker.3" size={22} opacity={0.75} className="media-muted:hidden media-volume-high:block hidden" />
                 </MuteButton>
 
                 <CaptionButton className="player-btn">
-                  <SFSymbol name="captions.bubble.fill" size={18} className="media-captions-on:opacity-100 opacity-50" />
+                  <SFSymbol name="captions.bubble.fill" size={22} className="media-captions-on:opacity-100 opacity-50" />
                 </CaptionButton>
 
                 {/* Speed picker */}
                 <div className="relative">
                   <button
                     onClick={() => setShowSpeed(p => !p)}
-                    className="player-btn text-xs font-bold text-white/50 hover:text-white/80 w-9 h-9 flex items-center justify-center rounded-full transition-colors"
+                    className="player-btn text-sm font-bold text-white/50 hover:text-white/90"
                   >
                     1×
                   </button>
                   {showSpeed && (
-                    <div className="absolute bottom-full right-0 mb-2 bg-neutral-900 border border-white/10 rounded-xl p-1 min-w-[110px] z-30">
+                    <div className="absolute bottom-full right-0 mb-3 bg-[#141414] border border-white/10 rounded-2xl p-1.5 min-w-[130px] z-30 shadow-xl">
                       {speeds.map(s => (
                         <button
                           key={s}
                           onClick={() => { if (playerRef.current) playerRef.current.playbackRate = s; setShowSpeed(false); }}
-                          className="w-full text-left px-3 py-2 rounded-lg text-sm text-white/65 hover:bg-white/6 hover:text-white transition-colors"
+                          className="w-full text-left px-4 py-2.5 rounded-xl text-sm text-white/65 hover:bg-white/7 hover:text-white transition-colors font-medium"
                         >
                           {s === 1 ? 'Normal' : `${s}×`}
                         </button>
@@ -240,8 +238,8 @@ export default function Player({
                 </div>
 
                 <FullscreenButton className="player-btn">
-                  <SFSymbol name="arrow.up.left.and.arrow.down.right" size={17} opacity={0.7} className="media-fullscreen:hidden block" />
-                  <SFSymbol name="arrow.down.right.and.arrow.up.left" size={17} opacity={0.7} className="media-fullscreen:block hidden" />
+                  <SFSymbol name="arrow.up.left.and.arrow.down.right" size={20} opacity={0.75} className="media-fullscreen:hidden block" />
+                  <SFSymbol name="arrow.down.right.and.arrow.up.left" size={20} opacity={0.75} className="media-fullscreen:block hidden" />
                 </FullscreenButton>
               </div>
             </div>
