@@ -43,7 +43,7 @@ export function buildHomeRows(
         n => title.toLowerCase() === n.toLowerCase()
       );
 
-      const row = {
+      const row: HomeCatalogRow = {
         id: `${manifest.id}_${catalog.type}_${catalog.id}`,
         title,
         type: catalog.type,
@@ -52,7 +52,7 @@ export function buildHomeRows(
         isMainRow,
       } satisfies HomeCatalogRow;
 
-      return row as HomeCatalogRow;
+      return row;
     })
     .filter((row): row is HomeCatalogRow => row !== null);
 }
