@@ -40,14 +40,19 @@ struct HomeScreen: View {
                 VStack(spacing: 0) {
                     // Hero Section
                     if !featuredItems.isEmpty {
+                        let safeIndex = heroIndex % featuredItems.count
+                        let rowTitle = catalogRepo.catalogRows
+                            .first(where: { $0.items.contains(where: { $0.id == featuredItems[safeIndex].id }) })?
+                            .title ?? "Featured"
                         HeroSection(
-                            item: featuredItems[heroIndex],
+                            item: featuredItems[safeIndex],
+                            rowTitle: rowTitle,
                             onTap: {
-                                selectedMedia = featuredItems[heroIndex]
+                                selectedMedia = featuredItems[safeIndex]
                                 showDetail = true
                             },
                             dotCount: featuredItems.count,
-                            activeIndex: heroIndex,
+                            activeIndex: safeIndex,
                             onDotTap: { i in
                                 withAnimation(.easeInOut(duration: 0.4)) {
                                     heroIndex = i
@@ -96,7 +101,7 @@ struct HomeScreen: View {
                                     showDetail = true
                                 }
                                 .onAppear {
-                                    if row.id == catalogRepo.catalogRows.last?.id {
+                                    if row.id == mainRows.last?.id {
                                         Task {
                                             await catalogRepo.loadMore(
                                                 rowId: row.id,
@@ -173,6 +178,10 @@ struct HomeScreen: View {
                 heroTimer?.invalidate()
                 heroTimer = nil
             }
+            .onChange(of: featuredItems.count) { newCount in
+                heroIndex = 0
+                startHeroTimer()
+            }
         }
     }
 
@@ -191,6 +200,7 @@ struct HomeScreen: View {
 
 struct HeroSection: View {
     let item: MetaPreview
+    let rowTitle: String
     let onTap: () -> Void
     let dotCount: Int
     let activeIndex: Int
@@ -231,7 +241,7 @@ struct HeroSection: View {
 
             // Content
             VStack(alignment: .leading, spacing: 0) {
-                Text(item.type == .movie ? "Popular Movies" : "Popular TV Shows")
+                Text(rowTitle)
                     .font(.system(size: 11, weight: .bold))
                     .foregroundColor(LunaTheme.accent)
                     .tracking(2)
