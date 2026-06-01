@@ -219,8 +219,8 @@ export default function DetailPage({ params }: { params: { type: string; id: str
 
         {/* Network / Production */}
         {detail?.links && detail.links.length > 0 && (() => {
-          const networks = detail.links!.filter(l => l.category === 'network');
-          const studios = detail.links!.filter(l => l.category === 'production');
+          const networks = detail.links.filter(l => l.category === 'network');
+          const studios = detail.links.filter(l => l.category === 'production');
           if (networks.length === 0 && studios.length === 0) return null;
           return (
             <section className="flex gap-8 flex-wrap">

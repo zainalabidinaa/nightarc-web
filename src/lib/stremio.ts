@@ -105,6 +105,7 @@ export async function fetchMeta(
       director: m.director,
       cast: (m.cast || []).map((c: any) => ({ id: c.id, name: c.name, photo: c.photo })),
       trailers: m.trailers,
+      links: m.links,
       videos,
       seasons,
     };
