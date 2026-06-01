@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../../AuthProvider';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Sidebar } from '@/components/Sidebar';
 import { MetaDetail, StreamItem, Season } from '@/lib/types';
 import { fetchMeta, fetchStreamsFromAll } from '@/lib/stremio';
@@ -193,6 +194,19 @@ export default function DetailPage({ params }: { params: { type: string; id: str
                 </svg>
                 {inLibrary ? 'Saved' : 'Watchlist'}
               </button>
+              {detail?.trailers && detail.trailers.length > 0 && detail.trailers[0].youtubeId && (
+                <a
+                  href={`https://www.youtube.com/watch?v=${detail.trailers[0].youtubeId}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-md bg-white/8 border border-white/10 text-white font-semibold text-sm hover:bg-white/12 transition-all"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="w-4 h-4 opacity-80">
+                    <polygon points="5,3 19,12 5,21" fill="currentColor" stroke="none"/>
+                  </svg>
+                  Trailer
+                </a>
+              )}
             </div>
           </div>
         </div>
@@ -200,10 +214,54 @@ export default function DetailPage({ params }: { params: { type: string; id: str
 
       {/* Below fold — constrained content */}
       <div className="px-6 pb-12 max-w-5xl space-y-10">
-        {/* Cast */}
+        {/* Trailers & Clips */}
+        {detail?.trailers && detail.trailers.length > 0 && (
+          <section className="mb-8">
+            <h3 className="text-sm font-bold text-white mb-4 px-6">Trailers &amp; Clips</h3>
+            <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide -mx-0 px-6">
+              {detail.trailers.map(trailer => (
+                <a
+                  key={trailer.id}
+                  href={`https://www.youtube.com/watch?v=${trailer.youtubeId}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-shrink-0 w-52 group cursor-pointer"
+                >
+                  <div className="relative w-52 h-[117px] rounded-xl overflow-hidden bg-luna-elevated mb-2">
+                    {trailer.youtubeId ? (
+                      <img
+                        src={`https://img.youtube.com/vi/${trailer.youtubeId}/mqdefault.jpg`}
+                        alt={trailer.title || 'Trailer'}
+                        className="absolute inset-0 w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 bg-luna-elevated" />
+                    )}
+                    {/* Play overlay */}
+                    <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/25">
+                        <svg viewBox="0 0 24 24" fill="white" className="w-5 h-5 ml-0.5">
+                          <polygon points="6,4 20,12 6,20" />
+                        </svg>
+                      </div>
+                    </div>
+                    {/* YouTube badge */}
+                    <div className="absolute bottom-2 right-2 bg-red-600/90 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
+                      YouTube
+                    </div>
+                  </div>
+                  <p className="text-sm font-semibold text-white line-clamp-1">{trailer.title || 'Trailer'}</p>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Creator and Cast */}
         {detail?.cast && detail.cast.length > 0 && (
           <section>
-            <h3 className="text-sm font-semibold text-white mb-4">Cast</h3>
+            <h3 className="text-sm font-bold text-white mb-4">Creator and Cast</h3>
             <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
               {detail.cast.slice(0, 20).map(p => (
                 <div key={p.name} className="flex-shrink-0 text-center w-16">
@@ -212,6 +270,37 @@ export default function DetailPage({ params }: { params: { type: string; id: str
                   </div>
                   <p className="text-xs text-white/40 truncate">{p.name}</p>
                 </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* More Like This */}
+        {detail?.moreLikeThis && detail.moreLikeThis.length > 0 && (
+          <section className="mb-8">
+            <h3 className="text-sm font-bold text-white mb-4">More Like This</h3>
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+              {detail.moreLikeThis.slice(0, 10).map(item => (
+                <Link
+                  key={item.id}
+                  href={`/browse/${item.type}/${item.id}`}
+                  className="group cursor-pointer"
+                >
+                  <div className="relative aspect-[2/3] rounded-lg overflow-hidden bg-luna-elevated mb-2">
+                    {item.poster ? (
+                      <img
+                        src={item.poster}
+                        alt={item.name}
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center text-white/20 text-xs font-semibold text-center px-2">{item.name}</div>
+                    )}
+                  </div>
+                  <p className="text-xs font-medium text-white/80 truncate">{item.name}</p>
+                  {item.releaseInfo && <p className="text-[10px] text-white/40 mt-0.5">{item.releaseInfo}</p>}
+                </Link>
               ))}
             </div>
           </section>

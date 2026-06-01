@@ -38,6 +38,7 @@ export interface MetaDetail {
   videos?: MetaVideo[];
   seasons?: Season[];
   links?: MetaLink[];
+  moreLikeThis?: MetaPreview[];
 }
 
 export interface Person {
