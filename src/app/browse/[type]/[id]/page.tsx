@@ -155,10 +155,16 @@ export default function DetailPage({ params }: { params: { type: string; id: str
                   {detail.imdbRating}
                 </span>
               )}
-              {detail?.genres?.slice(0, 3).map(g => (
-                <span key={g} className="text-white/40">{g}</span>
-              ))}
             </div>
+            {detail?.genres && detail.genres.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-4">
+                {detail.genres.slice(0, 5).map(g => (
+                  <span key={g} className="px-3 py-1 rounded-full bg-white/8 border border-white/10 text-xs text-white/70 font-medium">
+                    {g}
+                  </span>
+                ))}
+              </div>
+            )}
             {detail?.description && (
               <p className="text-sm text-white/50 leading-relaxed mb-6 line-clamp-3">{detail.description}</p>
             )}
@@ -211,6 +217,37 @@ export default function DetailPage({ params }: { params: { type: string; id: str
           </section>
         )}
 
+        {/* Network / Production */}
+        {detail?.links && detail.links.length > 0 && (() => {
+          const networks = detail.links!.filter(l => l.category === 'network');
+          const studios = detail.links!.filter(l => l.category === 'production');
+          if (networks.length === 0 && studios.length === 0) return null;
+          return (
+            <section className="flex gap-8 flex-wrap">
+              {networks.length > 0 && (
+                <div>
+                  <h4 className="text-xs font-bold text-white/40 uppercase tracking-wider mb-3">Network</h4>
+                  <div className="flex gap-2 flex-wrap">
+                    {networks.map(l => (
+                      <span key={l.url} className="px-3 py-1.5 rounded-lg bg-white/6 border border-white/8 text-xs text-white/70 font-semibold">{l.name}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {studios.length > 0 && (
+                <div>
+                  <h4 className="text-xs font-bold text-white/40 uppercase tracking-wider mb-3">Production</h4>
+                  <div className="flex gap-2 flex-wrap">
+                    {studios.map(l => (
+                      <span key={l.url} className="px-3 py-1.5 rounded-lg bg-white/6 border border-white/8 text-xs text-white/70 font-semibold">{l.name}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </section>
+          );
+        })()}
+
         {/* Seasons + Episodes */}
         {isSeries && detail?.seasons && detail.seasons.length > 0 && (
           <section>
@@ -227,28 +264,32 @@ export default function DetailPage({ params }: { params: { type: string; id: str
               ))}
             </div>
             {selectedSeason?.episodes && (
-              <div className="space-y-1">
+              <div className="flex gap-4 overflow-x-auto pb-3 scrollbar-hide -mx-6 px-6">
                 {selectedSeason.episodes.map(ep => (
-                  <button key={ep.id} onClick={() => handleEpisodeClick(ep.id)}
-                    className={`w-full text-left flex gap-4 p-3 rounded-lg transition-all group ${
-                      selectedEpisodeId === ep.id ? 'bg-white/10' : 'hover:bg-white/5'
-                    }`}>
-                    {ep.thumbnail ? (
-                      <img src={ep.thumbnail} alt="" className="w-28 h-16 object-cover rounded-md flex-shrink-0" loading="lazy" />
-                    ) : (
-                      <div className="w-28 h-16 bg-white/5 rounded-md flex-shrink-0 flex items-center justify-center text-white/20 text-xs">E{ep.episode}</div>
-                    )}
-                    <div className="flex-1 min-w-0 self-center">
-                      <p className="text-sm font-medium text-white">
-                        <span className="text-white/40 mr-1">{ep.episode}.</span>{ep.title}
-                      </p>
-                      {ep.overview && (
-                        <p className="text-xs text-white/30 mt-1 line-clamp-2">{ep.overview}</p>
+                  <button
+                    key={ep.id}
+                    onClick={() => handleEpisodeClick(ep.id)}
+                    className={`flex-shrink-0 w-52 text-left group rounded-xl overflow-hidden transition-all ${
+                      selectedEpisodeId === ep.id ? 'ring-2 ring-luna-accent' : ''
+                    }`}
+                  >
+                    <div className="relative w-full aspect-video bg-luna-elevated rounded-xl overflow-hidden mb-2">
+                      {ep.thumbnail ? (
+                        <img src={ep.thumbnail} alt={ep.title} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center text-white/15 text-sm font-semibold">E{ep.episode}</div>
                       )}
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                          <svg viewBox="0 0 24 24" fill="white" className="w-4 h-4 ml-0.5"><polygon points="6,4 20,12 6,20" /></svg>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex-shrink-0 self-center w-8 h-8 rounded-full bg-white/10 group-hover:bg-luna-accent/20 flex items-center justify-center transition-colors opacity-0 group-hover:opacity-100">
-                      <PlayIcon />
-                    </div>
+                    <p className="text-[10px] text-white/40 mb-0.5">Episode {ep.episode}</p>
+                    <p className="text-sm font-semibold text-white truncate">{ep.title}</p>
+                    {ep.overview && (
+                      <p className="text-xs text-white/40 mt-1 line-clamp-2 leading-relaxed">{ep.overview}</p>
+                    )}
                   </button>
                 ))}
               </div>

@@ -13,6 +13,12 @@ export interface MetaPreview {
   popularity?: number;
 }
 
+export interface MetaLink {
+  name: string;
+  category?: string;
+  url: string;
+}
+
 export interface MetaDetail {
   id: string;
   type: string;
@@ -31,6 +37,7 @@ export interface MetaDetail {
   trailers?: Trailer[];
   videos?: MetaVideo[];
   seasons?: Season[];
+  links?: MetaLink[];
 }
 
 export interface Person {
