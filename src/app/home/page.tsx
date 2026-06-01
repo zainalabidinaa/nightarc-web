@@ -1,52 +1,77 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAuth } from '../AuthProvider';
 import { useRouter } from 'next/navigation';
 import { Sidebar } from '@/components/Sidebar';
+import { HomeHero } from '@/components/HomeHero';
 import { MediaRow } from '@/components/MediaRow';
+import { FolderGrid } from '@/components/FolderGrid';
 import { FeaturedHomeItem, HomeCatalogRow, MetaDetail, WatchProgressEntry } from '@/lib/types';
 import { getWatchProgress, getSystemAddon } from '@/lib/services/api';
 import { fetchCatalog, fetchManifest, fetchMeta } from '@/lib/stremio';
-import { buildHomeRows, pickFeaturedItem } from './home-data';
+import { buildHomeRows, pickFeaturedItems, selectInitialCatalogs } from './home-data';
 import Link from 'next/link';
+
+interface ContinueWatchingItem extends WatchProgressEntry {
+  poster?: string;
+  resolvedName?: string;
+}
 
 export default function HomePage() {
   const { currentProfile, user, isLoading } = useAuth();
   const router = useRouter();
+
   const [rows, setRows] = useState<HomeCatalogRow[]>([]);
-  const [featured, setFeatured] = useState<FeaturedHomeItem | null>(null);
-  const [featuredMeta, setFeaturedMeta] = useState<MetaDetail | null>(null);
+  const [featuredItems, setFeaturedItems] = useState<FeaturedHomeItem[]>([]);
+  const [featuredMetas, setFeaturedMetas] = useState<Record<string, MetaDetail | null>>({});
+  const [featuredIndex, setFeaturedIndex] = useState(0);
+  const [continueWatching, setContinueWatching] = useState<ContinueWatchingItem[]>([]);
   const [hasSystemAddon, setHasSystemAddon] = useState(true);
-  const [continueWatching, setContinueWatching] = useState<WatchProgressEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
+  const heroTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const heroPausedRef = useRef(false);
+
+  // Hero rotation timer
   useEffect(() => {
-    if (isLoading) return;
-    if (!user) { router.replace('/auth'); return; }
-    if (!currentProfile) { router.replace('/profiles'); return; }
-    loadData();
-  }, [currentProfile, isLoading, user, router]);
+    if (featuredItems.length <= 1) return;
 
-  async function loadData() {
+    heroTimerRef.current = setInterval(() => {
+      if (!heroPausedRef.current) {
+        setFeaturedIndex((prev) => (prev + 1) % featuredItems.length);
+      }
+    }, 6000);
+
+    return () => {
+      if (heroTimerRef.current) {
+        clearInterval(heroTimerRef.current);
+        heroTimerRef.current = null;
+      }
+    };
+  }, [featuredItems.length]);
+
+  const loadData = useCallback(async () => {
+    if (!currentProfile) return;
     setLoading(true);
+    setError(null);
     try {
       const [progress, systemAddon] = await Promise.all([
-        getWatchProgress(currentProfile!.id),
+        getWatchProgress(currentProfile.id),
         getSystemAddon(),
       ]);
 
-      setContinueWatching(
-        progress
-          .filter((entry) => !entry.completed && entry.position_seconds > 0)
-          .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
-      );
+      const filteredProgress = progress
+        .filter((entry) => !entry.completed && entry.position_seconds > 0)
+        .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime());
 
       if (!systemAddon?.manifest_url) {
         setHasSystemAddon(false);
         setRows([]);
-        setFeatured(null);
-        setFeaturedMeta(null);
+        setFeaturedItems([]);
+        setFeaturedMetas({});
+        setContinueWatching(filteredProgress.slice(0, 10).map((e) => ({ ...e })));
         return;
       }
 
@@ -55,36 +80,43 @@ export default function HomePage() {
       const manifest = await fetchManifest(systemAddon.manifest_url);
       if (!manifest.transportUrl) {
         setRows([]);
-        setFeatured(null);
-        setFeaturedMeta(null);
+        setFeaturedItems([]);
+        setFeaturedMetas({});
+        setContinueWatching(filteredProgress.slice(0, 10).map((e) => ({ ...e })));
         return;
       }
 
-      const allCatalogs = manifest.catalogs || [];
-      const catalogResults = await Promise.allSettled(
-        allCatalogs.map(async (catalog) => {
-          const extras: Record<string, string> = {};
-          if (catalog.extra) {
-            for (const e of catalog.extra) {
-              if (e.options && e.options.length > 0) {
-                extras[e.name] = e.options[0];
-              }
-            }
+      // Fetch CW meta (poster + name) in parallel
+      const cw = filteredProgress.slice(0, 10);
+      const cwWithMeta: ContinueWatchingItem[] = await Promise.all(
+        cw.map(async (entry) => {
+          try {
+            const meta = await fetchMeta(manifest.transportUrl!, entry.media_type, entry.media_id);
+            return {
+              ...entry,
+              poster: meta?.poster,
+              resolvedName: meta?.name,
+            };
+          } catch {
+            return { ...entry };
           }
-          return {
-            key: `${catalog.type}:${catalog.id}`,
-            fallbackKey: catalog.id,
-            items: await fetchCatalog(manifest.transportUrl!, catalog.type, catalog.id, extras),
-          };
         })
+      );
+      setContinueWatching(cwWithMeta);
+
+      // Fetch catalog rows
+      const initialCatalogs = selectInitialCatalogs(manifest);
+      const catalogResults = await Promise.allSettled(
+        initialCatalogs.map(async (catalog) => ({
+          key: `${catalog.type}:${catalog.id}`,
+          fallbackKey: catalog.id,
+          items: await fetchCatalog(manifest.transportUrl!, catalog.type, catalog.id),
+        }))
       );
 
       const catalogItemsById: Record<string, HomeCatalogRow['items']> = {};
       for (const result of catalogResults) {
-        if (result.status !== 'fulfilled') {
-          continue;
-        }
-
+        if (result.status !== 'fulfilled') continue;
         catalogItemsById[result.value.key] = result.value.items;
         if (!(result.value.fallbackKey in catalogItemsById)) {
           catalogItemsById[result.value.fallbackKey] = result.value.items;
@@ -92,28 +124,47 @@ export default function HomePage() {
       }
 
       const nextRows = buildHomeRows(manifest, catalogItemsById);
-      const nextFeatured = pickFeaturedItem(nextRows);
+      const nextFeaturedItems = pickFeaturedItems(nextRows);
 
       setRows(nextRows);
-      setFeatured(nextFeatured);
+      setFeaturedItems(nextFeaturedItems);
+      setFeaturedIndex(0);
 
-      const canFetchMeta = manifest.resources?.some((resource) =>
-        (typeof resource === 'string' ? resource : resource.name) === 'meta'
+      // Prefetch meta for all 5 featured items in parallel
+      const metaResults = await Promise.allSettled(
+        nextFeaturedItems.map(async (fi) => {
+          const meta = await fetchMeta(manifest.transportUrl!, fi.item.type, fi.item.id);
+          return { id: fi.item.id, meta };
+        })
       );
 
-      if (nextFeatured && canFetchMeta) {
-        setFeaturedMeta(await fetchMeta(manifest.transportUrl, nextFeatured.item.type, nextFeatured.item.id));
-      } else {
-        setFeaturedMeta(null);
+      const metas: Record<string, MetaDetail | null> = {};
+      for (const r of metaResults) {
+        if (r.status === 'fulfilled') {
+          metas[r.value.id] = r.value.meta;
+        }
       }
-    } catch {
+      setFeaturedMetas(metas);
+    } catch (e) {
+      console.error('Failed to load home data:', e);
+      setError('Failed to load content. Please try again later.');
       setRows([]);
-      setFeatured(null);
-      setFeaturedMeta(null);
+      setFeaturedItems([]);
+      setFeaturedMetas({});
     } finally {
       setLoading(false);
     }
-  }
+  }, [currentProfile]);
+
+  useEffect(() => {
+    if (isLoading) return;
+    if (!user) { router.replace('/auth'); return; }
+    if (!currentProfile) { router.replace('/profiles'); return; }
+    loadData();
+  }, [currentProfile, isLoading, user, loadData]);
+
+  const mainRows = rows.filter((r) => r.isMainRow);
+  const folderRows = rows.filter((r) => !r.isMainRow);
 
   if (loading) {
     return (
@@ -127,51 +178,30 @@ export default function HomePage() {
 
   return (
     <Sidebar>
-      <div className="px-6 pt-24 pb-12">
-        {featured && (
-          <section className="mb-10 rounded-3xl border border-white/10 bg-luna-elevated/70 p-6">
-            <p className="text-xs uppercase tracking-[0.2em] text-luna-muted mb-3">Featured</p>
-            <div className="flex flex-col gap-6 md:flex-row md:items-center">
-              {featured.item.poster && (
-                <img
-                  src={featured.item.poster}
-                  alt={featured.item.name}
-                  className="h-56 w-40 rounded-2xl object-cover bg-luna-bg"
-                />
-              )}
-              <div className="max-w-2xl">
-                <h1 className="text-3xl font-bold text-white">{featuredMeta?.name || featured.item.name}</h1>
-                <p className="mt-2 text-sm text-luna-muted">
-                  From {featured.row.title}
-                  {featuredMeta?.imdbRating ? ` • IMDb ${featuredMeta.imdbRating}` : ''}
-                  {featuredMeta?.runtime ? ` • ${featuredMeta.runtime}` : ''}
-                </p>
-                {(featuredMeta?.description || featured.item.description) && (
-                  <p className="mt-4 max-w-xl text-sm leading-6 text-luna-muted/90">
-                    {featuredMeta?.description || featured.item.description}
-                  </p>
-                )}
-                <div className="mt-5">
-                  <Link
-                    href={`/browse/${featured.item.type}/${featured.item.id}`}
-                    className="inline-flex items-center rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-black transition-colors hover:bg-white/90"
-                  >
-                    Open title
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </section>
-        )}
+      {/* Hero — no horizontal padding, full width */}
+      {featuredItems.length > 0 && (
+        <div
+          onMouseEnter={() => { heroPausedRef.current = true; }}
+          onMouseLeave={() => { heroPausedRef.current = false; }}
+        >
+          <HomeHero
+            featuredItems={featuredItems}
+            activeIndex={featuredIndex}
+            metas={featuredMetas}
+            onIndexChange={setFeaturedIndex}
+          />
+        </div>
+      )}
 
+      <div className="px-6 pb-12">
         {/* Continue Watching */}
         {continueWatching.length > 0 && (
           <section className="mb-10">
             <h2 className="text-base font-semibold text-white mb-4">Continue Watching</h2>
             <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-              {continueWatching.slice(0, 10).map((item) => {
+              {continueWatching.map((item) => {
                 const pct = item.duration_seconds > 0
-                  ? (item.position_seconds / item.duration_seconds) * 100
+                  ? Math.round((item.position_seconds / item.duration_seconds) * 100)
                   : 0;
                 return (
                   <Link
@@ -179,20 +209,28 @@ export default function HomePage() {
                     href={`/browse/${item.media_type}/${item.media_id}`}
                     className="flex-shrink-0 w-48 group cursor-pointer"
                   >
-                    <div className="relative h-28 bg-luna-elevated rounded-xl overflow-hidden mb-2">
-                      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white/10">
-                        <div className="h-full bg-luna-accent transition-all" style={{ width: `${pct}%` }} />
-                      </div>
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                    <div className="relative h-[108px] bg-luna-elevated rounded-xl overflow-hidden mb-2">
+                      {item.poster && (
+                        <img
+                          src={item.poster}
+                          alt={item.resolvedName || item.media_id}
+                          className="absolute inset-0 w-full h-full object-cover"
+                          loading="lazy"
+                        />
+                      )}
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                         <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 ml-0.5">
                             <path fillRule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clipRule="evenodd" />
                           </svg>
                         </div>
                       </div>
+                      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white/10">
+                        <div className="h-full bg-luna-accent" style={{ width: `${pct}%` }} />
+                      </div>
                     </div>
-                    <p className="text-xs text-luna-muted truncate">{item.media_id}</p>
-                    <p className="text-xs text-luna-muted/60 mt-0.5">{Math.round(pct)}% watched</p>
+                    <p className="text-xs text-white font-medium truncate">{item.resolvedName || item.media_id}</p>
+                    <p className="text-xs text-luna-muted mt-0.5">{pct}% watched</p>
                   </Link>
                 );
               })}
@@ -200,24 +238,33 @@ export default function HomePage() {
           </section>
         )}
 
-        {hasSystemAddon ? (
-          rows.length > 0 ? (
-            rows.map((row, i) => (
-              <MediaRow key={row.id} title={row.title} items={row.items} defaultCollapsed={i < 4} />
-            ))
-          ) : (
-            <div className="flex flex-col items-center justify-center py-32 text-luna-muted">
-              <p className="text-sm">No home catalogs available yet.</p>
-              <p className="text-xs mt-1 opacity-60">The configured addon did not return any initial rows.</p>
-            </div>
-          )
-        ) : (
+        {/* Error / no addon states */}
+        {!hasSystemAddon ? (
           <div className="flex flex-col items-center justify-center py-32 text-luna-muted">
             <p className="text-sm">No system addon configured.</p>
             <p className="text-xs mt-1 opacity-60">Ask your admin to set up an addon in the admin panel.</p>
           </div>
-        )}
+        ) : error ? (
+          <div className="flex flex-col items-center justify-center py-32 text-luna-muted">
+            <p className="text-sm">Something went wrong.</p>
+            <p className="text-xs mt-1 opacity-60">{error}</p>
+          </div>
+        ) : rows.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-32 text-luna-muted">
+            <p className="text-sm">No home catalogs available yet.</p>
+            <p className="text-xs mt-1 opacity-60">The configured addon did not return any initial rows.</p>
+          </div>
+        ) : null}
 
+        {/* Main 4 rows as MediaRow */}
+        {mainRows.map((row) => (
+          <MediaRow key={row.id} title={row.title} items={row.items} />
+        ))}
+
+        {/* Folder grid for non-main rows */}
+        {folderRows.length > 0 && (
+          <FolderGrid collectionTitle="Browse" rows={folderRows} />
+        )}
       </div>
     </Sidebar>
   );
