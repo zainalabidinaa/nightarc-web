@@ -2,6 +2,12 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import Hls from 'hls.js';
+import {
+  ChevronLeft, Play, Pause,
+  Volume2, VolumeX, Volume1,
+  Subtitles, Gauge, Maximize, Minimize,
+  Airplay, PictureInPicture2, MoreVertical,
+} from 'lucide-react';
 import { StreamItem } from '@/lib/types';
 import { updateWatchProgress } from '@/lib/services/api';
 import { useAuth } from '@/app/AuthProvider';
@@ -29,6 +35,53 @@ function fmt(seconds: number): string {
   return m + ':' + String(rs).padStart(2, '0');
 }
 
+// Liquid Glass style tokens
+const glassLight = {
+  background: 'rgba(255,255,255,0.08)',
+  backdropFilter: 'blur(32px) saturate(180%)',
+  WebkitBackdropFilter: 'blur(32px) saturate(180%)',
+  border: '1px solid rgba(255,255,255,0.12)',
+  boxShadow: '0 2px 16px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.15)',
+} as React.CSSProperties;
+
+const glassDark = {
+  background: 'rgba(0,0,0,0.45)',
+  backdropFilter: 'blur(40px) saturate(150%)',
+  WebkitBackdropFilter: 'blur(40px) saturate(150%)',
+  border: '1px solid rgba(255,255,255,0.08)',
+  boxShadow: '0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)',
+} as React.CSSProperties;
+
+const glassPlay = {
+  background: 'rgba(255,255,255,0.14)',
+  backdropFilter: 'blur(40px) saturate(200%)',
+  WebkitBackdropFilter: 'blur(40px) saturate(200%)',
+  border: '1.5px solid rgba(255,255,255,0.22)',
+  boxShadow: '0 4px 24px rgba(0,0,0,0.4), inset 0 1.5px 0 rgba(255,255,255,0.3), inset 0 -1.5px 0 rgba(0,0,0,0.15)',
+} as React.CSSProperties;
+
+// Skip back 15s SVG
+function SkipBack15() {
+  return (
+    <svg viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-7 h-7">
+      <path d="M18 6C11.4 6 6 11.4 6 18s5.4 12 12 12 12-5.4 12-12" strokeLinecap="round"/>
+      <path d="M24 4l4 4-4 4" strokeLinecap="round" strokeLinejoin="round"/>
+      <text x="50%" y="56%" dominantBaseline="middle" textAnchor="middle" fontSize="8" fontWeight="700" stroke="none" fill="currentColor">15</text>
+    </svg>
+  );
+}
+
+// Skip forward 15s SVG
+function SkipForward15() {
+  return (
+    <svg viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-7 h-7">
+      <path d="M18 6c6.6 0 12 5.4 12 12S24.6 30 18 30 6 24.6 6 18" strokeLinecap="round"/>
+      <path d="M12 4L8 8l4 4" strokeLinecap="round" strokeLinejoin="round"/>
+      <text x="50%" y="56%" dominantBaseline="middle" textAnchor="middle" fontSize="8" fontWeight="700" stroke="none" fill="currentColor">15</text>
+    </svg>
+  );
+}
+
 export default function Player({
   streamUrl, streams, currentStream, title, poster, backdrop,
   mediaId, mediaType, startPosition, onSwitchStream, onBack,
@@ -48,8 +101,8 @@ export default function Player({
   const [showControls, setShowControls] = useState(true);
   const [showSources, setShowSources] = useState(false);
   const [showSubPop, setShowSubPop] = useState(false);
-  const [showChapPop, setShowChapPop] = useState(false);
   const [showQualPop, setShowQualPop] = useState(false);
+  const [showSpeedPop, setShowSpeedPop] = useState(false);
   const [errMsg, setErrMsg] = useState('');
   const [volume, setVolume] = useState(1);
   const [muted, setMuted] = useState(false);
@@ -57,10 +110,14 @@ export default function Player({
   const [activeAudio, setActiveAudio] = useState(-1);
   const [subTracks, setSubTracks] = useState<TrackItem[]>([]);
   const [activeSub, setActiveSub] = useState(-1);
+  const [qualityLevels, setQualityLevels] = useState<{ height: number; bitrate: number }[]>([]);
+  const [activeQuality, setActiveQuality] = useState(-1);
+  const [playbackRate, setPlaybackRate] = useState(1);
   const [isDragging, setIsDragging] = useState(false);
   const [tooltipPos, setTooltipPos] = useState(0);
   const [tooltipText, setTooltipText] = useState('0:00');
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [activeCueText, setActiveCueText] = useState('');
 
   useEffect(() => { startPosRef.current = startPosition; }, [startPosition]);
 
@@ -73,6 +130,8 @@ export default function Player({
     setState('loading'); setErrMsg('');
     setAudioTracks([]); setActiveAudio(-1);
     setSubTracks([]); setActiveSub(-1);
+    setQualityLevels([]); setActiveQuality(-1);
+    setActiveCueText('');
 
     const proxyHeaders = currentStream.behaviorHints?.proxyHeaders?.request;
     const hasHeaders = proxyHeaders != null && Object.keys(proxyHeaders).length > 0;
@@ -80,20 +139,23 @@ export default function Player({
     const tryHls = (isHls || hasHeaders) && Hls.isSupported();
 
     if (tryHls) {
-      let errCount = 0;
       const hls = new Hls({
+        renderTextTracksNatively: false,
+        startLevel: -1,
         xhrSetup(xhr) {
           if (hasHeaders) for (const [k, v] of Object.entries(proxyHeaders!)) xhr.setRequestHeader(k, v);
         },
       });
+      // Disable native subtitle display so we can render cues ourselves
+      hls.subtitleDisplay = false;
 
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        errCount = 0;
+      hls.on(Hls.Events.MANIFEST_PARSED, (_e, data) => {
         const at = hls.audioTracks.map((t, i) => ({ id: i, name: t.name || t.lang || 'Unknown', lang: t.lang || '?' }));
         const st = hls.subtitleTracks.map((t, i) => ({ id: i, name: t.name || t.lang || 'Unknown', lang: t.lang || '?' }));
-        if (at.length > 0) { setAudioTracks(at); if (hls.audioTrack >= 0) setActiveAudio(hls.audioTrack); }
-        if (st.length > 0) { setSubTracks(st); setActiveSub(hls.subtitleTrack); }
-        console.log('[hls] manifest parsed audio:', at.length, 'subs:', st.length);
+        const ql = data.levels.map((l: { height: number; bitrate: number }) => ({ height: l.height, bitrate: l.bitrate }));
+        setAudioTracks(at); setSubTracks(st); setQualityLevels(ql);
+        if (at.length > 0) setActiveAudio(hls.audioTrack);
+        console.log('[hls] manifest parsed audio:', at.length, 'subs:', st.length, 'levels:', ql.length);
         video.play().catch(() => {});
       });
 
@@ -112,15 +174,16 @@ export default function Player({
       });
 
       hls.on(Hls.Events.AUDIO_TRACK_SWITCHED, (_e, d) => setActiveAudio(d.id));
-      hls.on(Hls.Events.SUBTITLE_TRACK_SWITCH, (_e, d) => setActiveSub(d.id));
+      hls.on(Hls.Events.SUBTITLE_TRACK_SWITCH, (_e, d) => {
+        setActiveSub(d.id);
+        hls.subtitleDisplay = d.id >= 0;
+      });
 
       hls.on(Hls.Events.ERROR, (_e, data) => {
-        errCount++;
         if (data.fatal) {
-          console.log('[hls] fatal error type:', data.type, 'count:', errCount);
-          if (data.type === Hls.ErrorTypes.MEDIA_ERROR && errCount <= 1) {
-            hls.destroy(); hlsRef.current = null;
-            video.src = streamUrl; video.play().catch(() => {});
+          console.log('[hls] fatal error type:', data.type);
+          if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
+            hls.recoverMediaError();
           } else {
             setState('error');
             setErrMsg(data.type === Hls.ErrorTypes.NETWORK_ERROR ? 'Network error' : 'Playback error');
@@ -178,7 +241,39 @@ export default function Player({
     };
   }, [streamUrl, isDragging]);
 
-  // --- Progress ---
+  // --- Subtitle cue overlay ---
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    function updateCue() {
+      let text = '';
+      for (let i = 0; i < video!.textTracks.length; i++) {
+        const track = video!.textTracks[i];
+        if (track.mode === 'disabled') continue;
+        if (!track.activeCues?.length) continue;
+        for (let j = 0; j < track.activeCues.length; j++) {
+          const cue = track.activeCues[j] as VTTCue;
+          if (cue.text) text += (text ? '\n' : '') + cue.text;
+        }
+        if (text) break;
+      }
+      setActiveCueText(text);
+    }
+    video.addEventListener('timeupdate', updateCue);
+    return () => video.removeEventListener('timeupdate', updateCue);
+  }, [streamUrl]);
+
+  // Set TextTrack modes when activeSub changes
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    for (let i = 0; i < video.textTracks.length; i++) {
+      video.textTracks[i].mode = i === activeSub ? 'showing' : 'disabled';
+    }
+    if (activeSub < 0) setActiveCueText('');
+  }, [activeSub]);
+
+  // --- Progress reporting ---
   useEffect(() => {
     if (!currentProfile) return;
     progressInterval.current = setInterval(async () => {
@@ -189,6 +284,7 @@ export default function Player({
     }, 10000);
     return () => { if (progressInterval.current) clearInterval(progressInterval.current); };
   }, [currentProfile, mediaId, mediaType]);
+
   useEffect(() => {
     if (state === 'ended' && currentProfile) updateWatchProgress(currentProfile.id, mediaId, mediaType, dur, dur, true);
   }, [state, currentProfile, mediaId, mediaType, dur]);
@@ -198,18 +294,26 @@ export default function Player({
     setShowControls(true);
     if (hideTimer.current) clearTimeout(hideTimer.current);
     hideTimer.current = setTimeout(() => {
-      if (!showSubPop && !showChapPop && !showQualPop && !showSources) setShowControls(false);
+      if (!showSubPop && !showQualPop && !showSpeedPop && !showSources) setShowControls(false);
     }, 3500);
-  }, [showSubPop, showChapPop, showQualPop, showSources]);
+  }, [showSubPop, showQualPop, showSpeedPop, showSources]);
+
   useEffect(() => {
     const el = containerRef.current; if (!el) return;
-    const mv = () => { if (!showSubPop && !showChapPop && !showQualPop && !showSources) resetHide(); };
-    const lv = () => { if (!showSubPop && !showChapPop && !showQualPop && !showSources) setShowControls(false); };
+    const mv = () => { if (!showSubPop && !showQualPop && !showSpeedPop && !showSources) resetHide(); };
+    const lv = () => { if (!showSubPop && !showQualPop && !showSpeedPop && !showSources) setShowControls(false); };
     el.addEventListener('mousemove', mv);
     el.addEventListener('mouseleave', lv);
     resetHide();
     return () => { el.removeEventListener('mousemove', mv); el.removeEventListener('mouseleave', lv); if (hideTimer.current) clearTimeout(hideTimer.current); };
-  }, [resetHide, showSubPop, showChapPop, showQualPop, showSources]);
+  }, [resetHide, showSubPop, showQualPop, showSpeedPop, showSources]);
+
+  // --- Global mouseup for drag ---
+  useEffect(() => {
+    const onUp = () => setIsDragging(false);
+    window.addEventListener('mouseup', onUp);
+    return () => window.removeEventListener('mouseup', onUp);
+  }, []);
 
   // --- Volume ---
   useEffect(() => { const v = videoRef.current; if (v) { v.volume = volume; v.muted = muted; } }, [volume, muted]);
@@ -220,20 +324,56 @@ export default function Player({
   const skip = (s: number) => { const v = videoRef.current; if (!v) return; seek(Math.max(0, Math.min(v.duration || 0, v.currentTime + s))); };
   const toggleFS = () => { const el = containerRef.current; if (!el) return; if (document.fullscreenElement) document.exitFullscreen(); else el.requestFullscreen().catch(() => {}); };
 
+  // AirPlay
+  const triggerAirPlay = () => {
+    const video = videoRef.current as HTMLVideoElement & { webkitShowPlaybackTargetPicker?: () => void };
+    if (video?.webkitShowPlaybackTargetPicker) video.webkitShowPlaybackTargetPicker();
+  };
+
+  // PiP
+  const triggerPiP = async () => {
+    const video = videoRef.current as HTMLVideoElement & { requestPictureInPicture?: () => Promise<void> };
+    if (video?.requestPictureInPicture) {
+      try { await video.requestPictureInPicture(); } catch { /* ignore */ }
+    }
+  };
+
   // Fullscreen state listener
   useEffect(() => {
     const onChange = () => setIsFullscreen(!!document.fullscreenElement);
     document.addEventListener('fullscreenchange', onChange);
     return () => document.removeEventListener('fullscreenchange', onChange);
   }, []);
+
   const switchAudio = (id: number) => { if (hlsRef.current) { hlsRef.current.audioTrack = id; setActiveAudio(id); } setShowSubPop(false); };
-  const switchSub = (id: number) => { if (hlsRef.current) { hlsRef.current.subtitleTrack = id; setActiveSub(id); console.log('[sub] switched to track', id); } setShowSubPop(false); };
+  const switchSub = (id: number) => {
+    if (hlsRef.current) { hlsRef.current.subtitleTrack = id; console.log('[sub] switched to track', id); }
+    setActiveSub(id);
+    setShowSubPop(false);
+  };
+  const switchQuality = (level: number) => {
+    if (hlsRef.current) hlsRef.current.currentLevel = level;
+    setActiveQuality(level);
+    setShowQualPop(false);
+  };
+  const switchSpeed = (rate: number) => {
+    const v = videoRef.current; if (v) v.playbackRate = rate;
+    setPlaybackRate(rate);
+    setShowSpeedPop(false);
+  };
   const switchSrc = (s: StreamItem) => { setShowSources(false); onSwitchStream(s); };
-  const closePops = useCallback(() => { setShowSubPop(false); setShowChapPop(false); setShowQualPop(false); }, []);
+
+  const closePops = useCallback(() => { setShowSubPop(false); setShowQualPop(false); setShowSpeedPop(false); }, []);
+
   // Close popovers on outside click
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
-      if (!(e.target as HTMLElement).closest('.player-popover') && !(e.target as HTMLElement).closest('[aria-label="Subtitles and audio"]') && !(e.target as HTMLElement).closest('[aria-label="Chapters"]') && !(e.target as HTMLElement).closest('[aria-label="Quality and speed"]')) {
+      if (
+        !(e.target as HTMLElement).closest('.player-popover') &&
+        !(e.target as HTMLElement).closest('[aria-label="Subtitles and audio"]') &&
+        !(e.target as HTMLElement).closest('[aria-label="Quality"]') &&
+        !(e.target as HTMLElement).closest('[aria-label="Speed"]')
+      ) {
         closePops();
       }
     };
@@ -242,13 +382,28 @@ export default function Player({
   }, [closePops]);
 
   // --- Seek drag ---
-  const seekFromEvent = (e: React.MouseEvent | MouseEvent) => {
-    const el = e.currentTarget as HTMLElement;
-    const rect = el.getBoundingClientRect();
-    const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  const seekFromClientX = (clientX: number, rect: DOMRect) => {
+    const pct = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
     const t = pct * (dur || 0); seek(t); setTooltipText(fmt(t));
   };
-  const onSeekMove = (e: React.MouseEvent) => {
+
+  const onSeekBarMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    setIsDragging(true);
+    const rect = e.currentTarget.getBoundingClientRect();
+    seekFromClientX(e.clientX, rect);
+    e.preventDefault();
+
+    const onMove = (me: MouseEvent) => { seekFromClientX(me.clientX, rect); };
+    const onUp = () => {
+      setIsDragging(false);
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+    };
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+  };
+
+  const onSeekMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const pct = (e.clientX - rect.left) / rect.width;
     setTooltipPos(pct * 100); setTooltipText(fmt(pct * (dur || 0)));
@@ -268,24 +423,27 @@ export default function Player({
     };
     window.addEventListener('keydown', onK);
     return () => window.removeEventListener('keydown', onK);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const bgSrc = backdrop || poster;
   const pct = dur > 0 ? (pos / dur) * 100 : 0;
   const bufPct = dur > 0 ? (buf / dur) * 100 : 0;
 
-  const volIcon = muted || volume === 0
-    ? <><path d="M6 9H3a1 1 0 00-1 1v4a1 1 0 001 1h3l4.5 4.5a.5.5 0 00.85-.35V4.85a.5.5 0 00-.85-.35L6 9z"/><path d="M23 9l-6 6M17 9l6 6"/></>
-    : volume < 0.5
-    ? <><path d="M6 9H3a1 1 0 00-1 1v4a1 1 0 001 1h3l4.5 4.5a.5.5 0 00.85-.35V4.85a.5.5 0 00-.85-.35L6 9z"/><path d="M16 8a5 5 0 010 8"/></>
-    : <><path d="M6 9H3a1 1 0 00-1 1v4a1 1 0 001 1h3l4.5 4.5a.5.5 0 00.85-.35V4.85a.5.5 0 00-.85-.35L6 9z"/><path d="M16 8a5 5 0 010 8M19 5a8 8 0 010 14"/></>;
-
-  const pausePath = 'M13 8v8m6-8v8';
-  const playPath = 'M9.5 7v12l11-6z';
+  const VolumeIcon = muted || volume === 0 ? VolumeX : volume < 0.5 ? Volume1 : Volume2;
 
   return (
     <div ref={containerRef} className="fixed inset-0 bg-black z-50 select-none">
       <video ref={videoRef} className="absolute inset-0 w-full h-full" playsInline onClick={togglePlay} />
+
+      {/* Subtitle cue overlay */}
+      {activeCueText && (
+        <div className="absolute bottom-28 left-0 right-0 flex justify-center pointer-events-none z-20 px-6">
+          <div className="bg-black/75 text-white text-base font-medium px-4 py-2 rounded-lg text-center leading-snug whitespace-pre-line">
+            {activeCueText}
+          </div>
+        </div>
+      )}
 
       {/* Loading */}
       {state === 'loading' && (
@@ -320,27 +478,114 @@ export default function Player({
         </div>
       )}
 
-      {/* Controls */}
+      {/* Controls overlay */}
       <div className={`absolute inset-0 z-10 transition-opacity duration-300 ${showControls ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-transparent to-black/80 pointer-events-none" />
+        {/* Gradient top + bottom */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/70 pointer-events-none" />
 
-        {/* Bottom bar */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 pb-8 space-y-3">
-          {/* Seek */}
+        {/* TOP BAR */}
+        <div className="absolute top-0 left-0 right-0 px-5 pt-5 flex items-center justify-between gap-3">
+          {/* Back button — glass pill */}
+          <button
+            onClick={onBack}
+            style={glassLight}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full text-white text-sm font-medium hover:brightness-125 transition-all flex-shrink-0"
+            aria-label="Back"
+          >
+            <ChevronLeft size={16} />
+            Back
+          </button>
+
+          {/* Title — glass pill */}
+          <p
+            style={glassLight}
+            className="px-4 py-2 rounded-full text-white text-sm font-semibold truncate max-w-[40%]"
+          >
+            {title}
+          </p>
+
+          {/* AirPlay + PiP */}
+          <div className="flex gap-2 flex-shrink-0">
+            <button
+              onClick={triggerAirPlay}
+              style={glassLight}
+              className="w-9 h-9 rounded-full flex items-center justify-center text-white/80 hover:text-white hover:brightness-125 transition-all"
+              aria-label="AirPlay"
+            >
+              <Airplay size={18} />
+            </button>
+            <button
+              onClick={triggerPiP}
+              style={glassLight}
+              className="w-9 h-9 rounded-full flex items-center justify-center text-white/80 hover:text-white hover:brightness-125 transition-all"
+              aria-label="Picture in Picture"
+            >
+              <PictureInPicture2 size={18} />
+            </button>
+          </div>
+        </div>
+
+        {/* CENTER: Skip + Play/Pause */}
+        <div className="absolute inset-0 flex items-center justify-center gap-10 pointer-events-none">
+          {/* Skip back 15s */}
+          <button
+            onClick={() => skip(-15)}
+            style={glassLight}
+            className="w-14 h-14 rounded-full flex flex-col items-center justify-center text-white/85 hover:text-white hover:brightness-125 transition-all pointer-events-auto"
+            aria-label="Skip back 15 seconds"
+          >
+            <SkipBack15 />
+          </button>
+
+          {/* Play / Pause — heavy glass disc */}
+          <button
+            onClick={togglePlay}
+            style={glassPlay}
+            className="w-16 h-16 rounded-full flex items-center justify-center text-white hover:brightness-125 transition-all active:scale-95 pointer-events-auto"
+            aria-label={state === 'playing' ? 'Pause' : 'Play'}
+          >
+            {state === 'playing'
+              ? <Pause size={24} fill="white" />
+              : <Play size={24} fill="white" className="ml-0.5" />}
+          </button>
+
+          {/* Skip forward 15s */}
+          <button
+            onClick={() => skip(15)}
+            style={glassLight}
+            className="w-14 h-14 rounded-full flex flex-col items-center justify-center text-white/85 hover:text-white hover:brightness-125 transition-all pointer-events-auto"
+            aria-label="Skip forward 15 seconds"
+          >
+            <SkipForward15 />
+          </button>
+        </div>
+
+        {/* BOTTOM SHELF — floating dark glass panel */}
+        <div
+          style={glassDark}
+          className="absolute bottom-0 left-0 right-0 mx-4 mb-5 rounded-2xl px-5 py-4 space-y-3"
+        >
+          {/* Scrubber row */}
           <div className="flex items-center gap-3">
             <span className="text-xs text-white/50 w-10 text-right tabular-nums flex-shrink-0">{fmt(pos)}</span>
-            <div className="relative flex-1 h-5 flex items-center cursor-pointer group"
-              onMouseDown={e => { setIsDragging(true); seekFromEvent(e.nativeEvent); e.preventDefault(); }}
-              onMouseMove={e => { if (isDragging) seekFromEvent(e.nativeEvent); else onSeekMove(e); }}
+            <div
+              className="relative flex-1 h-5 flex items-center cursor-pointer group"
+              onMouseDown={onSeekBarMouseDown}
+              onMouseMove={onSeekMove}
             >
               <div className="w-full h-[2.5px] group-hover:h-[5px] bg-white/12 rounded-full relative transition-all">
                 <div className="absolute left-0 top-0 h-full bg-white/16 rounded-full" style={{ width: `${bufPct}%` }} />
-                <div className="absolute left-0 top-0 h-full bg-white group-hover:bg-red-600 rounded-full" style={{ width: `${pct}%` }} />
+                <div className="absolute left-0 top-0 h-full bg-white group-hover:bg-luna-accent rounded-full transition-colors" style={{ width: `${pct}%` }} />
               </div>
-              <div className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-red-600 rounded-full -translate-x-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity"
-                style={{ left: `${pct}%` }} />
-              {isDragging && (
-                <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black/85 backdrop-blur-md text-white text-xs font-semibold px-2 py-1 rounded whitespace-nowrap pointer-events-none">
+              <div
+                className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-luna-accent rounded-full -translate-x-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity"
+                style={{ left: `${pct}%` }}
+              />
+              {(isDragging || tooltipPos > 0) && (
+                <div
+                  className="absolute -top-8 bg-black/85 backdrop-blur-md text-white text-xs font-semibold px-2 py-1 rounded whitespace-nowrap pointer-events-none -translate-x-1/2"
+                  style={{ left: `${tooltipPos}%` }}
+                >
                   {tooltipText}
                 </div>
               )}
@@ -350,157 +595,154 @@ export default function Player({
 
           {/* Controls row */}
           <div className="flex items-center justify-between">
-            <div className="w-[140px]" />
-            {/* Center: Play + Skip */}
-            <div className="flex items-center gap-2">
-              <button onClick={() => skip(-10)} className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/6 transition-colors" aria-label="Skip back 10s">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-white/60">
-                  <path d="M17 20L7 12m0 0l10-8M7 12h10a4 4 0 010 8h-5"/>
-                  <text x="17" y="9" stroke="none" fill="currentColor" fontSize="7" fontWeight="700">10</text>
-                </svg>
+            {/* Left: Volume */}
+            <div className="flex items-center gap-1 group/vol">
+              <button
+                onClick={() => setMuted(!muted)}
+                className="w-9 h-9 rounded-full flex items-center justify-center text-white/60 hover:text-white hover:bg-white/8 transition-colors"
+                aria-label={muted ? 'Unmute' : 'Mute'}
+              >
+                <VolumeIcon size={20} />
               </button>
-              <button onClick={togglePlay} className="w-11 h-11 bg-white/90 hover:bg-white rounded-full flex items-center justify-center transition-all hover:scale-105 active:scale-95" aria-label={state === 'playing' ? 'Pause' : 'Play'}>
-                <svg viewBox="0 0 28 28" fill="currentColor" className="w-5 h-5 text-black">
-                  <path d={state === 'playing' ? pausePath : playPath} />
-                </svg>
-              </button>
-              <button onClick={() => skip(10)} className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/6 transition-colors" aria-label="Skip forward 10s">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-white/60">
-                  <path d="M7 20l10-8m0 0l-10-8m10 8H7a4 4 0 000 8h5"/>
-                  <text x="1" y="9" stroke="none" fill="currentColor" fontSize="7" fontWeight="700">10</text>
-                </svg>
-              </button>
+              <div className="w-0 overflow-hidden group-hover/vol:w-[68px] transition-all duration-200 flex items-center">
+                <input
+                  type="range" min={0} max={1} step={0.05} value={muted ? 0 : volume}
+                  onChange={e => { setVolume(+e.target.value); setMuted(false); }}
+                  className="w-[60px] h-[2.5px] accent-white bg-white/16 rounded-full cursor-pointer"
+                />
+              </div>
             </div>
 
-            {/* Right: volume, subs, chapters, quality, fullscreen */}
+            {/* Right: Subtitles, Speed, Quality, Sources, Fullscreen */}
             <div className="flex items-center gap-1">
-              {/* Volume */}
-              <div className="flex items-center gap-0 group/vol">
-                <button onClick={() => setMuted(!muted)} className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-white/6 transition-colors" aria-label={muted ? 'Unmute' : 'Mute'}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-white/55">{volIcon}</svg>
-                </button>
-                <div className="w-0 overflow-hidden group-hover/vol:w-[68px] transition-all duration-200 flex items-center">
-                  <input type="range" min={0} max={1} step={0.05} value={muted ? 0 : volume}
-                    onChange={e => { setVolume(+e.target.value); setMuted(false); }}
-                    className="w-[60px] h-[2.5px] accent-white bg-white/16 rounded-full cursor-pointer" />
-                </div>
-              </div>
-
               {/* Subtitles / Audio */}
               <div className="relative">
-                <button onClick={() => { setShowSubPop(!showSubPop); closePops(); }} className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-white/6 transition-colors" aria-label="Subtitles and audio">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-white/55">
-                    <path d="M12 20H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8"/><path d="M8 10h4M8 14h8M18 16v4M16 18h4"/>
-                  </svg>
+                <button
+                  onClick={() => { setShowSubPop(p => !p); setShowQualPop(false); setShowSpeedPop(false); }}
+                  className="w-9 h-9 rounded-full flex items-center justify-center text-white/60 hover:text-white hover:bg-white/8 transition-colors"
+                  aria-label="Subtitles and audio"
+                >
+                  <Subtitles size={20} />
                 </button>
                 {showSubPop && (
-                  <div className="absolute bottom-full right-0 mb-2 bg-neutral-900/95 backdrop-blur-2xl border border-white/6 rounded-xl player-popover p-1.5 min-w-[260px] shadow-2xl z-30">
-                    <div className="px-3 pt-2 pb-1 text-[10px] font-semibold text-white/25 uppercase tracking-wider">Audio</div>
+                  <div className="absolute bottom-full right-0 mb-2 rounded-xl player-popover p-1.5 min-w-[260px] z-30" style={glassDark}>
+                    <div className="px-3 pt-2 pb-1 text-[10px] font-semibold text-white/30 uppercase tracking-wider">Audio</div>
                     {audioTracks.length > 0 ? audioTracks.map(t => (
                       <button key={t.id} onClick={() => switchAudio(t.id)}
-                        className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center justify-between gap-2 ${t.id === activeAudio ? 'text-white' : 'text-white/65 hover:bg-white/4'}`}>
+                        className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center justify-between gap-2 ${t.id === activeAudio ? 'text-white' : 'text-white/65 hover:bg-white/6'}`}>
                         <span>{t.name}{t.lang !== '?' ? ` (${t.lang})` : ''}</span>
-                        <span className={`w-1.5 h-1.5 rounded-full bg-red-600 flex-shrink-0 ${t.id === activeAudio ? 'opacity-100' : 'opacity-0'}`} />
+                        <span className={`w-1.5 h-1.5 rounded-full bg-luna-accent flex-shrink-0 ${t.id === activeAudio ? 'opacity-100' : 'opacity-0'}`} />
                       </button>
                     )) : (
-                      <div className="px-3 py-2 text-xs text-white/25">No audio tracks detected</div>
+                      <div className="px-3 py-2 text-xs text-white/30">No audio tracks detected</div>
                     )}
-                    <div className="mx-2 my-1.5 h-px bg-white/4" />
-                    <div className="px-3 pt-1 pb-1 text-[10px] font-semibold text-white/25 uppercase tracking-wider">Subtitles</div>
+                    <div className="mx-2 my-1.5 h-px bg-white/6" />
+                    <div className="px-3 pt-1 pb-1 text-[10px] font-semibold text-white/30 uppercase tracking-wider">Subtitles</div>
                     <button onClick={() => switchSub(-1)}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center justify-between gap-2 ${activeSub < 0 ? 'text-white' : 'text-white/65 hover:bg-white/4'}`}>
-                      <span>Off</span><span className={`w-1.5 h-1.5 rounded-full bg-red-600 ${activeSub < 0 ? 'opacity-100' : 'opacity-0'}`} />
+                      className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center justify-between gap-2 ${activeSub < 0 ? 'text-white' : 'text-white/65 hover:bg-white/6'}`}>
+                      <span>Off</span>
+                      <span className={`w-1.5 h-1.5 rounded-full bg-luna-accent ${activeSub < 0 ? 'opacity-100' : 'opacity-0'}`} />
                     </button>
                     {subTracks.length > 0 ? subTracks.map(t => (
                       <button key={t.id} onClick={() => switchSub(t.id)}
-                        className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center justify-between gap-2 ${t.id === activeSub ? 'text-white' : 'text-white/65 hover:bg-white/4'}`}>
+                        className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center justify-between gap-2 ${t.id === activeSub ? 'text-white' : 'text-white/65 hover:bg-white/6'}`}>
                         <span>{t.name}{t.lang !== '?' ? ` (${t.lang})` : ''}</span>
-                        <span className={`w-1.5 h-1.5 rounded-full bg-red-600 flex-shrink-0 ${t.id === activeSub ? 'opacity-100' : 'opacity-0'}`} />
+                        <span className={`w-1.5 h-1.5 rounded-full bg-luna-accent flex-shrink-0 ${t.id === activeSub ? 'opacity-100' : 'opacity-0'}`} />
                       </button>
                     )) : (
-                      <div className="px-3 py-2 text-xs text-white/25">No subtitle tracks detected</div>
+                      <div className="px-3 py-2 text-xs text-white/30">No subtitle tracks detected</div>
                     )}
                   </div>
                 )}
               </div>
 
-              {/* Chapters */}
+              {/* Speed */}
               <div className="relative">
-                <button onClick={() => { setShowChapPop(!showChapPop); closePops(); }} className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-white/6 transition-colors" aria-label="Chapters">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-white/55">
-                    <circle cx="6" cy="6" r="1"/><circle cx="6" cy="12" r="1"/><circle cx="6" cy="18" r="1"/>
-                    <rect x="10" y="4" width="10" height="3" rx="1"/><rect x="10" y="11" width="10" height="3" rx="1"/><rect x="10" y="18" width="7" height="3" rx="1"/>
-                  </svg>
+                <button
+                  onClick={() => { setShowSpeedPop(p => !p); setShowQualPop(false); setShowSubPop(false); }}
+                  className="w-9 h-9 rounded-full flex items-center justify-center text-white/60 hover:text-white hover:bg-white/8 transition-colors"
+                  aria-label="Speed"
+                >
+                  <Gauge size={20} />
                 </button>
-                {showChapPop && (
-                  <div className="absolute bottom-full right-0 mb-2 bg-neutral-900/95 backdrop-blur-2xl border border-white/6 rounded-xl player-popover p-2 min-w-[280px] shadow-2xl z-30">
-                    <div className="px-3 pt-1 pb-2 text-[10px] font-semibold text-white/25 uppercase tracking-wider">Chapters</div>
-                    {[...Array(6)].map((_, i) => {
-                      const ch = ['Opening Credits','The Meadow','Bunny vs Rodents','The Chase','Revenge','End Credits'];
-                      return (
-                        <button key={i} onClick={() => { seek(dur * (i * 0.17)); closePops(); }}
-                          className="w-full flex gap-3 px-3 py-2 rounded-lg hover:bg-white/4 transition-colors text-left">
-                          <div className="w-[68px] h-9 bg-white/4 rounded flex items-center justify-center text-xs text-white/12 font-semibold flex-shrink-0">{i + 1}</div>
-                          <div className="min-w-0"><div className="text-xs font-semibold text-white truncate">{ch[i]}</div><div className="text-[11px] text-white/25 mt-0.5">{fmt(dur * (i * 0.17))}</div></div>
-                        </button>
-                      );
-                    })}
+                {showSpeedPop && (
+                  <div className="absolute bottom-full right-0 mb-2 rounded-xl player-popover p-1.5 min-w-[160px] z-30" style={glassDark}>
+                    <div className="px-3 pt-1 pb-1 text-[10px] font-semibold text-white/30 uppercase tracking-wider">Speed</div>
+                    {[0.5, 0.75, 1, 1.25, 1.5, 2].map(s => (
+                      <button key={s} onClick={() => switchSpeed(s)}
+                        className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center justify-between gap-2 ${s === playbackRate ? 'text-white' : 'text-white/65 hover:bg-white/6'}`}>
+                        <span>{s === 1 ? 'Normal' : `${s}×`}</span>
+                        <span className={`w-1.5 h-1.5 rounded-full bg-luna-accent ${s === playbackRate ? 'opacity-100' : 'opacity-0'}`} />
+                      </button>
+                    ))}
                   </div>
                 )}
               </div>
 
               {/* Quality */}
               <div className="relative">
-                <button onClick={() => { setShowQualPop(!showQualPop); closePops(); }} className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-white/6 transition-colors" aria-label="Quality and speed">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-white/55">
-                    <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+                <button
+                  onClick={() => { setShowQualPop(p => !p); setShowSpeedPop(false); setShowSubPop(false); }}
+                  className="w-9 h-9 rounded-full flex items-center justify-center text-white/60 hover:text-white hover:bg-white/8 transition-colors"
+                  aria-label="Quality"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+                    <rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 3l-4 4-4-4"/>
                   </svg>
                 </button>
                 {showQualPop && (
-                  <div className="absolute bottom-full right-0 mb-2 bg-neutral-900/95 backdrop-blur-2xl border border-white/6 rounded-xl player-popover p-1.5 min-w-[180px] shadow-2xl z-30">
-                    <div className="px-3 pt-1 pb-1 text-[10px] font-semibold text-white/25 uppercase tracking-wider">Quality</div>
-                    {['Auto','4K HDR','1080p','720p','480p'].map((q, i) => (
-                      <button key={q} className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center justify-between gap-2 ${i === 0 ? 'text-white' : 'text-white/65 hover:bg-white/4'}`}>
-                        <span>{q}{q === '4K HDR' && <span className="ml-1.5 text-[10px] font-bold text-red-600 bg-red-600/8 px-1.5 py-0.5 rounded">HDR</span>}</span>
-                        <span className={`w-1.5 h-1.5 rounded-full bg-red-600 ${i === 0 ? 'opacity-100' : 'opacity-0'}`} />
+                  <div className="absolute bottom-full right-0 mb-2 rounded-xl player-popover p-1.5 min-w-[180px] z-30" style={glassDark}>
+                    <div className="px-3 pt-1 pb-1 text-[10px] font-semibold text-white/30 uppercase tracking-wider">Quality</div>
+                    <button onClick={() => switchQuality(-1)}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center justify-between gap-2 ${activeQuality === -1 ? 'text-white' : 'text-white/65 hover:bg-white/6'}`}>
+                      <span>Auto</span>
+                      <span className={`w-1.5 h-1.5 rounded-full bg-luna-accent ${activeQuality === -1 ? 'opacity-100' : 'opacity-0'}`} />
+                    </button>
+                    {qualityLevels.length > 0 ? qualityLevels.map((q, i) => (
+                      <button key={i} onClick={() => switchQuality(i)}
+                        className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center justify-between gap-2 ${i === activeQuality ? 'text-white' : 'text-white/65 hover:bg-white/6'}`}>
+                        <span>{q.height ? `${q.height}p` : `${Math.round(q.bitrate / 1000)}k`}</span>
+                        <span className={`w-1.5 h-1.5 rounded-full bg-luna-accent flex-shrink-0 ${i === activeQuality ? 'opacity-100' : 'opacity-0'}`} />
                       </button>
-                    ))}
-                    <div className="mx-2 my-1.5 h-px bg-white/4" />
-                    <div className="px-3 pt-1 pb-1 text-[10px] font-semibold text-white/25 uppercase tracking-wider">Speed</div>
-                    {[0.5, 0.75, 1, 1.25, 1.5, 2].map(s => (
-                      <button key={s} onClick={() => { const v = videoRef.current; if (v) v.playbackRate = s; closePops(); }}
-                        className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center justify-between gap-2 ${s === 1 ? 'text-white' : 'text-white/65 hover:bg-white/4'}`}>
-                        <span>{s === 1 ? 'Normal' : `${s}×`}</span>
-                        <span className={`w-1.5 h-1.5 rounded-full bg-red-600 ${s === 1 ? 'opacity-100' : 'opacity-0'}`} />
-                      </button>
-                    ))}
+                    )) : (
+                      <div className="px-3 py-2 text-xs text-white/30">No quality levels</div>
+                    )}
                   </div>
                 )}
               </div>
 
+              {/* Sources */}
+              <button
+                onClick={() => setShowSources(true)}
+                className="w-9 h-9 rounded-full flex items-center justify-center text-white/60 hover:text-white hover:bg-white/8 transition-colors"
+                aria-label="Sources"
+              >
+                <MoreVertical size={20} />
+              </button>
+
               {/* Fullscreen */}
-              <button onClick={toggleFS} className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-white/6 transition-colors" aria-label="Fullscreen">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-white/55">
-                  {isFullscreen
-                    ? <><path d="M4 8V5a2 2 0 012-2h3M16 3h3a2 2 0 012 2v3M4 16v3a2 2 0 002 2h3M16 21h3a2 2 0 002-2v-3"/><circle cx="12" cy="12" r="2"/></>
-                    : <path d="M8 3H5a2 2 0 00-2 2v3M16 3h3a2 2 0 012 2v3M8 21H5a2 2 0 01-2-2v-3M16 21h3a2 2 0 002-2v-3"/>}
-                </svg>
+              <button
+                onClick={toggleFS}
+                className="w-9 h-9 rounded-full flex items-center justify-center text-white/60 hover:text-white hover:bg-white/8 transition-colors"
+                aria-label={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+              >
+                {isFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Center overlay (controls hidden) */}
+      {/* Center pause hint (controls hidden) */}
       {!showControls && state === 'paused' && (
         <button onClick={togglePlay} className="absolute inset-0 z-10 flex items-center justify-center">
-          <div className="w-16 h-16 rounded-full bg-black/45 backdrop-blur-sm flex items-center justify-center">
-            <svg viewBox="0 0 24 24" fill="white" className="w-8 h-8 ml-1"><polygon points="6,4 20,12 6,20" /></svg>
+          <div style={glassPlay} className="w-16 h-16 rounded-full flex items-center justify-center">
+            <Play size={24} fill="white" className="ml-0.5" />
           </div>
         </button>
       )}
 
-      {/* Source panel */}
+      {/* Source panel — slide in from right */}
       {showSources && (
         <div className="absolute inset-0 z-40 flex justify-end">
           <div className="absolute inset-0 bg-black/60" onClick={() => setShowSources(false)} />
