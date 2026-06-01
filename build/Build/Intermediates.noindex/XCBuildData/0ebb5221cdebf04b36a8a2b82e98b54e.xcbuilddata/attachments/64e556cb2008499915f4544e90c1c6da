@@ -1,0 +1,4 @@
+module LunaCore {
+header "LunaCore-Swift.h"
+export *
+}

@@ -9,13 +9,12 @@ struct MacProfilePicker: View {
         VStack(spacing: 28) {
             Spacer()
 
-            Image(systemName: "moon.stars.fill")
-                .font(.system(size: 48))
-                .foregroundColor(LunaTheme.accent)
+            AppIconView()
+                .frame(width: 64, height: 64)
+                .shadow(color: LunaTheme.accent.opacity(0.3), radius: 16)
 
             Text("Who's watching?")
-                .font(.title2)
-                .fontWeight(.semibold)
+                .font(.system(size: 20, weight: .semibold))
                 .foregroundColor(.white)
 
             LazyVGrid(
@@ -98,13 +97,12 @@ struct MacCreateProfile: View {
         VStack(spacing: 24) {
             Spacer()
 
-            Image(systemName: "moon.stars.fill")
-                .font(.system(size: 56))
-                .foregroundColor(LunaTheme.accent)
+            AppIconView()
+                .frame(width: 72, height: 72)
+                .shadow(color: LunaTheme.accent.opacity(0.3), radius: 20)
 
             Text("Create Profile")
-                .font(.title2)
-                .fontWeight(.semibold)
+                .font(.system(size: 20, weight: .semibold))
                 .foregroundColor(.white)
 
             TextField("Profile Name", text: $name)

@@ -6,42 +6,6 @@
 	<integer>12</integer>
 	<key>logs</key>
 	<dict>
-		<key>1686915D-B4DF-4248-80B3-4F231F957F36</key>
-		<dict>
-			<key>className</key>
-			<string>IDECommandLineBuildLog</string>
-			<key>documentTypeString</key>
-			<string>&lt;nil&gt;</string>
-			<key>domainType</key>
-			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
-			<key>fileName</key>
-			<string>1686915D-B4DF-4248-80B3-4F231F957F36.xcactivitylog</string>
-			<key>hasPrimaryLog</key>
-			<true/>
-			<key>primaryObservable</key>
-			<dict>
-				<key>highLevelStatus</key>
-				<string>W</string>
-				<key>totalNumberOfAnalyzerIssues</key>
-				<integer>0</integer>
-				<key>totalNumberOfErrors</key>
-				<integer>0</integer>
-				<key>totalNumberOfTestFailures</key>
-				<integer>0</integer>
-				<key>totalNumberOfWarnings</key>
-				<integer>1</integer>
-			</dict>
-			<key>signature</key>
-			<string>Resolve Packages</string>
-			<key>timeStartedRecording</key>
-			<real>802044997.39537895</real>
-			<key>timeStoppedRecording</key>
-			<real>802044997.61335695</real>
-			<key>title</key>
-			<string>Resolve Packages</string>
-			<key>uniqueIdentifier</key>
-			<string>1686915D-B4DF-4248-80B3-4F231F957F36</string>
-		</dict>
 		<key>30B617AB-148B-463A-B315-43169191A516</key>
 		<dict>
 			<key>className</key>
@@ -77,6 +41,42 @@
 			<string>Resolve Packages</string>
 			<key>uniqueIdentifier</key>
 			<string>30B617AB-148B-463A-B315-43169191A516</string>
+		</dict>
+		<key>B980A73B-9676-495A-AC42-C93634F60FA9</key>
+		<dict>
+			<key>className</key>
+			<string>IDECommandLineBuildLog</string>
+			<key>documentTypeString</key>
+			<string>&lt;nil&gt;</string>
+			<key>domainType</key>
+			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
+			<key>fileName</key>
+			<string>B980A73B-9676-495A-AC42-C93634F60FA9.xcactivitylog</string>
+			<key>hasPrimaryLog</key>
+			<true/>
+			<key>primaryObservable</key>
+			<dict>
+				<key>highLevelStatus</key>
+				<string>W</string>
+				<key>totalNumberOfAnalyzerIssues</key>
+				<integer>0</integer>
+				<key>totalNumberOfErrors</key>
+				<integer>0</integer>
+				<key>totalNumberOfTestFailures</key>
+				<integer>0</integer>
+				<key>totalNumberOfWarnings</key>
+				<integer>1</integer>
+			</dict>
+			<key>signature</key>
+			<string>Resolve Packages</string>
+			<key>timeStartedRecording</key>
+			<real>802045642.62227404</real>
+			<key>timeStoppedRecording</key>
+			<real>802045645.162166</real>
+			<key>title</key>
+			<string>Resolve Packages</string>
+			<key>uniqueIdentifier</key>
+			<string>B980A73B-9676-495A-AC42-C93634F60FA9</string>
 		</dict>
 	</dict>
 </dict>
