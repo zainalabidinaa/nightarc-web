@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import Hls from 'hls.js';
 import { SFSymbol } from '@/components/SFSymbol';
 import { StreamItem } from '@/lib/types';
+import { SubtitleItem } from '@/lib/stremio';
 import { updateWatchProgress } from '@/lib/services/api';
 import { useAuth } from '@/app/AuthProvider';
 
@@ -17,6 +18,7 @@ interface PlayerProps {
   mediaId: string;
   mediaType: string;
   startPosition?: number;
+  subtitles?: SubtitleItem[];
   onSwitchStream: (stream: StreamItem) => void;
   onBack: () => void;
 }
@@ -38,9 +40,17 @@ function parseQuality(s: StreamItem): { label: string; color: string } {
   return { label: 'SD', color: 'text-slate-500 bg-slate-500/10' };
 }
 
+// Audio codecs Chrome/Firefox cannot decode — streams with these will play video
+// but produce silence in the browser (DTS, TrueHD, raw Atmos require native decoders).
+const BAD_AUDIO_CODECS = ['dts', 'truehd', 'atmos', 'remux', 'blu-ray', 'bluray'];
+function isWebCompatAudio(s: StreamItem): boolean {
+  const t = (s.title || s.name || s.description || '').toLowerCase();
+  return !BAD_AUDIO_CODECS.some(k => t.includes(k));
+}
+
 export default function Player({
   streamUrl, streams, currentStream, title, poster, backdrop,
-  mediaId, mediaType, startPosition, onSwitchStream, onBack,
+  mediaId, mediaType, startPosition, subtitles = [], onSwitchStream, onBack,
 }: PlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -92,15 +102,14 @@ export default function Player({
 
     const proxyHeaders = currentStream.behaviorHints?.proxyHeaders?.request;
     const hasHeaders = proxyHeaders != null && Object.keys(proxyHeaders).length > 0;
-    const isHls = streamUrl.includes('.m3u8') || streamUrl.includes('/manifest') || streamUrl.includes('/playlist');
-    const tryHls = (isHls || hasHeaders) && Hls.isSupported();
 
     console.log('[player] streamUrl:', streamUrl);
-    console.log('[player] isHls:', isHls, '| hasHeaders:', hasHeaders, '| tryHls:', tryHls);
-    setIsHlsStream(tryHls);
 
-    if (tryHls) {
+    if (Hls.isSupported()) {
+      // Always try HLS.js — many Real-Debrid/debrid URLs are HLS without .m3u8 in the URL.
+      // If the content isn't HLS, HLS.js fires a manifest error and we fall back to direct.
       let mediaErrCount = 0;
+      setIsHlsStream(true);
 
       const hls = new Hls({
         renderTextTracksNatively: false,
@@ -109,7 +118,6 @@ export default function Player({
           if (hasHeaders) for (const [k, v] of Object.entries(proxyHeaders!)) xhr.setRequestHeader(k, v);
         },
       });
-      // Disable native subtitle display so we can render cues ourselves
       hls.subtitleDisplay = false;
 
       hls.on(Hls.Events.MANIFEST_PARSED, (_e, data) => {
@@ -146,22 +154,25 @@ export default function Player({
 
       hls.on(Hls.Events.ERROR, (_e, data) => {
         if (data.fatal) {
-          console.log('[hls] fatal error type:', data.type);
+          console.log('[hls] fatal error:', data.type, data.details);
           if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
             mediaErrCount++;
             if (mediaErrCount <= 2) {
               hls.recoverMediaError();
             } else {
-              // Fallback: destroy HLS and try direct src
               hls.destroy(); hlsRef.current = null;
               video.src = streamUrl;
               video.play().catch(() => {});
-              // If that also fails, the video element's 'error' event will set state='error'
             }
           } else {
-            setState('error');
-            setErrMsg(data.type === Hls.ErrorTypes.NETWORK_ERROR ? 'Network error' : 'Playback error');
+            // Any other fatal error (network, CORS, manifest parse, etc.) —
+            // fall back to direct src. If that also fails, the video element's
+            // 'error' event will surface the error state.
+            console.log('[hls] falling back to direct src:', data.details);
             hls.destroy(); hlsRef.current = null;
+            setIsHlsStream(false);
+            video.src = streamUrl;
+            video.play().catch(() => {});
           }
         }
       });
@@ -170,6 +181,8 @@ export default function Player({
       hls.attachMedia(video);
       hlsRef.current = hls;
     } else {
+      // HLS.js not supported (e.g. Safari uses native HLS) — go direct
+      setIsHlsStream(false);
       video.src = streamUrl;
       video.play().catch(() => {});
     }
@@ -226,7 +239,7 @@ export default function Player({
     const video = videoRef.current;
     if (!video) return;
     function updateCue() {
-      if (activeSub < 0) { setActiveCueText(''); return; }
+      if (activeSub < 0 && !externalTrackRef.current) { setActiveCueText(''); return; }
       let text = '';
       for (let i = 0; i < video!.textTracks.length; i++) {
         const track = video!.textTracks[i];
@@ -324,10 +337,56 @@ export default function Player({
 
   const switchAudio = (id: number) => { if (hlsRef.current) { hlsRef.current.audioTrack = id; } setShowSubPop(false); };
   const switchSub = (id: number) => {
-    if (hlsRef.current) { hlsRef.current.subtitleTrack = id; console.log('[sub] switched to track', id); }
+    if (hlsRef.current) { hlsRef.current.subtitleTrack = id; }
     setActiveSub(id);
     setShowSubPop(false);
   };
+
+  const externalTrackRef = useRef<HTMLTrackElement | null>(null);
+  const [activeExternalSubId, setActiveExternalSubId] = useState<string | null>(null);
+
+  const switchExternalSub = useCallback(async (sub: SubtitleItem | null) => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    // Remove previous external track
+    if (externalTrackRef.current) {
+      try { video.removeChild(externalTrackRef.current); } catch {}
+      externalTrackRef.current = null;
+    }
+
+    if (!sub) { setActiveExternalSubId(null); setActiveCueText(''); setShowSubPop(false); return; }
+
+    // Deactivate HLS subtitle tracks
+    if (hlsRef.current) hlsRef.current.subtitleTrack = -1;
+    setActiveSub(-1);
+
+    try {
+      const res = await fetch(sub.url);
+      let text = await res.text();
+      // Convert SRT to VTT if needed
+      if (!text.trimStart().startsWith('WEBVTT')) {
+        text = 'WEBVTT\n\n' + text.replace(/\r\n/g, '\n').replace(/(\d{2}:\d{2}:\d{2}),(\d{3})/g, '$1.$2');
+      }
+      const blob = new Blob([text], { type: 'text/vtt' });
+      const blobUrl = URL.createObjectURL(blob);
+
+      const track = document.createElement('track');
+      track.kind = 'subtitles';
+      track.srclang = sub.lang;
+      track.label = sub.name || sub.lang;
+      track.src = blobUrl;
+      video.appendChild(track);
+      // hidden = cues fire, browser doesn't render natively
+      setTimeout(() => { if (track.track) track.track.mode = 'hidden'; }, 50);
+
+      externalTrackRef.current = track;
+      setActiveExternalSubId(sub.id);
+    } catch (e) {
+      console.error('[sub] failed to load external subtitle', e);
+    }
+    setShowSubPop(false);
+  }, []);
   const switchQuality = (level: number) => {
     if (hlsRef.current) hlsRef.current.currentLevel = level;
     setActiveQuality(level);
@@ -598,7 +657,7 @@ export default function Player({
                   className="w-9 h-9 rounded-full flex items-center justify-center text-white/60 hover:text-white hover:bg-white/8 transition-colors"
                   aria-label="Subtitles and audio"
                 >
-                  <SFSymbol name="captions.bubble.fill" size={18} opacity={activeSub >= 0 ? 1 : 0.65} />
+                  <SFSymbol name="captions.bubble.fill" size={18} opacity={activeSub >= 0 || activeExternalSubId ? 1 : 0.65} />
                 </button>
                 {showSubPop && (
                   <div className="absolute bottom-full right-0 mb-2 rounded-xl player-popover p-1.5 min-w-[260px] z-30 bg-neutral-900 border border-white/10">
@@ -610,27 +669,31 @@ export default function Player({
                         <span className={`w-1.5 h-1.5 rounded-full bg-luna-accent flex-shrink-0 ${t.id === activeAudio ? 'opacity-100' : 'opacity-0'}`} />
                       </button>
                     )) : (
-                      <div className="px-3 py-2 text-xs text-white/30">
-                        {isHlsStream ? 'No audio tracks in this stream' : 'Tracks unavailable for direct streams'}
-                      </div>
+                      <div className="px-3 py-2 text-xs text-white/30">No audio tracks in this stream</div>
                     )}
                     <div className="mx-2 my-1.5 h-px bg-white/6" />
                     <div className="px-3 pt-1 pb-1 text-[10px] font-semibold text-white/30 uppercase tracking-wider">Subtitles</div>
-                    <button onClick={() => switchSub(-1)}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center justify-between gap-2 ${activeSub < 0 ? 'text-white' : 'text-white/65 hover:bg-white/6'}`}>
+                    <button onClick={() => { switchSub(-1); switchExternalSub(null); }}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center justify-between gap-2 ${activeSub < 0 && !activeExternalSubId ? 'text-white' : 'text-white/65 hover:bg-white/6'}`}>
                       <span>Off</span>
-                      <span className={`w-1.5 h-1.5 rounded-full bg-luna-accent ${activeSub < 0 ? 'opacity-100' : 'opacity-0'}`} />
+                      <span className={`w-1.5 h-1.5 rounded-full bg-luna-accent ${activeSub < 0 && !activeExternalSubId ? 'opacity-100' : 'opacity-0'}`} />
                     </button>
-                    {subTracks.length > 0 ? subTracks.map(t => (
-                      <button key={t.id} onClick={() => switchSub(t.id)}
+                    {subTracks.map(t => (
+                      <button key={t.id} onClick={() => { switchExternalSub(null); switchSub(t.id); }}
                         className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center justify-between gap-2 ${t.id === activeSub ? 'text-white' : 'text-white/65 hover:bg-white/6'}`}>
                         <span>{t.name}{t.lang !== '?' ? ` (${t.lang})` : ''}</span>
                         <span className={`w-1.5 h-1.5 rounded-full bg-luna-accent flex-shrink-0 ${t.id === activeSub ? 'opacity-100' : 'opacity-0'}`} />
                       </button>
-                    )) : (
-                      <div className="px-3 py-2 text-xs text-white/30">
-                        {isHlsStream ? 'No subtitle tracks in this stream' : 'Subtitles unavailable for direct streams'}
-                      </div>
+                    ))}
+                    {subtitles.map(s => (
+                      <button key={s.id} onClick={() => switchExternalSub(s)}
+                        className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center justify-between gap-2 ${s.id === activeExternalSubId ? 'text-white' : 'text-white/65 hover:bg-white/6'}`}>
+                        <span>{s.name || s.lang}</span>
+                        <span className={`w-1.5 h-1.5 rounded-full bg-luna-accent flex-shrink-0 ${s.id === activeExternalSubId ? 'opacity-100' : 'opacity-0'}`} />
+                      </button>
+                    ))}
+                    {subTracks.length === 0 && subtitles.length === 0 && (
+                      <div className="px-3 py-2 text-xs text-white/30">No subtitle tracks in this stream</div>
                     )}
                   </div>
                 )}
@@ -727,14 +790,21 @@ export default function Player({
               </button>
             </div>
             {(() => {
+              // Sort: web-compatible audio streams first within each addon group
+              const sorted = [...streams].sort((a, b) => {
+                const aOk = isWebCompatAudio(a) ? 0 : 1;
+                const bOk = isWebCompatAudio(b) ? 0 : 1;
+                return aOk - bOk;
+              });
               const grp: Record<string, StreamItem[]> = {};
-              for (const s of streams) { const k = s.addonName || 'Unknown'; (grp[k] ??= []).push(s); }
+              for (const s of sorted) { const k = s.addonName || 'Unknown'; (grp[k] ??= []).push(s); }
               return Object.entries(grp).map(([name, items]) => (
                 <div key={name} className="border-b border-white/4 last:border-b-0">
                   <div className="px-4 pt-3 pb-1"><p className="text-[10px] font-semibold text-white/25 uppercase tracking-wider">{name}</p></div>
                   {items.map((s, i) => {
                     const isActive = s.url === currentStream.url;
                     const quality = parseQuality(s);
+                    const webCompat = isWebCompatAudio(s);
                     return (
                       <button
                         key={s.url || s.infoHash || s.externalUrl || `${s.addonName}-${i}`}
@@ -746,6 +816,9 @@ export default function Player({
                           <p className="text-sm text-white/85 truncate">{s.title || s.name || 'Unknown'}</p>
                           <p className="text-xs text-white/35 mt-0.5">{s.addonName}</p>
                         </div>
+                        {!webCompat && (
+                          <span className="text-[10px] text-yellow-400/70 flex-shrink-0" title="Audio codec (DTS/TrueHD) may not play in browser">⚠</span>
+                        )}
                       </button>
                     );
                   })}

@@ -5,12 +5,13 @@ import { useAuth } from '../../../AuthProvider';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Player from '@/components/Player';
 import { StreamItem } from '@/lib/types';
+import { SubtitleItem, fetchSubtitlesFromAll } from '@/lib/stremio';
 import { getCachedStreams, getCachedStream } from '@/lib/stream-cache';
 
 export default function WatchPage({ params }: { params: { type: string; id: string } }) {
   const resolved = params;
   const searchParams = useSearchParams();
-  const { user, currentProfile, isLoading } = useAuth();
+  const { user, currentProfile, isLoading, addons } = useAuth();
   const router = useRouter();
 
   const streamUrlRaw = searchParams.get('url');
@@ -25,6 +26,7 @@ export default function WatchPage({ params }: { params: { type: string; id: stri
 
   const [activeStream, setActiveStream] = useState<StreamItem>(cachedStream || fallbackStream);
   const [activeUrl, setActiveUrl] = useState(streamUrl);
+  const [subtitles, setSubtitles] = useState<SubtitleItem[]>([]);
   const savedPosition = useRef(0);
 
   useEffect(() => {
@@ -33,6 +35,14 @@ export default function WatchPage({ params }: { params: { type: string; id: stri
     if (!currentProfile) { router.replace('/profiles'); return; }
     if (!streamUrl) { router.back(); return; }
   }, [user, currentProfile, isLoading, streamUrl]);
+
+  // Fetch subtitles from all subtitle addons
+  useEffect(() => {
+    if (!addons || addons.length === 0) return;
+    fetchSubtitlesFromAll(resolved.type, resolved.id, addons)
+      .then(setSubtitles)
+      .catch(() => {});
+  }, [resolved.type, resolved.id, addons]);
 
   function handleSwitchStream(newStream: StreamItem) {
     if (!newStream.url) return;
@@ -53,6 +63,7 @@ export default function WatchPage({ params }: { params: { type: string; id: stri
       mediaId={resolved.id}
       mediaType={resolved.type}
       startPosition={savedPosition.current || undefined}
+      subtitles={subtitles}
       onSwitchStream={handleSwitchStream}
       onBack={() => router.back()}
     />

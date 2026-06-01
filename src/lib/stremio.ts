@@ -142,6 +142,54 @@ function hasResource(addon: AddonManifest, name: string): boolean {
   return !!addon.resources?.some(r => (typeof r === 'string' ? r : r.name) === name);
 }
 
+export interface SubtitleItem {
+  id: string;
+  url: string;
+  lang: string;
+  name?: string;
+}
+
+async function fetchSubtitles(baseURL: string, type: string, id: string): Promise<SubtitleItem[]> {
+  try {
+    const res = await fetch(`${baseURL}/subtitles/${type}/${id}.json`);
+    const json = await res.json();
+    return (json.subtitles || []).map((s: any, i: number) => ({
+      id: s.id || s.url || String(i),
+      url: s.url,
+      lang: s.lang || 'und',
+      name: s.id || undefined,
+    }));
+  } catch {
+    return [];
+  }
+}
+
+// Community OpenSubtitles Stremio addon — public, no auth, always available
+const OPENSUBTITLES_ADDON_URL = 'https://opensubtitles-v3.strem.io';
+
+export async function fetchSubtitlesFromAll(
+  type: string,
+  id: string,
+  addons: AddonManifest[]
+): Promise<SubtitleItem[]> {
+  // Collect all addon URLs + always append OpenSubtitles as a guaranteed fallback.
+  // Many addons also support subtitles without declaring it in their manifest, so
+  // we try all of them rather than filtering by resource declaration.
+  const urls = [
+    ...addons.filter(a => !!a.transportUrl).map(a => a.transportUrl!),
+    OPENSUBTITLES_ADDON_URL,
+  ];
+  const results = await Promise.allSettled(
+    urls.map(url => fetchSubtitles(url, type, id))
+  );
+  // Deduplicate by subtitle URL so the same track doesn't appear twice
+  const seen = new Set<string>();
+  return results
+    .filter((r): r is PromiseFulfilledResult<SubtitleItem[]> => r.status === 'fulfilled')
+    .flatMap(r => r.value)
+    .filter(s => { if (seen.has(s.url)) return false; seen.add(s.url); return true; });
+}
+
 export async function fetchStreamsFromAll(
   type: string,
   id: string,
