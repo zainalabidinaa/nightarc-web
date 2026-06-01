@@ -131,7 +131,7 @@ export default function DetailPage({ params }: { params: { type: string; id: str
       <div className="relative min-h-[55vh] flex items-end">
         {backdropSrc && (
           <div className="absolute inset-0 overflow-hidden">
-            <img src={backdropSrc} alt="" className="w-full h-full object-cover" aria-hidden="true" />
+            <img src={backdropSrc} alt="" className="w-full h-full object-cover object-top" aria-hidden="true" />
           </div>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-luna-bg via-luna-bg/50 to-luna-bg/20" />
@@ -198,7 +198,7 @@ export default function DetailPage({ params }: { params: { type: string; id: str
         </div>
       </div>
 
-      {/* Below fold */}
+      {/* Below fold — constrained content */}
       <div className="px-6 pb-12 max-w-5xl space-y-10">
         {/* Cast */}
         {detail?.cast && detail.cast.length > 0 && (
@@ -248,55 +248,6 @@ export default function DetailPage({ params }: { params: { type: string; id: str
           );
         })()}
 
-        {/* Seasons + Episodes */}
-        {isSeries && detail?.seasons && detail.seasons.length > 0 && (
-          <section>
-            <h3 className="text-sm font-semibold text-white mb-4">Episodes</h3>
-            <div className="flex gap-2 overflow-x-auto pb-2 mb-5 scrollbar-hide">
-              {detail.seasons.map(s => (
-                <button key={s.id}
-                  onClick={() => { setSelectedSeason(s); setShowStreams(false); setSelectedEpisodeId(null); }}
-                  className={`flex-shrink-0 px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                    selectedSeason?.id === s.id ? 'bg-white text-black' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'
-                  }`}>
-                  Season {s.number}
-                </button>
-              ))}
-            </div>
-            {selectedSeason?.episodes && (
-              <div className="flex gap-4 overflow-x-auto pb-3 scrollbar-hide -mx-6 px-6">
-                {selectedSeason.episodes.map(ep => (
-                  <button
-                    key={ep.id}
-                    onClick={() => handleEpisodeClick(ep.id)}
-                    className={`flex-shrink-0 w-52 text-left group rounded-xl overflow-hidden transition-all ${
-                      selectedEpisodeId === ep.id ? 'ring-2 ring-luna-accent' : ''
-                    }`}
-                  >
-                    <div className="relative w-full aspect-video bg-luna-elevated rounded-xl overflow-hidden mb-2">
-                      {ep.thumbnail ? (
-                        <img src={ep.thumbnail} alt={ep.title} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
-                      ) : (
-                        <div className="absolute inset-0 flex items-center justify-center text-white/15 text-sm font-semibold">E{ep.episode}</div>
-                      )}
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                          <svg viewBox="0 0 24 24" fill="white" className="w-4 h-4 ml-0.5"><polygon points="6,4 20,12 6,20" /></svg>
-                        </div>
-                      </div>
-                    </div>
-                    <p className="text-[10px] text-white/40 mb-0.5">Episode {ep.episode}</p>
-                    <p className="text-sm font-semibold text-white truncate">{ep.title}</p>
-                    {ep.overview && (
-                      <p className="text-xs text-white/40 mt-1 line-clamp-2 leading-relaxed">{ep.overview}</p>
-                    )}
-                  </button>
-                ))}
-              </div>
-            )}
-          </section>
-        )}
-
         {/* Streams */}
         {showStreams && (
           <section>
@@ -329,6 +280,55 @@ export default function DetailPage({ params }: { params: { type: string; id: str
           </section>
         )}
       </div>
+
+      {/* Episode section — full width, no max-w constraint */}
+      {isSeries && detail?.seasons && detail.seasons.length > 0 && (
+        <section className="mb-10 px-6">
+          <h3 className="text-sm font-semibold text-white mb-4">Episodes</h3>
+          <div className="flex gap-2 overflow-x-auto pb-2 mb-5 scrollbar-hide">
+            {detail.seasons.map(s => (
+              <button key={s.id}
+                onClick={() => { setSelectedSeason(s); setShowStreams(false); setSelectedEpisodeId(null); }}
+                className={`flex-shrink-0 px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                  selectedSeason?.id === s.id ? 'bg-white text-black' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'
+                }`}>
+                Season {s.number}
+              </button>
+            ))}
+          </div>
+          {selectedSeason?.episodes && (
+            <div className="flex gap-4 overflow-x-auto pb-3 scrollbar-hide -mx-6 px-6">
+              {selectedSeason.episodes.map(ep => (
+                <button
+                  key={ep.id}
+                  onClick={() => handleEpisodeClick(ep.id)}
+                  className={`flex-shrink-0 w-52 text-left group rounded-xl overflow-hidden transition-all ${
+                    selectedEpisodeId === ep.id ? 'ring-2 ring-luna-accent' : ''
+                  }`}
+                >
+                  <div className="relative w-full aspect-video bg-luna-elevated rounded-xl overflow-hidden mb-2">
+                    {ep.thumbnail ? (
+                      <img src={ep.thumbnail} alt={ep.title} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center text-white/15 text-sm font-semibold">E{ep.episode}</div>
+                    )}
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                        <svg viewBox="0 0 24 24" fill="white" className="w-4 h-4 ml-0.5"><polygon points="6,4 20,12 6,20" /></svg>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-[10px] text-white/40 mb-0.5">Episode {ep.episode}</p>
+                  <p className="text-sm font-semibold text-white truncate">{ep.title}</p>
+                  {ep.overview && (
+                    <p className="text-xs text-white/40 mt-1 line-clamp-2 leading-relaxed">{ep.overview}</p>
+                  )}
+                </button>
+              ))}
+            </div>
+          )}
+        </section>
+      )}
 
       {/* Auto-play loading overlay */}
       {autoPlaying && (
