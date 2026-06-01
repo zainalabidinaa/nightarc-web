@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Redesign LunaWeb home screen (cinematic hero, folder grids, CW artwork), detail page (episode horizontal scroll, network section), and web player (Apple-native UI, HLS audio+subtitle fixes).
+**Goal:** Redesign LunaWeb home screen (cinematic hero, folder grids, CW artwork), detail page (episode horizontal scroll, network section), and web player (Liquid Glass Apple-style UI, HLS audio+subtitle fixes).
 
 **Architecture:** Six targeted file changes in the existing Next.js 14 app. No new routes needed — `/collections/[folderId]` already exists for folder browsing. All HLS fixes are in `Player.tsx` config and event handling.
 
@@ -894,11 +894,33 @@ git commit -m "feat(web): horizontal episode cards, genre chips, network section
 - Modify: `LunaWeb/src/components/Player.tsx`
 
 This is a full replacement. Key changes from the current version:
-- Apple-native visual layout (top bar with back/title/AirPlay, center skip+play, bottom scrubber+controls)
-- HLS audio fix: set `hls.subtitleDisplay = true` after track switch; ensure `AUDIO_TRACK_SWITCHED` is waited for
+- **Liquid Glass visual style** — all controls use `backdrop-filter: blur()` + translucent borders. Back button and title are glass pills. Skip buttons are glass circles. Play button is a heavy glass disc with inner specular highlight. Bottom controls float as a dark glass shelf (`rgba(0,0,0,.45)` + `blur(40px)`). Popovers use dark glass (`blur(48px)`).
+- Apple-native layout: top bar with back/title/AirPlay, center skip+play, bottom scrubber+controls
+- HLS audio fix: ensure `AUDIO_TRACK_SWITCHED` event is handled; use `hls.recoverMediaError()` on fatal media errors
 - Subtitle fix: set `renderTextTracksNatively: false` in HLS config, implement custom `<div>` cue overlay using the video element's `textTracks` API
 - Quality panel: derive from `hls.levels` (real levels), not hardcoded list
 - Remove fake hardcoded chapters panel
+
+**CSS tokens for Liquid Glass** (use inline styles or extend Tailwind config — `backdrop-filter` isn't in Tailwind v3 by default, use the `[@supports]` variant or inline):
+```css
+/* Glass light — for back pill, skip buttons, top icons */
+background: rgba(255,255,255,0.08);
+backdrop-filter: blur(32px) saturate(180%);
+border: 1px solid rgba(255,255,255,0.12);
+box-shadow: 0 2px 16px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.15);
+
+/* Glass dark — for bottom shelf, popovers */
+background: rgba(0,0,0,0.45);
+backdrop-filter: blur(40px) saturate(150%);
+border: 1px solid rgba(255,255,255,0.08);
+box-shadow: 0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+
+/* Play button — stronger glass disc */
+background: rgba(255,255,255,0.14);
+backdrop-filter: blur(40px) saturate(200%);
+border: 1.5px solid rgba(255,255,255,0.22);
+box-shadow: 0 4px 24px rgba(0,0,0,0.4), inset 0 1.5px 0 rgba(255,255,255,0.3), inset 0 -1.5px 0 rgba(0,0,0,0.15);
+```
 
 - [ ] **Step 1: Replace `Player.tsx` entirely**
 
@@ -1327,33 +1349,70 @@ export default function Player({
 
         {/* TOP BAR */}
         <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-5 pt-5">
+          {/* Back — glass pill */}
           <button
             onClick={onBack}
-            className="flex items-center gap-1.5 text-white/85 hover:text-white transition-colors text-sm font-medium"
+            className="flex items-center gap-1.5 text-sm font-semibold text-white/90 px-4 py-2 rounded-full transition-opacity hover:opacity-80"
+            style={{
+              background: 'rgba(255,255,255,0.08)',
+              backdropFilter: 'blur(32px) saturate(180%)',
+              WebkitBackdropFilter: 'blur(32px) saturate(180%)',
+              border: '1px solid rgba(255,255,255,0.12)',
+              boxShadow: '0 2px 16px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.15)',
+            }}
             aria-label="Back"
           >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 opacity-80">
               <path d="M15 18l-6-6 6-6" />
             </svg>
             Back
           </button>
 
-          <p className="text-sm font-semibold text-white/85 text-center flex-1 px-4 truncate">{title}</p>
+          {/* Title — glass pill */}
+          <p
+            className="text-sm font-semibold text-white/85 px-4 py-2 rounded-full truncate max-w-[260px]"
+            style={{
+              background: 'rgba(255,255,255,0.08)',
+              backdropFilter: 'blur(32px) saturate(180%)',
+              WebkitBackdropFilter: 'blur(32px) saturate(180%)',
+              border: '1px solid rgba(255,255,255,0.12)',
+              boxShadow: '0 2px 16px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.15)',
+            }}
+          >
+            {title}
+          </p>
 
-          <div className="flex items-center gap-1">
-            {/* Sources toggle */}
+          <div className="flex items-center gap-2">
+            {/* Sources toggle — glass circle */}
             <button
               onClick={() => { closePops(); setShowSources(s => !s); }}
-              className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors text-white/70"
+              className="w-9 h-9 rounded-full flex items-center justify-center text-white/75 transition-opacity hover:opacity-80"
+              style={{
+                background: 'rgba(255,255,255,0.08)',
+                backdropFilter: 'blur(32px) saturate(180%)',
+                WebkitBackdropFilter: 'blur(32px) saturate(180%)',
+                border: '1px solid rgba(255,255,255,0.12)',
+                boxShadow: '0 2px 16px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.15)',
+              }}
               aria-label="Sources"
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-5 h-5">
-                <circle cx="12" cy="5" r="1.5" fill="currentColor" /><circle cx="12" cy="12" r="1.5" fill="currentColor" /><circle cx="12" cy="19" r="1.5" fill="currentColor" />
+              <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                <circle cx="12" cy="5" r="1.8" /><circle cx="12" cy="12" r="1.8" /><circle cx="12" cy="19" r="1.8" />
               </svg>
             </button>
-            {/* AirPlay */}
-            <button className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors text-white/70" aria-label="AirPlay">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-5 h-5">
+            {/* AirPlay — glass circle */}
+            <button
+              className="w-9 h-9 rounded-full flex items-center justify-center text-white/75 transition-opacity hover:opacity-80"
+              style={{
+                background: 'rgba(255,255,255,0.08)',
+                backdropFilter: 'blur(32px) saturate(180%)',
+                WebkitBackdropFilter: 'blur(32px) saturate(180%)',
+                border: '1px solid rgba(255,255,255,0.12)',
+                boxShadow: '0 2px 16px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.15)',
+              }}
+              aria-label="AirPlay"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-4 h-4">
                 <path d="M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h18a2 2 0 012 2v10a2 2 0 01-2 2h-2M12 15l-4 5h8l-4-5z" />
               </svg>
             </button>
@@ -1364,7 +1423,7 @@ export default function Player({
         <div className="absolute inset-0 flex items-center justify-center gap-11 pointer-events-none">
           <button
             onClick={() => skip(-15)}
-            className="pointer-events-auto flex flex-col items-center gap-1.5 text-white/75 hover:text-white transition-colors"
+            className="pointer-events-auto flex flex-col items-center gap-1.5 text-white/80 transition-opacity hover:opacity-80"
             aria-label="Skip back 15s"
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" className="w-9 h-9">
@@ -1377,7 +1436,14 @@ export default function Player({
 
           <button
             onClick={togglePlay}
-            className="pointer-events-auto w-16 h-16 rounded-full bg-white/15 border border-white/20 backdrop-blur-md flex items-center justify-center hover:bg-white/25 transition-colors active:scale-95"
+            className="pointer-events-auto w-16 h-16 rounded-full flex items-center justify-center active:scale-95 transition-transform"
+            style={{
+              background: 'rgba(255,255,255,0.14)',
+              backdropFilter: 'blur(40px) saturate(200%)',
+              WebkitBackdropFilter: 'blur(40px) saturate(200%)',
+              border: '1.5px solid rgba(255,255,255,0.22)',
+              boxShadow: '0 4px 24px rgba(0,0,0,0.4), inset 0 1.5px 0 rgba(255,255,255,0.3), inset 0 -1.5px 0 rgba(0,0,0,0.15)',
+            }}
             aria-label={state === 'playing' ? 'Pause' : 'Play'}
           >
             {state === 'playing' ? (
@@ -1393,7 +1459,7 @@ export default function Player({
 
           <button
             onClick={() => skip(15)}
-            className="pointer-events-auto flex flex-col items-center gap-1.5 text-white/75 hover:text-white transition-colors"
+            className="pointer-events-auto flex flex-col items-center gap-1.5 text-white/80 transition-opacity hover:opacity-80"
             aria-label="Skip forward 15s"
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" className="w-9 h-9">
@@ -1405,8 +1471,17 @@ export default function Player({
           </button>
         </div>
 
-        {/* BOTTOM */}
-        <div className="absolute bottom-0 left-0 right-0 px-5 pb-7 space-y-3">
+        {/* BOTTOM — floating dark glass shelf */}
+        <div
+          className="absolute bottom-0 left-0 right-0 mx-4 mb-5 rounded-2xl px-5 py-4 space-y-3"
+          style={{
+            background: 'rgba(0,0,0,0.45)',
+            backdropFilter: 'blur(40px) saturate(150%)',
+            WebkitBackdropFilter: 'blur(40px) saturate(150%)',
+            border: '1px solid rgba(255,255,255,0.08)',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)',
+          }}
+        >
           {/* Seek bar */}
           <div className="flex items-center gap-3">
             <span className="text-xs text-white/50 w-10 text-right tabular-nums shrink-0">{fmt(pos)}</span>
@@ -1475,7 +1550,7 @@ export default function Player({
                 </button>
 
                 {showSubPop && (
-                  <div className="absolute bottom-full right-0 mb-2 bg-neutral-900/95 backdrop-blur-2xl border border-white/8 rounded-2xl p-1.5 min-w-[240px] shadow-2xl z-30">
+                  <div className="absolute bottom-full right-0 mb-2 rounded-2xl p-1.5 min-w-[240px] z-30" style={{ background:'rgba(18,18,22,0.7)', backdropFilter:'blur(48px) saturate(200%)', WebkitBackdropFilter:'blur(48px) saturate(200%)', border:'1px solid rgba(255,255,255,0.1)', boxShadow:'0 16px 48px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.1)' }}>
                     {audioTracks.length > 0 && (
                       <>
                         <p className="px-3 pt-2 pb-1 text-[10px] font-bold text-white/30 uppercase tracking-widest">Audio</p>
@@ -1522,7 +1597,7 @@ export default function Player({
                     </svg>
                   </button>
                   {showQualPop && (
-                    <div className="absolute bottom-full right-0 mb-2 bg-neutral-900/95 backdrop-blur-2xl border border-white/8 rounded-2xl p-1.5 min-w-[160px] shadow-2xl z-30">
+                    <div className="absolute bottom-full right-0 mb-2 rounded-2xl p-1.5 min-w-[160px] z-30" style={{ background:'rgba(18,18,22,0.7)', backdropFilter:'blur(48px) saturate(200%)', WebkitBackdropFilter:'blur(48px) saturate(200%)', border:'1px solid rgba(255,255,255,0.1)', boxShadow:'0 16px 48px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.1)' }}>
                       <p className="px-3 pt-1 pb-1 text-[10px] font-bold text-white/30 uppercase tracking-widest">Quality</p>
                       <button onClick={() => switchQuality(-1)}
                         className={`w-full text-left px-3 py-2 rounded-xl text-sm flex items-center justify-between gap-2 transition-colors ${activeQuality === -1 ? 'text-white' : 'text-white/60 hover:bg-white/5'}`}>
@@ -1548,7 +1623,7 @@ export default function Player({
                     <circle cx="12" cy="12" r="10"/><path d="M10 8l6 4-6 4V8z" fill="currentColor" stroke="none"/>
                   </svg>
                 </button>
-                <div className="absolute bottom-full right-0 mb-2 bg-neutral-900/95 backdrop-blur-2xl border border-white/8 rounded-2xl p-1.5 min-w-[140px] shadow-2xl z-30 hidden group-hover/speed:block">
+                <div className="absolute bottom-full right-0 mb-2 rounded-2xl p-1.5 min-w-[140px] z-30 hidden group-hover/speed:block" style={{ background:'rgba(18,18,22,0.7)', backdropFilter:'blur(48px) saturate(200%)', WebkitBackdropFilter:'blur(48px) saturate(200%)', border:'1px solid rgba(255,255,255,0.1)', boxShadow:'0 16px 48px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.1)' }}>
                   {[0.5, 0.75, 1, 1.25, 1.5, 2].map(s => (
                     <button key={s}
                       onClick={() => { const v = videoRef.current; if (v) v.playbackRate = s; }}
