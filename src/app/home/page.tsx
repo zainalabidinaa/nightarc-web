@@ -30,7 +30,7 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [discoverRows, setDiscoverRows] = useState<HomeCatalogRow[]>([]);
-  const [collectionSections, setCollectionSections] = useState<{ id: string; name: string; folders: { id: string; name: string; cover_image: string | null }[] }[]>([]);
+  const [collectionSections, setCollectionSections] = useState<{ id: string; name: string; folders: { id: string; name: string; cover_image: string | null; tile_shape: string | null }[] }[]>([]);
 
   const heroTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const heroPausedRef = useRef(false);
@@ -189,10 +189,10 @@ export default function HomePage() {
             name: c.name,
             folders: (c.folders || [])
               .filter((f) => (f.folder_catalogs?.length ?? 0) > 0 || f.cover_image)
-              .map((f) => ({ id: f.id, name: f.name, cover_image: f.cover_image || null }))
+              .map((f) => ({ id: f.id, name: f.name, cover_image: f.cover_image || null, tile_shape: f.tile_shape || null }))
           }))
           .filter(c => c.folders.length > 0);
-        setCollectionSections(otherCollections);
+        setCollectionSections(otherCollections as typeof otherCollections);
       } catch (e) {
         console.error('Failed to load collections:', e);
       }
@@ -345,33 +345,44 @@ export default function HomePage() {
           <MediaRow key={row.id} title={row.title} items={row.items} />
         ))}
 
-        {/* Collection sections — Franchises, Streaming, Decades, etc. */}
+        {/* Collection sections — Franchises, Streaming, Decades, etc. — one scrollable row each */}
         {collectionSections.map(section => (
           <section key={section.id} className="mb-10">
-            <h2 className="text-base font-bold text-white mb-4">{section.name}</h2>
-            <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
-              {section.folders.map(folder => (
-                <Link
-                  key={folder.id}
-                  href={`/collections/${folder.id}`}
-                  className="group relative aspect-[2/3] rounded-lg overflow-hidden bg-luna-elevated cursor-pointer block"
-                >
-                  {folder.cover_image ? (
-                    <img
-                      src={folder.cover_image}
-                      alt={folder.name}
-                      loading="lazy"
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 rounded-lg"
-                    />
-                  ) : (
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-white/0" />
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-2">
-                    <p className="text-[10px] font-bold text-white leading-tight line-clamp-2">{folder.name}</p>
-                  </div>
-                </Link>
-              ))}
+            <h2 className="text-xl font-bold tracking-tight text-white mb-4">{section.name}</h2>
+            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+              {section.folders.map(folder => {
+                const isLandscape = folder.tile_shape === 'LANDSCAPE';
+                return (
+                  <Link
+                    key={folder.id}
+                    href={`/collections/${folder.id}`}
+                    className="flex-shrink-0 group cursor-pointer"
+                    style={{ width: isLandscape ? '220px' : '140px' }}
+                  >
+                    <div
+                      className="relative overflow-hidden rounded-xl bg-luna-elevated mb-2"
+                      style={{ aspectRatio: isLandscape ? '16/9' : '2/3' }}
+                    >
+                      {folder.cover_image ? (
+                        <img
+                          src={folder.cover_image}
+                          alt={folder.name}
+                          loading="lazy"
+                          className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-white/0" />
+                      )}
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300 flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <svg viewBox="0 0 24 24" fill="white" className="w-4 h-4 ml-0.5"><polygon points="6,4 20,12 6,20"/></svg>
+                        </div>
+                      </div>
+                    </div>
+                    <p className="text-sm font-semibold text-white/90 truncate group-hover:text-white transition-colors">{folder.name}</p>
+                  </Link>
+                );
+              })}
             </div>
           </section>
         ))}

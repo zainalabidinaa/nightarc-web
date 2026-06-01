@@ -182,6 +182,7 @@ export interface Folder {
   name: string;
   cover_image: string | null;
   focus_gif: string | null;
+  tile_shape: 'LANDSCAPE' | 'PORTRAIT' | null;
   sort_order: number;
   created_at: string;
   folder_catalogs?: FolderCatalog[];

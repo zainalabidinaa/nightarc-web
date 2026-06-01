@@ -150,6 +150,7 @@ export default function AdminPage() {
         name: folder.name,
         cover_image: folder.cover_image || '',
         focus_gif: folder.focus_gif || '',
+        tile_shape: (folder as any).tile_shape || 'PORTRAIT',
       });
       await setFolderCatalogs(folder.id, catalogs);
     } else {
@@ -159,7 +160,8 @@ export default function AdminPage() {
         folder.name,
         folder.cover_image || '',
         folder.focus_gif || '',
-        sortOrder
+        sortOrder,
+        (folder as any).tile_shape || 'PORTRAIT'
       );
       await setFolderCatalogs(newFolder.id, catalogs);
     }
@@ -422,6 +424,25 @@ export default function AdminPage() {
                   className="w-full px-3 py-2 bg-luna-elevated rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-luna-accent"
                   placeholder="https://cdn.example.com/netflix.png"
                 />
+              </div>
+              <div>
+                <label className="text-xs text-luna-muted mb-1 block">Tile Shape</label>
+                <div className="flex gap-2">
+                  {(['PORTRAIT', 'LANDSCAPE'] as const).map(shape => (
+                    <button
+                      key={shape}
+                      type="button"
+                      onClick={() => setFolderModal(prev => ({ ...prev, folder: { ...prev.folder, tile_shape: shape } }))}
+                      className={`flex-1 py-2 rounded-xl text-sm font-medium transition-all border ${
+                        (folderModal.folder?.tile_shape ?? 'PORTRAIT') === shape
+                          ? 'bg-luna-accent/20 border-luna-accent/40 text-luna-accent'
+                          : 'bg-luna-elevated border-transparent text-luna-muted hover:text-white'
+                      }`}
+                    >
+                      {shape === 'PORTRAIT' ? '▭ Portrait' : '▬ Landscape'}
+                    </button>
+                  ))}
+                </div>
               </div>
               <div>
                 <label className="text-xs text-luna-muted mb-1 block">Hover GIF URL</label>

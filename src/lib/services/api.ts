@@ -295,11 +295,12 @@ export async function createFolder(
   name: string,
   coverImage: string,
   focusGif: string,
-  sortOrder: number
+  sortOrder: number,
+  tileShape: string = 'PORTRAIT'
 ): Promise<Folder> {
   const { data, error } = await supabase
     .from('folders')
-    .insert({ collection_id: collectionId, name, cover_image: coverImage, focus_gif: focusGif, sort_order: sortOrder })
+    .insert({ collection_id: collectionId, name, cover_image: coverImage, focus_gif: focusGif, sort_order: sortOrder, tile_shape: tileShape })
     .select()
     .single();
   if (error) throw error;
@@ -308,7 +309,7 @@ export async function createFolder(
 
 export async function updateFolder(
   id: string,
-  updates: { name?: string; cover_image?: string; focus_gif?: string; sort_order?: number }
+  updates: { name?: string; cover_image?: string; focus_gif?: string; sort_order?: number; tile_shape?: string }
 ): Promise<void> {
   await supabase.from('folders').update(updates).eq('id', id);
 }
