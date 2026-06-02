@@ -208,9 +208,7 @@ struct AddonsScreen: View {
                             Text("Install")
                                 .frame(maxWidth: .infinity)
                                 .padding()
-                                .background(LunaTheme.accent)
-                                .foregroundColor(.white)
-                                .cornerRadius(12)
+                                .glassProminentButtonStyle(tint: LunaTheme.accent, cornerRadius: 12)
                         }
                         .disabled(newAddonURL.isEmpty)
                         .padding(.horizontal)
