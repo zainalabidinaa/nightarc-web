@@ -5,82 +5,124 @@ struct SettingsScreen: View {
     @EnvironmentObject var profileManager: ProfileManager
     @StateObject private var addonRepo = AddonRepository.shared
     @State private var showAddons = false
-    @State private var showProfileEditor = false
 
     var body: some View {
         NavigationStack {
-            List {
-                Section("Profile") {
-                    if let profile = profileManager.currentProfile {
-                        HStack {
-                            Circle()
-                                .fill(profile.avatarColor.map { Color(hex: $0) } ?? LunaTheme.accent)
-                                .frame(width: 48, height: 48)
-                                .overlay(
-                                    Text(String(profile.name.prefix(1).uppercased()))
+            ScrollView {
+                VStack(spacing: 16) {
+                    // Profile Section
+                    VStack(spacing: 0) {
+                        if let profile = profileManager.currentProfile {
+                            HStack {
+                                Circle()
+                                    .fill(profile.avatarColor.map { Color(hex: $0) } ?? LunaTheme.accent)
+                                    .frame(width: 48, height: 48)
+                                    .overlay(
+                                        Text(String(profile.name.prefix(1).uppercased()))
+                                            .font(.headline)
+                                            .foregroundColor(.white)
+                                    )
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(profile.name)
                                         .font(.headline)
                                         .foregroundColor(.white)
-                                )
-                            VStack(alignment: .leading) {
-                                Text(profile.name)
-                                    .font(.headline)
-                                    .foregroundColor(.white)
-                                Text(profile.isAdmin ? "Admin" : "User")
+                                    Text(profile.isAdmin ? "Admin" : "User")
+                                        .font(.caption)
+                                        .foregroundColor(LunaTheme.textSecondary)
+                                }
+                                Spacer()
+                                Image(systemName: "chevron.right")
                                     .font(.caption)
-                                    .foregroundColor(LunaTheme.textSecondary)
+                                    .foregroundColor(LunaTheme.textTertiary)
                             }
-                            Spacer()
+                            .padding()
+
+                            Divider().background(Color.white.opacity(0.08))
+
+                            Button {
+                                profileManager.currentProfile = nil
+                            } label: {
+                                HStack {
+                                    Text("Switch Profile")
+                                        .foregroundColor(LunaTheme.accent)
+                                    Spacer()
+                                    Image(systemName: "arrow.triangle.swap")
+                                        .font(.caption)
+                                        .foregroundColor(LunaTheme.accent)
+                                }
+                                .padding()
+                            }
                         }
                     }
+                    .glassCard(cornerRadius: 14)
+                    .padding(.horizontal)
 
-                    Button("Switch Profile") {
-                        profileManager.currentProfile = nil
+                    // Addons Section
+                    VStack(spacing: 0) {
+                        Button {
+                            showAddons = true
+                        } label: {
+                            HStack {
+                                Text("Manage Addons")
+                                    .foregroundColor(.white)
+                                Spacer()
+                                Text("\(addonRepo.managedAddons.count)")
+                                    .foregroundColor(LunaTheme.textSecondary)
+                                Image(systemName: "chevron.right")
+                                    .font(.caption)
+                                    .foregroundColor(LunaTheme.textTertiary)
+                            }
+                            .padding()
+                        }
+
+                        Divider().background(Color.white.opacity(0.08))
+
+                        Text("Addons provide content catalogs, metadata, and streaming sources")
+                            .font(.caption)
+                            .foregroundColor(LunaTheme.textTertiary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding()
                     }
-                    .foregroundColor(LunaTheme.accent)
-                }
+                    .glassCard(cornerRadius: 14)
+                    .padding(.horizontal)
 
-                Section("Addons") {
-                    Button {
-                        showAddons = true
-                    } label: {
-                        HStack {
-                            Text("Manage Addons")
-                            Spacer()
-                            Text("\(addonRepo.managedAddons.count)")
-                                .foregroundColor(LunaTheme.textSecondary)
+                    // Account Section
+                    VStack(spacing: 0) {
+                        Button(role: .destructive) {
+                            Task { await profileManager.signOut() }
+                        } label: {
+                            HStack {
+                                Text("Sign Out")
+                                    .foregroundColor(.red)
+                                Spacer()
+                            }
+                            .padding()
                         }
                     }
+                    .glassCard(cornerRadius: 14)
+                    .padding(.horizontal)
 
-                    Text("Addons provide content catalogs, metadata, and streaming sources")
-                        .font(.caption)
-                        .foregroundColor(LunaTheme.textTertiary)
-                }
-
-                Section("Account") {
-                    Button(role: .destructive) {
-                        Task { await profileManager.signOut() }
-                    } label: {
-                        Text("Sign Out")
+                    // Footer
+                    VStack(spacing: 4) {
+                        Text("Luna v1.0.0")
+                            .font(.caption)
+                            .foregroundColor(LunaTheme.textTertiary)
+                        Text("Built with the Stremio addon ecosystem")
+                            .font(.caption2)
+                            .foregroundColor(LunaTheme.textTertiary)
                     }
-                }
+                    .padding(.top)
 
-                Section {
-                    Text("Luna v1.0.0")
-                        .font(.caption)
-                        .foregroundColor(LunaTheme.textTertiary)
-                    Text("Built with Stremio addon ecosystem")
-                        .font(.caption2)
-                        .foregroundColor(LunaTheme.textTertiary)
+                    Spacer().frame(height: 32)
                 }
+                .padding(.top)
             }
-            .scrollContentBackground(.hidden)
             .background(LunaTheme.background)
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.large)
             .sheet(isPresented: $showAddons) {
                 AddonsScreen()
             }
-            .foregroundColor(.white)
         }
     }
 }
