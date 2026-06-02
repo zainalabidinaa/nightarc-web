@@ -320,10 +320,7 @@ struct FolderGridSection: View {
     let onTap: (MetaPreview) -> Void
 
     private let columns = [
-        GridItem(.flexible()),
-        GridItem(.flexible()),
-        GridItem(.flexible()),
-        GridItem(.flexible())
+        GridItem(.adaptive(minimum: 80), spacing: 8)
     ]
 
     var body: some View {
@@ -344,6 +341,10 @@ struct FolderCell: View {
     let row: CatalogRow
     let onTap: (MetaPreview) -> Void
 
+    private var isLandscape: Bool {
+        row.tileShape == "landscape"
+    }
+
     var body: some View {
         let coverURL: URL? = {
             if let ci = row.coverImage { return URL(string: ci) }
@@ -357,7 +358,8 @@ struct FolderCell: View {
             ZStack(alignment: .bottom) {
                 RoundedRectangle(cornerRadius: 8)
                     .fill(LunaTheme.surfaceElevated)
-                    .aspectRatio(2/3, contentMode: .fit)
+                    .aspectRatio(isLandscape ? 16/9 : 2/3, contentMode: .fit)
+
                 if let url = coverURL {
                     AsyncImage(url: url) { phase in
                         if case .success(let img) = phase {
@@ -365,14 +367,23 @@ struct FolderCell: View {
                         }
                     }
                     .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .aspectRatio(2/3, contentMode: .fit)
+                    .aspectRatio(isLandscape ? 16/9 : 2/3, contentMode: .fit)
                 }
-                LinearGradient(colors: [.black.opacity(0.75), .clear], startPoint: .bottom, endPoint: .top)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .aspectRatio(2/3, contentMode: .fit)
+
+                LinearGradient(
+                    colors: [.black.opacity(0.75), .clear],
+                    startPoint: .bottom,
+                    endPoint: .top
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .aspectRatio(isLandscape ? 16/9 : 2/3, contentMode: .fit)
+
                 Text(row.title)
-                    .font(.system(size: 9, weight: .bold)).foregroundColor(.white)
-                    .lineLimit(2).multilineTextAlignment(.leading).padding(6)
+                    .font(.system(size: isLandscape ? 11 : 9, weight: .bold))
+                    .foregroundColor(.white)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
+                    .padding(8)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
