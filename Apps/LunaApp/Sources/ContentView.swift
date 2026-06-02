@@ -37,13 +37,23 @@ struct MainTabView: View {
     var body: some View {
         if sizeClass == .regular {
             NavigationSplitView {
-                List(selection: $selectedTab) {
-                    Label("Home", systemImage: "house.fill").tag(0)
-                    Label("Search", systemImage: "magnifyingglass").tag(1)
-                    Label("Library", systemImage: "bookmark.fill").tag(2)
-                    Label("Settings", systemImage: "gearshape.fill").tag(3)
+                List {
+                    Button { selectedTab = 0 } label: {
+                        Label("Home", systemImage: "house.fill")
+                    }
+                    Button { selectedTab = 1 } label: {
+                        Label("Search", systemImage: "magnifyingglass")
+                    }
+                    Button { selectedTab = 2 } label: {
+                        Label("Library", systemImage: "bookmark.fill")
+                    }
+                    Button { selectedTab = 3 } label: {
+                        Label("Settings", systemImage: "gearshape.fill")
+                    }
                     if roleManager.isAdmin {
-                        Label("Admin", systemImage: "shield.fill").tag(4)
+                        Button { selectedTab = 4 } label: {
+                            Label("Admin", systemImage: "shield.fill")
+                        }
                     }
                 }
                 .listStyle(.sidebar)

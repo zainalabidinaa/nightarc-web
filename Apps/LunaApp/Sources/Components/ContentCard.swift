@@ -95,7 +95,7 @@ struct ContentCard: View {
         switch resolvedShape {
         case .landscape: return 200
         case .square:    return 140
-        case .poster:    return 120
+        case .poster, nil: return 120
         }
     }
 
@@ -103,7 +103,7 @@ struct ContentCard: View {
         switch resolvedShape {
         case .landscape: return 112
         case .square:    return 140
-        case .poster:    return 180
+        case .poster, nil: return 180
         }
     }
 }
