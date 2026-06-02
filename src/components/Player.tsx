@@ -340,13 +340,12 @@ export default function Player({
   const playerRef = useRef<MediaPlayerInstance>(null);
   const { currentProfile } = useAuth();
 
-  // Always try HLS.js first — many streams (Real-Debrid, AlOStreams etc.) are HLS
-  // without .m3u8 in the URL. If HLS.js fails to parse the manifest, fall back to native.
-  const [srcType, setSrcType] = useState<VidstackSourceType>(() => getInitialSourceType(streamUrl));
+  // Source type detection uses URL patterns, behavioral hints, and known debrid domains.
+  // HLS streams (m3u8, manifest, debrid) → application/x-mpegurl; unknown → video/mp4 native.
+  const [srcType, setSrcType] = useState<VidstackSourceType>(() => getInitialSourceType(streamUrl, currentStream));
   const src = { src: streamUrl, type: srcType };
 
-  // Reset src type when stream changes
-  useEffect(() => { setSrcType(getInitialSourceType(streamUrl)); }, [streamUrl]);
+  useEffect(() => { setSrcType(getInitialSourceType(streamUrl, currentStream)); }, [streamUrl, currentStream]);
 
   const onProviderChange = useCallback((provider: MediaProviderAdapter | null) => {
     if (isHLSProvider(provider)) {
