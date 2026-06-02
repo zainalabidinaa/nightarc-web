@@ -38,6 +38,7 @@ export default function Player({
   const hlsRef = useRef<Hls | null>(null);
   const progressInterval = useRef<ReturnType<typeof setInterval> | null>(null);
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const loadTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const startPosRef = useRef<number | undefined>();
   const { currentProfile } = useAuth();
 
@@ -68,6 +69,7 @@ export default function Player({
   // Always try HLS.js first — most stremio/debrid streams are HLS even
   // when the URL lacks .m3u8. On any fatal error, fall back to native
   // video element so direct MP4/WebM URLs still work seamlessly.
+  // A 15s timeout guards against streams that hang without triggering any event.
   const initPlayer = useCallback(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -80,11 +82,23 @@ export default function Player({
     const proxyHeaders = currentStream.behaviorHints?.proxyHeaders?.request;
     const hasHeaders = proxyHeaders != null && Object.keys(proxyHeaders).length > 0;
 
+    const fallbackToNative = () => {
+      if (hlsRef.current) { hlsRef.current.destroy(); hlsRef.current = null; }
+      video.src = streamUrl;
+      video.load();
+      video.play().catch(() => {});
+    };
+
     if (!Hls.isSupported()) {
       video.src = streamUrl;
       video.play().catch(() => {});
       return;
     }
+
+    const loadTimeout = setTimeout(() => {
+      if (hlsRef.current) fallbackToNative();
+    }, 15000);
+    loadTimeoutRef.current = loadTimeout;
 
     let mediaErrCount = 0;
     const hls = new Hls({
@@ -94,6 +108,7 @@ export default function Player({
     });
 
     hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      clearTimeout(loadTimeout);
       mediaErrCount = 0;
       const at = hls.audioTracks.map((t, i) => ({ id: i, name: t.name || t.lang || 'Unknown', lang: t.lang || '?' }));
       const st = hls.subtitleTracks.map((t, i) => ({ id: i, name: t.name || t.lang || 'Unknown', lang: t.lang || '?' }));
@@ -120,19 +135,16 @@ export default function Player({
 
     hls.on(Hls.Events.ERROR, (_e, data) => {
       if (!data.fatal) return;
+      clearTimeout(loadTimeout);
       console.log('[hls] fatal error:', data.type, data.details);
       if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
         mediaErrCount++;
         if (mediaErrCount <= 2) {
           hls.recoverMediaError();
-        } else {
-          hls.destroy(); hlsRef.current = null;
-          video.src = streamUrl; video.play().catch(() => {});
+          return;
         }
-      } else {
-        hls.destroy(); hlsRef.current = null;
-        video.src = streamUrl; video.play().catch(() => {});
       }
+      fallbackToNative();
     });
 
     hls.loadSource(streamUrl);
@@ -142,7 +154,10 @@ export default function Player({
 
   useEffect(() => {
     initPlayer();
-    return () => { if (hlsRef.current) { hlsRef.current.destroy(); hlsRef.current = null; } };
+    return () => {
+      if (loadTimeoutRef.current) clearTimeout(loadTimeoutRef.current);
+      if (hlsRef.current) { hlsRef.current.destroy(); hlsRef.current = null; }
+    };
   }, [initPlayer]);
 
   // --- Video events ---
