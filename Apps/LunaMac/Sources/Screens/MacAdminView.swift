@@ -4,92 +4,132 @@ import LunaCore
 struct MacAdminView: View {
     @StateObject private var adminService = AdminService.shared
     @State private var maxUses = 1
+    @State private var isGenerating = false
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: 20) {
                 Text("Admin Panel")
-                    .font(.title)
-                    .fontWeight(.bold)
+                    .font(.system(size: 26, weight: .bold))
                     .foregroundColor(.white)
-                    .padding(.horizontal)
-                    .padding(.top, 56)
-                    .padding(.bottom, 16)
+                    .padding(.top, LunaTheme.navBarTopInset)
 
-                VStack(alignment: .leading, spacing: 12) {
-                    HStack {
-                        Text("Max uses:")
-                            .font(.subheadline)
-                            .foregroundColor(LunaTheme.textSecondary)
-                        Stepper("\(maxUses)", value: $maxUses, in: 1...100)
-                            .labelsHidden()
-                    }
-
-                    Button("Generate Invite Code") {
-                        Task { try await adminService.generateInviteCode(maxUses: maxUses) }
-                    }
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(LunaTheme.accent)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-                }
-                .padding()
-                .background(LunaTheme.surface)
-                .cornerRadius(10)
-                .padding(.horizontal)
-
+                // ── Generate invite ──────────────────────────────
                 VStack(alignment: .leading, spacing: 0) {
-                    Text("Invite Codes (\(adminService.inviteCodes.count))")
-                        .font(.system(size: 11, weight: .bold))
-                        .foregroundColor(LunaTheme.textTertiary)
-                        .tracking(1)
-                        .textCase(.uppercase)
-                        .padding(.horizontal, 20)
-                        .padding(.top, 24)
-                        .padding(.bottom, 6)
+                    sectionHeader("Generate Invite Code")
 
-                    VStack(spacing: 0) {
-                        ForEach(adminService.inviteCodes) { code in
-                            HStack {
-                                Text(code.code)
-                                    .font(.system(.body, design: .monospaced))
-                                    .fontWeight(.bold)
-                                    .foregroundColor(LunaTheme.accent)
-                                Spacer()
-                                Circle()
-                                    .fill(code.isActive && !code.isUsed ? Color.green : Color.red)
-                                    .frame(width: 8, height: 8)
-                                Text(code.isActive && !code.isUsed ? "Active" : "Revoked")
-                                    .font(.caption)
-                                    .foregroundColor(LunaTheme.textTertiary)
-                                if code.isActive && !code.isUsed {
-                                    Button("Revoke") {
-                                        Task { try await adminService.revokeInviteCode(code.code) }
+                    VStack(alignment: .leading, spacing: 16) {
+                        HStack {
+                            Text("Max uses")
+                                .font(.subheadline)
+                                .foregroundColor(LunaTheme.textSecondary)
+                            Spacer()
+                            Stepper(value: $maxUses, in: 1...100) {
+                                Text("\(maxUses)")
+                                    .font(.system(.body, design: .rounded))
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.white)
+                                    .frame(minWidth: 28)
+                            }
+                            .fixedSize()
+                        }
+
+                        Button {
+                            Task {
+                                isGenerating = true
+                                _ = try? await adminService.generateInviteCode(maxUses: maxUses)
+                                isGenerating = false
+                            }
+                        } label: {
+                            HStack(spacing: 6) {
+                                if isGenerating {
+                                    ProgressView().controlSize(.small).tint(.white)
+                                }
+                                Text(isGenerating ? "Generating…" : "Generate Code")
+                                    .fontWeight(.semibold)
+                            }
+                            .font(.subheadline)
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                            .background(LunaTheme.accent)
+                            .cornerRadius(8)
+                        }
+                        .buttonStyle(.plain)
+                        .disabled(isGenerating)
+                    }
+                    .padding(16)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(LunaTheme.surface)
+                    .cornerRadius(12)
+                }
+
+                // ── Invite codes ─────────────────────────────────
+                VStack(alignment: .leading, spacing: 0) {
+                    sectionHeader("Invite Codes (\(adminService.inviteCodes.count))")
+
+                    if adminService.inviteCodes.isEmpty {
+                        Text("No invite codes yet. Generate one above.")
+                            .font(.caption)
+                            .foregroundColor(LunaTheme.textTertiary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(16)
+                            .background(LunaTheme.surface)
+                            .cornerRadius(12)
+                    } else {
+                        VStack(spacing: 0) {
+                            ForEach(adminService.inviteCodes) { code in
+                                let active = code.isActive && !code.isUsed
+                                HStack(spacing: 12) {
+                                    Text(code.code)
+                                        .font(.system(.body, design: .monospaced))
+                                        .fontWeight(.bold)
+                                        .foregroundColor(LunaTheme.accent)
+                                    Spacer()
+                                    Circle()
+                                        .fill(active ? Color.green : Color.red)
+                                        .frame(width: 7, height: 7)
+                                    Text(active ? "Active" : (code.isUsed ? "Used" : "Revoked"))
+                                        .font(.caption)
+                                        .foregroundColor(LunaTheme.textTertiary)
+                                    if active {
+                                        Button("Revoke") {
+                                            Task { try? await adminService.revokeInviteCode(code.code) }
+                                        }
+                                        .font(.caption)
+                                        .foregroundColor(.red)
+                                        .buttonStyle(.plain)
                                     }
-                                    .font(.caption)
-                                    .foregroundColor(.red)
+                                }
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 12)
+                                .background(LunaTheme.surface)
+                                if code.id != adminService.inviteCodes.last?.id {
+                                    Divider().background(Color.white.opacity(0.06))
                                 }
                             }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 10)
-                            .background(LunaTheme.surface)
-                            if code.id != adminService.inviteCodes.last?.id {
-                                Divider().background(Color.white.opacity(0.06))
-                            }
                         }
+                        .cornerRadius(12)
                     }
-                    .cornerRadius(10)
-                    .padding(.horizontal)
                 }
 
-                Spacer().frame(height: 32)
+                Spacer(minLength: 32)
             }
+            .frame(maxWidth: 640, alignment: .leading)
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, 24)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(LunaTheme.background)
         .task { await adminService.loadInviteCodes() }
+    }
+
+    private func sectionHeader(_ title: String) -> some View {
+        Text(title)
+            .font(.system(size: 11, weight: .bold))
+            .foregroundColor(LunaTheme.textTertiary)
+            .tracking(1)
+            .textCase(.uppercase)
+            .padding(.bottom, 8)
     }
 }

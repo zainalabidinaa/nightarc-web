@@ -111,12 +111,12 @@ struct ProfilePickerScreen: View {
             }
         }
         .sheet(isPresented: $showCreateProfile) {
-            CreateProfileSheet()
+            ProfileCreateSheet()
         }
     }
 }
 
-struct CreateProfileSheet: View {
+struct ProfileCreateSheet: View {
     @EnvironmentObject var profileManager: ProfileManager
     @Environment(\.dismiss) private var dismiss
     @State private var name = ""

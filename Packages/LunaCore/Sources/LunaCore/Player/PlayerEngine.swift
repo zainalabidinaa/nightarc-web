@@ -162,16 +162,19 @@ public class PlayerEngine: ObservableObject {
         guard let player = player else { return }
         let interval = CMTime(seconds: 0.5, preferredTimescale: 600)
         timeObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] time in
-            self?.currentPosition = time.seconds
-            self?.isLoading = false
+            guard let self else { return }
+            MainActor.assumeIsolated {
+                self.currentPosition = time.seconds
+                self.isLoading = false
 
-            if let duration = player.currentItem?.duration.seconds,
-               duration > 0, !duration.isNaN, !duration.isInfinite {
-                self?.duration = duration
-            }
+                if let dur = player.currentItem?.duration.seconds,
+                   dur > 0, !dur.isNaN, !dur.isInfinite {
+                    self.duration = dur
+                }
 
-            if let loadedRange = player.currentItem?.loadedTimeRanges.first as? CMTimeRange {
-                self?.bufferedPosition = loadedRange.end.seconds
+                if let loadedRange = player.currentItem?.loadedTimeRanges.first as? CMTimeRange {
+                    self.bufferedPosition = loadedRange.end.seconds
+                }
             }
         }
     }
@@ -211,7 +214,12 @@ public class PlayerEngine: ObservableObject {
             mediaType: launch.contentType.rawValue,
             positionSeconds: currentPosition,
             durationSeconds: duration,
-            completed: completed
+            completed: completed,
+            name: launch.title,
+            poster: launch.poster,
+            parentMetaId: launch.parentMetaId,
+            season: launch.seasonNumber,
+            episode: launch.episodeNumber
         )
     }
 

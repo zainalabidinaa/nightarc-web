@@ -67,7 +67,7 @@ struct MacLibraryView: View {
                         }
                     }
                     .padding()
-                    .padding(.top, 48)
+                    .padding(.top, LunaTheme.navBarTopInset)
                 }
             }
         }

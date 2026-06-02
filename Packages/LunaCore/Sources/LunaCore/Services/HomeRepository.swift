@@ -34,26 +34,37 @@ public class HomeRepository: ObservableObject {
                     // Find addons that support the meta resource for this media type
                     let addons = addonRepo.findAddonWithMetaResource(type: entry.mediaType)
                     group.addTask {
+                        // Use parentMetaId if stored, otherwise strip episode suffix from id
+                        // (e.g. "tt9813792:1:2" → "tt9813792") so metadata resolves correctly
+                        let metaLookupId = entry.parentMetaId
+                            ?? entry.mediaId.split(separator: ":").first.map(String.init)
+                            ?? entry.mediaId
                         var meta: MetaDetail?
                         for addon in addons {
                             guard let baseURL = addon.transportUrl else { continue }
                             if let fetched = try? await metaService.fetchMeta(
                                 type: entry.mediaType,
-                                id: entry.mediaId,
+                                id: metaLookupId,
                                 baseURL: baseURL
                             ) {
                                 meta = fetched
                                 break
                             }
                         }
+                        // Fallback: URL-decode the stored ID (may contain %3A for colons)
+                        // then take just the base IMDB id (drop season/episode suffix)
+                        let decodedFallback = (entry.mediaId.removingPercentEncoding ?? entry.mediaId)
+                            .split(separator: ":").first.map(String.init) ?? entry.mediaId
                         return ContinueWatchingItem(
                             mediaId: entry.mediaId,
                             mediaType: entry.mediaType,
-                            name: meta?.name ?? entry.mediaId,
-                            poster: meta?.poster,
+                            name: meta?.name ?? entry.name ?? decodedFallback,
+                            poster: meta?.poster ?? entry.poster,
                             resumePositionMs: entry.positionSeconds * 1000,
                             durationMs: entry.durationSeconds * 1000,
-                            progressFraction: entry.progressFraction
+                            progressFraction: entry.progressFraction,
+                            seasonNumber: entry.season,
+                            episodeNumber: entry.episode
                         )
                     }
                 }

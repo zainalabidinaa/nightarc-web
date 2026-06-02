@@ -94,7 +94,6 @@ public actor SupabaseClient {
 
         let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
         guard (200...299).contains(statusCode) else {
-            let errorBody = String(data: data, encoding: .utf8) ?? "Unknown"
             throw SupabaseError.requestFailed(statusCode)
         }
 

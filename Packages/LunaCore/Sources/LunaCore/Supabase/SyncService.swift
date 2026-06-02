@@ -67,6 +67,11 @@ public actor SyncService {
             let duration_seconds: Double
             let completed: Bool
             let updated_at: String
+            let name: String?
+            let poster: String?
+            let parent_meta_id: String?
+            let season: Int?
+            let episode: Int?
         }
 
         let dateFormatter = DateFormatter()
@@ -80,7 +85,12 @@ public actor SyncService {
             position_seconds: entry.positionSeconds,
             duration_seconds: entry.durationSeconds,
             completed: entry.completed,
-            updated_at: dateFormatter.string(from: entry.updatedAt)
+            updated_at: dateFormatter.string(from: entry.updatedAt),
+            name: entry.name,
+            poster: entry.poster,
+            parent_meta_id: entry.parentMetaId,
+            season: entry.season,
+            episode: entry.episode
         )
         try await client.upsert(into: "watch_progress", onConflict: "profile_id,media_id", value: row)
     }
@@ -95,6 +105,11 @@ public actor SyncService {
             let duration_seconds: Double
             let completed: Bool
             let updated_at: String
+            let name: String?
+            let poster: String?
+            let parent_meta_id: String?
+            let season: Int?
+            let episode: Int?
         }
         let rows: [ProgressRow] = try await client.select(
             from: "watch_progress",
@@ -112,7 +127,12 @@ public actor SyncService {
                 positionSeconds: row.position_seconds,
                 durationSeconds: row.duration_seconds,
                 completed: row.completed,
-                updatedAt: dateFormatter.date(from: row.updated_at) ?? Date()
+                updatedAt: dateFormatter.date(from: row.updated_at) ?? Date(),
+                name: row.name,
+                poster: row.poster,
+                parentMetaId: row.parent_meta_id,
+                season: row.season,
+                episode: row.episode
             )
         }
     }
@@ -240,5 +260,27 @@ public actor SyncService {
             from: "library_items",
             where: ["profile_id": profileId, "media_id": mediaId]
         )
+    }
+
+    public struct SystemAddonInfo: Sendable {
+        public let name: String?
+        public let url: String
+    }
+
+    public func pullSystemAddonInfo() async throws -> SystemAddonInfo? {
+        struct SystemAddonRow: Codable {
+            let manifest_url: String
+            let name: String?
+        }
+        let rows: [SystemAddonRow] = try await client.select(
+            from: "system_addon",
+            order: "updated_at.desc"
+        )
+        guard let row = rows.first else { return nil }
+        return SystemAddonInfo(name: row.name, url: row.manifest_url)
+    }
+
+    public func pullSystemAddon() async throws -> String? {
+        try await pullSystemAddonInfo()?.url
     }
 }

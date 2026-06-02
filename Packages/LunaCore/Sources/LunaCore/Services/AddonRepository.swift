@@ -11,23 +11,50 @@ public class AddonRepository: ObservableObject {
     private let syncService = SyncService()
     private var currentProfileId: String?
 
+    // Caches parsed manifests for 5 minutes so repeated loads (e.g. tab switches)
+    // don't re-hit the network. AIOMetadata sends no-store headers so URLCache
+    // doesn't help here; we cache at the app layer instead.
+    private nonisolated(unsafe) static var manifestCache: [String: (AddonManifest, Date)] = [:]
+    private static let manifestTTL: TimeInterval = 300
+    private var systemAddonUrl: String?
+
     private init() {}
 
-    public func loadAddons(profileId: String) async {
+    /// URLs that are provided automatically (defaults + admin system addon) and must
+    /// NOT be written back into the per-user `installed_addons` table. Mirrors the web
+    /// app, which merges these in-memory and persists only user-added extras.
+    private var managedURLs: Set<String> {
+        var set = Set(LunaConfig.defaultAddons)
+        if let systemAddonUrl { set.insert(systemAddonUrl) }
+        return set
+    }
+
+    /// The user's own installed addons — everything except defaults and the system addon.
+    public var userAddons: [ManagedAddon] {
+        managedAddons.filter { !managedURLs.contains($0.manifestUrl) }
+    }
+
+    /// True when this addon comes from defaults or the admin system addon (not user-added).
+    public func isManaged(_ addon: ManagedAddon) -> Bool {
+        managedURLs.contains(addon.manifestUrl)
+    }
+
+    public func loadAddons(profileId: String, systemAddonUrl: String? = nil) async {
         self.currentProfileId = profileId
+        self.systemAddonUrl = systemAddonUrl
         isLoading = true
         defer { isLoading = false }
 
-        do {
-            let remoteUrls = try await syncService.pullAddons(profileId: profileId)
-            if !remoteUrls.isEmpty {
-                await refreshFromUrls(remoteUrls)
-            } else {
-                await refreshFromUrls(LunaConfig.defaultAddons)
-            }
-        } catch {
-            await refreshFromUrls(LunaConfig.defaultAddons)
+        let remoteUrls = (try? await syncService.pullAddons(profileId: profileId)) ?? []
+        // Always include defaults; append any user extras that aren't in defaults
+        var merged = LunaConfig.defaultAddons
+        for url in remoteUrls where !merged.contains(url) {
+            merged.append(url)
         }
+        if let systemUrl = systemAddonUrl, !merged.contains(systemUrl) {
+            merged.insert(systemUrl, at: 0)
+        }
+        await refreshFromUrls(merged)
     }
 
     public func refreshFromUrls(_ urls: [String]) async {
@@ -68,8 +95,16 @@ public class AddonRepository: ObservableObject {
     }
 
     private func fetchManifest(url: String) async throws -> AddonManifest {
-        let text = try await StremioHTTPClient.shared.getText(url: url + (url.contains("?") ? "&" : "?") + "t=\(Date().timeIntervalSince1970)")
-        return try AddonManifestParser.parse(json: text, manifestUrl: url)
+        // Return cached manifest if fresh (server sends no-store so URLCache is useless)
+        if let (cached, stamp) = AddonRepository.manifestCache[url],
+           Date().timeIntervalSince(stamp) < AddonRepository.manifestTTL {
+            return cached
+        }
+        // No cache-buster: the timestamp suffix was defeating ETags on every launch
+        let text = try await StremioHTTPClient.shared.getText(url: url)
+        let manifest = try AddonManifestParser.parse(json: text, manifestUrl: url)
+        AddonRepository.manifestCache[url] = (manifest, Date())
+        return manifest
     }
 
     public func installAddon(url: String) async {
@@ -111,7 +146,10 @@ public class AddonRepository: ObservableObject {
 
     private func persistAddons() async {
         guard let profileId = currentProfileId else { return }
-        let urls = managedAddons.map { $0.manifestUrl }
+        // Persist only user-added addons. Defaults and the system addon are merged
+        // in-memory on load, so writing them here would pollute the per-user table
+        // and pin stale defaults forever. Matches LunaWebV2's saveInstalledAddons.
+        let urls = userAddons.map { $0.manifestUrl }
         try? await syncService.pushAddons(profileId: profileId, addonUrls: urls)
     }
 

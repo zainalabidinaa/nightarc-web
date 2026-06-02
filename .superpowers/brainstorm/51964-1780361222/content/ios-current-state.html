@@ -1,0 +1,343 @@
+<h2>Luna iOS App — Current State (SwiftUI)</h2>
+<p class="subtitle">All screens as coded in Apps/LunaApp/Sources/. Dark theme (#080808), accent purple (#CC66FF).</p>
+
+<div class="section">
+  <h3>Screen Flow</h3>
+</div>
+
+<div class="cards">
+  <!-- Auth Screen -->
+  <div class="card">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">Auth — Sign In / Sign Up</div>
+        <div class="mockup-body" style="background:#080808;padding:24px;text-align:center;font-family:-apple-system,sans-serif;">
+          <div style="font-size:48px;margin-bottom:8px;">🌙</div>
+          <div style="color:white;font-size:36px;font-weight:800;margin-bottom:4px;">Luna</div>
+          <div style="color:rgba(255,255,255,0.7);font-size:13px;margin-bottom:20px;">Sign in to continue</div>
+          <div style="background:#111;border-radius:10px;padding:12px;margin:0 16px 8px;text-align:left;color:rgba(255,255,255,0.5);">Email</div>
+          <div style="background:#111;border-radius:10px;padding:12px;margin:0 16px 8px;text-align:left;color:rgba(255,255,255,0.5);">Password</div>
+          <div style="background:#CC66FF;color:white;border-radius:10px;padding:12px;margin:12px 16px;font-weight:600;">Sign In</div>
+          <div style="color:#CC66FF;font-size:13px;">Don't have an account? Sign Up</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Auth Screen</h3>
+      <p>Moon icon + email/password form + invite code (sign-up). Toggle between sign-in/sign-up.</p>
+    </div>
+  </div>
+
+  <!-- Home Screen Hero -->
+  <div class="card">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">Home — Hero Section (420pt tall)</div>
+        <div class="mockup-body" style="background:#080808;font-family:-apple-system,sans-serif;">
+          <div style="position:relative;height:320px;overflow:hidden;border-radius:12px;background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);">
+            <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,#080808);padding:20px 16px 16px;">
+              <div style="color:#CC66FF;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">TRENDING MOVIES</div>
+              <div style="color:white;font-size:32px;font-weight:900;">Dune: Part Two</div>
+              <div style="display:flex;gap:8px;align-items:center;margin:4px 0 12px;">
+                <span style="color:#fbbf24;font-size:11px;">★ 8.8</span>
+                <span style="color:rgba(255,255,255,0.6);font-size:11px;">2024</span>
+                <span style="color:rgba(255,255,255,0.6);font-size:11px;">Sci-Fi, Action</span>
+              </div>
+              <div style="display:flex;gap:10px;">
+                <div style="background:white;color:black;border-radius:20px;padding:8px 18px;font-size:12px;font-weight:600;">▶ Watch Now</div>
+                <div style="background:rgba(255,255,255,0.15);color:white;border-radius:20px;padding:8px 14px;font-size:12px;font-weight:500;border:1px solid rgba(255,255,255,0.2);">+ My List</div>
+              </div>
+            </div>
+            <div style="position:absolute;bottom:12px;right:12px;display:flex;gap:4px;">
+              <div style="width:16px;height:3px;background:white;border-radius:2px;"></div>
+              <div style="width:6px;height:3px;background:rgba(255,255,255,0.3);border-radius:2px;"></div>
+              <div style="width:6px;height:3px;background:rgba(255,255,255,0.3);border-radius:2px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Home — Hero</h3>
+      <p>Auto-rotating cinematic hero (5 items, 6s). Backdrop image + gradient overlays + title + metadata + Watch Now/My List buttons + navigation dots.</p>
+    </div>
+  </div>
+
+  <!-- Home Screen Rows -->
+  <div class="card">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">Home — Continue Watching + Catalog Rows</div>
+        <div class="mockup-body" style="background:#080808;padding:12px;font-family:-apple-system,sans-serif;">
+          <div style="color:white;font-size:15px;font-weight:600;margin-bottom:8px;">Continue Watching</div>
+          <div style="display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;">
+            <div style="min-width:160px;height:90px;background:#1c1c1e;border-radius:8px;position:relative;">
+              <div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:#CC66FF;width:65%;"></div>
+              <div style="position:absolute;bottom:14px;left:50%;transform:translateX(-50%);width:28px;height:28px;background:rgba(0,0,0,0.5);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+                <span style="color:white;font-size:10px;">▶</span>
+              </div>
+            </div>
+            <div style="min-width:160px;height:90px;background:#1c1c1e;border-radius:8px;"></div>
+            <div style="min-width:160px;height:90px;background:#1c1c1e;border-radius:8px;"></div>
+          </div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <span style="color:white;font-size:15px;font-weight:600;">Popular Movies</span>
+          </div>
+          <div style="display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;">
+            <div style="min-width:100px;height:150px;background:#1c1c1e;border-radius:8px;display:flex;flex-direction:column;">
+              <div style="flex:1;background:linear-gradient(135deg,#2d1b3d,#1a1a2e);border-radius:8px;position:relative;">
+                <div style="position:absolute;top:4px;left:4px;background:#CC66FF;color:white;font-size:8px;font-weight:700;padding:2px 5px;border-radius:3px;">4K</div>
+              </div>
+              <div style="color:white;font-size:10px;padding:4px;">Movie Title</div>
+              <div style="color:rgba(255,255,255,0.5);font-size:9px;padding:0 4px 4px;">★ 7.5</div>
+            </div>
+            <div style="min-width:100px;height:150px;background:#1c1c1e;border-radius:8px;display:flex;flex-direction:column;">
+              <div style="flex:1;background:linear-gradient(135deg,#2d1b3d,#16213e);border-radius:8px;"></div>
+              <div style="color:white;font-size:10px;padding:4px;">Movie Title</div>
+              <div style="color:rgba(255,255,255,0.5);font-size:9px;padding:0 4px 4px;">★ 8.2</div>
+            </div>
+            <div style="min-width:100px;height:150px;background:#1c1c1e;border-radius:8px;display:flex;flex-direction:column;">
+              <div style="flex:1;background:linear-gradient(135deg,#1a2e1a,#1a1a2e);border-radius:8px;"></div>
+              <div style="color:white;font-size:10px;padding:4px;">Movie Title</div>
+              <div style="color:rgba(255,255,255,0.5);font-size:9px;padding:0 4px 4px;">★ 6.9</div>
+            </div>
+            <div style="min-width:100px;height:150px;background:#1c1c1e;border-radius:8px;display:flex;flex-direction:column;">
+              <div style="flex:1;background:linear-gradient(135deg,#1b2d3d,#16213e);border-radius:8px;"></div>
+            </div>
+          </div>
+
+          <div style="color:white;font-size:13px;font-weight:600;margin-bottom:8px;">Browse</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;">
+            <div style="aspect-ratio:2/3;background:#1c1c1e;border-radius:8px;position:relative;">
+              <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,0.75));padding:4px;border-radius:0 0 8px 8px;">
+                <div style="color:white;font-size:8px;font-weight:600;">Netflix</div>
+              </div>
+            </div>
+            <div style="aspect-ratio:2/3;background:#1c1c1e;border-radius:8px;position:relative;">
+              <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,0.75));padding:4px;border-radius:0 0 8px 8px;">
+                <div style="color:white;font-size:8px;font-weight:600;">Amazon</div>
+              </div>
+            </div>
+            <div style="aspect-ratio:2/3;background:#1c1c1e;border-radius:8px;position:relative;">
+              <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,0.75));padding:4px;border-radius:0 0 8px 8px;">
+                <div style="color:white;font-size:8px;font-weight:600;">Disney+</div>
+              </div>
+            </div>
+            <div style="aspect-ratio:2/3;background:#1c1c1e;border-radius:8px;position:relative;">
+              <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,0.75));padding:4px;border-radius:0 0 8px 8px;">
+                <div style="color:white;font-size:8px;font-weight:600;">Apple TV+</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Home — Content Rows</h3>
+      <p>Continue Watching row (16:9 cards + progress bar). Main catalog rows (portrait 2:3 cards + badges). FolderGrid section (4 columns).</p>
+    </div>
+  </div>
+
+  <!-- Detail Screen -->
+  <div class="card">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">Detail — Media Info + Seasons</div>
+        <div class="mockup-body" style="background:#080808;font-family:-apple-system,sans-serif;">
+          <div style="position:relative;height:240px;background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:12px;overflow:hidden;">
+            <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,#080808);padding:40px 16px 0;"></div>
+            <div style="position:absolute;bottom:60px;left:12px;display:flex;align-items:flex-end;gap:12px;">
+              <div style="width:72px;height:108px;background:#1c1c1e;border-radius:6px;"></div>
+              <div>
+                <div style="color:white;font-size:18px;font-weight:700;">Dune: Part Two</div>
+                <div style="color:rgba(255,255,255,0.6);font-size:11px;">2024 • 2h 46m</div>
+              </div>
+            </div>
+          </div>
+          <div style="padding:12px;display:flex;gap:8px;">
+            <div style="flex:1;background:#CC66FF;color:white;text-align:center;padding:8px;border-radius:10px;font-size:12px;font-weight:600;">▶ Play</div>
+            <div style="background:#111;color:white;padding:8px;border-radius:10px;">🔖</div>
+            <div style="background:#111;color:white;padding:8px;border-radius:10px;">✓</div>
+          </div>
+          <div style="padding:0 12px;">
+            <div style="color:white;font-size:13px;font-weight:600;margin-bottom:4px;">Overview</div>
+            <div style="color:rgba(255,255,255,0.7);font-size:11px;line-height:1.4;">Paul Atreides unites with the Fremen to seek revenge against those who destroyed his family...</div>
+          </div>
+          <div style="padding:10px 12px;">
+            <div style="color:white;font-size:13px;font-weight:600;margin-bottom:4px;">Cast</div>
+            <div style="display:flex;gap:8px;">
+              <div style="width:44px;height:44px;background:#1c1c1e;border-radius:50%;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.5);font-size:16px;">T</div>
+              <div style="width:44px;height:44px;background:#1c1c1e;border-radius:50%;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.5);font-size:16px;">Z</div>
+              <div style="width:44px;height:44px;background:#1c1c1e;border-radius:50%;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.5);font-size:16px;">R</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Detail Screen</h3>
+      <p>Backdrop hero + poster + Play/Bookmark/Watched buttons. Overview, genres, cast circles, network/studio links, seasons selector + episode cards.</p>
+    </div>
+  </div>
+
+  <!-- Search Screen -->
+  <div class="card">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">Search</div>
+        <div class="mockup-body" style="background:#080808;padding:12px;font-family:-apple-system,sans-serif;">
+          <div style="background:#111;border-radius:10px;padding:10px;margin-bottom:12px;color:rgba(255,255,255,0.5);">Search movies & shows...</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+            <div style="aspect-ratio:2/3;background:#1c1c1e;border-radius:8px;"></div>
+            <div style="aspect-ratio:2/3;background:#1c1c1e;border-radius:8px;"></div>
+            <div style="aspect-ratio:2/3;background:#1c1c1e;border-radius:8px;"></div>
+            <div style="aspect-ratio:2/3;background:#1c1c1e;border-radius:8px;"></div>
+            <div style="aspect-ratio:2/3;background:#1c1c1e;border-radius:8px;"></div>
+            <div style="aspect-ratio:2/3;background:#1c1c1e;border-radius:8px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Search Screen</h3>
+      <p>Text field + adaptive grid of ContentCards. On-submit search against enabled addons. Empty state with icon.</p>
+    </div>
+  </div>
+
+  <!-- Library Screen -->
+  <div class="card">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">Library</div>
+        <div class="mockup-body" style="background:#080808;padding:12px;font-family:-apple-system,sans-serif;">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+            <div style="aspect-ratio:2/3;background:#1c1c1e;border-radius:8px;"></div>
+            <div style="aspect-ratio:2/3;background:#1c1c1e;border-radius:8px;"></div>
+            <div style="aspect-ratio:2/3;background:#1c1c1e;border-radius:8px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Library Screen</h3>
+      <p>Grid of saved watchlist items. 2:3 poster cards + context menu (long-press to remove). Empty state with bookmark icon.</p>
+    </div>
+  </div>
+</div>
+
+<div class="cards">
+  <!-- Settings Screen -->
+  <div class="card">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">Settings</div>
+        <div class="mockup-body" style="background:#080808;padding:4px;font-family:-apple-system,sans-serif;">
+          <div style="background:#1c1c1e;border-radius:10px;margin:8px;">
+            <div style="padding:12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,0.1);">
+              <div style="width:36px;height:36px;background:#CC66FF;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:600;">Z</div>
+              <div>
+                <div style="color:white;font-size:14px;font-weight:500;">Zain</div>
+                <div style="color:rgba(255,255,255,0.5);font-size:11px;">Admin</div>
+              </div>
+            </div>
+            <div style="padding:12px;color:#CC66FF;font-size:14px;border-bottom:1px solid rgba(255,255,255,0.1);">Switch Profile</div>
+          </div>
+          <div style="background:#1c1c1e;border-radius:10px;margin:8px;">
+            <div style="padding:12px;display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.1);">
+              <span style="color:white;">Manage Addons</span>
+              <span style="color:rgba(255,255,255,0.5);">3</span>
+            </div>
+            <div style="padding:8px 12px;color:rgba(255,255,255,0.5);font-size:10px;">Addons provide content catalogs, metadata, and streaming sources</div>
+          </div>
+          <div style="background:#1c1c1e;border-radius:10px;margin:8px;">
+            <div style="padding:12px;color:#ff4444;">Sign Out</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Settings Screen</h3>
+      <p>iOS-style grouped List. Profile section (avatar circle + name/role). Addon manager with count badge. Sign out. App version footer.</p>
+    </div>
+  </div>
+
+  <!-- Tab Bar -->
+  <div class="card">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">Tab Bar + Navigation Structure</div>
+        <div class="mockup-body" style="background:#080808;padding:20px 12px;font-family:-apple-system,sans-serif;">
+          <div style="background:#111;border-radius:12px;padding:8px 16px;display:flex;justify-content:space-between;align-items:center;">
+            <div style="text-align:center;color:#CC66FF;">
+              <div style="font-size:18px;">🏠</div>
+              <div style="font-size:9px;">Home</div>
+            </div>
+            <div style="text-align:center;color:rgba(255,255,255,0.5);">
+              <div style="font-size:18px;">🔍</div>
+              <div style="font-size:9px;">Search</div>
+            </div>
+            <div style="text-align:center;color:rgba(255,255,255,0.5);">
+              <div style="font-size:18px;">📖</div>
+              <div style="font-size:9px;">Library</div>
+            </div>
+            <div style="text-align:center;color:rgba(255,255,255,0.5);">
+              <div style="font-size:18px;">⚙️</div>
+              <div style="font-size:9px;">Settings</div>
+            </div>
+            <div style="text-align:center;color:rgba(255,255,255,0.3);">
+              <div style="font-size:18px;">🛡️</div>
+              <div style="font-size:9px;">Admin</div>
+            </div>
+          </div>
+          <div style="margin-top:12px;padding:8px;background:#1c1c1e;border-radius:8px;text-align:center;">
+            <div style="color:rgba(255,255,255,0.7);font-size:11px;margin-bottom:4px;">Navigation: TabView → NavigationStack per tab</div>
+            <div style="color:rgba(255,255,255,0.4);font-size:10px;">Home / Search / Library / Settings each have their own NavigationStack</div>
+            <div style="color:rgba(255,255,255,0.4);font-size:10px;">DetailScreen pushed as .navigationDestination</div>
+            <div style="color:rgba(255,255,255,0.4);font-size:10px;">StreamSelectionScreen as .sheet</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Tab Bar</h3>
+      <p>Dark-mode TabView with 4-5 tabs (Admin conditional on role). Each tab has its own NavigationStack. accentColor = .purple</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Architecture Notes</h3>
+  <div style="display:flex;gap:16px;flex-wrap:wrap;">
+    <div style="flex:1;min-width:200px;background:#111;border-radius:10px;padding:16px;">
+      <div class="label">Theme</div>
+      <div style="margin-top:8px;font-size:12px;color:rgba(255,255,255,0.7);line-height:1.6;">
+        <code style="color:#CC66FF;">Background:</code> #080808<br>
+        <code style="color:#CC66FF;">Surface:</code> #111111<br>
+        <code style="color:#CC66FF;">Elevated:</code> #1c1c1e<br>
+        <code style="color:#CC66FF;">Accent:</code> #CC66FF<br>
+        <code style="color:#CC66FF;">Text:</code> white / 0.7 / 0.5 opacity
+      </div>
+    </div>
+    <div style="flex:1;min-width:200px;background:#111;border-radius:10px;padding:16px;">
+      <div class="label">State Management</div>
+      <div style="margin-top:8px;font-size:12px;color:rgba(255,255,255,0.7);line-height:1.6;">
+        <code style="color:#CC66FF;">@StateObject</code> per repository<br>
+        <code style="color:#CC66FF;">@EnvironmentObject</code> ProfileManager<br>
+        <code style="color:#CC66FF;">.task</code> for async data loading<br>
+        <code style="color:#CC66FF;">Timer</code> for hero auto-rotation
+      </div>
+    </div>
+    <div style="flex:1;min-width:200px;background:#111;border-radius:10px;padding:16px;">
+      <div class="label">Key Limitations</div>
+      <div style="margin-top:8px;font-size:12px;color:rgba(255,255,255,0.7);line-height:1.6;">
+        No Liquid Glass (iOS 17+ only)<br>
+        No iPad layout adaptation<br>
+        No offline support<br>
+        No pull-to-refresh<br>
+        Basic error handling<br>
+        No animations/transitions
+      </div>
+    </div>
+  </div>
+</div>

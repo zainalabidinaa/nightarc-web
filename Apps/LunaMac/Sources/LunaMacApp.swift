@@ -32,7 +32,7 @@ struct LunaMacApp: App {
         window.styleMask.insert(.fullSizeContentView)
         window.isMovableByWindowBackground = true
         window.backgroundColor = NSColor(
-            red: 0.05, green: 0.05, blue: 0.12, alpha: 1.0
+            red: 0.031, green: 0.031, blue: 0.031, alpha: 1.0
         )
     }
 }

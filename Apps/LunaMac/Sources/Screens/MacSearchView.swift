@@ -39,7 +39,7 @@ struct MacSearchView: View {
             .cornerRadius(10)
             .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.white.opacity(0.08), lineWidth: 1))
             .padding(.horizontal)
-            .padding(.top, 56)
+            .padding(.top, LunaTheme.navBarTopInset)
 
             if !searchRepo.results.isEmpty {
                 HStack(spacing: 8) {

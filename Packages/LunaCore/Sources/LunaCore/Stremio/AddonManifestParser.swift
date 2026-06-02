@@ -21,10 +21,30 @@ public enum AddonManifestParser {
             let logo: String?
             let background: String?
         }
+        // Stremio manifests express `resources` as EITHER plain strings
+        // (e.g. "catalog", "meta", "stream") OR objects ({name, types, idPrefixes}).
+        // Most addons (Cinemeta, AIOMetadata, OpenSubtitles) use the string form, so
+        // we must accept both or the whole manifest fails to decode and is dropped.
         struct RawResource: Codable {
             let name: String?
             let types: [String]?
             let idPrefixes: [String]?
+
+            enum CodingKeys: String, CodingKey { case name, types, idPrefixes }
+
+            init(from decoder: Decoder) throws {
+                let single = try decoder.singleValueContainer()
+                if let str = try? single.decode(String.self) {
+                    name = str
+                    types = nil
+                    idPrefixes = nil
+                } else {
+                    let c = try decoder.container(keyedBy: CodingKeys.self)
+                    name = try c.decodeIfPresent(String.self, forKey: .name)
+                    types = try c.decodeIfPresent([String].self, forKey: .types)
+                    idPrefixes = try c.decodeIfPresent([String].self, forKey: .idPrefixes)
+                }
+            }
         }
         struct RawCatalog: Codable {
             let type: String?

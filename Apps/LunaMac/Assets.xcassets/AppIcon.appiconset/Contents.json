@@ -16,7 +16,7 @@
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "32x32",
-      "filename" : "icon_32x32.png"
+      "filename" : "icon_32x32_1x.png"
     },
     {
       "idiom" : "mac",
@@ -40,7 +40,7 @@
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "256x256",
-      "filename" : "icon_256x256.png"
+      "filename" : "icon_256x256_1x.png"
     },
     {
       "idiom" : "mac",
@@ -52,13 +52,13 @@
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "512x512",
-      "filename" : "icon_512x512.png"
+      "filename" : "icon_512x512_1x.png"
     },
     {
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "512x512",
-      "filename" : "icon_512x512.png"
+      "filename" : "icon_512x512@2x.png"
     }
   ],
   "info" : {

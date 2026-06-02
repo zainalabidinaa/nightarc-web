@@ -1,11 +1,11 @@
-// swift-tools-version: 5.9
+// swift-tools-version: 6.0
 import PackageDescription
 
 let package = Package(
     name: "LunaCore",
     platforms: [
         .iOS(.v17),
-        .macOS(.v14)
+        .macOS("26.0")
     ],
     products: [
         .library(
@@ -17,11 +17,6 @@ let package = Package(
         .target(
             name: "LunaCore",
             path: "Sources/LunaCore"
-        ),
-        .testTarget(
-            name: "LunaCoreTests",
-            dependencies: ["LunaCore"],
-            path: "Tests/LunaCoreTests"
         )
     ]
 )

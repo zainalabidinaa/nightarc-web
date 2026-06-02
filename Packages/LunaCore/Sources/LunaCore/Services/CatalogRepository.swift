@@ -5,6 +5,7 @@ public class CatalogRepository: ObservableObject {
     public static let shared = CatalogRepository()
 
     @Published public var catalogRows: [CatalogRow] = []
+    @Published public var collectionRows: [CatalogRow] = []
     @Published public var isLoading = false
 
     private let catalogService = CatalogService.shared
@@ -13,48 +14,78 @@ public class CatalogRepository: ObservableObject {
 
     public func loadAllCatalogs(addons: [AddonManifest]) async {
         isLoading = true
-        defer { isLoading = false }
+        catalogRows = []
 
-        var rows: [CatalogRow] = []
+        // Score catalogs so Popular/Trending load first — hero appears fast,
+        // then remaining rows fill in progressively behind it.
+        struct ScoredCatalog {
+            let addon: AddonManifest
+            let catalog: AddonCatalog
+            let baseURL: String
+            let extras: [String: String]
+            let score: Int
+        }
 
-        await withTaskGroup(of: CatalogRow?.self) { group in
-            for addon in addons {
-                guard let catalogs = addon.catalogs,
-                      let baseURL = addon.transportUrl else { continue }
+        var scored: [ScoredCatalog] = []
+        for addon in addons {
+            guard let catalogs = addon.catalogs, let baseURL = addon.transportUrl else { continue }
+            for catalog in catalogs {
+                let needsSearch = (catalog.extra ?? []).contains { $0.name == "search" && ($0.isRequired ?? false) }
+                if needsSearch { continue }
+                var extras: [String: String] = [:]
+                for e in catalog.extra ?? [] { if let first = e.options?.first { extras[e.name] = first } }
+                let text = "\(catalog.name ?? "") \(catalog.id) \(catalog.type)".lowercased()
+                var s = 0
+                if text.contains("popular")  { s += 4 }
+                if text.contains("trending") { s += 4 }
+                if text.contains("featured") { s += 3 }
+                if catalog.type == "movie" || catalog.type == "series" { s += 2 }
+                scored.append(ScoredCatalog(addon: addon, catalog: catalog, baseURL: baseURL, extras: extras, score: s))
+            }
+        }
+        scored.sort { $0.score > $1.score }
 
-                for catalog in catalogs {
+        // Load high-priority catalogs first (score ≥ 4) so the hero populates fast,
+        // then load everything else progressively.
+        let priority = scored.filter { $0.score >= 4 }
+        let rest     = scored.filter { $0.score < 4 }
+
+        func fetch(_ items: [ScoredCatalog]) async {
+            await withTaskGroup(of: CatalogRow?.self) { group in
+                for sc in items {
                     group.addTask {
                         do {
                             let query = CatalogService.StremioCatalogQuery(
-                                type: catalog.type,
-                                id: catalog.id,
-                                baseURL: baseURL
+                                type: sc.catalog.type,
+                                id: sc.catalog.id,
+                                baseURL: sc.baseURL,
+                                extras: sc.extras
                             )
-                            let items = try await self.catalogService.fetchCatalog(query: query)
-                            guard !items.isEmpty else { return nil }
+                            let rows = try await self.catalogService.fetchCatalog(query: query)
+                            guard !rows.isEmpty else { return nil }
                             return CatalogRow(
-                                id: "\(addon.id)_\(catalog.id)",
-                                title: catalog.name ?? catalog.id.capitalized,
-                                items: items,
-                                addonName: addon.name,
+                                id: "\(sc.addon.id)_\(sc.catalog.type)_\(sc.catalog.id)",
+                                title: sc.catalog.name ?? sc.catalog.id.capitalized,
+                                items: rows,
+                                addonName: sc.addon.name,
                                 page: 0,
-                                hasMore: items.count >= 50
+                                hasMore: rows.count >= 50
                             )
-                        } catch {
-                            return nil
-                        }
+                        } catch { return nil }
                     }
                 }
-            }
-
-            for await row in group {
-                if let row = row {
-                    rows.append(row)
+                for await row in group {
+                    if let row, !catalogRows.contains(where: { $0.id == row.id }) {
+                        catalogRows.append(row)
+                        isLoading = false
+                    }
                 }
             }
         }
 
-        self.catalogRows = rows
+        await fetch(priority)   // hero-worthy rows — appear first
+        await fetch(rest)       // remaining rows fill in after
+        isLoading = false
     }
 
     public func loadFromCollections(
@@ -119,7 +150,7 @@ public class CatalogRepository: ObservableObject {
             }
         }
 
-        self.catalogRows = rows
+        self.collectionRows = rows
     }
 
     private func genreExtras(_ genre: String?) -> [String: String] {

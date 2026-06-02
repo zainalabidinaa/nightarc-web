@@ -3,7 +3,13 @@ import LunaCore
 
 struct ContinueWatchingCard: View {
     let item: ContinueWatchingItem
+    var isLoading: Bool = false
     @State private var isHovering = false
+
+    private var episodeLabel: String? {
+        guard let s = item.seasonNumber, let e = item.episodeNumber else { return nil }
+        return "S\(s)E\(e)"
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -44,7 +50,10 @@ struct ContinueWatchingCard: View {
                 }
                 .cornerRadius(8)
 
-                if isHovering {
+                if isLoading {
+                    Color.black.opacity(0.4).cornerRadius(8)
+                    ProgressView().tint(.white)
+                } else if isHovering {
                     Color.black.opacity(0.4).cornerRadius(8)
                     Circle()
                         .fill(Color.white.opacity(0.2))
@@ -66,8 +75,8 @@ struct ContinueWatchingCard: View {
                 .lineLimit(1)
                 .frame(width: 200, alignment: .leading)
 
-            if let epTitle = item.episodeTitle {
-                Text(epTitle)
+            if let subtitle = item.episodeTitle ?? episodeLabel {
+                Text(subtitle)
                     .font(.caption2)
                     .foregroundColor(LunaTheme.textTertiary)
                     .lineLimit(1)

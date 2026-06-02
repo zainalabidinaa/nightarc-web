@@ -5,6 +5,8 @@ struct MacSettingsView: View {
     @EnvironmentObject var profileManager: ProfileManager
     @StateObject private var addonRepo = AddonRepository.shared
     @State private var newUrl = ""
+    @State private var systemAddonName: String?
+    @State private var systemAddonUrl: String?
 
     var body: some View {
         ScrollView {
@@ -34,7 +36,7 @@ struct MacSettingsView: View {
                     .background(LunaTheme.surface)
                     .cornerRadius(10)
                     .padding(.horizontal)
-                    .padding(.top, 56)
+                    .padding(.top, LunaTheme.navBarTopInset)
 
                     Button("Switch Profile") {
                         profileManager.currentProfile = nil
@@ -45,8 +47,42 @@ struct MacSettingsView: View {
                     .padding(.top, 8)
                 }
 
+                if let sysUrl = systemAddonUrl {
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text("System Addon")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundColor(LunaTheme.textTertiary)
+                            .tracking(1)
+                            .textCase(.uppercase)
+                            .padding(.horizontal, 20)
+                            .padding(.top, 24)
+                            .padding(.bottom, 6)
+
+                        HStack {
+                            Image(systemName: "star.circle.fill")
+                                .foregroundColor(LunaTheme.accent)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(systemAddonName ?? "System Addon")
+                                    .font(.subheadline)
+                                    .foregroundColor(.white)
+                                Text(sysUrl)
+                                    .font(.caption2)
+                                    .foregroundColor(LunaTheme.textTertiary)
+                                    .lineLimit(1)
+                                    .truncationMode(.middle)
+                            }
+                            Spacer()
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                        .background(LunaTheme.surface)
+                        .cornerRadius(10)
+                        .padding(.horizontal)
+                    }
+                }
+
                 VStack(alignment: .leading, spacing: 0) {
-                    Text("Addons (\(addonRepo.managedAddons.count))")
+                    Text("Addons (\(addonRepo.userAddons.count) installed)")
                         .font(.system(size: 11, weight: .bold))
                         .foregroundColor(LunaTheme.textTertiary)
                         .tracking(1)
@@ -56,26 +92,47 @@ struct MacSettingsView: View {
                         .padding(.bottom, 6)
 
                     VStack(spacing: 0) {
-                        ForEach(addonRepo.managedAddons) { addon in
+                        if addonRepo.userAddons.isEmpty {
                             HStack {
-                                Text(addon.displayName)
-                                    .font(.subheadline)
-                                    .foregroundColor(.white)
-                                Spacer()
-                                Circle()
-                                    .fill(addon.enabled ? Color.green : LunaTheme.textTertiary)
-                                    .frame(width: 8, height: 8)
-                                Text(addon.enabled ? "Enabled" : "Disabled")
+                                Text("No custom addons. Core addons are included automatically and sync across your devices.")
                                     .font(.caption)
-                                    .foregroundColor(addon.enabled ? .green : LunaTheme.textTertiary)
+                                    .foregroundColor(LunaTheme.textTertiary)
+                                Spacer()
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                            .background(LunaTheme.surface)
+                        }
+
+                        ForEach(addonRepo.userAddons) { addon in
+                            HStack(spacing: 10) {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(addon.displayName)
+                                        .font(.subheadline)
+                                        .foregroundColor(.white)
+                                    Text(addon.manifestUrl)
+                                        .font(.caption2)
+                                        .foregroundColor(LunaTheme.textTertiary)
+                                        .lineLimit(1)
+                                        .truncationMode(.middle)
+                                }
+                                Spacer()
+                                Button("Remove") {
+                                    addonRepo.removeAddon(url: addon.manifestUrl)
+                                }
+                                .font(.caption)
+                                .foregroundColor(.red)
+                                .buttonStyle(.plain)
                             }
                             .padding(.horizontal, 16)
                             .padding(.vertical, 10)
                             .background(LunaTheme.surface)
-                            if addon.id != addonRepo.managedAddons.last?.id {
+                            if addon.id != addonRepo.userAddons.last?.id {
                                 Divider().background(Color.white.opacity(0.06))
                             }
                         }
+
+                        Divider().background(Color.white.opacity(0.06))
 
                         HStack(spacing: 8) {
                             TextField("Add addon URL...", text: $newUrl)
@@ -126,5 +183,13 @@ struct MacSettingsView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(LunaTheme.background)
+        .task {
+            let info = try? await SyncService.shared.pullSystemAddonInfo()
+            systemAddonUrl = info?.url
+            systemAddonName = info?.name
+            if addonRepo.managedAddons.isEmpty, let profile = profileManager.currentProfile {
+                await addonRepo.loadAddons(profileId: profile.id, systemAddonUrl: info?.url)
+            }
+        }
     }
 }

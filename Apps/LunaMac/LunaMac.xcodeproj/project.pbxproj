@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0B57296543256691C6D991EC /* SpeedPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67A23554298F8A05D33B879C /* SpeedPicker.swift */; };
+		A11CE00000000000000000B2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A11CE00000000000000000B1 /* Assets.xcassets */; };
 		0F3BD507FE7FA21B19743891 /* PillNavBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC87226396402DD391FC0EA8 /* PillNavBar.swift */; };
 		15FB252603EEA7C4D7FC39C7 /* LunaMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D9F1BB9E9AE2FDD4783A8F /* LunaMacApp.swift */; };
 		25AE3ED3CBBD178DFBCF88F2 /* ContinueWatchingCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 775F60F464BE79EC3685B054 /* ContinueWatchingCard.swift */; };
@@ -33,6 +34,7 @@
 
 /* Begin PBXFileReference section */
 		006E59DB9A61C6A5A152E632 /* MediaRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaRow.swift; sourceTree = "<group>"; };
+		A11CE00000000000000000B1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1D208A16CA8BCBA46CC00B06 /* PlayerControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerControls.swift; sourceTree = "<group>"; };
 		21DE9B3C9A2A39B080AC0F27 /* MacSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacSettingsView.swift; sourceTree = "<group>"; };
 		45C6A214683E2B604D87AA91 /* HomeHero.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeHero.swift; sourceTree = "<group>"; };
@@ -68,6 +70,17 @@
 		};
 /* End PBXFrameworksBuildPhase section */
 
+/* Begin PBXResourcesBuildPhase section */
+		A11CE00000000000000000B3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A11CE00000000000000000B2 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXGroup section */
 		037C85AC699919FA0D49B241 /* Products */ = {
 			isa = PBXGroup;
@@ -82,6 +95,7 @@
 			children = (
 				D77E24EDF41934D89B9FD85F /* Packages */,
 				B87C8F611C498CBB8E0E2011 /* Sources */,
+				A11CE00000000000000000B1 /* Assets.xcassets */,
 				037C85AC699919FA0D49B241 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -147,6 +161,7 @@
 			buildPhases = (
 				72F36C0C557CB523166AD994 /* Sources */,
 				2B3A6C897AA82D7D3B469371 /* Frameworks */,
+				A11CE00000000000000000B3 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -230,8 +245,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_KEY_CFBundleIconFile = AppIcon;
-				INFOPLIST_KEY_LSMinimumSystemVersion = 14.0;
+				INFOPLIST_KEY_LSMinimumSystemVersion = 26.0;
 				INFOPLIST_KEY_NSAppTransportSecurity = "[\"NSAllowsArbitraryLoads\": true]";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -297,7 +311,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Luna;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Luna";
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -306,7 +320,7 @@
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 			};
 			name = Debug;
 		};
@@ -359,7 +373,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Luna;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Luna";
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -367,7 +381,7 @@
 				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 			};
 			name = Release;
 		};
@@ -376,8 +390,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_KEY_CFBundleIconFile = AppIcon;
-				INFOPLIST_KEY_LSMinimumSystemVersion = 14.0;
+				INFOPLIST_KEY_LSMinimumSystemVersion = 26.0;
 				INFOPLIST_KEY_NSAppTransportSecurity = "[\"NSAllowsArbitraryLoads\": true]";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

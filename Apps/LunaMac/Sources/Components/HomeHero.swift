@@ -11,6 +11,7 @@ struct HomeHero: View {
 
     var body: some View {
         ZStack(alignment: .bottomLeading) {
+            // ── Backdrop image ────────────────────────────────────────────────
             Group {
                 if let banner = item.banner ?? item.poster,
                    let url = URL(string: banner) {
@@ -29,6 +30,17 @@ struct HomeHero: View {
             .frame(height: 480)
             .clipped()
 
+            // ── Gradient layer 1: top fade (navbar blending) ─────────────────
+            LinearGradient(
+                colors: [LunaTheme.background, .clear],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(maxWidth: .infinity)
+            .frame(height: 120)
+            .frame(maxHeight: .infinity, alignment: .top)
+
+            // ── Gradient layer 2: bottom fade ─────────────────────────────────
             LinearGradient(
                 colors: [.clear, LunaTheme.background.opacity(0.7), LunaTheme.background],
                 startPoint: .top,
@@ -36,13 +48,15 @@ struct HomeHero: View {
             )
             .frame(height: 480)
 
+            // ── Gradient layer 3: left-to-right (content legibility) ──────────
             LinearGradient(
-                colors: [.black.opacity(0.5), .clear],
+                colors: [.black.opacity(0.9), .black.opacity(0.5), .clear],
                 startPoint: .leading,
                 endPoint: .trailing
             )
             .frame(height: 480)
 
+            // ── Content ───────────────────────────────────────────────────────
             VStack(alignment: .leading, spacing: 0) {
                 Text(rowTitle.uppercased())
                     .font(.system(size: 11, weight: .bold))
@@ -50,12 +64,23 @@ struct HomeHero: View {
                     .tracking(2)
                     .padding(.bottom, 8)
 
-                Text(item.name)
-                    .font(.system(size: 44, weight: .black))
-                    .foregroundColor(.white)
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.7)
-                    .padding(.bottom, 6)
+                // Logo or title text — mirrors LunaWebV2 HomeHero
+                if let logoUrl = item.logo.flatMap({ URL(string: $0) }) {
+                    AsyncImage(url: logoUrl) { phase in
+                        if case .success(let img) = phase {
+                            img.resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(height: 64)
+                                .frame(maxWidth: 340, alignment: .leading)
+                        } else {
+                            titleText
+                        }
+                    }
+                    .padding(.bottom, 8)
+                } else {
+                    titleText
+                        .padding(.bottom, 6)
+                }
 
                 HStack(spacing: 8) {
                     if let rating = item.imdbRating {
@@ -74,7 +99,18 @@ struct HomeHero: View {
                             .foregroundColor(.white.opacity(0.6))
                     }
                 }
-                .padding(.bottom, 18)
+                .padding(.bottom, 8)
+
+                if let desc = item.description {
+                    Text(desc)
+                        .font(.subheadline)
+                        .foregroundColor(.white.opacity(0.7))
+                        .lineLimit(2)
+                        .frame(maxWidth: 500, alignment: .leading)
+                        .padding(.bottom, 16)
+                } else {
+                    Spacer().frame(height: 16)
+                }
 
                 HStack(spacing: 12) {
                     Button(action: onTap) {
@@ -94,12 +130,9 @@ struct HomeHero: View {
                             .foregroundColor(.white)
                             .padding(.horizontal, 18)
                             .padding(.vertical, 11)
-                            .background(Color.white.opacity(0.12))
+                            .background(.ultraThinMaterial)
                             .clipShape(Capsule())
-                            .overlay(
-                                Capsule()
-                                    .stroke(Color.white.opacity(0.2), lineWidth: 1)
-                            )
+                            .overlay(Capsule().stroke(Color.white.opacity(0.2), lineWidth: 1))
                     }
                     .buttonStyle(.plain)
                 }
@@ -108,16 +141,14 @@ struct HomeHero: View {
             .padding(.bottom, 28)
             .frame(maxWidth: .infinity, alignment: .leading)
 
+            // ── Pagination dots ───────────────────────────────────────────────
             if dotCount > 1 {
                 HStack(spacing: 5) {
                     ForEach(0..<dotCount, id: \.self) { i in
                         Button { onDotTap(i) } label: {
                             RoundedRectangle(cornerRadius: 2)
                                 .fill(i == activeIndex ? Color.white : Color.white.opacity(0.3))
-                                .frame(
-                                    width: i == activeIndex ? 20 : 6,
-                                    height: 3
-                                )
+                                .frame(width: i == activeIndex ? 20 : 6, height: 3)
                         }
                         .buttonStyle(.plain)
                         .animation(.easeInOut(duration: 0.25), value: activeIndex)
@@ -130,5 +161,13 @@ struct HomeHero: View {
         }
         .frame(height: 480)
         .clipped()
+    }
+
+    private var titleText: some View {
+        Text(item.name)
+            .font(.system(size: 44, weight: .black))
+            .foregroundColor(.white)
+            .lineLimit(2)
+            .minimumScaleFactor(0.7)
     }
 }

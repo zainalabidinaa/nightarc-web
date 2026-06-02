@@ -9,15 +9,21 @@ public struct WatchProgressEntry: Codable, Sendable, Identifiable {
     public let durationSeconds: Double
     public let completed: Bool
     public let updatedAt: Date
+    public let name: String?
+    public let poster: String?
+    public let parentMetaId: String?
+    public let season: Int?
+    public let episode: Int?
 
     enum CodingKeys: String, CodingKey {
-        case id, completed
+        case id, completed, name, poster, season, episode
         case profileId = "profile_id"
         case mediaId = "media_id"
         case mediaType = "media_type"
         case positionSeconds = "position_seconds"
         case durationSeconds = "duration_seconds"
         case updatedAt = "updated_at"
+        case parentMetaId = "parent_meta_id"
     }
 
     public var progressFraction: Double {
@@ -33,7 +39,12 @@ public struct WatchProgressEntry: Codable, Sendable, Identifiable {
         positionSeconds: Double = 0,
         durationSeconds: Double = 0,
         completed: Bool = false,
-        updatedAt: Date = Date()
+        updatedAt: Date = Date(),
+        name: String? = nil,
+        poster: String? = nil,
+        parentMetaId: String? = nil,
+        season: Int? = nil,
+        episode: Int? = nil
     ) {
         self.id = id
         self.profileId = profileId
@@ -43,6 +54,11 @@ public struct WatchProgressEntry: Codable, Sendable, Identifiable {
         self.durationSeconds = durationSeconds
         self.completed = completed
         self.updatedAt = updatedAt
+        self.name = name
+        self.poster = poster
+        self.parentMetaId = parentMetaId
+        self.season = season
+        self.episode = episode
     }
 }
 

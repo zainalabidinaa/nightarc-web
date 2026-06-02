@@ -1,0 +1,427 @@
+<h2>Luna iOS — Redesign Vision</h2>
+<p class="subtitle">Liquid Glass + AVPlayer + Profile Picker + Polish. Side-by-side with current state.</p>
+
+<div class="section">
+  <h3>1. Liquid Glass — Whole-App Transformation</h3>
+</div>
+
+<div class="split">
+  <!-- CURRENT Home -->
+  <div class="mockup">
+    <div class="mockup-header">CURRENT: Flat Dark</div>
+    <div class="mockup-body" style="background:#080808;font-family:-apple-system,sans-serif;">
+      <div style="position:relative;height:340px;border-radius:12px;overflow:hidden;background:linear-gradient(135deg,#1a1a2e,#16213e);">
+        <div style="position:absolute;bottom:0;left:0;right:0;padding:20px 16px 16px;background:linear-gradient(transparent,rgba(8,8,8,0.9));">
+          <div style="color:#CC66FF;font-size:9px;font-weight:700;letter-spacing:2px;margin-bottom:6px;">TRENDING MOVIES</div>
+          <div style="color:white;font-size:28px;font-weight:900;">Dune: Part Two</div>
+          <div style="display:flex;gap:6px;margin:4px 0 12px;font-size:11px;">
+            <span style="color:#fbbf24;">★ 8.8</span>
+            <span style="color:rgba(255,255,255,0.5);">2024</span>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <div style="background:white;color:black;border-radius:20px;padding:7px 16px;font-size:11px;font-weight:600;">▶ Watch Now</div>
+            <div style="background:rgba(255,255,255,0.12);color:white;border-radius:20px;padding:7px 12px;font-size:11px;border:1px solid rgba(255,255,255,0.15);">+ My List</div>
+          </div>
+        </div>
+      </div>
+      <div style="padding:12px;">
+        <div style="display:flex;gap:6px;overflow-x:auto;">
+          <div style="min-width:80px;height:120px;background:#1c1c1e;border-radius:8px;"></div>
+          <div style="min-width:80px;height:120px;background:#1c1c1e;border-radius:8px;"></div>
+          <div style="min-width:80px;height:120px;background:#1c1c1e;border-radius:8px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REDESIGN Home -->
+  <div class="mockup">
+    <div class="mockup-header">REDESIGN: Liquid Glass</div>
+    <div class="mockup-body" style="background:#080808;font-family:-apple-system,sans-serif;">
+      <!-- Glass Hero Card -->
+      <div style="position:relative;height:340px;border-radius:12px;overflow:hidden;background:linear-gradient(135deg,#1a1a2e,#16213e);">
+        <div style="position:absolute;inset:0;backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);background:rgba(255,255,255,0.06);border-radius:22px;margin:8px;border:0.5px solid rgba(255,255,255,0.12);"></div>
+        <div style="position:absolute;bottom:0;left:0;right:0;padding:20px 20px 20px;margin:8px 8px 8px 8px;">
+          <div style="color:#CC66FF;font-size:9px;font-weight:700;letter-spacing:2px;margin-bottom:6px;">TRENDING MOVIES</div>
+          <div style="color:white;font-size:28px;font-weight:900;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.5));">Dune: Part Two</div>
+          <div style="display:flex;gap:6px;margin:4px 0 12px;font-size:11px;">
+            <span style="color:#fbbf24;">★ 8.8</span>
+            <span style="color:rgba(255,255,255,0.6);">2024</span>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <div style="background:white;color:black;border-radius:20px;padding:7px 16px;font-size:11px;font-weight:600;backdrop-filter:blur(20px);box-shadow:0 2px 20px rgba(204,102,255,0.3);">▶ Watch Now</div>
+            <div style="background:rgba(255,255,255,0.08);color:white;border-radius:20px;padding:7px 12px;font-size:11px;backdrop-filter:blur(20px);border:0.5px solid rgba(255,255,255,0.15);">+ My List</div>
+          </div>
+        </div>
+      </div>
+      <div style="padding:12px;">
+        <!-- Glass media cards in a GlassEffectContainer (merged edges) -->
+        <div style="display:flex;gap:6px;overflow-x:auto;">
+          <div style="min-width:80px;height:120px;border-radius:8px;background:rgba(255,255,255,0.06);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border:0.5px solid rgba(255,255,255,0.10);position:relative;">
+            <div style="position:absolute;top:3px;left:3px;background:rgba(204,102,255,0.25);color:white;font-size:7px;font-weight:700;padding:1px 4px;border-radius:3px;backdrop-filter:blur(10px);">4K</div>
+          </div>
+          <div style="min-width:80px;height:120px;border-radius:8px;background:rgba(255,255,255,0.06);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border:0.5px solid rgba(255,255,255,0.10);"></div>
+          <div style="min-width:80px;height:120px;border-radius:8px;background:rgba(255,255,255,0.06);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border:0.5px solid rgba(255,255,255,0.10);"></div>
+          <div style="min-width:80px;height:120px;border-radius:8px;background:rgba(255,255,255,0.06);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border:0.5px solid rgba(255,255,255,0.10);"></div>
+        </div>
+      </div>
+      <div style="text-align:center;padding:4px 0 8px;font-size:9px;color:rgba(255,255,255,0.4);">
+        GlassEffectContainer merges adjacent card edges
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:24px;">
+  <h3>2. Profile Picker (Netflix-Style)</h3>
+</div>
+
+<div class="split">
+  <div class="mockup">
+    <div class="mockup-header">CURRENT: Simple List (no dedicated picker screen found in iOS code)</div>
+    <div class="mockup-body" style="background:#080808;padding:30px;text-align:center;font-family:-apple-system,sans-serif;">
+      <div style="color:rgba(255,255,255,0.4);font-size:24px;margin-bottom:16px;">No profile picker currently</div>
+      <div style="color:rgba(255,255,255,0.3);font-size:13px;">Current flow: Auth → ProfileSelectionScreen (basic list) → MainTabView</div>
+    </div>
+  </div>
+
+  <div class="mockup">
+    <div class="mockup-header">REDESIGN: Glass Profile Picker</div>
+    <div class="mockup-body" style="background:linear-gradient(135deg,#08080c,#0a0a14,#0d0d1a);padding:24px;font-family:-apple-system,sans-serif;text-align:center;">
+      <div style="color:white;font-size:26px;font-weight:800;margin-bottom:6px;">Who's watching?</div>
+      <div style="color:rgba(255,255,255,0.5);font-size:13px;margin-bottom:24px;">Choose a profile</div>
+      <div style="display:flex;justify-content:center;gap:20px;flex-wrap:wrap;">
+        <!-- Profile 1 - Active -->
+        <div style="cursor:pointer;">
+          <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#CC66FF,#818cf8);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:2px solid white;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 30px rgba(204,102,255,0.3);">
+            <span style="color:white;font-size:28px;font-weight:700;">Z</span>
+          </div>
+          <div style="color:white;font-size:12px;font-weight:600;margin-top:6px;">Zain</div>
+        </div>
+        <!-- Profile 2 -->
+        <div>
+          <div style="width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,0.08);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:0.5px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;">
+            <span style="color:rgba(255,255,255,0.8);font-size:28px;font-weight:700;">S</span>
+          </div>
+          <div style="color:rgba(255,255,255,0.6);font-size:12px;margin-top:6px;">Sara</div>
+        </div>
+        <!-- Profile 3 -->
+        <div>
+          <div style="width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:0.5px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;">
+            <span style="color:rgba(255,255,255,0.8);font-size:28px;font-weight:700;">K</span>
+          </div>
+          <div style="color:rgba(255,255,255,0.6);font-size:12px;margin-top:6px;">Kids</div>
+        </div>
+        <!-- Add Profile -->
+        <div>
+          <div style="width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,0.04);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px dashed rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;">
+            <span style="color:rgba(255,255,255,0.4);font-size:24px;">+</span>
+          </div>
+          <div style="color:rgba(255,255,255,0.4);font-size:12px;margin-top:6px;">Add Profile</div>
+        </div>
+      </div>
+      <div style="margin-top:24px;">
+        <div style="background:rgba(255,255,255,0.06);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border-radius:12px;border:0.5px solid rgba(255,255,255,0.1);padding:12px;margin:0 20px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="color:white;font-size:13px;">Manage Profiles</span>
+            <span style="color:#CC66FF;font-size:14px;">⚙</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:24px;">
+  <h3>3. Native AVPlayer (Apple's System Player)</h3>
+</div>
+
+<div class="split">
+  <div class="mockup">
+    <div class="mockup-header">CURRENT: No iOS Player Found (PlayerScreen exists but is stub)</div>
+    <div class="mockup-body" style="background:#080808;padding:30px;text-align:center;font-family:-apple-system,sans-serif;">
+      <div style="color:rgba(255,255,255,0.4);font-size:20px;margin-bottom:8px;">⏸</div>
+      <div style="color:rgba(255,255,255,0.3);font-size:13px;">PlayerScreen.swift is a stub. StreamSelectionScreen picks sources but playback isn't implemented for iOS yet.</div>
+    </div>
+  </div>
+
+  <div class="mockup">
+    <div class="mockup-header">REDESIGN: AVPlayer + Liquid Glass Overlay</div>
+    <div class="mockup-body" style="background:#000;font-family:-apple-system,sans-serif;position:relative;height:340px;">
+      <!-- Simulated video background -->
+      <div style="position:absolute;inset:0;background:linear-gradient(135deg,#0a0a0f,#1a1a2e,#0f0f1a);display:flex;align-items:center;justify-content:center;">
+        <div style="color:white;font-size:40px;">▶</div>
+      </div>
+      <!-- Glass transport controls overlay -->
+      <div style="position:absolute;bottom:0;left:0;right:0;padding:16px;">
+        <!-- Progress bar -->
+        <div style="margin-bottom:12px;">
+          <div style="background:rgba(255,255,255,0.15);height:4px;border-radius:2px;position:relative;">
+            <div style="background:white;height:4px;border-radius:2px;width:35%;position:relative;">
+              <div style="position:absolute;right:-6px;top:-4px;width:12px;height:12px;background:white;border-radius:50%;"></div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;color:rgba(255,255,255,0.5);font-size:10px;margin-top:4px;">
+            <span>0:42</span><span>2:33</span>
+          </div>
+        </div>
+        <!-- Controls - glass pill -->
+        <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.08);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:16px;padding:8px 16px;border:0.5px solid rgba(255,255,255,0.12);">
+          <div style="display:flex;gap:8px;align-items:center;">
+            <span style="color:white;font-size:13px;font-weight:500;">Dune: Part Two</span>
+            <span style="background:rgba(204,102,255,0.3);color:white;font-size:9px;padding:2px 6px;border-radius:8px;">4K HDR</span>
+          </div>
+          <div style="display:flex;gap:16px;align-items:center;">
+            <span style="color:white;font-size:16px;">⏮</span>
+            <span style="color:white;font-size:24px;background:white;color:black;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;">▶</span>
+            <span style="color:white;font-size:16px;">⏭</span>
+            <span style="color:white;font-size:16px;">🔊</span>
+            <span style="color:white;font-size:16px;">⤢</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:24px;">
+  <h3>4. Polish & Additional Features</h3>
+</div>
+
+<div class="cards">
+  <div class="card">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">Loading Skeletons</div>
+        <div class="mockup-body" style="background:#080808;padding:16px;font-family:-apple-system,sans-serif;">
+          <div style="display:flex;gap:8px;overflow-x:auto;">
+            <div style="min-width:80px;height:120px;background:rgba(255,255,255,0.04);border-radius:8px;animation:pulse 1.5s infinite;"></div>
+            <div style="min-width:80px;height:120px;background:rgba(255,255,255,0.04);border-radius:8px;animation:pulse 1.5s infinite 0.2s;"></div>
+            <div style="min-width:80px;height:120px;background:rgba(255,255,255,0.04);border-radius:8px;animation:pulse 1.5s infinite 0.4s;"></div>
+            <div style="min-width:80px;height:120px;background:rgba(255,255,255,0.04);border-radius:8px;animation:pulse 1.5s infinite 0.6s;"></div>
+          </div>
+          <style>@keyframes pulse{0%,100%{opacity:0.3}50%{opacity:0.6}}</style>
+          <div style="color:rgba(255,255,255,0.3);font-size:10px;margin-top:4px;text-align:center;">Shimmer skeletons replace ProgressView spinners</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Loading Skeletons</h3>
+      <p>Redacted placeholder cards with shimmer animation. Replaces raw ProgressView().</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">Error States & Empty States</div>
+        <div class="mockup-body" style="background:#080808;padding:30px;font-family:-apple-system,sans-serif;text-align:center;">
+          <div style="color:rgba(255,255,255,0.3);font-size:32px;margin-bottom:8px;">⚠️</div>
+          <div style="color:white;font-size:14px;font-weight:600;margin-bottom:4px;">Something went wrong</div>
+          <div style="color:rgba(255,255,255,0.5);font-size:11px;margin-bottom:12px;">Check your connection and try again</div>
+          <div style="background:rgba(255,255,255,0.08);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:0.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:8px 20px;display:inline-block;color:white;font-size:12px;">Retry</div>
+          <div style="margin-top:16px;color:rgba(255,255,255,0.2);font-size:9px;">Styled error views for: network failure, no results, empty library, auth errors</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Error & Empty States</h3>
+      <p>Styled error views with retry buttons. Empty states with contextual icons and messaging.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">Detail Screen — Glass Upgrades</div>
+        <div class="mockup-body" style="background:#080808;font-family:-apple-system,sans-serif;">
+          <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:12px;overflow:hidden;margin-bottom:8px;">
+            <div style="position:relative;height:200px;">
+              <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,#080808);padding:50px 16px 0;"></div>
+              <div style="position:absolute;top:12px;left:12px;display:flex;gap:6px;">
+                <span style="background:rgba(204,102,255,0.3);color:white;font-size:8px;padding:3px 8px;border-radius:10px;backdrop-filter:blur(10px);">Action</span>
+                <span style="background:rgba(255,255,255,0.1);color:white;font-size:8px;padding:3px 8px;border-radius:10px;backdrop-filter:blur(10px);">Sci-Fi</span>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px;padding:0 12px;">
+            <div style="flex:1;background:rgba(255,255,255,0.08);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:0.5px solid rgba(255,255,255,0.1);border-radius:10px;text-align:center;padding:8px;color:#CC66FF;font-size:11px;font-weight:600;">▶ Play</div>
+            <div style="background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:0.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:8px;color:white;">📖</div>
+            <div style="background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:0.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:8px;color:white;">✓</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Detail Polish</h3>
+      <p>Glass buttons, genre chips with blur, backdrop hero with system blur, cast horizontal scroll.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">Animations & Micro-interactions</div>
+        <div class="mockup-body" style="background:#080808;padding:20px;font-family:-apple-system,sans-serif;">
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="width:6px;height:6px;background:#CC66FF;border-radius:50%;"></div>
+              <span style="color:white;font-size:11px;">Hero carousel: crossfade + parallax between items</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="width:6px;height:6px;background:#CC66FF;border-radius:50%;"></div>
+              <span style="color:white;font-size:11px;">Card tap: matchedGeometryEffect into DetailScreen</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="width:6px;height:6px;background:#CC66FF;border-radius:50%;"></div>
+              <span style="color:white;font-size:11px;">Pull-to-refresh with glass indicator on ScrollViews</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="width:6px;height:6px;background:#CC66FF;border-radius:50%;"></div>
+              <span style="color:white;font-size:11px;">Tab switching: spring animation (.interpolatingSpring)</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="width:6px;height:6px;background:#CC66FF;border-radius:50%;"></div>
+              <span style="color:white;font-size:11px;">Haptic feedback: light impact on tap, medium on selection</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="width:6px;height:6px;background:#CC66FF;border-radius:50%;"></div>
+              <span style="color:white;font-size:11px;">Swipe-to-delete library items with .swipeActions</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="width:6px;height:6px;background:#CC66FF;border-radius:50%;"></div>
+              <span style="color:white;font-size:11px;">Scroll-to-top on tab re-tap (like system apps)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Animations & Haptics</h3>
+      <p>matchedGeometryEffect transitions, parallax hero, spring tab switching, haptic feedback on interactions.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">Search — Glass + Trending Suggestions</div>
+        <div class="mockup-body" style="background:#080808;padding:12px;font-family:-apple-system,sans-serif;">
+          <div style="background:rgba(255,255,255,0.06);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border:0.5px solid rgba(255,255,255,0.1);border-radius:12px;padding:10px;margin-bottom:12px;display:flex;align-items:center;gap:6px;">
+            <span style="color:rgba(255,255,255,0.4);">🔍</span>
+            <span style="color:rgba(255,255,255,0.4);">Search movies & shows...</span>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <span style="background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:0.5px solid rgba(255,255,255,0.1);border-radius:16px;padding:6px 14px;font-size:11px;color:white;">🔥 Trending</span>
+            <span style="background:rgba(204,102,255,0.1);border:0.5px solid rgba(204,102,255,0.2);border-radius:16px;padding:6px 14px;font-size:11px;color:#CC66FF;">New Releases</span>
+            <span style="background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:0.5px solid rgba(255,255,255,0.1);border-radius:16px;padding:6px 14px;font-size:11px;color:white;">Action</span>
+            <span style="background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:0.5px solid rgba(255,255,255,0.1);border-radius:16px;padding:6px 14px;font-size:11px;color:white;">Comedy</span>
+          </div>
+          <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;">
+            <div style="aspect-ratio:2/3;background:rgba(255,255,255,0.04);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:0.5px solid rgba(255,255,255,0.1);border-radius:8px;"></div>
+            <div style="aspect-ratio:2/3;background:rgba(255,255,255,0.04);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:0.5px solid rgba(255,255,255,0.1);border-radius:8px;"></div>
+            <div style="aspect-ratio:2/3;background:rgba(255,255,255,0.04);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:0.5px solid rgba(255,255,255,0.1);border-radius:8px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Search Upgrades</h3>
+      <p>Glass search bar, trending/quick filter chips, glass result cards. Debounced suggestions as you type.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">iPad Adaptive Layout</div>
+        <div class="mockup-body" style="background:#080808;padding:12px;font-family:-apple-system,sans-serif;">
+          <div style="display:flex;height:280px;border-radius:12px;overflow:hidden;">
+            <!-- Sidebar -->
+            <div style="width:180px;background:rgba(255,255,255,0.04);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border-right:0.5px solid rgba(255,255,255,0.08);padding:16px;">
+              <div style="display:flex;align-items:center;gap:8px;padding:8px;border-radius:8px;background:rgba(255,255,255,0.06);margin-bottom:4px;">
+                <span>🏠</span><span style="color:white;font-size:12px;">Home</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:8px;color:rgba(255,255,255,0.5);font-size:12px;">
+                <span>🔍</span><span>Search</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:8px;color:rgba(255,255,255,0.5);font-size:12px;">
+                <span>📖</span><span>Library</span>
+              </div>
+            </div>
+            <!-- Content -->
+            <div style="flex:1;padding:12px;">
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;">
+                <div style="aspect-ratio:2/3;background:rgba(255,255,255,0.04);border-radius:8px;"></div>
+                <div style="aspect-ratio:2/3;background:rgba(255,255,255,0.04);border-radius:8px;"></div>
+                <div style="aspect-ratio:2/3;background:rgba(255,255,255,0.04);border-radius:8px;"></div>
+                <div style="aspect-ratio:2/3;background:rgba(255,255,255,0.04);border-radius:8px;"></div>
+              </div>
+            </div>
+          </div>
+          <div style="color:rgba(255,255,255,0.3);font-size:10px;text-align:center;margin-top:6px;">NavigationSplitView for iPad, TabView for iPhone</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>iPad Support</h3>
+      <p>NavigationSplitView sidebar for iPad. Adaptive column grids. landscape/portrait support. Stage Manager compatible.</p>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:24px;">
+  <h3>5. Implementation Scope — What Changes Per Screen</h3>
+  <table style="width:100%;border-collapse:collapse;color:white;font-size:12px;">
+    <tr style="border-bottom:0.5px solid rgba(255,255,255,0.1);">
+      <th style="text-align:left;padding:8px;color:#CC66FF;">Screen</th>
+      <th style="text-align:left;padding:8px;color:#CC66FF;">Current</th>
+      <th style="text-align:left;padding:8px;color:#CC66FF;">Redesign</th>
+    </tr>
+    <tr style="border-bottom:0.5px solid rgba(255,255,255,0.06);">
+      <td style="padding:8px;font-weight:600;">AuthScreen</td>
+      <td style="padding:8px;color:rgba(255,255,255,0.7);">Flat surface fields</td>
+      <td style="padding:8px;color:rgba(255,255,255,0.7);">Glass texture bg + blur fields + animated moon icon</td>
+    </tr>
+    <tr style="border-bottom:0.5px solid rgba(255,255,255,0.06);">
+      <td style="padding:8px;font-weight:600;">ProfilePicker ✨ NEW</td>
+      <td style="padding:8px;color:rgba(255,255,255,0.4);">Doesn't exist (basic list)</td>
+      <td style="padding:8px;color:rgba(255,255,255,0.7);">Glass avatar circles, Netflix-style grid, add/manage</td>
+    </tr>
+    <tr style="border-bottom:0.5px solid rgba(255,255,255,0.06);">
+      <td style="padding:8px;font-weight:600;">HomeScreen</td>
+      <td style="padding:8px;color:rgba(255,255,255,0.7);">Flat gradient hero + surface cards</td>
+      <td style="padding:8px;color:rgba(255,255,255,0.7);">.clear glass hero card, GlassEffectContainer rows, glass cards</td>
+    </tr>
+    <tr style="border-bottom:0.5px solid rgba(255,255,255,0.06);">
+      <td style="padding:8px;font-weight:600;">DetailScreen</td>
+      <td style="padding:8px;color:rgba(255,255,255,0.7);">Surface buttons, basic layout</td>
+      <td style="padding:8px;color:rgba(255,255,255,0.7);">Glass buttons, blur backdrop, matchedGeometry hero transition</td>
+    </tr>
+    <tr style="border-bottom:0.5px solid rgba(255,255,255,0.06);">
+      <td style="padding:8px;font-weight:600;">PlayerScreen ✨ NEW</td>
+      <td style="padding:8px;color:rgba(255,255,255,0.4);">Stub file</td>
+      <td style="padding:8px;color:rgba(255,255,255,0.7);">AVPlayer + glass transport overlay + PiP + subtitles</td>
+    </tr>
+    <tr style="border-bottom:0.5px solid rgba(255,255,255,0.06);">
+      <td style="padding:8px;font-weight:600;">SearchScreen</td>
+      <td style="padding:8px;color:rgba(255,255,255,0.7);">Surface field + basic grid</td>
+      <td style="padding:8px;color:rgba(255,255,255,0.7);">Glass search bar, filter chips, trending suggestions, debounce</td>
+    </tr>
+    <tr style="border-bottom:0.5px solid rgba(255,255,255,0.06);">
+      <td style="padding:8px;font-weight:600;">LibraryScreen</td>
+      <td style="padding:8px;color:rgba(255,255,255,0.7);">Surface card grid</td>
+      <td style="padding:8px;color:rgba(255,255,255,0.7);">Glass cards, swipe-to-delete, empty/error states</td>
+    </tr>
+    <tr style="border-bottom:0.5px solid rgba(255,255,255,0.06);">
+      <td style="padding:8px;font-weight:600;">SettingsScreen</td>
+      <td style="padding:8px;color:rgba(255,255,255,0.7);">System list</td>
+      <td style="padding:8px;color:rgba(255,255,255,0.7);">Glass section cards, profile header blur</td>
+    </tr>
+    <tr>
+      <td style="padding:8px;font-weight:600;">AdminDashboard</td>
+      <td style="padding:8px;color:rgba(255,255,255,0.7);">Basic views</td>
+      <td style="padding:8px;color:rgba(255,255,255,0.7);">Glass containers, consistent styling</td>
+    </tr>
+  </table>
+</div>

@@ -27,9 +27,15 @@ public class WatchProgressRepository: ObservableObject {
         mediaType: String,
         positionSeconds: Double,
         durationSeconds: Double,
-        completed: Bool = false
+        completed: Bool = false,
+        name: String? = nil,
+        poster: String? = nil,
+        parentMetaId: String? = nil,
+        season: Int? = nil,
+        episode: Int? = nil
     ) async {
-        let existingId = progressEntries.first(where: { $0.mediaId == mediaId })?.id ?? UUID().uuidString
+        let existing = progressEntries.first(where: { $0.mediaId == mediaId })
+        let existingId = existing?.id ?? UUID().uuidString
 
         let entry = WatchProgressEntry(
             id: existingId,
@@ -39,7 +45,12 @@ public class WatchProgressRepository: ObservableObject {
             positionSeconds: positionSeconds,
             durationSeconds: durationSeconds,
             completed: completed,
-            updatedAt: Date()
+            updatedAt: Date(),
+            name: name ?? existing?.name,
+            poster: poster ?? existing?.poster,
+            parentMetaId: parentMetaId ?? existing?.parentMetaId,
+            season: season ?? existing?.season,
+            episode: episode ?? existing?.episode
         )
 
         if let idx = progressEntries.firstIndex(where: { $0.mediaId == mediaId }) {

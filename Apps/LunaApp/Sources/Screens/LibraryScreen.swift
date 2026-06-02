@@ -104,7 +104,7 @@ struct LibraryScreen: View {
     }
 
     @ViewBuilder
-    private func placeholderView(item: LibraryItem) -> some View {
+    private func placeholderView(item: LunaCore.LibraryItem) -> some View {
         Image(systemName: item.mediaType == "movie" ? "film" : "tv")
             .font(.title)
             .foregroundColor(LunaTheme.textTertiary)

@@ -10,7 +10,7 @@ public actor StremioHTTPClient {
         let config = URLSessionConfiguration.default
         config.timeoutIntervalForRequest = 30
         config.timeoutIntervalForResource = 60
-        config.httpMaximumConnectionsPerHost = 4
+        config.httpMaximumConnectionsPerHost = 10
         self.session = URLSession(configuration: config)
         self.decoder = JSONDecoder()
     }

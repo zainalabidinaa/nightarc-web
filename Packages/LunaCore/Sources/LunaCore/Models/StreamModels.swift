@@ -104,7 +104,8 @@ public struct SubtitleItem: Codable, Sendable, Identifiable {
     }
 }
 
-public struct PlayerLaunch: Codable, Sendable {
+public struct PlayerLaunch: Codable, Sendable, Identifiable {
+    public var id: String { videoId }
     public let title: String
     public let sourceUrl: String
     public let sourceHeaders: [String: String]?

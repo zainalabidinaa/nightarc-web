@@ -6,7 +6,7 @@ public actor CatalogService {
 
     private init() {}
 
-    public struct StremioCatalogQuery {
+    public struct StremioCatalogQuery: Sendable {
         public let type: String
         public let id: String
         public let baseURL: String
@@ -37,6 +37,14 @@ public actor CatalogService {
             let type: String?
             let name: String?
             let poster: String?
+            // AIOMetadata's direct TMDB URL (w600_and_h900_bestv2). Prefer over `poster`
+            // which routes through the AIOMetadata proxy and can redirect to a stale/404 path.
+            let _rawPosterUrl: String?
+            // AIOMetadata / Cinemeta return "background" (16:9 landscape) and
+            // "landscapePoster". Neither uses "banner". Map background → banner so
+            // HomeHero gets a landscape backdrop instead of a portrait poster.
+            let background: String?
+            let landscapePoster: String?
             let banner: String?
             let logo: String?
             let posterShape: String?
@@ -62,8 +70,8 @@ public actor CatalogService {
                     id: raw.id ?? "",
                     type: MediaType(rawValue: raw.type ?? "movie") ?? .movie,
                     name: raw.name ?? "Unknown",
-                    poster: raw.poster,
-                    banner: raw.banner,
+                    poster: raw._rawPosterUrl ?? raw.poster,
+                    banner: raw.background ?? raw.landscapePoster ?? raw.banner,
                     logo: raw.logo,
                     posterShape: raw.posterShape.flatMap { PosterShape(rawValue: $0) },
                     description: raw.description,
