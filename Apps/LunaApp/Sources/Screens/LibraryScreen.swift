@@ -12,19 +12,21 @@ struct LibraryScreen: View {
                 LunaTheme.background.ignoresSafeArea()
 
                 if libraryRepo.isLoading {
-                    ProgressView().tint(LunaTheme.accent)
-                } else if libraryRepo.libraryItems.isEmpty {
-                    VStack(spacing: 8) {
-                        Image(systemName: "bookmark")
-                            .font(.system(size: 40))
-                            .foregroundColor(LunaTheme.textTertiary)
-                        Text("Your library is empty")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                        Text("Save movies and shows to watch later")
-                            .font(.subheadline)
-                            .foregroundColor(LunaTheme.textSecondary)
+                    LazyVGrid(
+                        columns: [GridItem(.adaptive(minimum: 120), spacing: 12)],
+                        spacing: 16
+                    ) {
+                        ForEach(0..<9, id: \.self) { _ in
+                            ShimmerCard(width: 120, height: 180, cornerRadius: 8)
+                        }
                     }
+                    .padding()
+                } else if libraryRepo.libraryItems.isEmpty {
+                    EmptyStateView(
+                        icon: "bookmark",
+                        title: "Your library is empty",
+                        message: "Save movies and shows to watch later. Tap the bookmark icon on any title to add it here."
+                    )
                 } else {
                     ScrollView {
                         LazyVGrid(
@@ -34,10 +36,6 @@ struct LibraryScreen: View {
                             ForEach(libraryRepo.libraryItems) { item in
                                 VStack(alignment: .leading, spacing: 4) {
                                     ZStack {
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .fill(LunaTheme.surfaceElevated)
-                                            .frame(width: 120, height: 180)
-
                                         if let poster = item.poster, let url = URL(string: poster) {
                                             AsyncImage(url: url) { phase in
                                                 if case .success(let image) = phase {
@@ -45,15 +43,16 @@ struct LibraryScreen: View {
                                                         .aspectRatio(contentMode: .fill)
                                                         .frame(width: 120, height: 180)
                                                         .clipped()
-                                                        .cornerRadius(8)
+                                                } else {
+                                                    placeholderView(item: item)
                                                 }
                                             }
                                         } else {
-                                            Image(systemName: item.mediaType == "movie" ? "film" : "tv")
-                                                .font(.title)
-                                                .foregroundColor(LunaTheme.textTertiary)
+                                            placeholderView(item: item)
                                         }
                                     }
+                                    .frame(width: 120, height: 180)
+                                    .glassCard(cornerRadius: 8)
 
                                     Text(item.name ?? item.mediaId)
                                         .font(.caption)
@@ -69,7 +68,7 @@ struct LibraryScreen: View {
                                         poster: item.poster
                                     )
                                 }
-                                .contextMenu {
+                                .swipeActions(edge: .trailing) {
                                     Button(role: .destructive) {
                                         Task {
                                             guard let profile = profileManager.currentProfile else { return }
@@ -86,6 +85,10 @@ struct LibraryScreen: View {
                         }
                         .padding()
                     }
+                    .refreshable {
+                        guard let profile = profileManager.currentProfile else { return }
+                        await libraryRepo.loadLibrary(profileId: profile.id)
+                    }
                 }
             }
             .navigationTitle("Library")
@@ -98,5 +101,13 @@ struct LibraryScreen: View {
                 await libraryRepo.loadLibrary(profileId: profile.id)
             }
         }
+    }
+
+    @ViewBuilder
+    private func placeholderView(item: LibraryItem) -> some View {
+        Image(systemName: item.mediaType == "movie" ? "film" : "tv")
+            .font(.title)
+            .foregroundColor(LunaTheme.textTertiary)
+            .frame(width: 120, height: 180)
     }
 }
