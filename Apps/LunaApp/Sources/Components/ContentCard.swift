@@ -66,6 +66,7 @@ struct ContentCard: View {
                     .foregroundColor(LunaTheme.textSecondary)
             }
         }
+        .sensoryFeedback(.impact(weight: .light), trigger: item.id)
     }
 
     private var placeholderView: some View {

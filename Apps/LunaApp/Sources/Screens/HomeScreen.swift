@@ -54,7 +54,7 @@ struct HomeScreen: View {
                             dotCount: featuredItems.count,
                             activeIndex: safeIndex,
                             onDotTap: { i in
-                                withAnimation(.easeInOut(duration: 0.4)) {
+                                withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
                                     heroIndex = i
                                 }
                                 startHeroTimer()
@@ -149,6 +149,18 @@ struct HomeScreen: View {
                 }
             }
             .ignoresSafeArea(edges: .top)
+            .refreshable {
+                guard let profile = profileManager.currentProfile else { return }
+                if collectionRepo.collections.isEmpty {
+                    await catalogRepo.loadAllCatalogs(addons: addonRepo.enabledAddons)
+                } else {
+                    await catalogRepo.loadFromCollections(
+                        collectionRepo: collectionRepo,
+                        addons: addonRepo.enabledAddons
+                    )
+                }
+                await homeRepo.loadContinueWatching(profileId: profile.id)
+            }
             .background(LunaTheme.background)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -203,7 +215,7 @@ struct HomeScreen: View {
         heroTimer?.invalidate()
         guard featuredItems.count > 1 else { return }
         heroTimer = Timer.scheduledTimer(withTimeInterval: 6, repeats: true) { _ in
-            withAnimation(.easeInOut(duration: 0.4)) {
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
                 heroIndex = (heroIndex + 1) % featuredItems.count
             }
         }
