@@ -238,8 +238,7 @@ struct DetailScreen: View {
                                                             .font(.caption).fontWeight(.semibold)
                                                             .foregroundColor(LunaTheme.textSecondary)
                                                             .padding(.horizontal, 12).padding(.vertical, 7)
-                                                            .background(LunaTheme.surface)
-                                                            .cornerRadius(8)
+                                                            .glassCapsule(interactive: true)
                                                     }
                                                 }
                                             }
