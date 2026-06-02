@@ -3,7 +3,7 @@ import { classifyStreamProbe } from '../../src/lib/stream-probe.js';
 export const config = { runtime: 'edge' };
 
 function streamText(stream: any): string {
-  return `${stream.name ?? ''} ${stream.title ?? ''} ${stream.description ?? ''} ${stream.behaviorHints?.filename ?? ''} ${stream.url ?? ''}`.toLowerCase();
+  return `${stream.name ?? ''} ${stream.title ?? ''} ${stream.description ?? ''} ${stream.behaviorHints?.filename ?? ''}`.toLowerCase();
 }
 
 function metadataRejectReason(stream: any): string | null {
