@@ -272,16 +272,9 @@ struct HeroSection: View {
             .frame(height: 420)
 
             // Glass overlay card
-            if #available(iOS 26, *) {
-                RoundedRectangle(cornerRadius: 22, style: .continuous)
-                    .fill(.clear)
-                    .glassEffect(
-                        .clear.interactive(),
-                        in: .rect(cornerRadius: 22, style: .continuous)
-                    )
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 8)
-            }
+            .appCardStyle(surfaceStyle: .darkGlass, cornerRadius: 22)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 8)
 
             // Content
             VStack(alignment: .leading, spacing: 0) {
