@@ -18,9 +18,12 @@ struct AuthScreen: View {
             VStack(spacing: 24) {
                 Spacer()
 
-                Image(systemName: "moon.stars.fill")
-                    .font(.system(size: 64))
-                    .foregroundColor(LunaTheme.accent)
+                Image("luna-icon")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 88, height: 88)
+                    .cornerRadius(20)
+                    .shadow(color: LunaTheme.accent.opacity(0.5), radius: 24)
 
                 Text("Luna")
                     .font(.system(size: 42, weight: .bold, design: .rounded))
@@ -38,23 +41,20 @@ struct AuthScreen: View {
                         .keyboardType(.emailAddress)
                         .autocapitalization(.none)
                         .padding()
-                        .background(LunaTheme.surface)
-                        .cornerRadius(12)
+                        .glassCard(cornerRadius: 12)
                         .foregroundColor(.white)
 
                     SecureField("Password", text: $password)
                         .textContentType(isSignUp ? .newPassword : .password)
                         .padding()
-                        .background(LunaTheme.surface)
-                        .cornerRadius(12)
+                        .glassCard(cornerRadius: 12)
                         .foregroundColor(.white)
 
                     if isSignUp {
                         TextField("Invite Code", text: $inviteCode)
                             .autocapitalization(.allCharacters)
                             .padding()
-                            .background(LunaTheme.surface)
-                            .cornerRadius(12)
+                            .glassCard(cornerRadius: 12)
                             .foregroundColor(.white)
                     }
                 }
@@ -78,10 +78,8 @@ struct AuthScreen: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(LunaTheme.accent)
-                    .foregroundColor(.white)
-                    .cornerRadius(12)
                 }
+                .glassProminentButtonStyle(tint: LunaTheme.accent, cornerRadius: 12)
                 .disabled(isLoading || email.isEmpty || password.isEmpty)
                 .padding(.horizontal, 32)
 
