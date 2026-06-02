@@ -65,6 +65,9 @@ export default function Player({
   useEffect(() => { startPosRef.current = startPosition; }, [startPosition]);
 
   // --- hls.js init ---
+  // Always try HLS.js first — most stremio/debrid streams are HLS even
+  // when the URL lacks .m3u8. On any fatal error, fall back to native
+  // video element so direct MP4/WebM URLs still work seamlessly.
   const initPlayer = useCallback(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -76,66 +79,65 @@ export default function Player({
 
     const proxyHeaders = currentStream.behaviorHints?.proxyHeaders?.request;
     const hasHeaders = proxyHeaders != null && Object.keys(proxyHeaders).length > 0;
-    const isHls = streamUrl.includes('.m3u8') || streamUrl.includes('/manifest') || streamUrl.includes('/playlist');
-    const tryHls = (isHls || hasHeaders) && Hls.isSupported();
 
-    if (tryHls) {
-      let errCount = 0;
-      const hls = new Hls({
-        xhrSetup(xhr) {
-          if (hasHeaders) for (const [k, v] of Object.entries(proxyHeaders!)) xhr.setRequestHeader(k, v);
-        },
-      });
-
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        errCount = 0;
-        const at = hls.audioTracks.map((t, i) => ({ id: i, name: t.name || t.lang || 'Unknown', lang: t.lang || '?' }));
-        const st = hls.subtitleTracks.map((t, i) => ({ id: i, name: t.name || t.lang || 'Unknown', lang: t.lang || '?' }));
-        if (at.length > 0) { setAudioTracks(at); if (hls.audioTrack >= 0) setActiveAudio(hls.audioTrack); }
-        if (st.length > 0) { setSubTracks(st); setActiveSub(hls.subtitleTrack); }
-        console.log('[hls] manifest parsed audio:', at.length, 'subs:', st.length);
-        video.play().catch(() => {});
-      });
-
-      hls.on(Hls.Events.AUDIO_TRACKS_UPDATED, () => {
-        const at = hls.audioTracks.map((t, i) => ({ id: i, name: t.name || t.lang || 'Unknown', lang: t.lang || '?' }));
-        setAudioTracks(at);
-        if (hls.audioTrack >= 0) setActiveAudio(hls.audioTrack);
-        console.log('[hls] audio tracks updated:', at.length, at.map(t => t.lang));
-      });
-
-      hls.on(Hls.Events.SUBTITLE_TRACKS_UPDATED, () => {
-        const st = hls.subtitleTracks.map((t, i) => ({ id: i, name: t.name || t.lang || 'Unknown', lang: t.lang || '?' }));
-        setSubTracks(st);
-        setActiveSub(hls.subtitleTrack);
-        console.log('[hls] subtitle tracks updated:', st.length, st.map(t => t.lang));
-      });
-
-      hls.on(Hls.Events.AUDIO_TRACK_SWITCHED, (_e, d) => setActiveAudio(d.id));
-      hls.on(Hls.Events.SUBTITLE_TRACK_SWITCH, (_e, d) => setActiveSub(d.id));
-
-      hls.on(Hls.Events.ERROR, (_e, data) => {
-        errCount++;
-        if (data.fatal) {
-          console.log('[hls] fatal error type:', data.type, 'count:', errCount);
-          if (data.type === Hls.ErrorTypes.MEDIA_ERROR && errCount <= 1) {
-            hls.destroy(); hlsRef.current = null;
-            video.src = streamUrl; video.play().catch(() => {});
-          } else {
-            setState('error');
-            setErrMsg(data.type === Hls.ErrorTypes.NETWORK_ERROR ? 'Network error' : 'Playback error');
-            hls.destroy(); hlsRef.current = null;
-          }
-        }
-      });
-
-      hls.loadSource(streamUrl);
-      hls.attachMedia(video);
-      hlsRef.current = hls;
-    } else {
+    if (!Hls.isSupported()) {
       video.src = streamUrl;
       video.play().catch(() => {});
+      return;
     }
+
+    let mediaErrCount = 0;
+    const hls = new Hls({
+      xhrSetup(xhr) {
+        if (hasHeaders) for (const [k, v] of Object.entries(proxyHeaders!)) xhr.setRequestHeader(k, v);
+      },
+    });
+
+    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      mediaErrCount = 0;
+      const at = hls.audioTracks.map((t, i) => ({ id: i, name: t.name || t.lang || 'Unknown', lang: t.lang || '?' }));
+      const st = hls.subtitleTracks.map((t, i) => ({ id: i, name: t.name || t.lang || 'Unknown', lang: t.lang || '?' }));
+      if (at.length > 0) { setAudioTracks(at); if (hls.audioTrack >= 0) setActiveAudio(hls.audioTrack); }
+      if (st.length > 0) { setSubTracks(st); setActiveSub(hls.subtitleTrack); }
+      console.log('[hls] manifest parsed audio:', at.length, 'subs:', st.length);
+      video.play().catch(() => {});
+    });
+
+    hls.on(Hls.Events.AUDIO_TRACKS_UPDATED, () => {
+      const at = hls.audioTracks.map((t, i) => ({ id: i, name: t.name || t.lang || 'Unknown', lang: t.lang || '?' }));
+      setAudioTracks(at);
+      if (hls.audioTrack >= 0) setActiveAudio(hls.audioTrack);
+    });
+
+    hls.on(Hls.Events.SUBTITLE_TRACKS_UPDATED, () => {
+      const st = hls.subtitleTracks.map((t, i) => ({ id: i, name: t.name || t.lang || 'Unknown', lang: t.lang || '?' }));
+      setSubTracks(st);
+      setActiveSub(hls.subtitleTrack);
+    });
+
+    hls.on(Hls.Events.AUDIO_TRACK_SWITCHED, (_e, d) => setActiveAudio(d.id));
+    hls.on(Hls.Events.SUBTITLE_TRACK_SWITCH, (_e, d) => setActiveSub(d.id));
+
+    hls.on(Hls.Events.ERROR, (_e, data) => {
+      if (!data.fatal) return;
+      console.log('[hls] fatal error:', data.type, data.details);
+      if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
+        mediaErrCount++;
+        if (mediaErrCount <= 2) {
+          hls.recoverMediaError();
+        } else {
+          hls.destroy(); hlsRef.current = null;
+          video.src = streamUrl; video.play().catch(() => {});
+        }
+      } else {
+        hls.destroy(); hlsRef.current = null;
+        video.src = streamUrl; video.play().catch(() => {});
+      }
+    });
+
+    hls.loadSource(streamUrl);
+    hls.attachMedia(video);
+    hlsRef.current = hls;
   }, [streamUrl, currentStream]);
 
   useEffect(() => {
