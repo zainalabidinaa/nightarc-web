@@ -86,9 +86,7 @@ struct DetailScreen: View {
                                 }
                                 .frame(maxWidth: .infinity)
                                 .padding()
-                                .background(LunaTheme.accent)
-                                .foregroundColor(.white)
-                                .cornerRadius(12)
+                                .glassProminentButtonStyle(tint: LunaTheme.accent, cornerRadius: 12)
                             }
 
                             Button {
@@ -106,9 +104,8 @@ struct DetailScreen: View {
                                 Image(systemName: libraryRepo.isInLibrary(mediaId: detail.id) ? "bookmark.fill" : "bookmark")
                                     .font(.title3)
                                     .padding()
-                                    .background(LunaTheme.surface)
+                                    .glassCard(cornerRadius: 12, interactive: true)
                                     .foregroundColor(libraryRepo.isInLibrary(mediaId: detail.id) ? LunaTheme.accent : .white)
-                                    .cornerRadius(12)
                             }
 
                             Button {
@@ -130,9 +127,8 @@ struct DetailScreen: View {
                                 Image(systemName: watchedRepo.isWatched(mediaId: detail.id) ? "checkmark.circle.fill" : "checkmark.circle")
                                     .font(.title3)
                                     .padding()
-                                    .background(LunaTheme.surface)
+                                    .glassCard(cornerRadius: 12, interactive: true)
                                     .foregroundColor(watchedRepo.isWatched(mediaId: detail.id) ? .green : .white)
-                                    .cornerRadius(12)
                             }
                         }
                         .padding(.horizontal)
@@ -162,9 +158,8 @@ struct DetailScreen: View {
                                                 .font(.caption)
                                                 .padding(.horizontal, 12)
                                                 .padding(.vertical, 6)
-                                                .background(LunaTheme.surface)
+                                                .glassCapsule(interactive: true)
                                                 .foregroundColor(LunaTheme.textSecondary)
-                                                .cornerRadius(16)
                                         }
                                     }
                                 }
@@ -182,7 +177,7 @@ struct DetailScreen: View {
                                         ForEach(cast.prefix(20)) { person in
                                             VStack(spacing: 4) {
                                                 Circle()
-                                                    .fill(LunaTheme.surfaceElevated)
+                                                    .glassCircle()
                                                     .frame(width: 56, height: 56)
                                                     .overlay(
                                                         Text(person.name.prefix(1))
@@ -272,9 +267,8 @@ struct DetailScreen: View {
                                                 Text("Season \(season.number)")
                                                     .font(.subheadline).fontWeight(.medium)
                                                     .padding(.horizontal, 16).padding(.vertical, 8)
-                                                    .background(selectedSeasonId == season.id || (selectedSeasonId == nil && seasons.sorted(by: { $0.number < $1.number }).first?.id == season.id) ? Color.white : LunaTheme.surface)
+                                                    .glassCapsule(interactive: true)
                                                     .foregroundColor(selectedSeasonId == season.id || (selectedSeasonId == nil && seasons.sorted(by: { $0.number < $1.number }).first?.id == season.id) ? .black : LunaTheme.textSecondary)
-                                                    .clipShape(Capsule())
                                             }
                                         }
                                     }
