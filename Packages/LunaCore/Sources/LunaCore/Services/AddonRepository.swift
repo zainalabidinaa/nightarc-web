@@ -62,7 +62,6 @@ public class AddonRepository: ObservableObject {
 
     public func refreshFromUrls(_ urls: [String]) async {
         var addons: [ManagedAddon] = []
-        var fetchErrors: [String] = []
         let existing = managedAddons
 
         await withTaskGroup(of: ManagedAddon?.self) { group in
