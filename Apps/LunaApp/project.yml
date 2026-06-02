@@ -28,8 +28,7 @@ targets:
     sources:
       - path: Sources
     resources:
-      - path: Resources
-        type: folder
+      - path: Resources/Assets.xcassets
     dependencies:
       - package: LunaCore
     settings:
