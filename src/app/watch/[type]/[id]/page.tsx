@@ -5,20 +5,17 @@ import { useAuth } from '../../../AuthProvider';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Player from '@/components/Player';
 import { StreamItem } from '@/lib/types';
-import { SubtitleItem, fetchSubtitlesFromAll } from '@/lib/stremio';
 import { getCachedStreams, getCachedStream } from '@/lib/stream-cache';
-import { getPlayableStreamUrl } from '@/lib/player-utils';
 
 export default function WatchPage({ params }: { params: { type: string; id: string } }) {
   const resolved = params;
   const searchParams = useSearchParams();
-  const { user, currentProfile, isLoading, addons } = useAuth();
+  const { user, currentProfile, isLoading } = useAuth();
   const router = useRouter();
 
   const streamUrlRaw = searchParams.get('url');
   const cacheId = searchParams.get('cid');
   const titleRaw = searchParams.get('title');
-  const posRaw = searchParams.get('pos');
 
   const streamUrl = streamUrlRaw ? decodeURIComponent(streamUrlRaw) : '';
   const displayTitle = titleRaw ? decodeURIComponent(titleRaw) : decodeURIComponent(resolved.id);
@@ -28,10 +25,7 @@ export default function WatchPage({ params }: { params: { type: string; id: stri
 
   const [activeStream, setActiveStream] = useState<StreamItem>(cachedStream || fallbackStream);
   const [activeUrl, setActiveUrl] = useState(streamUrl);
-  const [subtitles, setSubtitles] = useState<SubtitleItem[]>([]);
   const savedPosition = useRef(0);
-  // Resume position: from URL param (initial load) or stream-switch (savedPosition ref)
-  const resumePosition = posRaw ? Number(posRaw) : undefined;
 
   useEffect(() => {
     if (isLoading) return;
@@ -40,21 +34,12 @@ export default function WatchPage({ params }: { params: { type: string; id: stri
     if (!streamUrl) { router.back(); return; }
   }, [user, currentProfile, isLoading, streamUrl]);
 
-  // Fetch subtitles from all subtitle addons
-  useEffect(() => {
-    if (!addons || addons.length === 0) return;
-    fetchSubtitlesFromAll(resolved.type, resolved.id, addons)
-      .then(setSubtitles)
-      .catch(() => {});
-  }, [resolved.type, resolved.id, addons]);
-
   function handleSwitchStream(newStream: StreamItem) {
-    const url = getPlayableStreamUrl(newStream);
-    if (!url) return;
+    if (!newStream.url) return;
     const video = document.querySelector('video');
     savedPosition.current = video?.currentTime || 0;
     setActiveStream(newStream);
-    setActiveUrl(url);
+    setActiveUrl(newStream.url);
   }
 
   if (!streamUrl) return null;
@@ -67,8 +52,7 @@ export default function WatchPage({ params }: { params: { type: string; id: stri
       title={displayTitle}
       mediaId={resolved.id}
       mediaType={resolved.type}
-      startPosition={savedPosition.current > 0 ? savedPosition.current : resumePosition}
-      subtitles={subtitles}
+      startPosition={savedPosition.current || undefined}
       onSwitchStream={handleSwitchStream}
       onBack={() => router.back()}
     />

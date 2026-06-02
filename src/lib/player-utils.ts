@@ -1,7 +1,5 @@
 import { StreamItem } from './types';
 
-export type VidstackSourceType = 'application/x-mpegurl' | 'video/mp4';
-
 export function getStreamUrl(stream: Pick<StreamItem, 'url' | 'externalUrl'>): string | undefined {
   return stream.url || stream.externalUrl;
 }
@@ -37,31 +35,6 @@ export function sortStreamsForBrowserPlayback(streams: StreamItem[]): StreamItem
   return [...streams]
     .filter(stream => getPlayableStreamUrl(stream) && !stream.infoHash && !stream.behaviorHints?.notWebReady)
     .sort((a, b) => browserPlaybackScore(b) - browserPlaybackScore(a));
-}
-
-const HLS_URL_PATTERNS = ['.m3u8', '.m3u', '/manifest', '/playlist', '/hls/', 'type=hls'];
-const HLS_DOMAIN_PATTERNS = ['real-debrid.com', 'alldebrid.com', 'premiumize.me', 'debrid.it', 'debrid.net'];
-
-export function getInitialSourceType(url: string, stream?: Pick<StreamItem, 'behaviorHints'>): VidstackSourceType {
-  if (stream?.behaviorHints?.webPlayableType) return stream.behaviorHints.webPlayableType;
-
-  const lower = url.toLowerCase();
-
-  for (const p of HLS_URL_PATTERNS) {
-    if (lower.includes(p)) return 'application/x-mpegurl';
-  }
-
-  if (stream?.behaviorHints?.proxyHeaders) return 'application/x-mpegurl';
-
-  for (const d of HLS_DOMAIN_PATTERNS) {
-    if (lower.includes(d)) return 'application/x-mpegurl';
-  }
-
-  return 'video/mp4';
-}
-
-export function getFallbackSourceType(currentType: VidstackSourceType): VidstackSourceType | null {
-  return currentType === 'application/x-mpegurl' ? 'video/mp4' : null;
 }
 
 export function streamMatchesUrl(stream: Pick<StreamItem, 'url' | 'externalUrl'>, url: string): boolean {
