@@ -174,12 +174,18 @@ async function fetchSubtitles(baseURL: string, type: string, id: string): Promis
     const params = new URLSearchParams({ url: baseURL, type, id });
     const res = await fetch(`/api/stremio/subtitles?${params}`);
     const json = await res.json();
-    return (json.subtitles || []).map((s: any, i: number) => ({
-      id: s.id || s.url || String(i),
-      url: s.url,
-      lang: s.lang || 'und',
-      name: s.id || undefined,
-    }));
+    const langNames = new Intl.DisplayNames(['en'], { type: 'language' });
+    return (json.subtitles || []).map((s: any, i: number) => {
+      const lang = s.lang || 'und';
+      let displayName: string;
+      try { displayName = langNames.of(lang) || lang; } catch { displayName = lang; }
+      return {
+        id: s.id || s.url || String(i),
+        url: s.url ? `/api/stremio/vtt?url=${encodeURIComponent(s.url)}` : s.url,
+        lang,
+        name: displayName,
+      };
+    });
   } catch {
     return [];
   }
