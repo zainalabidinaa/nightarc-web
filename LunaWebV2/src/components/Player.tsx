@@ -263,6 +263,8 @@ function PlayerUI({
   const volume = useMediaState('volume');
   const fullscreen = useMediaState('fullscreen');
   const canPlay = useMediaState('canPlay');
+  const audioTracks = useMediaState('audioTracks');
+  const [selectedAudioTrackId, setSelectedAudioTrackId] = useState<string | null>(null);
 
   const [showControls, setShowControls] = useState(true);
   const [showSources, setShowSources] = useState(false);
@@ -489,11 +491,25 @@ function PlayerUI({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-0 overflow-y-auto max-h-[60vh]">
               <div className="px-8 py-6 border-r border-white/8">
                 <h4 className="text-xl font-bold text-white mb-5">Audio</h4>
-                <button className="flex w-full items-center gap-4 py-3 text-left text-lg text-white">
-                  <span className="w-5 text-white">✓</span>
-                  <span>{currentMeta.audioCodec ? `${currentMeta.audioCodec} Audio` : 'Default Audio'}</span>
-                </button>
-                <p className="mt-4 text-sm leading-relaxed text-white/35">Additional audio tracks appear here when the stream exposes them to the browser.</p>
+                {audioTracks.length > 0 ? audioTracks.map((track, i) => {
+                  const trackId = track.id || String(i);
+                  const isSelected = selectedAudioTrackId ? selectedAudioTrackId === trackId : track.selected;
+                  const langNames = new Intl.DisplayNames(['en'], { type: 'language' });
+                  let label = track.label || track.language || `Track ${i + 1}`;
+                  try { if (track.language) label = langNames.of(track.language) || label; } catch {}
+                  return (
+                    <button key={trackId} onClick={() => {
+                      setSelectedAudioTrackId(trackId);
+                      const t = (playerRef.current as any)?.audioTracks?.[i];
+                      if (t) t.selected = true;
+                    }} className={`flex w-full items-center gap-4 py-3 text-left text-lg ${isSelected ? 'text-white' : 'text-white/55 hover:text-white'}`}>
+                      <span className="w-5 text-white">{isSelected ? '✓' : ''}</span>
+                      <span>{label}</span>
+                    </button>
+                  );
+                }) : (
+                  <p className="text-sm leading-relaxed text-white/35">No additional audio tracks available for this stream.</p>
+                )}
               </div>
               <div className="px-8 py-6">
                 <h4 className="text-xl font-bold text-white mb-5">Subtitles</h4>

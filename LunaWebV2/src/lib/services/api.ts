@@ -105,7 +105,7 @@ export async function updateWatchProgress(
     .select('id')
     .eq('profile_id', profileId)
     .eq('media_id', mediaId)
-    .single();
+    .maybeSingle();
 
   if (existing) {
     await supabase.from('watch_progress').update({
