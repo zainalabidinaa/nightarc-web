@@ -53,7 +53,7 @@ export default function WatchPage() {
           // IP-lock doesn't apply. Gets final CDN URL after redirects + real type.
           // Race against 2.5s so a slow probe doesn't delay the player.
           const probe = await Promise.race([
-            probeStreamClient(rawUrl),
+            probeStreamClient(rawUrl, { headers: best.behaviorHints?.proxyHeaders?.request }),
             new Promise<null>(r => setTimeout(() => r(null), 2500)),
           ]);
           if (cancelled) return;
