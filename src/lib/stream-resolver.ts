@@ -19,8 +19,9 @@ export interface StreamProbeResult {
 
 export async function probeStreamClient(
   url: string,
-  timeoutMs = 3000
+  options?: { headers?: Record<string, string>; timeoutMs?: number }
 ): Promise<StreamProbeResult | null> {
+  const { headers: customHeaders, timeoutMs = 3000 } = options ?? {};
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
 
@@ -33,6 +34,7 @@ export async function probeStreamClient(
         // Request only the first kilobyte — enough to read an HLS header or MP4 ftyp box
         Range: 'bytes=0-1023',
         Accept: 'application/vnd.apple.mpegurl, application/x-mpegurl, video/mp4, */*',
+        ...customHeaders,
       },
     });
 

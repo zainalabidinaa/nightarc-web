@@ -167,11 +167,21 @@ function PlayerUI({
 
   useEffect(() => () => { if (hideTimer.current) clearTimeout(hideTimer.current); }, []);
 
+  // Stall during buffering: waiting=true for 9s → try next stream
   useEffect(() => {
     if (!waiting) return;
     const timer = setTimeout(onPlaybackStalled, 9000);
     return () => clearTimeout(timer);
   }, [currentStream.url, onPlaybackStalled, waiting]);
+
+  // Hard timeout: if canPlay never fires within 15s the stream is dead
+  // (covers the case where waiting stays false but canPlay stays false —
+  // e.g. silent HLS load failure, wrong source type, unreachable URL)
+  useEffect(() => {
+    if (canPlay) return;
+    const timer = setTimeout(onPlaybackStalled, 15000);
+    return () => clearTimeout(timer);
+  }, [currentStream.url, canPlay, onPlaybackStalled]);
 
   const VolumeIcon = muted || volume === 0 ? VolumeX : volume < 0.5 ? Volume1 : Volume2;
   const currentMeta = parseStreamMeta(currentStream);
