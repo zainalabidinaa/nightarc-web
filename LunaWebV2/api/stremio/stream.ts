@@ -10,7 +10,9 @@ function metadataRejectReason(stream: any): string | null {
   const text = streamText(stream);
   if (text.includes('.mkv')) return 'matroska-metadata';
   if (text.includes('hevc') || text.includes('h.265') || text.includes('h265') || text.includes('x265')) return 'hevc-metadata';
-  if (text.includes('dolby vision') || text.includes(' dv ') || text.includes('hdr')) return 'hdr-metadata';
+  // Note: HDR alone is NOT rejected — AVC/H.264 HDR is playable in Chrome.
+  // Only reject confirmed Dolby Vision (almost always HEVC, rarely playable in browser).
+  if (text.includes('dolby vision') || text.includes('[dv]') || / dv[ \].]/.test(text)) return 'dv-metadata';
   return null;
 }
 
@@ -81,15 +83,17 @@ async function annotateBrowserPlayableStreams(data: any): Promise<any> {
       return { ...stream, behaviorHints: { ...stream.behaviorHints, webPlayableType: metadataType } };
     }
     const probe = await probeBrowserPlayable(stream);
-    if (probe.playable) return { ...stream, behaviorHints: { ...stream.behaviorHints, webPlayableType: probe.type ?? metadataType ?? undefined } };
-    return {
-      ...stream,
-      behaviorHints: {
-        ...stream.behaviorHints,
-        notWebReady: true,
-        webNotReadyReason: probe.reason,
-      },
-    };
+    if (probe.playable) {
+      return { ...stream, behaviorHints: { ...stream.behaviorHints, webPlayableType: probe.type ?? metadataType ?? undefined } };
+    }
+    // Only hard-block when we received actual bad data (Matroska bytes or HTML error page).
+    // For network failures, timeouts, HTTP 4xx/5xx (common for IP-locked debrid links
+    // probed from Vercel's servers), and unknown containers — pass through so the
+    // browser can try the URL directly with the user's own IP/session.
+    if (probe.reason === 'matroska' || probe.reason === 'html-error') {
+      return { ...stream, behaviorHints: { ...stream.behaviorHints, notWebReady: true, webNotReadyReason: probe.reason } };
+    }
+    return stream;
   }));
 
   return { ...data, streams };
