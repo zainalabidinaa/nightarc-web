@@ -94,10 +94,12 @@ export function isLikelyIncompatible(stream: StreamItem): boolean {
   return getStreamCompatibility(stream) !== 'direct';
 }
 
+// /elfmagic/ is AIOStreams' ElfHosted HLS proxy path — those segments are served
+// through elfhosted.com with CORS headers and play fine with HLS.js.
+// elfhosted.com is NOT a blanket HLS domain — Comet ElfHosted serves direct video
+// (no HLS manifest), so we must not classify all elfhosted.com URLs as HLS.
 const HLS_URL_PATTERNS = ['.m3u8', '.m3u', '/manifest', '/playlist', '/hls/', 'type=hls', '/elfmagic/'];
-// ElfHosted's streaming infrastructure always serves HLS through their proxy.
-// All aiostreams.elfhosted.com/playback/ and similar endpoints return HLS streams.
-const HLS_DOMAIN_PATTERNS: string[] = ['elfhosted.com'];
+const HLS_DOMAIN_PATTERNS: string[] = [];
 
 export function getInitialSourceType(url: string, stream?: Pick<StreamItem, 'behaviorHints'>): VidstackSourceType {
   if (stream?.behaviorHints?.webPlayableType) return stream.behaviorHints.webPlayableType;
