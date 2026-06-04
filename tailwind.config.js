@@ -16,7 +16,19 @@ module.exports = {
           secondary: '#818cf8',
           text: '#fafafa',
           muted: '#71717a',
-        }
+        },
+        background: '#080808',
+        foreground: '#fafafa',
+        primary: {
+          DEFAULT: '#c084fc',
+          foreground: '#fafafa',
+        },
+        muted: {
+          DEFAULT: '#111111',
+          foreground: '#71717a',
+        },
+        border: '#2a2a2a',
+        ring: '#c084fc',
       },
       backdropBlur: {
         xs: '2px',

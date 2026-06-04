@@ -12,6 +12,7 @@
   --accent: #c084fc;
   --text: #fafafa;
   --muted: #71717a;
+  --radius: 0.5rem;
 }
 
 body {
