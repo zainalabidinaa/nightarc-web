@@ -83,10 +83,9 @@ export function isLikelyIncompatible(stream: StreamItem): boolean {
 }
 
 const HLS_URL_PATTERNS = ['.m3u8', '.m3u', '/manifest', '/playlist', '/hls/', 'type=hls', '/elfmagic/'];
-// Debrid domains removed — they primarily serve MP4/MKV files, not HLS manifests.
-// Incompatible containers (MKV/HEVC) are now routed through the remux server
-// (see streaming-server.ts), so we no longer guess HLS by domain.
-const HLS_DOMAIN_PATTERNS: string[] = [];
+// ElfHosted's streaming infrastructure always serves HLS through their proxy.
+// All aiostreams.elfhosted.com/playback/ and similar endpoints return HLS streams.
+const HLS_DOMAIN_PATTERNS: string[] = ['elfhosted.com'];
 
 export function getInitialSourceType(url: string, stream?: Pick<StreamItem, 'behaviorHints'>): VidstackSourceType {
   if (stream?.behaviorHints?.webPlayableType) return stream.behaviorHints.webPlayableType;
