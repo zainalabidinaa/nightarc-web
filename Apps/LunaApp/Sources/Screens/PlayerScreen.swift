@@ -7,6 +7,7 @@ struct PlayerScreen: View {
     let onDismiss: () -> Void
 
     @StateObject private var engine = PlayerEngine.shared
+    @StateObject private var ksEngine = KSPlayerEngine()
     @State private var showControls = true
     @State private var gestureState = PlayerGestureState()
     @State private var isLocked = false
@@ -16,7 +17,16 @@ struct PlayerScreen: View {
         ZStack {
             Color.black.ignoresSafeArea()
 
-            if let player = engine.player {
+            if engine.engineMode == .custom, let customView = engine.customDisplayView ?? ksEngine.displayView {
+                KSPlayerViewRepresentable(playerView: customView)
+                    .ignoresSafeArea()
+                    .playerGestures(
+                        engine: engine,
+                        state: $gestureState,
+                        showControls: $showControls,
+                        isLocked: $isLocked
+                    )
+            } else if let player = engine.player {
                 EnginePlayerView(player: player)
                     .ignoresSafeArea()
                     .playerGestures(
@@ -157,11 +167,57 @@ struct PlayerScreen: View {
         .preferredColorScheme(.dark)
         .onAppear {
             engine.launch(launch)
+            if engine.engineMode == .custom {
+                wireCustomEngine()
+                ksEngine.launch(launch)
+            }
             engine.play()
         }
         .onDisappear {
             engine.stop()
+            ksEngine.stop()
         }
+    }
+
+    private var feedbackText: String {
+        switch gestureState.mode {
+        case .brightness: return "\(Int(gestureState.value * 100))%"
+        case .volume: return "\(Int(gestureState.value * 100))%"
+        case .horizontalSeek:
+            let h = Int(gestureState.value) / 3600
+            let m = (Int(gestureState.value) % 3600) / 60
+            let s = Int(gestureState.value) % 60
+            return h > 0 ? String(format: "%d:%02d:%02d", h, m, s) : String(format: "%d:%02d", m, s)
+        case .none: return ""
+        }
+    }
+
+    private func wireCustomEngine() {
+        engine.customDisplayView = ksEngine.displayView
+        engine.onCustomPlay = { [weak ksEngine] in ksEngine?.play() }
+        engine.onCustomPause = { [weak ksEngine] in ksEngine?.pause() }
+        engine.onCustomSeek = { [weak ksEngine] in ksEngine?.seek(to: $0) }
+        engine.onCustomSetSpeed = { [weak ksEngine] in ksEngine?.setPlaybackSpeed($0) }
+        engine.onCustomSkipForward = { [weak ksEngine] in ksEngine?.skipForward() }
+        engine.onCustomSkipBack = { [weak ksEngine] in ksEngine?.skipBack() }
+        engine.onCustomSkipForward15 = { [weak ksEngine] in ksEngine?.skipForward15() }
+        engine.onCustomSkipBack15 = { [weak ksEngine] in ksEngine?.skipBack15() }
+        engine.onCustomToggleMute = { [weak ksEngine] in ksEngine?.toggleMute() }
+        engine.onCustomCycleSubtitle = { [weak ksEngine] in ksEngine?.cycleSubtitle() }
+        engine.onCustomSetSubtitle = { [weak ksEngine] in ksEngine?.setSubtitle($0) }
+        engine.onCustomStop = { [weak ksEngine] in ksEngine?.stop() }
+
+        ksEngine.$isPlaying.assign(to: &engine.$isPlaying)
+        ksEngine.$isLoading.assign(to: &engine.$isLoading)
+        ksEngine.$isEnded.assign(to: &engine.$isEnded)
+        ksEngine.$currentPosition.assign(to: &engine.$currentPosition)
+        ksEngine.$duration.assign(to: &engine.$duration)
+        ksEngine.$playbackSpeed.assign(to: &engine.$playbackSpeed)
+        ksEngine.$availableSubtitles.assign(to: &engine.$availableSubtitles)
+        ksEngine.$selectedSubtitle.assign(to: &engine.$selectedSubtitle)
+        ksEngine.$availableAudioTracks.assign(to: &engine.$availableAudioTracks)
+        ksEngine.$selectedAudioTrack.assign(to: &engine.$selectedAudioTrack)
+        ksEngine.$isMuted.assign(to: &engine.$isMuted)
     }
 
     private var feedbackText: String {

@@ -103,10 +103,10 @@ struct HomeScreen: View {
 
                         LazyVStack(spacing: 24) {
                             ForEach(mainRows) { row in
-                                CatalogRowView(row: row, metrics: metrics, onTap: { item in
+                                CatalogRowView(row: row, onTap: { item in
                                     selectedMedia = item
                                     showDetail = true
-                                })
+                                }, metrics: metrics)
                                 .onAppear {
                                     if row.id == mainRows.last?.id {
                                         Task {
@@ -124,7 +124,7 @@ struct HomeScreen: View {
                         if !browseRows.isEmpty {
                             LazyVStack(spacing: 24) {
                                 ForEach(browseRows) { row in
-                                    CatalogRowView(row: row, metrics: metrics, onTap: { item in
+                                    CatalogRowView(row: row, onTap: { item in
                                         if item.id.hasPrefix("folder_"),
                                            let folderRow = catalogRepo.allFolderRows[item.id] {
                                             selectedFolder = folderRow
@@ -133,7 +133,7 @@ struct HomeScreen: View {
                                             selectedMedia = item
                                             showDetail = true
                                         }
-                                    })
+                                    }, metrics: metrics)
                                 }
                             }
                             .padding(.top, 24)
@@ -178,14 +178,7 @@ struct HomeScreen: View {
                         Button {
                             profileManager.currentProfile = nil
                         } label: {
-                            Circle()
-                                .fill(profile.avatarColor.map { Color(hex: $0) } ?? LunaTheme.accent)
-                                .frame(width: 32, height: 32)
-                                .overlay(
-                                    Text(String(profile.name.prefix(1)))
-                                        .font(.caption)
-                                        .foregroundColor(.white)
-                                )
+                            ProfileAvatarView(profile: profile, size: 32)
                         }
                     }
                 }
@@ -348,8 +341,11 @@ struct CatalogRowView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 12) {
                     ForEach(Array(row.items.enumerated()), id: \.element.id) { index, item in
-                        ContentCard(item: item, row: row, index: index,
-                                    width: metrics?.posterWidth, height: metrics?.posterHeight)
+                        let isLandscape = row.tileShape == "landscape"
+                        let isSquare = row.tileShape == "square"
+                        let w = isLandscape ? (metrics?.landscapeWidth ?? 200) : isSquare ? (metrics?.posterWidth ?? 140) : (metrics?.posterWidth ?? 120)
+                        let h = isLandscape ? (metrics?.landscapeHeight ?? 112) : isSquare ? (metrics?.posterWidth ?? 140) : (metrics?.posterHeight ?? 180)
+                        ContentCard(item: item, row: row, index: index, width: w, height: h)
                             .onTapGesture { onTap(item) }
                     }
                 }

@@ -467,7 +467,7 @@ struct EpisodeCard: View {
                     .frame(width: 220, height: 124)
 
                 if let thumb = episode.thumbnail, let url = URL(string: thumb) {
-                    AsyncImage(url: url) { phase in
+                    CachedAsyncImage(url: url) { phase in
                         if case .success(let img) = phase {
                             img.resizable().aspectRatio(contentMode: .fill)
                                 .frame(width: 220, height: 124)

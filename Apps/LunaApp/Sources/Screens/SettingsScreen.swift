@@ -17,14 +17,7 @@ struct SettingsScreen: View {
                     VStack(spacing: 0) {
                         if let profile = profileManager.currentProfile {
                             HStack {
-                                Circle()
-                                    .fill(profile.avatarColor.map { Color(hex: $0) } ?? LunaTheme.accent)
-                                    .frame(width: 48, height: 48)
-                                    .overlay(
-                                        Text(String(profile.name.prefix(1).uppercased()))
-                                            .font(.headline)
-                                            .foregroundColor(.white)
-                                    )
+                                ProfileAvatarView(profile: profile, size: 48)
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(profile.name)
                                         .font(.headline)

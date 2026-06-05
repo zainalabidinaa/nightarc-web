@@ -8,6 +8,7 @@ struct ContentCard: View {
     var width: CGFloat? = nil
     var height: CGFloat? = nil
     @State private var imageFailed = false
+    @State private var retryCount = 0
 
     init(item: MetaPreview, row: CatalogRow? = nil, index: Int? = nil, width: CGFloat? = nil, height: CGFloat? = nil) {
         self.item = item
@@ -24,8 +25,9 @@ struct ContentCard: View {
                     .fill(LunaTheme.surfaceElevated)
                     .frame(width: cardWidth, height: cardHeight)
 
-                if let posterURL = item.poster, let url = URL(string: posterURL), !imageFailed {
-                    AsyncImage(url: url) { phase in
+                let primaryURL = (item.poster ?? item.banner).flatMap(URL.init)
+                if let url = primaryURL, !imageFailed {
+                    CachedAsyncImage(url: url) { phase in
                         switch phase {
                         case .success(let image):
                             image
@@ -35,7 +37,7 @@ struct ContentCard: View {
                                 .clipped()
                                 .cornerRadius(8)
                         case .failure:
-                            placeholderView
+                            placeholderView.onAppear { retryCount += 1 }
                         case .empty:
                             ProgressView().tint(LunaTheme.accent)
                         @unknown default:
@@ -50,11 +52,6 @@ struct ContentCard: View {
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(LunaTheme.accent.opacity(0.3), lineWidth: 2)
                         .frame(width: cardWidth, height: cardHeight)
-                }
-
-                ForEach(item.derivedBadges(index: index)) { badge in
-                    BadgeView(badge: badge)
-                        .padding(4)
                 }
             }
 
@@ -71,6 +68,13 @@ struct ContentCard: View {
             }
         }
         .sensoryFeedback(.impact(weight: .light), trigger: item.id)
+        .onChange(of: item.id) { _, _ in
+            imageFailed = false
+            retryCount = 0
+        }
+        .onChange(of: retryCount) { _, count in
+            if count >= 2 { imageFailed = true }
+        }
     }
 
     private var placeholderView: some View {
