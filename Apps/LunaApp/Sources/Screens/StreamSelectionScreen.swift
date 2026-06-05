@@ -13,6 +13,7 @@ struct StreamSelectionScreen: View {
     @State private var selectedStream: StreamItem?
     @State private var showPlayer = false
     @State private var playerLaunch: PlayerLaunch?
+    @State private var noUrlAlert = false
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
@@ -37,6 +38,13 @@ struct StreamSelectionScreen: View {
                             Section(addonName) {
                                 ForEach(streams) { stream in
                                     Button {
+                                        Task {
+                                            await StreamWarmupRepository.shared.warmup(
+                                                type: mediaType.rawValue,
+                                                id: mediaId,
+                                                addons: addonRepo.enabledAddons
+                                            )
+                                        }
                                         launchStream(stream)
                                     } label: {
                                         HStack {
@@ -63,6 +71,7 @@ struct StreamSelectionScreen: View {
                     .scrollContentBackground(.hidden)
                 }
             }
+            .sensoryFeedback(.impact(weight: .light), trigger: selectedStream?.id)
             .navigationTitle("Select Source")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -71,15 +80,26 @@ struct StreamSelectionScreen: View {
                 }
             }
             .fullScreenCover(isPresented: $showPlayer) {
-                if let launch = playerLaunch, let url = URL(string: launch.sourceUrl) {
+                if let launch = playerLaunch {
                     PlayerScreen(
-                        streamURL: url,
-                        title: launch.title,
+                        launch: launch,
                         onDismiss: { showPlayer = false }
                     )
                 }
             }
+            .alert("No direct URL", isPresented: $noUrlAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text("This stream doesn't have a direct playback URL (it may be a torrent or external link not supported by the built-in player).")
+            }
             .task {
+                // Clear stale results from any previous media item
+                streamRepo.clearStreams()
+                // Ensure addons are loaded (may not be if coming from a deep link)
+                if addonRepo.enabledAddons.isEmpty,
+                   let profile = ProfileManager.shared.currentProfile {
+                    await addonRepo.loadAddons(profileId: profile.id)
+                }
                 await streamRepo.fetchStreams(
                     type: mediaType.rawValue,
                     id: mediaId,
@@ -95,7 +115,12 @@ struct StreamSelectionScreen: View {
     }
 
     private func launchStream(_ stream: StreamItem) {
-        guard let url = stream.url else { return }
+        selectedStream = stream
+        // Prefer direct URL, fall back to externalUrl (e.g. YouTube/streaming service links)
+        guard let url = stream.url ?? stream.externalUrl else {
+            noUrlAlert = true
+            return
+        }
         let launch = PlayerLaunch(
             title: mediaName,
             sourceUrl: url,

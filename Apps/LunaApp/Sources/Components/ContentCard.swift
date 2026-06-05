@@ -5,12 +5,16 @@ struct ContentCard: View {
     let item: MetaPreview
     let row: CatalogRow?
     let index: Int?
+    var width: CGFloat? = nil
+    var height: CGFloat? = nil
     @State private var imageFailed = false
 
-    init(item: MetaPreview, row: CatalogRow? = nil, index: Int? = nil) {
+    init(item: MetaPreview, row: CatalogRow? = nil, index: Int? = nil, width: CGFloat? = nil, height: CGFloat? = nil) {
         self.item = item
         self.row = row
         self.index = index
+        self.width = width
+        self.height = height
     }
 
     var body: some View {
@@ -92,6 +96,7 @@ struct ContentCard: View {
     }
 
     private var cardWidth: CGFloat {
+        if let width = width { return width }
         switch resolvedShape {
         case .landscape: return 200
         case .square:    return 140
@@ -100,6 +105,7 @@ struct ContentCard: View {
     }
 
     private var cardHeight: CGFloat {
+        if let height = height { return height }
         switch resolvedShape {
         case .landscape: return 112
         case .square:    return 140

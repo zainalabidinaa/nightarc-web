@@ -19,80 +19,172 @@ struct DetailScreen: View {
         ScrollView {
             if let detail = metaRepo.detail {
                 VStack(alignment: .leading, spacing: 0) {
-                    ZStack(alignment: .bottomLeading) {
-                        if let bg = detail.background, let url = URL(string: bg) {
-                            AsyncImage(url: url) { phase in
-                                switch phase {
-                                case .success(let image):
-                                    image.resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(height: 300)
-                                        .clipped()
-                                        .overlay(
-                                            LinearGradient(
-                                                colors: [.clear, LunaTheme.background],
-                                                startPoint: .center,
-                                                endPoint: .bottom
-                                            )
-                                        )
-                                default:
-                                    Color(LunaTheme.surfaceElevated).frame(height: 300)
-                                }
-                            }
-                        } else {
-                            Color(LunaTheme.surfaceElevated).frame(height: 200)
-                        }
 
-                        HStack(alignment: .bottom, spacing: 16) {
-                            if let poster = detail.poster, let url = URL(string: poster) {
+                    // ── BACKDROP ──────────────────────────────────────────
+                    // Use GeometryReader to extend the image under the status bar
+                    // WITHOUT putting ignoresSafeArea on an inner view (which breaks
+                    // sibling layout frames and strips horizontal padding below).
+                    GeometryReader { geo in
+                        let topInset = geo.safeAreaInsets.top
+                        let backdropURL = detail.background.flatMap(URL.init)
+                            ?? detail.poster.flatMap(URL.init)
+
+                        ZStack(alignment: .bottom) {
+                            if let url = backdropURL {
                                 AsyncImage(url: url) { phase in
-                                    if case .success(let image) = phase {
-                                        image.resizable()
+                                    if case .success(let img) = phase {
+                                        img.resizable()
                                             .aspectRatio(contentMode: .fill)
-                                            .frame(width: 100, height: 150)
-                                            .cornerRadius(8)
+                                            .frame(maxWidth: .infinity)
+                                            .frame(height: 320 + topInset)
+                                            .clipped()
                                     } else {
                                         Color(LunaTheme.surfaceElevated)
-                                            .frame(width: 100, height: 150)
-                                            .cornerRadius(8)
+                                            .frame(maxWidth: .infinity)
+                                            .frame(height: 320 + topInset)
                                     }
                                 }
+                            } else {
+                                Color(LunaTheme.surfaceElevated)
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 320 + topInset)
                             }
 
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(detail.name)
-                                    .font(.title2)
-                                    .fontWeight(.bold)
-                                    .foregroundColor(.white)
-                                if let info = detail.releaseInfo {
-                                    Text(info)
-                                        .font(.subheadline)
+                            LinearGradient(
+                                stops: [
+                                    .init(color: .clear,                            location: 0.0),
+                                    .init(color: .clear,                            location: 0.35),
+                                    .init(color: LunaTheme.background.opacity(0.6), location: 0.65),
+                                    .init(color: LunaTheme.background,              location: 1.0),
+                                ],
+                                startPoint: .top, endPoint: .bottom
+                            )
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 320 + topInset)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 320 + topInset)
+                    }
+                    // Fixed layout height the VStack sees — GeometryReader
+                    // renders taller internally to cover the safe area
+                    .frame(height: 320)
+
+                    // ── POSTER + TITLE ────────────────────────────────────
+                    // .offset(y:) moves the view visually without disturbing
+                    // sibling layout frames — safe alternative to negative padding
+                    HStack(alignment: .bottom, spacing: 14) {
+                        if let poster = detail.poster, let url = URL(string: poster) {
+                            AsyncImage(url: url) { phase in
+                                if case .success(let img) = phase {
+                                    img.resizable()
+                                        .aspectRatio(2/3, contentMode: .fill)
+                                        .frame(width: 110, height: 165)
+                                        .cornerRadius(10)
+                                        .shadow(color: .black.opacity(0.5), radius: 10, y: 4)
+                                } else {
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(LunaTheme.surfaceElevated)
+                                        .frame(width: 110, height: 165)
+                                }
+                            }
+                        }
+
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(detail.name)
+                                .font(.title3.bold())
+                                .foregroundColor(.white)
+                                .lineLimit(3)
+                                .fixedSize(horizontal: false, vertical: true)
+
+                            // Meta row
+                            HStack(spacing: 6) {
+                                if let rating = detail.imdbRating {
+                                    HStack(spacing: 3) {
+                                        Image(systemName: "star.fill")
+                                            .font(.caption2)
+                                            .foregroundColor(.yellow)
+                                        Text(rating)
+                                            .font(.caption.bold())
+                                            .foregroundColor(.yellow)
+                                    }
+                                }
+                                if let release = detail.releaseInfo {
+                                    Text(release)
+                                        .font(.caption)
+                                        .foregroundColor(LunaTheme.textSecondary)
+                                }
+                                if let runtime = detail.runtime {
+                                    Text(runtime)
+                                        .font(.caption)
                                         .foregroundColor(LunaTheme.textSecondary)
                                 }
                             }
-                        }
-                        .padding(.horizontal)
-                        .padding(.bottom, 16)
-                    }
 
-                    VStack(spacing: 16) {
-                        HStack(spacing: 12) {
-                            Button {
-                                showStreamSelection = true
-                            } label: {
-                                HStack {
-                                    Image(systemName: "play.fill")
-                                    Text("Play")
+                            if let genres = detail.genres?.prefix(3), !genres.isEmpty {
+                                HStack(spacing: 5) {
+                                    ForEach(Array(genres), id: \.self) { genre in
+                                        Text(genre)
+                                            .font(.system(size: 10, weight: .medium))
+                                            .foregroundColor(LunaTheme.textSecondary)
+                                            .padding(.horizontal, 7).padding(.vertical, 3)
+                                            .overlay(
+                                                Capsule()
+                                                    .stroke(LunaTheme.textTertiary.opacity(0.5), lineWidth: 1)
+                                            )
+                                    }
                                 }
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .glassProminentButtonStyle(tint: LunaTheme.accent, cornerRadius: 12)
                             }
+                        }
+                        .padding(.bottom, 4)
+                    }
+                    .padding(.horizontal, 16)
+                    .offset(y: -50)          // visually floats into backdrop bottom
+                    .padding(.bottom, -50)   // cancel the extra space .offset leaves
 
-                            Button {
-                                Task {
-                                    guard let profile = profileManager.currentProfile else { return }
-                                    await libraryRepo.toggleLibrary(
+                    // ── ACTION BUTTONS ────────────────────────────────────
+                    HStack(spacing: 10) {
+                        Button { showStreamSelection = true } label: {
+                            HStack(spacing: 8) {
+                                Image(systemName: "play.fill").font(.subheadline)
+                                Text("Play").font(.subheadline.bold())
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .background(LunaTheme.accent)
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
+                        }
+
+                        let inLibrary = libraryRepo.isInLibrary(mediaId: detail.id)
+                        Button {
+                            Task {
+                                guard let profile = profileManager.currentProfile else { return }
+                                await libraryRepo.toggleLibrary(
+                                    profileId: profile.id,
+                                    mediaId: detail.id,
+                                    mediaType: type,
+                                    name: detail.name,
+                                    poster: detail.poster
+                                )
+                            }
+                        } label: {
+                            Image(systemName: inLibrary ? "bookmark.fill" : "bookmark")
+                                .font(.title3)
+                                .frame(width: 50, height: 50)
+                                .background(LunaTheme.surfaceElevated)
+                                .foregroundColor(inLibrary ? LunaTheme.accent : .white)
+                                .cornerRadius(10)
+                        }
+                        .sensoryFeedback(.impact(weight: .light), trigger: inLibrary)
+
+                        let watched = watchedRepo.isWatched(mediaId: detail.id)
+                        Button {
+                            Task {
+                                guard let profile = profileManager.currentProfile else { return }
+                                if watched {
+                                    await watchedRepo.markUnwatched(mediaId: detail.id)
+                                } else {
+                                    await watchedRepo.markWatched(
                                         profileId: profile.id,
                                         mediaId: detail.id,
                                         mediaType: type,
@@ -100,210 +192,152 @@ struct DetailScreen: View {
                                         poster: detail.poster
                                     )
                                 }
-                            } label: {
-                                Image(systemName: libraryRepo.isInLibrary(mediaId: detail.id) ? "bookmark.fill" : "bookmark")
-                                    .font(.title3)
-                                    .padding()
-                                    .glassCard(cornerRadius: 12, interactive: true)
-                                    .foregroundColor(libraryRepo.isInLibrary(mediaId: detail.id) ? LunaTheme.accent : .white)
                             }
-
-                            Button {
-                                Task {
-                                    guard let profile = profileManager.currentProfile else { return }
-                                    if watchedRepo.isWatched(mediaId: detail.id) {
-                                        await watchedRepo.markUnwatched(mediaId: detail.id)
-                                    } else {
-                                        await watchedRepo.markWatched(
-                                            profileId: profile.id,
-                                            mediaId: detail.id,
-                                            mediaType: type,
-                                            name: detail.name,
-                                            poster: detail.poster
-                                        )
-                                    }
-                                }
-                            } label: {
-                                Image(systemName: watchedRepo.isWatched(mediaId: detail.id) ? "checkmark.circle.fill" : "checkmark.circle")
-                                    .font(.title3)
-                                    .padding()
-                                    .glassCard(cornerRadius: 12, interactive: true)
-                                    .foregroundColor(watchedRepo.isWatched(mediaId: detail.id) ? .green : .white)
-                            }
-                        }
-                        .padding(.horizontal)
-
-                        if let description = detail.description, !description.isEmpty {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("Overview")
-                                    .font(.headline)
-                                    .foregroundColor(.white)
-                                Text(description)
-                                    .font(.body)
-                                    .foregroundColor(LunaTheme.textSecondary)
-                                    .lineLimit(6)
-                            }
-                            .padding(.horizontal)
-                        }
-
-                        if let genres = detail.genres, !genres.isEmpty {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("Genres")
-                                    .font(.headline)
-                                    .foregroundColor(.white)
-                                ScrollView(.horizontal, showsIndicators: false) {
-                                    HStack(spacing: 8) {
-                                        ForEach(genres, id: \.self) { genre in
-                                            Text(genre)
-                                                .font(.caption)
-                                                .padding(.horizontal, 12)
-                                                .padding(.vertical, 6)
-                                                .glassCapsule(interactive: true)
-                                                .foregroundColor(LunaTheme.textSecondary)
-                                        }
-                                    }
-                                }
-                            }
-                            .padding(.horizontal)
-                        }
-
-                        if let cast = detail.cast, !cast.isEmpty {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("Cast")
-                                    .font(.headline)
-                                    .foregroundColor(.white)
-                                ScrollView(.horizontal, showsIndicators: false) {
-                                    HStack(spacing: 12) {
-                                        ForEach(cast.prefix(20)) { person in
-                                            VStack(spacing: 4) {
-                                                Circle()
-                                                    .glassCircle()
-                                                    .frame(width: 56, height: 56)
-                                                    .overlay(
-                                                        Text(person.name.prefix(1))
-                                                            .font(.headline)
-                                                            .foregroundColor(LunaTheme.textSecondary)
-                                                    )
-                                                Text(person.name)
-                                                    .font(.caption2)
-                                                    .foregroundColor(LunaTheme.textSecondary)
-                                                    .lineLimit(1)
-                                                    .frame(width: 64)
-                                            }
-                                        }
-                                    }
-                                    .padding(.horizontal)
-                                }
-                                .padding(.horizontal, -16)
-                            }
-                            .padding(.horizontal)
-                        }
-
-                        if let links = detail.links, !links.isEmpty {
-                            let networks = links.filter { $0.category?.lowercased() == "network" }
-                            let studios = links.filter { $0.category?.lowercased() == "production" }
-
-                            if !networks.isEmpty || !studios.isEmpty {
-                                VStack(alignment: .leading, spacing: 16) {
-                                    if !networks.isEmpty {
-                                        VStack(alignment: .leading, spacing: 8) {
-                                            Text("NETWORK")
-                                                .font(.system(size: 10, weight: .bold))
-                                                .foregroundColor(LunaTheme.textTertiary)
-                                                .tracking(1.5)
-                                            ScrollView(.horizontal, showsIndicators: false) {
-                                                HStack(spacing: 8) {
-                                                    ForEach(networks) { link in
-                                                        Text(link.name)
-                                                            .font(.caption).fontWeight(.semibold)
-                                                            .foregroundColor(LunaTheme.textSecondary)
-                                                            .padding(.horizontal, 12).padding(.vertical, 7)
-                                                            .glassCapsule(interactive: true)
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    if !studios.isEmpty {
-                                        VStack(alignment: .leading, spacing: 8) {
-                                            Text("PRODUCTION")
-                                                .font(.system(size: 10, weight: .bold))
-                                                .foregroundColor(LunaTheme.textTertiary)
-                                                .tracking(1.5)
-                                            ScrollView(.horizontal, showsIndicators: false) {
-                                                HStack(spacing: 8) {
-                                                    ForEach(studios) { link in
-                                                        Text(link.name)
-                                                            .font(.caption).fontWeight(.semibold)
-                                                            .foregroundColor(LunaTheme.textSecondary)
-                                                            .padding(.horizontal, 12).padding(.vertical, 7)
-                                                            .glassCapsule(interactive: true)
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                .padding(.horizontal)
-                            }
-                        }
-
-                        if let seasons = detail.seasons, !seasons.isEmpty {
-                            VStack(alignment: .leading, spacing: 12) {
-                                Text("Episodes")
-                                    .font(.headline)
-                                    .foregroundColor(.white)
-                                    .padding(.horizontal)
-
-                                ScrollView(.horizontal, showsIndicators: false) {
-                                    HStack(spacing: 8) {
-                                        ForEach(seasons.sorted(by: { $0.number < $1.number })) { season in
-                                            Button {
-                                                selectedSeasonId = season.id
-                                            } label: {
-                                                Text("Season \(season.number)")
-                                                    .font(.subheadline).fontWeight(.medium)
-                                                    .padding(.horizontal, 16).padding(.vertical, 8)
-                                                    .glassCapsule(interactive: true)
-                                                    .foregroundColor(selectedSeasonId == season.id || (selectedSeasonId == nil && seasons.sorted(by: { $0.number < $1.number }).first?.id == season.id) ? .white : LunaTheme.textSecondary)
-                                            }
-                                        }
-                                    }
-                                    .padding(.horizontal)
-                                }
-
-                                if let activeSeason = seasons.first(where: { $0.id == (selectedSeasonId ?? seasons.sorted(by: { $0.number < $1.number }).first?.id) }),
-                                   let episodes = activeSeason.episodes {
-                                    ScrollView(.horizontal, showsIndicators: false) {
-                                        LazyHStack(spacing: 12) {
-                                            ForEach(episodes) { ep in
-                                                EpisodeCard(episode: ep) {
-                                                    showStreamSelection = true
-                                                }
-                                            }
-                                        }
-                                        .padding(.horizontal)
-                                    }
-                                }
-                            }
+                        } label: {
+                            Image(systemName: watched ? "checkmark.circle.fill" : "checkmark.circle")
+                                .font(.title3)
+                                .frame(width: 50, height: 50)
+                                .background(LunaTheme.surfaceElevated)
+                                .foregroundColor(watched ? .green : .white)
+                                .cornerRadius(10)
                         }
                     }
+                    .padding(.horizontal, 16)
                     .padding(.top, 16)
+
+                    // ── OVERVIEW ──────────────────────────────────────────
+                    if let description = detail.description, !description.isEmpty {
+                        ExpandableText(text: description)
+                            .padding(.horizontal, 16)
+                            .padding(.top, 20)
+                    }
+
+                    // ── DETAILS CHIPS ─────────────────────────────────────
+                    detailChips(detail: detail)
+
+                    // ── CAST ──────────────────────────────────────────────
+                    if let cast = detail.cast, !cast.isEmpty {
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text("Cast")
+                                .font(.headline).foregroundColor(.white)
+                                .padding(.horizontal, 16)
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 14) {
+                                    ForEach(cast.prefix(20)) { person in
+                                        VStack(spacing: 5) {
+                                            Circle()
+                                                .fill(LunaTheme.surfaceElevated)
+                                                .frame(width: 54, height: 54)
+                                                .overlay(
+                                                    Text(String(person.name.prefix(1)).uppercased())
+                                                        .font(.headline)
+                                                        .foregroundColor(LunaTheme.textSecondary)
+                                                )
+                                            Text(person.name)
+                                                .font(.caption2)
+                                                .foregroundColor(LunaTheme.textSecondary)
+                                                .lineLimit(1)
+                                                .frame(width: 60)
+                                        }
+                                    }
+                                }
+                                .padding(.horizontal, 16)
+                            }
+                        }
+                        .padding(.top, 20)
+                    }
+
+                    // ── EPISODES ──────────────────────────────────────────
+                    if let seasons = detail.seasons, !seasons.isEmpty {
+                        let sorted = seasons.sorted { $0.number < $1.number }
+                        let activeId = selectedSeasonId ?? sorted.first?.id
+
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Episodes")
+                                .font(.headline).foregroundColor(.white)
+                                .padding(.horizontal, 16)
+
+                            // Season picker
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 8) {
+                                    ForEach(sorted) { season in
+                                        Button { selectedSeasonId = season.id } label: {
+                                            Text("Season \(season.number)")
+                                                .font(.subheadline.weight(.medium))
+                                                .padding(.horizontal, 14).padding(.vertical, 7)
+                                                .background(
+                                                    season.id == activeId
+                                                        ? LunaTheme.accent
+                                                        : LunaTheme.surfaceElevated
+                                                )
+                                                .foregroundColor(season.id == activeId ? .white : LunaTheme.textSecondary)
+                                                .cornerRadius(20)
+                                        }
+                                    }
+                                }
+                                .padding(.horizontal, 16)
+                            }
+
+                            if let activeSeason = sorted.first(where: { $0.id == activeId }),
+                               let episodes = activeSeason.episodes {
+                                ScrollView(.horizontal, showsIndicators: false) {
+                                    LazyHStack(spacing: 12) {
+                                        ForEach(episodes) { ep in
+                                            EpisodeCard(episode: ep) {
+                                                showStreamSelection = true
+                                            }
+                                        }
+                                    }
+                                    .padding(.horizontal, 16)
+                                }
+                            }
+                        }
+                        .padding(.top, 20)
+                    }
+
+                    // ── NETWORK / PRODUCTION ──────────────────────────────
+                    if let links = detail.links, !links.isEmpty {
+                        let networks = links.filter { $0.category?.lowercased() == "network" }
+                        let studios  = links.filter { $0.category?.lowercased() == "production" }
+                        if !networks.isEmpty || !studios.isEmpty {
+                            VStack(alignment: .leading, spacing: 14) {
+                                if !networks.isEmpty {
+                                    linkRow(label: "NETWORK", links: networks)
+                                }
+                                if !studios.isEmpty {
+                                    linkRow(label: "PRODUCTION", links: studios)
+                                }
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.top, 20)
+                        }
+                    }
+
+                    Spacer().frame(height: 48)
                 }
             } else if metaRepo.isLoading {
                 VStack {
-                    Spacer().frame(height: 200)
+                    Spacer().frame(height: 280)
                     ProgressView().tint(LunaTheme.accent)
                     Spacer()
                 }
             } else if let error = metaRepo.errorMessage {
-                Text(error)
-                    .foregroundColor(.red)
-                    .padding()
+                VStack {
+                    Spacer().frame(height: 200)
+                    Text(error).foregroundColor(LunaTheme.textSecondary).padding().multilineTextAlignment(.center)
+                    Spacer()
+                }
             }
         }
+        .ignoresSafeArea(edges: .top)
         .background(LunaTheme.background)
+        .refreshable {
+            await metaRepo.loadDetail(
+                type: type,
+                id: mediaId,
+                addons: addonRepo.findAddonWithMetaResource(type: type)
+            )
+        }
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showStreamSelection) {
             StreamSelectionScreen(
@@ -315,6 +349,9 @@ struct DetailScreen: View {
             )
         }
         .task {
+            if addonRepo.enabledAddons.isEmpty, let profile = profileManager.currentProfile {
+                await addonRepo.loadAddons(profileId: profile.id)
+            }
             await metaRepo.loadDetail(
                 type: type,
                 id: mediaId,
@@ -326,7 +363,97 @@ struct DetailScreen: View {
             }
         }
     }
+
+    @ViewBuilder
+    private func detailChips(detail: MetaDetail) -> some View {
+        let hasGenres  = !(detail.genres ?? []).isEmpty
+        let hasDirector = !(detail.director ?? []).isEmpty
+        if hasGenres || hasDirector {
+            VStack(alignment: .leading, spacing: 14) {
+                if hasGenres {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("GENRES")
+                            .font(.system(size: 10, weight: .bold))
+                            .foregroundColor(LunaTheme.textTertiary)
+                            .tracking(1.5)
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 8) {
+                                ForEach(detail.genres!, id: \.self) { genre in
+                                    Text(genre)
+                                        .font(.caption)
+                                        .padding(.horizontal, 12).padding(.vertical, 6)
+                                        .background(LunaTheme.surfaceElevated)
+                                        .foregroundColor(LunaTheme.textSecondary)
+                                        .cornerRadius(16)
+                                }
+                            }
+                        }
+                    }
+                }
+                if hasDirector {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("DIRECTOR")
+                            .font(.system(size: 10, weight: .bold))
+                            .foregroundColor(LunaTheme.textTertiary)
+                            .tracking(1.5)
+                        Text(detail.director!.map(\.name).joined(separator: ", "))
+                            .font(.subheadline)
+                            .foregroundColor(.white)
+                    }
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 20)
+        }
+    }
+
+    @ViewBuilder
+    private func linkRow(label: String, links: [MetaLink]) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(label)
+                .font(.system(size: 10, weight: .bold))
+                .foregroundColor(LunaTheme.textTertiary)
+                .tracking(1.5)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(links) { link in
+                        Text(link.name)
+                            .font(.caption.weight(.semibold))
+                            .foregroundColor(LunaTheme.textSecondary)
+                            .padding(.horizontal, 12).padding(.vertical, 7)
+                            .background(LunaTheme.surfaceElevated)
+                            .cornerRadius(16)
+                    }
+                }
+            }
+        }
+    }
 }
+
+// MARK: - Expandable overview text
+
+private struct ExpandableText: View {
+    let text: String
+    @State private var expanded = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(text)
+                .font(.subheadline)
+                .foregroundColor(LunaTheme.textSecondary)
+                .lineLimit(expanded ? nil : 3)
+                .animation(.easeInOut(duration: 0.2), value: expanded)
+
+            Button { expanded.toggle() } label: {
+                Text(expanded ? "Less" : "More")
+                    .font(.caption.bold())
+                    .foregroundColor(LunaTheme.accent)
+            }
+        }
+    }
+}
+
+// MARK: - Episode Card
 
 struct EpisodeCard: View {
     let episode: MetaVideo
@@ -337,60 +464,68 @@ struct EpisodeCard: View {
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
                     .fill(LunaTheme.surfaceElevated)
-                    .frame(width: 208, height: 117)
+                    .frame(width: 220, height: 124)
 
                 if let thumb = episode.thumbnail, let url = URL(string: thumb) {
                     AsyncImage(url: url) { phase in
                         if case .success(let img) = phase {
                             img.resizable().aspectRatio(contentMode: .fill)
+                                .frame(width: 220, height: 124)
+                                .clipped()
+                                .cornerRadius(10)
+                        } else {
+                            episodePlaceholder
                         }
                     }
-                    .frame(width: 208, height: 117)
-                    .clipped()
-                    .cornerRadius(10)
+                    .frame(width: 220, height: 124)
                 } else {
-                    Image(systemName: "play.rectangle.fill")
-                        .font(.title2)
-                        .foregroundColor(LunaTheme.textTertiary)
+                    episodePlaceholder
                 }
 
-                Color.black.opacity(0.3)
-                    .cornerRadius(10)
+                // Play button
                 Button(action: onPlay) {
                     Circle()
-                        .fill(Color.white.opacity(0.2))
-                        .frame(width: 40, height: 40)
+                        .fill(Color.black.opacity(0.55))
+                        .frame(width: 42, height: 42)
                         .overlay(
                             Image(systemName: "play.fill")
-                                .font(.system(size: 16))
+                                .font(.system(size: 15))
                                 .foregroundColor(.white)
                                 .offset(x: 1.5)
                         )
                 }
             }
-            .frame(width: 208, height: 117)
+            .frame(width: 220, height: 124)
 
             if let epNum = episode.episode {
                 Text("Episode \(epNum)")
                     .font(.caption2)
                     .foregroundColor(LunaTheme.textTertiary)
             }
-
             Text(episode.title)
-                .font(.caption)
-                .fontWeight(.semibold)
+                .font(.caption.weight(.semibold))
                 .foregroundColor(.white)
                 .lineLimit(1)
-                .frame(width: 208, alignment: .leading)
-
+                .frame(width: 220, alignment: .leading)
             if let overview = episode.overview {
                 Text(overview)
                     .font(.caption2)
                     .foregroundColor(LunaTheme.textSecondary)
                     .lineLimit(2)
-                    .frame(width: 208, alignment: .leading)
+                    .frame(width: 220, alignment: .leading)
             }
         }
+    }
+
+    private var episodePlaceholder: some View {
+        RoundedRectangle(cornerRadius: 10)
+            .fill(LunaTheme.surfaceElevated)
+            .frame(width: 220, height: 124)
+            .overlay(
+                Image(systemName: "play.rectangle.fill")
+                    .font(.title2)
+                    .foregroundColor(LunaTheme.textTertiary)
+            )
     }
 }
 

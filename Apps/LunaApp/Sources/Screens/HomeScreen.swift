@@ -71,26 +71,27 @@ struct HomeScreen: View {
 
                     // Continue Watching
                     if !homeRepo.continueWatchingItems.isEmpty {
-                        ContinueWatchingRow(
-                            items: homeRepo.continueWatchingItems,
-                            onTap: { item in
-                                // ContinueWatchingItem -> navigate via mediaId lookup
-                                if let match = catalogRepo.catalogRows
-                                    .flatMap({ $0.items })
-                                    .first(where: { $0.id == item.mediaId }) {
-                                    selectedMedia = match
-                                    showDetail = true
-                                } else {
-                                    // Fallback: build a minimal MetaPreview from the CW item
-                                    selectedMedia = MetaPreview(
-                                        id: item.mediaId,
-                                        type: item.mediaType == "movie" ? .movie : .series,
-                                        name: item.name,
-                                        poster: item.poster
-                                    )
-                                    showDetail = true
-                                }
+                    ContinueWatchingRow(
+                        items: homeRepo.continueWatchingItems,
+                        onTap: { item in
+                            // ContinueWatchingItem -> navigate via mediaId lookup
+                            if let match = catalogRepo.catalogRows
+                                .flatMap({ $0.items })
+                                .first(where: { $0.id == item.mediaId }) {
+                                selectedMedia = match
+                                showDetail = true
+                            } else {
+                                // Fallback: build a minimal MetaPreview from the CW item
+                                selectedMedia = MetaPreview(
+                                    id: item.mediaId,
+                                    type: item.mediaType == "movie" ? .movie : .series,
+                                    name: item.name,
+                                    poster: item.poster
+                                )
+                                showDetail = true
                             }
+                        },
+                        metrics: metrics
                         )
                         .padding(.top, 16)
                     }
@@ -102,10 +103,10 @@ struct HomeScreen: View {
 
                         LazyVStack(spacing: 24) {
                             ForEach(mainRows) { row in
-                                CatalogRowView(row: row) { item in
+                                CatalogRowView(row: row, metrics: metrics, onTap: { item in
                                     selectedMedia = item
                                     showDetail = true
-                                }
+                                })
                                 .onAppear {
                                     if row.id == mainRows.last?.id {
                                         Task {
@@ -123,7 +124,7 @@ struct HomeScreen: View {
                         if !browseRows.isEmpty {
                             LazyVStack(spacing: 24) {
                                 ForEach(browseRows) { row in
-                                    CatalogRowView(row: row) { item in
+                                    CatalogRowView(row: row, metrics: metrics, onTap: { item in
                                         if item.id.hasPrefix("folder_"),
                                            let folderRow = catalogRepo.allFolderRows[item.id] {
                                             selectedFolder = folderRow
@@ -132,7 +133,7 @@ struct HomeScreen: View {
                                             selectedMedia = item
                                             showDetail = true
                                         }
-                                    }
+                                    })
                                 }
                             }
                             .padding(.top, 24)
@@ -321,6 +322,7 @@ struct FolderCell: View {
 struct CatalogRowView: View {
     let row: CatalogRow
     let onTap: (MetaPreview) -> Void
+    var metrics: ResponsiveMetrics? = nil
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -346,7 +348,8 @@ struct CatalogRowView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 12) {
                     ForEach(Array(row.items.enumerated()), id: \.element.id) { index, item in
-                        ContentCard(item: item, row: row, index: index)
+                        ContentCard(item: item, row: row, index: index,
+                                    width: metrics?.posterWidth, height: metrics?.posterHeight)
                             .onTapGesture { onTap(item) }
                     }
                 }
@@ -361,6 +364,7 @@ struct CatalogRowView: View {
 struct ContinueWatchingRow: View {
     let items: [ContinueWatchingItem]
     let onTap: (ContinueWatchingItem) -> Void
+    var metrics: ResponsiveMetrics? = nil
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -372,7 +376,9 @@ struct ContinueWatchingRow: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 12) {
                     ForEach(items) { item in
-                        ContinueWatchingCard(item: item)
+                        ContinueWatchingCard(item: item,
+                                             width: metrics?.continueWatchingWidth ?? 192,
+                                             height: metrics?.continueWatchingHeight ?? 108)
                             .onTapGesture { onTap(item) }
                     }
                 }
@@ -385,6 +391,8 @@ struct ContinueWatchingRow: View {
 
 struct ContinueWatchingCard: View {
     let item: ContinueWatchingItem
+    var width: CGFloat = 192
+    var height: CGFloat = 108
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -402,7 +410,7 @@ struct ContinueWatchingCard: View {
                         RoundedRectangle(cornerRadius: 8).fill(LunaTheme.surfaceElevated)
                     }
                 }
-                .frame(width: 192, height: 108).clipped()
+                .frame(width: width, height: height).clipped()
                 .glassCard(cornerRadius: 8)
 
                 // Play overlay circle
@@ -428,10 +436,10 @@ struct ContinueWatchingCard: View {
                     }.frame(height: 3)
                 }.cornerRadius(8)
             }
-            .frame(width: 192, height: 108)
+            .frame(width: width, height: height)
 
             Text(item.name)
-                .font(.caption).foregroundColor(.white).lineLimit(1).frame(width: 192, alignment: .leading)
+                .font(.caption).foregroundColor(.white).lineLimit(1).frame(width: width, alignment: .leading)
             Text("\(Int(item.progressFraction * 100))% watched")
                 .font(.caption2).foregroundColor(LunaTheme.textSecondary)
         }

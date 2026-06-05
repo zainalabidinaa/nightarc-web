@@ -89,6 +89,9 @@ struct SearchScreen: View {
                         }
                         .padding()
                     }
+                    .refreshable {
+                        await searchRepo.search(query: query, addons: addonRepo.enabledAddons)
+                    }
                 } else {
                     Spacer()
                     EmptyStateView(

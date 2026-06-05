@@ -5,6 +5,7 @@ struct LibraryScreen: View {
     @StateObject private var libraryRepo = LibraryRepository.shared
     @EnvironmentObject var profileManager: ProfileManager
     @State private var selectedMedia: MetaPreview?
+    @State private var deleteTrigger = 0
 
     var body: some View {
         NavigationStack {
@@ -68,8 +69,10 @@ struct LibraryScreen: View {
                                         poster: item.poster
                                     )
                                 }
+                                .sensoryFeedback(.warning, trigger: deleteTrigger)
                                 .swipeActions(edge: .trailing) {
                                     Button(role: .destructive) {
+                                        deleteTrigger &+= 1
                                         Task {
                                             guard let profile = profileManager.currentProfile else { return }
                                             await libraryRepo.removeFromLibrary(

@@ -40,6 +40,7 @@ struct AppearanceSettingsScreen: View {
                 }
                 .padding(.top, 16)
             }
+            .sensoryFeedback(.selection, trigger: selectedTheme)
         }
         .navigationTitle("Appearance")
         .navigationBarTitleDisplayMode(.large)
