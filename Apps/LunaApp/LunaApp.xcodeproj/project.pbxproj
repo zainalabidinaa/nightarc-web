@@ -14,19 +14,22 @@
 		51F954F851A3A4639C70B2DC /* HomeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1D306A69DBADAA0F197720 /* HomeScreen.swift */; };
 		5D46158A76F52BE1C09AF19E /* ContentCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00168395CD29DECF58929337 /* ContentCard.swift */; };
 		686742C906F6505703092384 /* AuthScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC9E52B6F1F02AA0DEB87EFC /* AuthScreen.swift */; };
+		80C1474A29FA28C2DA7249F3 /* ParallaxHero.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAEE2CAF16072C19867A20A /* ParallaxHero.swift */; };
 		820BAC8791A33426DA083C58 /* ProfilePickerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DF866A3E0E86D182E4E9B76 /* ProfilePickerScreen.swift */; };
 		9D4E0D93663B1850ADCBF81B /* SettingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F6FD24D68DBBAB57E9D8FC0 /* SettingsScreen.swift */; };
-		A22222222222222222222222 /* Resources/Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A11111111111111111111111 /* Resources/Assets.xcassets */; };
 		A41D3574B0860B92B8B5AEDB /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD567E5F1A6F35B412CA5D2 /* ContentView.swift */; };
+		BDCDDABB1BC24F5935F28D3A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1090FE6DB83D71C735613B5A /* Assets.xcassets */; };
 		CC04D7816468C4295A23224C /* LibraryScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B09F922B13BDAE26C9D8D09 /* LibraryScreen.swift */; };
 		DC87974D2CDD0738F492C161 /* ProfileSelectionScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 602AEA64A4AEEB986BCCF030 /* ProfileSelectionScreen.swift */; };
 		DF7E51B56A0B680B99CADF12 /* PlayerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A181B6B8151B673BA741C9D1 /* PlayerScreen.swift */; };
 		E416FBBA817F1C4807C7DA01 /* StreamSelectionScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C55E48E637AA4A974497787 /* StreamSelectionScreen.swift */; };
+		F66A4C64BB762AEE5764C7E5 /* FolderScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E34EEADD9A5EF5DDF1A16D /* FolderScreen.swift */; };
 		FFEE989D846E33C03915C982 /* LunaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8997E09659D665EA90785B88 /* LunaApp.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		00168395CD29DECF58929337 /* ContentCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentCard.swift; sourceTree = "<group>"; };
+		1090FE6DB83D71C735613B5A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		154121DC1EBCCE63654E64A7 /* SearchScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchScreen.swift; sourceTree = "<group>"; };
 		1B09F922B13BDAE26C9D8D09 /* LibraryScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryScreen.swift; sourceTree = "<group>"; };
 		2F6FD24D68DBBAB57E9D8FC0 /* SettingsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsScreen.swift; sourceTree = "<group>"; };
@@ -38,11 +41,12 @@
 		7C55E48E637AA4A974497787 /* StreamSelectionScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamSelectionScreen.swift; sourceTree = "<group>"; };
 		8997E09659D665EA90785B88 /* LunaApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LunaApp.swift; sourceTree = "<group>"; };
 		9DF866A3E0E86D182E4E9B76 /* ProfilePickerScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePickerScreen.swift; sourceTree = "<group>"; };
-		A11111111111111111111111 /* Resources/Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Resources/Assets.xcassets; sourceTree = "<group>"; };
 		A181B6B8151B673BA741C9D1 /* PlayerScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerScreen.swift; sourceTree = "<group>"; };
 		AAD567E5F1A6F35B412CA5D2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		AC9E52B6F1F02AA0DEB87EFC /* AuthScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthScreen.swift; sourceTree = "<group>"; };
 		BB1D306A69DBADAA0F197720 /* HomeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeScreen.swift; sourceTree = "<group>"; };
+		E4E34EEADD9A5EF5DDF1A16D /* FolderScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderScreen.swift; sourceTree = "<group>"; };
+		EEAEE2CAF16072C19867A20A /* ParallaxHero.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Sources/Components/ParallaxHero.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,7 +65,7 @@
 			isa = PBXGroup;
 			children = (
 				FB8CF744AB2BB6CEC4A7158E /* Packages */,
-				A11111111111111111111111 /* Resources/Assets.xcassets */,
+				8175E0AAF4E752C116CBC790 /* Resources */,
 				FF894D15BAF1F72E2304102E /* Sources */,
 				FA83959789E2C0959454512A /* Products */,
 			);
@@ -79,6 +83,7 @@
 			isa = PBXGroup;
 			children = (
 				00168395CD29DECF58929337 /* ContentCard.swift */,
+				EEAEE2CAF16072C19867A20A /* ParallaxHero.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -88,6 +93,7 @@
 			children = (
 				AC9E52B6F1F02AA0DEB87EFC /* AuthScreen.swift */,
 				5531073B5639881F588923FD /* DetailScreen.swift */,
+				E4E34EEADD9A5EF5DDF1A16D /* FolderScreen.swift */,
 				BB1D306A69DBADAA0F197720 /* HomeScreen.swift */,
 				1B09F922B13BDAE26C9D8D09 /* LibraryScreen.swift */,
 				A181B6B8151B673BA741C9D1 /* PlayerScreen.swift */,
@@ -99,6 +105,14 @@
 				4E8E524DFDD82B84D41B0D26 /* Admin */,
 			);
 			path = Screens;
+			sourceTree = "<group>";
+		};
+		8175E0AAF4E752C116CBC790 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				1090FE6DB83D71C735613B5A /* Assets.xcassets */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		FA83959789E2C0959454512A /* Products */ = {
@@ -136,7 +150,7 @@
 			buildConfigurationList = 5A476A0186FE1BB0F9F4054E /* Build configuration list for PBXNativeTarget "LunaApp" */;
 			buildPhases = (
 				487558CD4A76833032A8F0FA /* Sources */,
-				A33333333333333333333333 /* Resources */,
+				098C81E73056C19AF4C4F0A3 /* Resources */,
 				4D08DEE719EFCAFEDA47C900 /* Frameworks */,
 			);
 			buildRules = (
@@ -170,7 +184,7 @@
 			mainGroup = 384A6FC407F9048C66A7E665;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				33E8A54A211E0CE059F9CBDE /* XCLocalSwiftPackageReference "../../Packages/LunaCore" */,
+				33E8A54A211E0CE059F9CBDE /* XCLocalSwiftPackageReference "LunaCore" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = FA83959789E2C0959454512A /* Products */;
@@ -183,11 +197,11 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		A33333333333333333333333 /* Resources */ = {
+		098C81E73056C19AF4C4F0A3 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A22222222222222222222222 /* Resources/Assets.xcassets in Resources */,
+				BDCDDABB1BC24F5935F28D3A /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -203,6 +217,7 @@
 				5D46158A76F52BE1C09AF19E /* ContentCard.swift in Sources */,
 				A41D3574B0860B92B8B5AEDB /* ContentView.swift in Sources */,
 				4F839D638BC31FAC259A5C3C /* DetailScreen.swift in Sources */,
+				F66A4C64BB762AEE5764C7E5 /* FolderScreen.swift in Sources */,
 				51F954F851A3A4639C70B2DC /* HomeScreen.swift in Sources */,
 				CC04D7816468C4295A23224C /* LibraryScreen.swift in Sources */,
 				FFEE989D846E33C03915C982 /* LunaApp.swift in Sources */,
@@ -212,6 +227,7 @@
 				31AD7D46ADA1FA2B777F4FB7 /* SearchScreen.swift in Sources */,
 				9D4E0D93663B1850ADCBF81B /* SettingsScreen.swift in Sources */,
 				E416FBBA817F1C4807C7DA01 /* StreamSelectionScreen.swift in Sources */,
+				80C1474A29FA28C2DA7249F3 /* ParallaxHero.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -224,6 +240,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = 5TWS8P597N;
+				INFOPLIST_KEY_CFBundleIconName = AppIcon;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSAppTransportSecurity = "[\"NSAllowsArbitraryLoads\": true]";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -293,8 +310,10 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UIRequiredDeviceCapabilities = arm64;
+				INFOPLIST_KEY_UIRequiresFullScreen = NO;
 				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDarkContent;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "portrait landscapeLeft landscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "portrait portraitUpsideDown landscapeLeft landscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MARKETING_VERSION = 1.0.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -314,6 +333,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = 5TWS8P597N;
+				INFOPLIST_KEY_CFBundleIconName = AppIcon;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSAppTransportSecurity = "[\"NSAllowsArbitraryLoads\": true]";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -377,8 +397,10 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UIRequiredDeviceCapabilities = arm64;
+				INFOPLIST_KEY_UIRequiresFullScreen = NO;
 				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDarkContent;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "portrait landscapeLeft landscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "portrait portraitUpsideDown landscapeLeft landscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MARKETING_VERSION = 1.0.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -415,7 +437,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		33E8A54A211E0CE059F9CBDE /* XCLocalSwiftPackageReference "../../Packages/LunaCore" */ = {
+		33E8A54A211E0CE059F9CBDE /* XCLocalSwiftPackageReference "LunaCore" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../Packages/LunaCore;
 		};

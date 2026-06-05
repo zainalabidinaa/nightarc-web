@@ -7,8 +7,12 @@ struct HomeScreen: View {
     @StateObject private var collectionRepo = CollectionRepository.shared
     @StateObject private var homeRepo = HomeRepository.shared
     @StateObject private var addonRepo = AddonRepository.shared
+    @StateObject private var preferenceStore = CollectionDisplayPreferenceStore.shared
+    @StateObject private var libraryRepo = LibraryRepository.shared
     @State private var selectedMedia: MetaPreview?
     @State private var showDetail = false
+    @State private var selectedFolder: CatalogRow? = nil
+    @State private var showFolder = false
 
     private let mainRowNames: Set<String> = [
         "Popular Movies", "Popular TV Shows",
@@ -32,36 +36,38 @@ struct HomeScreen: View {
     }
 
     @State private var heroIndex = 0
-    @State private var heroTimer: Timer? = nil
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 0) {
-                    // Hero Section
-                    if !featuredItems.isEmpty {
-                        let safeIndex = heroIndex % featuredItems.count
-                        let rowTitle = catalogRepo.catalogRows
-                            .first(where: { $0.items.contains(where: { $0.id == featuredItems[safeIndex].id }) })?
-                            .title ?? "Featured"
-                        HeroSection(
-                            item: featuredItems[safeIndex],
-                            rowTitle: rowTitle,
-                            onTap: {
-                                selectedMedia = featuredItems[safeIndex]
-                                showDetail = true
-                            },
-                            dotCount: featuredItems.count,
-                            activeIndex: safeIndex,
-                            onDotTap: { i in
-                                withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
-                                    heroIndex = i
-                                }
-                                startHeroTimer()
+            GeometryReader { geo in
+                let metrics = ResponsiveMetrics(for: geo.size.width)
+                ZStack {
+                    LunaTheme.background.ignoresSafeArea()
+                    ScrollView {
+                        VStack(spacing: 0) {
+                            if !featuredItems.isEmpty {
+                                ParallaxHero(
+                                    items: featuredItems,
+                                    currentIndex: $heroIndex,
+                                    metrics: metrics,
+                                    onWatchNow: { item in
+                                        selectedMedia = item
+                                        showDetail = true
+                                    },
+                                    onToggleLibrary: { item in
+                                        Task {
+                                            guard let profile = profileManager.currentProfile else { return }
+                                            await libraryRepo.toggleLibrary(
+                                                profileId: profile.id,
+                                                mediaId: item.id,
+                                                mediaType: item.type.rawValue,
+                                                name: item.name,
+                                                poster: item.poster
+                                            )
+                                        }
+                                    }
+                                )
                             }
-                        )
-                        .ignoresSafeArea(edges: .top)
-                    }
 
                     // Continue Watching
                     if !homeRepo.continueWatchingItems.isEmpty {
@@ -92,7 +98,7 @@ struct HomeScreen: View {
                     if !catalogRepo.catalogRows.isEmpty {
                         // Main rows
                         let mainRows = catalogRepo.catalogRows.filter { mainRowNames.contains($0.title) }
-                        let folderRows = catalogRepo.catalogRows.filter { !mainRowNames.contains($0.title) }
+                        let browseRows = catalogRepo.catalogRows.filter { !mainRowNames.contains($0.title) }
 
                         LazyVStack(spacing: 24) {
                             ForEach(mainRows) { row in
@@ -107,28 +113,27 @@ struct HomeScreen: View {
                                                 rowId: row.id,
                                                 addons: addonRepo.enabledAddons
                                             )
-                        }
-                    } else {
-                        VStack {
-                            Spacer().frame(height: 100)
-                            EmptyStateView(
-                                icon: "antenna.radiowaves.left.and.right",
-                                title: "No content available",
-                                message: addonRepo.errorMessage ?? "Failed to load catalogs. Pull to retry or check your addons in Settings."
-                            )
-                            Spacer()
-                        }
-                    }
+                                        }
+                                    }
                                 }
                             }
                         }
                         .padding(.top, 24)
 
-                        // Folder grid
-                        if !folderRows.isEmpty {
-                            FolderGridSection(rows: folderRows) { item in
-                                selectedMedia = item
-                                showDetail = true
+                        if !browseRows.isEmpty {
+                            LazyVStack(spacing: 24) {
+                                ForEach(browseRows) { row in
+                                    CatalogRowView(row: row) { item in
+                                        if item.id.hasPrefix("folder_"),
+                                           let folderRow = catalogRepo.allFolderRows[item.id] {
+                                            selectedFolder = folderRow
+                                            showFolder = true
+                                        } else {
+                                            selectedMedia = item
+                                            showDetail = true
+                                        }
+                                    }
+                                }
                             }
                             .padding(.top, 24)
                         }
@@ -158,20 +163,14 @@ struct HomeScreen: View {
                     Spacer().frame(height: 32)
                 }
             }
-            .ignoresSafeArea(edges: .top)
             .refreshable {
                 guard let profile = profileManager.currentProfile else { return }
-                if collectionRepo.collections.isEmpty {
-                    await catalogRepo.loadAllCatalogs(addons: addonRepo.enabledAddons)
-                } else {
-                    await catalogRepo.loadFromCollections(
-                        collectionRepo: collectionRepo,
-                        addons: addonRepo.enabledAddons
-                    )
-                }
+                await reloadCatalogRows()
                 await homeRepo.loadContinueWatching(profileId: profile.id)
             }
-            .background(LunaTheme.background)
+                }
+            }
+            .ignoresSafeArea(edges: .top)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     if let profile = profileManager.currentProfile {
@@ -195,167 +194,47 @@ struct HomeScreen: View {
                     DetailScreen(mediaId: media.id, type: media.type.rawValue, name: media.name)
                 }
             }
+            .navigationDestination(isPresented: $showFolder) {
+                if let folder = selectedFolder {
+                    FolderScreen(row: folder)
+                }
+            }
             .task {
                 guard let profile = profileManager.currentProfile else { return }
                 await addonRepo.loadAddons(profileId: profile.id)
                 await collectionRepo.load()
-                if collectionRepo.collections.isEmpty {
-                    await catalogRepo.loadAllCatalogs(addons: addonRepo.enabledAddons)
-                } else {
-                    await catalogRepo.loadFromCollections(
-                        collectionRepo: collectionRepo,
-                        addons: addonRepo.enabledAddons
-                    )
+                await libraryRepo.loadLibrary(profileId: profile.id)
+                if catalogRepo.catalogRows.isEmpty {
+                    if collectionRepo.collections.isEmpty {
+                        await catalogRepo.loadAllCatalogs(addons: addonRepo.enabledAddons)
+                    } else {
+                        await catalogRepo.loadFromCollections(
+                            collectionRepo: collectionRepo,
+                            addons: addonRepo.enabledAddons
+                        )
+                        await catalogRepo.supplementWithAddonCatalogs(
+                            addons: addonRepo.enabledAddons
+                        )
+                    }
                 }
                 await homeRepo.loadContinueWatching(profileId: profile.id)
-                startHeroTimer()
             }
-            .onDisappear {
-                heroTimer?.invalidate()
-                heroTimer = nil
-            }
-            .onChange(of: featuredItems.count) { _, newCount in
-                heroIndex = 0
-                startHeroTimer()
+            .onChange(of: preferenceStore.revision) { _, _ in
+                Task { await reloadCatalogRows() }
             }
         }
     }
 
-    private func startHeroTimer() {
-        heroTimer?.invalidate()
-        guard featuredItems.count > 1 else { return }
-        heroTimer = Timer.scheduledTimer(withTimeInterval: 6, repeats: true) { _ in
-            withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
-                heroIndex = (heroIndex + 1) % featuredItems.count
-            }
-        }
-    }
-}
-
-// MARK: - Hero Section
-
-struct HeroSection: View {
-    let item: MetaPreview
-    let rowTitle: String
-    let onTap: () -> Void
-    let dotCount: Int
-    let activeIndex: Int
-    let onDotTap: (Int) -> Void
-
-    @State private var imageFailed = false
-
-    var body: some View {
-        ZStack(alignment: .bottomLeading) {
-            Group {
-                if let banner = item.banner ?? item.poster, let url = URL(string: banner), !imageFailed {
-                    AsyncImage(url: url) { phase in
-                        switch phase {
-                        case .success(let img):
-                            img.resizable().aspectRatio(contentMode: .fill)
-                        case .failure:
-                            LunaTheme.background
-                                .onAppear { imageFailed = true }
-                        default:
-                            LunaTheme.background
-                        }
-                    }
-                } else {
-                    LunaTheme.surface
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: 420)
-            .clipped()
-
-            LinearGradient(
-                colors: [.clear, LunaTheme.background.opacity(0.7), LunaTheme.background],
-                startPoint: .top,
-                endPoint: .bottom
+    private func reloadCatalogRows() async {
+        if collectionRepo.collections.isEmpty {
+            await catalogRepo.loadAllCatalogs(addons: addonRepo.enabledAddons)
+        } else {
+            await catalogRepo.loadFromCollections(
+                collectionRepo: collectionRepo,
+                addons: addonRepo.enabledAddons
             )
-            .frame(height: 420)
-
-            LinearGradient(
-                colors: [LunaTheme.background.opacity(0.7), .clear],
-                startPoint: .leading,
-                endPoint: .trailing
-            )
-            .frame(height: 420)
-
-            // Glass overlay card
-            .appCardStyle(surfaceStyle: .darkGlass, cornerRadius: 22)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 8)
-
-            // Content
-            VStack(alignment: .leading, spacing: 0) {
-                Text(rowTitle)
-                    .font(.system(size: 11, weight: .bold))
-                    .foregroundColor(LunaTheme.accent)
-                    .tracking(2)
-                    .textCase(.uppercase)
-                    .padding(.bottom, 8)
-
-                Text(item.name)
-                    .font(.system(size: 40, weight: .black))
-                    .foregroundColor(.white)
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.7)
-                    .padding(.bottom, 6)
-
-                HStack(spacing: 8) {
-                    if let rating = item.imdbRating {
-                        Label(rating, systemImage: "star.fill")
-                            .font(.caption)
-                            .foregroundColor(.yellow)
-                    }
-                    if let release = item.releaseInfo {
-                        Text(release).font(.caption).foregroundColor(.white.opacity(0.6))
-                    }
-                    if let genres = item.genres?.prefix(2) {
-                        Text(genres.joined(separator: ", "))
-                            .font(.caption)
-                            .foregroundColor(.white.opacity(0.6))
-                    }
-                }
-                .padding(.bottom, 16)
-
-                HStack(spacing: 12) {
-                    Button(action: onTap) {
-                        Label("Watch Now", systemImage: "play.fill")
-                            .font(.subheadline.bold())
-                            .foregroundColor(.black)
-                            .padding(.horizontal, 20).padding(.vertical, 11)
-                            .background(Color.white).clipShape(Capsule())
-                    }
-
-                    Button(action: onTap) {
-                        Label("My List", systemImage: "plus")
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 16).padding(.vertical, 11)
-                    }
-                    .glassCapsule(interactive: true, clear: true)
-                }
-            }
-            .padding(.horizontal, 24).padding(.bottom, 24)
-            .frame(maxWidth: .infinity, alignment: .leading)
-
-            if dotCount > 1 {
-                HStack(spacing: 5) {
-                    ForEach(0..<dotCount, id: \.self) { i in
-                        Button { onDotTap(i) } label: {
-                            RoundedRectangle(cornerRadius: 2)
-                                .fill(i == activeIndex ? Color.white : Color.white.opacity(0.3))
-                                .frame(width: i == activeIndex ? 20 : 6, height: 3)
-                        }
-                        .animation(.easeInOut(duration: 0.25), value: activeIndex)
-                    }
-                }
-                .padding(.trailing, 16).padding(.bottom, 16)
-                .frame(maxWidth: .infinity, alignment: .trailing)
-            }
+            await catalogRepo.supplementWithAddonCatalogs(addons: addonRepo.enabledAddons)
         }
-        .frame(height: 420).clipped()
     }
 }
 
