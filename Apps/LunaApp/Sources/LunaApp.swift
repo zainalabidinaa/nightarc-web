@@ -18,6 +18,21 @@ struct LunaApp: App {
                 .environmentObject(roleManager)
                 .environmentObject(themeManager)
                 .preferredColorScheme(.dark)
+                .onOpenURL { handleDeepLink($0) }
+        }
+    }
+
+    private func handleDeepLink(_ url: URL) {
+        guard let scheme = url.scheme else { return }
+
+        if scheme == "stremio" || scheme == "luna",
+           url.host == "install-addon",
+           let addonURL = URLComponents(url: url, resolvingAgainstBaseURL: true)?
+               .queryItems?.first(where: { $0.name == "url" })?.value {
+            Task {
+                await AddonRepository.shared.installAddon(url: addonURL)
+                ToastPresenter.shared.show(message: "Addon installed", style: .success)
+            }
         }
     }
 }

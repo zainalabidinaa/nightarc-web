@@ -18,6 +18,11 @@ settings:
     INFOPLIST_KEY_UILaunchScreen_Generation: true
     INFOPLIST_KEY_UIRequiredDeviceCapabilities: "arm64"
     INFOPLIST_KEY_UIStatusBarStyle: "UIStatusBarStyleDarkContent"
+    INFOPLIST_KEY_CFBundleURLTypes:
+      - CFBundleURLSchemes:
+        - luna
+      - CFBundleURLSchemes:
+        - stremio
     INFOPLIST_KEY_UIAppFonts:
       - JetBrainsSans-Regular.ttf
       - JetBrainsSans-SemiBold.ttf
