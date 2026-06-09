@@ -3,16 +3,20 @@ import LunaCore
 
 struct HomeScreen: View {
     @EnvironmentObject var profileManager: ProfileManager
+    @Environment(\.scenePhase) private var scenePhase
     @StateObject private var catalogRepo = CatalogRepository.shared
     @StateObject private var collectionRepo = CollectionRepository.shared
     @StateObject private var homeRepo = HomeRepository.shared
     @StateObject private var addonRepo = AddonRepository.shared
     @StateObject private var preferenceStore = CollectionDisplayPreferenceStore.shared
+    @StateObject private var heroStore = HeroPreferenceStore.shared
     @StateObject private var libraryRepo = LibraryRepository.shared
     @State private var selectedMedia: MetaPreview?
     @State private var showDetail = false
     @State private var selectedFolder: CatalogRow? = nil
     @State private var showFolder = false
+    @State private var playerLaunch: PlayerLaunch?
+    @State private var streamSelectionLaunch: PlayerLaunch?
 
     private let mainRowNames: Set<String> = [
         "Popular Movies", "Popular TV Shows",
@@ -20,10 +24,29 @@ struct HomeScreen: View {
     ]
 
     private var featuredItems: [MetaPreview] {
-        let mainRows = catalogRepo.catalogRows.filter { mainRowNames.contains($0.title) }
+        let allRows = catalogRepo.catalogRows
+        let heroRows: [CatalogRow]
+        if heroStore.rowOrder.isEmpty {
+            // Default: main rows in natural order
+            heroRows = allRows.filter { mainRowNames.contains($0.title) }
+        } else {
+            // Respect saved order and enabled/disabled state
+            let enabledOrdered = heroStore.rowOrder
+                .filter { heroStore.isEnabled(rowTitle: $0) }
+                .compactMap { title in allRows.first { $0.title == title } }
+            // Also include any mainRow titles not yet in saved order (new defaults)
+            let missing = allRows.filter {
+                mainRowNames.contains($0.title) &&
+                !heroStore.rowOrder.contains($0.title) &&
+                heroStore.isEnabled(rowTitle: $0.title)
+            }
+            let computed = enabledOrdered + missing
+            // Fall back to default rows when all hero-configured rows are disabled
+            heroRows = computed.isEmpty ? allRows.filter { mainRowNames.contains($0.title) } : computed
+        }
         var seen = Set<String>()
         var candidates: [MetaPreview] = []
-        for row in mainRows {
+        for row in heroRows {
             for item in row.items where !seen.contains(item.id) {
                 seen.insert(item.id)
                 candidates.append(item)
@@ -42,7 +65,7 @@ struct HomeScreen: View {
             GeometryReader { geo in
                 let metrics = ResponsiveMetrics(for: geo.size.width)
                 ZStack {
-                    LunaTheme.background.ignoresSafeArea()
+                    Color.black.ignoresSafeArea()
                     ScrollView {
                         VStack(spacing: 0) {
                             if !featuredItems.isEmpty {
@@ -74,22 +97,30 @@ struct HomeScreen: View {
                     ContinueWatchingRow(
                         items: homeRepo.continueWatchingItems,
                         onTap: { item in
-                            // ContinueWatchingItem -> navigate via mediaId lookup
-                            if let match = catalogRepo.catalogRows
-                                .flatMap({ $0.items })
-                                .first(where: { $0.id == item.mediaId }) {
-                                selectedMedia = match
-                                showDetail = true
-                            } else {
-                                // Fallback: build a minimal MetaPreview from the CW item
-                                selectedMedia = MetaPreview(
-                                    id: item.mediaId,
-                                    type: item.mediaType == "movie" ? .movie : .series,
-                                    name: item.name,
-                                    poster: item.poster
-                                )
-                                showDetail = true
+                            let decodedId = item.mediaId.removingPercentEncoding ?? item.mediaId
+                            let cachedSource: LastPlaybackSource? = profileManager.currentProfile.flatMap { profile in
+                                let ids = [decodedId, item.parentMediaId].compactMap { $0 }
+                                return ids.lazy.compactMap { LastPlaybackSourceStore.shared.source(profileId: profile.id, mediaId: $0) }.first
                             }
+                            presentPlayback(
+                                PlayerLaunch(
+                                title: item.name,
+                                sourceUrl: cachedSource?.sourceUrl ?? "",
+                                sourceHeaders: cachedSource?.sourceHeaders,
+                                logo: item.logo,
+                                poster: item.poster,
+                                episodeThumbnail: item.thumbnail,
+                                seasonNumber: item.seasonNumber,
+                                episodeNumber: item.episodeNumber,
+                                streamTitle: cachedSource?.streamTitle ?? item.episodeTitle,
+                                providerName: cachedSource?.providerName,
+                                contentType: item.mediaType == "movie" ? .movie : .series,
+                                videoId: decodedId,
+                                parentMetaId: item.parentMediaId,
+                                parentMetaType: item.parentMediaId == nil ? nil : item.mediaType,
+                                initialPositionMs: item.resumePositionMs
+                                )
+                            )
                         },
                         metrics: metrics
                         )
@@ -97,18 +128,20 @@ struct HomeScreen: View {
                     }
 
                     if !catalogRepo.catalogRows.isEmpty {
-                        // Main rows
-                        let mainRows = catalogRepo.catalogRows.filter { mainRowNames.contains($0.title) }
-                        let browseRows = catalogRepo.catalogRows.filter { !mainRowNames.contains($0.title) }
-
-                        LazyVStack(spacing: 24) {
-                            ForEach(mainRows) { row in
+                        LazyVStack(spacing: 28) {
+                            ForEach(catalogRepo.catalogRows) { row in
                                 CatalogRowView(row: row, onTap: { item in
-                                    selectedMedia = item
-                                    showDetail = true
+                                    if item.id.hasPrefix("folder_"),
+                                       let folderRow = catalogRepo.allFolderRows[item.id] {
+                                        selectedFolder = folderRow
+                                        showFolder = true
+                                    } else {
+                                        selectedMedia = item
+                                        showDetail = true
+                                    }
                                 }, metrics: metrics)
                                 .onAppear {
-                                    if row.id == mainRows.last?.id {
+                                    if row.id == catalogRepo.catalogRows.last?.id {
                                         Task {
                                             await catalogRepo.loadMore(
                                                 rowId: row.id,
@@ -120,24 +153,6 @@ struct HomeScreen: View {
                             }
                         }
                         .padding(.top, 24)
-
-                        if !browseRows.isEmpty {
-                            LazyVStack(spacing: 24) {
-                                ForEach(browseRows) { row in
-                                    CatalogRowView(row: row, onTap: { item in
-                                        if item.id.hasPrefix("folder_"),
-                                           let folderRow = catalogRepo.allFolderRows[item.id] {
-                                            selectedFolder = folderRow
-                                            showFolder = true
-                                        } else {
-                                            selectedMedia = item
-                                            showDetail = true
-                                        }
-                                    }, metrics: metrics)
-                                }
-                            }
-                            .padding(.top, 24)
-                        }
                     } else if catalogRepo.isLoading {
                         VStack(spacing: 24) {
                             Spacer().frame(height: 20)
@@ -193,10 +208,30 @@ struct HomeScreen: View {
                     FolderScreen(row: folder)
                 }
             }
+            .fullScreenCover(item: $playerLaunch) { launch in
+                PlayerScreen(launch: launch, onDismiss: { playerLaunch = nil })
+            }
+            .fullScreenCover(item: $streamSelectionLaunch) { launch in
+                StreamSelectionScreen(
+                    mediaType: launch.contentType,
+                    mediaId: launch.videoId,
+                    mediaName: launch.title,
+                    poster: launch.poster,
+                    logo: launch.logo,
+                    episodeThumbnail: launch.episodeThumbnail,
+                    parentMetaId: launch.parentMetaId,
+                    parentMetaType: launch.parentMetaType,
+                    seasonNumber: launch.seasonNumber,
+                    episodeNumber: launch.episodeNumber,
+                    episodeTitle: launch.streamTitle,
+                    initialPositionMs: launch.initialPositionMs
+                )
+            }
             .task {
                 guard let profile = profileManager.currentProfile else { return }
                 await addonRepo.loadAddons(profileId: profile.id)
-                await collectionRepo.load()
+                async let continueWatching: Void = homeRepo.loadContinueWatching(profileId: profile.id)
+                await loadGlobalOrganizer()
                 await libraryRepo.loadLibrary(profileId: profile.id)
                 if catalogRepo.catalogRows.isEmpty {
                     if collectionRepo.collections.isEmpty {
@@ -206,20 +241,51 @@ struct HomeScreen: View {
                             collectionRepo: collectionRepo,
                             addons: addonRepo.enabledAddons
                         )
-                        await catalogRepo.supplementWithAddonCatalogs(
-                            addons: addonRepo.enabledAddons
-                        )
                     }
                 }
-                await homeRepo.loadContinueWatching(profileId: profile.id)
+                await continueWatching
             }
             .onChange(of: preferenceStore.revision) { _, _ in
                 Task { await reloadCatalogRows() }
             }
+            .onChange(of: scenePhase) { _, phase in
+                guard phase == .active, let profile = profileManager.currentProfile else { return }
+                Task { await homeRepo.loadContinueWatching(profileId: profile.id) }
+            }
+        }
+    }
+
+    private func presentPlayback(_ launch: PlayerLaunch) {
+        guard let profile = profileManager.currentProfile else {
+            streamSelectionLaunch = launch
+            return
+        }
+
+        if StreamAutoplayPreferenceStore.shared.mode(profileId: profile.id) == .manual {
+            streamSelectionLaunch = PlayerLaunch(
+                title: launch.title,
+                sourceUrl: "",
+                logo: launch.logo,
+                poster: launch.poster,
+                episodeThumbnail: launch.episodeThumbnail,
+                seasonNumber: launch.seasonNumber,
+                episodeNumber: launch.episodeNumber,
+                streamTitle: launch.streamTitle,
+                providerName: launch.providerName,
+                contentType: launch.contentType,
+                videoId: launch.videoId,
+                parentMetaId: launch.parentMetaId,
+                parentMetaType: launch.parentMetaType,
+                initialPositionMs: launch.initialPositionMs,
+                subtitles: launch.subtitles
+            )
+        } else {
+            playerLaunch = launch
         }
     }
 
     private func reloadCatalogRows() async {
+        await loadGlobalOrganizer()
         if collectionRepo.collections.isEmpty {
             await catalogRepo.loadAllCatalogs(addons: addonRepo.enabledAddons)
         } else {
@@ -227,9 +293,21 @@ struct HomeScreen: View {
                 collectionRepo: collectionRepo,
                 addons: addonRepo.enabledAddons
             )
-            await catalogRepo.supplementWithAddonCatalogs(addons: addonRepo.enabledAddons)
         }
     }
+
+    private func loadGlobalOrganizer() async {
+        guard let url = Bundle.main.url(forResource: "home-organizer", withExtension: "json"),
+              let data = try? Data(contentsOf: url) else {
+            await collectionRepo.load()
+            return
+        }
+        await collectionRepo.loadOrganizer(
+            bundledData: data,
+            remoteURL: LunaConfig.homeOrganizerRemoteURL.flatMap(URL.init(string:))
+        )
+    }
+
 }
 
 // MARK: - Folder Grid
@@ -282,7 +360,8 @@ struct FolderCell: View {
                 if let url = coverURL {
                     AsyncImage(url: url) { phase in
                         if case .success(let img) = phase {
-                            img.resizable().aspectRatio(contentMode: .fill)
+                            img.resizable()
+                                .aspectRatio(contentMode: isLandscape ? .fit : .fill)
                         }
                     }
                     .clipShape(RoundedRectangle(cornerRadius: 8))
@@ -331,18 +410,22 @@ struct CatalogRowView: View {
                     }
                 } else if !(row.hideTitle ?? false) {
                     Text(row.title)
-                        .font(.headline)
+                        .font(.system(size: 17, weight: .semibold))
                         .foregroundColor(.white)
                 }
                 Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(LunaTheme.textSecondary)
             }
             .padding(.horizontal)
 
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 12) {
                     ForEach(Array(row.items.enumerated()), id: \.element.id) { index, item in
-                        let isLandscape = row.tileShape == "landscape"
-                        let isSquare = row.tileShape == "square"
+                        let shape = row.tileShape ?? item.posterShape?.rawValue
+                        let isLandscape = shape == "landscape"
+                        let isSquare = shape == "square"
                         let w = isLandscape ? (metrics?.landscapeWidth ?? 200) : isSquare ? (metrics?.posterWidth ?? 140) : (metrics?.posterWidth ?? 120)
                         let h = isLandscape ? (metrics?.landscapeHeight ?? 112) : isSquare ? (metrics?.posterWidth ?? 140) : (metrics?.posterHeight ?? 180)
                         ContentCard(item: item, row: row, index: index, width: w, height: h)
@@ -362,20 +445,65 @@ struct ContinueWatchingRow: View {
     let onTap: (ContinueWatchingItem) -> Void
     var metrics: ResponsiveMetrics? = nil
 
+    @EnvironmentObject var profileManager: ProfileManager
+    @StateObject private var watchProgressRepo = WatchProgressRepository.shared
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Continue Watching")
-                .font(.headline)
-                .foregroundColor(.white)
-                .padding(.horizontal)
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Text("Continue Watching")
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundColor(.white)
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(LunaTheme.textSecondary)
+            }
+            .padding(.horizontal)
 
             ScrollView(.horizontal, showsIndicators: false) {
-                LazyHStack(spacing: 12) {
+                LazyHStack(spacing: 10) {
                     ForEach(items) { item in
                         ContinueWatchingCard(item: item,
-                                             width: metrics?.continueWatchingWidth ?? 192,
-                                             height: metrics?.continueWatchingHeight ?? 108)
+                                             width: metrics?.continueWatchingWidth ?? 185,
+                                             height: metrics?.continueWatchingHeight ?? 104)
                             .onTapGesture { onTap(item) }
+                            .contextMenu {
+                                Button {
+                                    Task {
+                                        guard let profile = profileManager.currentProfile else { return }
+                                        await watchProgressRepo.markWatched(
+                                            profileId: profile.id,
+                                            mediaId: item.mediaId,
+                                            mediaType: item.mediaType,
+                                            name: item.name,
+                                            poster: item.poster
+                                        )
+                                    }
+                                } label: {
+                                    Label("Mark as Watched", systemImage: "checkmark.circle")
+                                }
+
+                                Divider()
+
+                                Button(role: .destructive) {
+                                    Task {
+                                        guard let profile = profileManager.currentProfile else { return }
+                                        await watchProgressRepo.updateProgress(
+                                            profileId: profile.id,
+                                            mediaId: item.mediaId,
+                                            mediaType: item.mediaType,
+                                            positionSeconds: item.resumePositionMs / 1000,
+                                            durationSeconds: item.durationMs / 1000,
+                                            completed: true,
+                                            name: item.name,
+                                            poster: item.poster
+                                        )
+                                    }
+                                } label: {
+                                    Label("Remove", systemImage: "trash")
+                                }
+                            }
                     }
                 }
                 .padding(.horizontal)
@@ -387,57 +515,145 @@ struct ContinueWatchingRow: View {
 
 struct ContinueWatchingCard: View {
     let item: ContinueWatchingItem
-    var width: CGFloat = 192
-    var height: CGFloat = 108
+    var width: CGFloat = 185
+    var height: CGFloat = 104
+
+    private var imageURL: URL? {
+        (item.thumbnail ?? item.poster).flatMap(URL.init)
+    }
+
+    private var episodeBadge: String? {
+        guard let s = item.seasonNumber, let e = item.episodeNumber else { return nil }
+        return "S\(s) E\(e)"
+    }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 5) {
             ZStack(alignment: .bottom) {
+                // Thumbnail / poster / placeholder
                 Group {
-                    if let poster = item.poster, let url = URL(string: poster) {
-                        AsyncImage(url: url) { phase in
-                            if case .success(let img) = phase {
+                    if let url = imageURL {
+                        CachedAsyncImage(url: url) { phase in
+                            switch phase {
+                            case .success(let img):
                                 img.resizable().aspectRatio(contentMode: .fill)
-                            } else {
-                                RoundedRectangle(cornerRadius: 8).fill(LunaTheme.surfaceElevated)
+                            default:
+                                cwPlaceholder
                             }
                         }
                     } else {
-                        RoundedRectangle(cornerRadius: 8).fill(LunaTheme.surfaceElevated)
+                        cwPlaceholder
                     }
                 }
-                .frame(width: width, height: height).clipped()
-                .glassCard(cornerRadius: 8)
+                .frame(width: width, height: height)
+                .clipped()
+                .clipShape(RoundedRectangle(cornerRadius: 12))
 
-                // Play overlay circle
-                Circle().fill(Color.black.opacity(0.5)).frame(width: 36, height: 36)
-                    .overlay(
-                        Image(systemName: "play.fill")
-                            .font(.system(size: 14))
-                            .foregroundColor(.white)
-                            .offset(x: 1)
-                    )
-                    .padding(.bottom, 16)
+                // Bottom gradient
+                LinearGradient(colors: [.black.opacity(0.55), .clear],
+                               startPoint: .bottom, endPoint: .top)
+                    .frame(height: height * 0.55)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
 
-                // Progress bar
+                // Minimal white progress bar, inset from the card edge.
                 VStack(spacing: 0) {
                     Spacer()
                     GeometryReader { geo in
                         ZStack(alignment: .leading) {
-                            Rectangle().fill(Color.white.opacity(0.2)).frame(height: 3)
+                            Capsule()
+                                .fill(Color.white.opacity(0.22))
+                                .frame(height: 2)
                             Rectangle()
-                                .fill(LunaTheme.accent)
-                                .frame(width: geo.size.width * item.progressFraction, height: 3)
+                                .fill(Color.white.opacity(0.92))
+                                .frame(width: max(0, geo.size.width * item.progressFraction), height: 2)
+                                .clipShape(Capsule())
                         }
-                    }.frame(height: 3)
-                }.cornerRadius(8)
+                    }
+                    .frame(height: 2)
+                    .padding(.horizontal, 8)
+                    .padding(.bottom, 6)
+                }
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+
+                // Play button + episode badge row at bottom-left
+                HStack(spacing: 6) {
+                    Image(systemName: "play.fill")
+                        .font(.system(size: 9, weight: .bold))
+                        .foregroundColor(.white)
+                        .padding(5)
+                        .background(Color.black.opacity(0.55))
+                        .clipShape(Circle())
+
+                    if let badge = episodeBadge {
+                        Text(badge)
+                            .font(.system(size: 10, weight: .semibold))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 3)
+                            .background(Color.black.opacity(0.55))
+                            .clipShape(Capsule())
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal, 6)
+                .padding(.bottom, 12)
             }
             .frame(width: width, height: height)
 
             Text(item.name)
-                .font(.caption).foregroundColor(.white).lineLimit(1).frame(width: width, alignment: .leading)
-            Text("\(Int(item.progressFraction * 100))% watched")
-                .font(.caption2).foregroundColor(LunaTheme.textSecondary)
+                .font(.system(size: 13, weight: .medium))
+                .foregroundColor(.white)
+                .lineLimit(1)
+                .frame(width: width, alignment: .leading)
+
+            if let subtitle = cardSubtitle {
+                Text(subtitle)
+                    .font(.system(size: 11))
+                    .foregroundColor(.white.opacity(0.55))
+                    .lineLimit(1)
+                    .frame(width: width, alignment: .leading)
+            }
+        }
+    }
+
+    private var cardSubtitle: String? {
+        if let s = item.seasonNumber, let e = item.episodeNumber {
+            let epLabel = "S\(s) E\(e)"
+            if let title = item.episodeTitle, !title.isEmpty {
+                return "\(epLabel) · \(title)"
+            }
+            return epLabel
+        }
+        // Movie: show timestamp
+        if item.resumePositionMs > 0 {
+            let secs = Int(item.resumePositionMs / 1000)
+            let h = secs / 3600
+            let m = (secs % 3600) / 60
+            let s = secs % 60
+            let ts = h > 0
+                ? String(format: "%d:%02d:%02d", h, m, s)
+                : String(format: "%d:%02d", m, s)
+            return ts
+        }
+        return nil
+    }
+
+    private var cwPlaceholder: some View {
+        ZStack {
+            Color(white: 0.12)
+            VStack(spacing: 6) {
+                Image(systemName: "play.rectangle.fill")
+                    .font(.system(size: 22))
+                    .foregroundColor(.white.opacity(0.25))
+                if !item.name.isEmpty {
+                    Text(item.name)
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundColor(.white.opacity(0.45))
+                        .lineLimit(2)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 8)
+                }
+            }
         }
     }
 }
