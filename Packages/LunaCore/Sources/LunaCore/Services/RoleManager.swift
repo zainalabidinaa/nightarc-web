@@ -5,11 +5,14 @@ public class RoleManager: ObservableObject {
     public static let shared = RoleManager()
 
     @Published public var isAdmin = false
+    @Published public var profileRole: ProfileRole = .user
 
     private init() {}
 
     public func evaluateRole(profile: LunaProfile?) {
-        isAdmin = profile?.isAdmin ?? false
+        let role = profile?.profileRole ?? .user
+        profileRole = role
+        isAdmin = role == .admin
     }
 
     public func setUserAsAdmin(profile: LunaProfile) async throws {
