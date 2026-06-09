@@ -7,46 +7,100 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		00BD6F5241188801987D03AF /* home-organizer.json in Resources */ = {isa = PBXBuildFile; fileRef = 9842A1E7929FFD8D4E7EFDF0 /* home-organizer.json */; };
+		0229DEBF5AFAB0844C38634B /* ToastOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76DC0C148B5FA75E275AB88 /* ToastOverlay.swift */; };
+		05EC772D7FE64E632B3E6874 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5021AFE28BA52BB392BF601 /* AppDelegate.swift */; };
+		07CE1DE22DCA4B2E6B48ACBE /* SourcesPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C223F48F9A9C0673DC899CB7 /* SourcesPanel.swift */; };
 		14392764C3C3CA687F10AADB /* AdminDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68E00BE18255F4D9413A264A /* AdminDashboard.swift */; };
+		1475ED15C25CFA1E053C0E55 /* PlayerLockMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36FA246F28A95DFD2B8404AD /* PlayerLockMode.swift */; };
+		1C55A17124B959DFFB297669 /* ParallaxHero.swift in Sources */ = {isa = PBXBuildFile; fileRef = 190EBCA186BD638374504440 /* ParallaxHero.swift */; };
+		282C8288BB3ECEDE62B0AE5F /* JetBrainsSans-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 50B90299650F95A6E85658A8 /* JetBrainsSans-SemiBold.ttf */; };
+		2F5CC1B4A78C4A320B8650F0 /* PlayerGestureSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7F114EB0E88978772EB8E84 /* PlayerGestureSystem.swift */; };
 		31AD7D46ADA1FA2B777F4FB7 /* SearchScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154121DC1EBCCE63654E64A7 /* SearchScreen.swift */; };
+		32DFBB2CD3E516785C2E8D2F /* PlayerBottomBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39506C8070CEC61F66337ADE /* PlayerBottomBar.swift */; };
+		3B339EE5FDFBCDB880593E55 /* SubtitleModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17BDF7BDC8C78D8875849C0D /* SubtitleModal.swift */; };
 		464711895FE40F3059C744F8 /* LunaCore in Frameworks */ = {isa = PBXBuildFile; productRef = 4A5D463B7FB6D39EA41A7774 /* LunaCore */; };
 		4F839D638BC31FAC259A5C3C /* DetailScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5531073B5639881F588923FD /* DetailScreen.swift */; };
 		51F954F851A3A4639C70B2DC /* HomeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1D306A69DBADAA0F197720 /* HomeScreen.swift */; };
+		55DF7B0D91D5656CF3758D88 /* JetBrainsSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EE6305607A21DB5FB94092ED /* JetBrainsSans-Bold.ttf */; };
 		5D46158A76F52BE1C09AF19E /* ContentCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00168395CD29DECF58929337 /* ContentCard.swift */; };
+		676A5B46DB76B09D17842A41 /* HeroManagementScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B293E446788F7299A213CB02 /* HeroManagementScreen.swift */; };
 		686742C906F6505703092384 /* AuthScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC9E52B6F1F02AA0DEB87EFC /* AuthScreen.swift */; };
-		80C1474A29FA28C2DA7249F3 /* ParallaxHero.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAEE2CAF16072C19867A20A /* ParallaxHero.swift */; };
+		7C6FFB84664C20B2E53DCA2E /* NetworkOfflineBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0504AB4ED55C9D8B0C44CB6 /* NetworkOfflineBanner.swift */; };
 		820BAC8791A33426DA083C58 /* ProfilePickerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DF866A3E0E86D182E4E9B76 /* ProfilePickerScreen.swift */; };
+		841BF9362FC8E57647EAA2D5 /* KSPlayerEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEA63A80299BEF7BA301579F /* KSPlayerEngine.swift */; };
+		866E29F0C4009F2B144CBD05 /* PlayerFeedbackPill.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE887B11896ABE26FA685609 /* PlayerFeedbackPill.swift */; };
+		8B3451223C0AA260BAF56D11 /* JetBrainsSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 218BD3CEEF60EEDDCDF94BC4 /* JetBrainsSans-Regular.ttf */; };
+		8F21DE4E6386E5B26CEFB126 /* AppearanceSettingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 479508B2D739EC5A11B5756B /* AppearanceSettingsScreen.swift */; };
+		956E92882C3235F7AEAED699 /* ThemeChip.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6339D71F786B13FFD083E6C /* ThemeChip.swift */; };
 		9D4E0D93663B1850ADCBF81B /* SettingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F6FD24D68DBBAB57E9D8FC0 /* SettingsScreen.swift */; };
+		A0FC643E8B35AB45F739D883 /* ProfileAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC771F481CFCF03773341785 /* ProfileAvatarView.swift */; };
 		A41D3574B0860B92B8B5AEDB /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD567E5F1A6F35B412CA5D2 /* ContentView.swift */; };
+		A7368670B4BEF865ED7A0E0C /* AnimatedRemoteImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E193D392D0AB52E8D8D8232F /* AnimatedRemoteImage.swift */; };
+		ACDFE6ED8744833E4816959F /* AudioTrackModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2EF2802D349464BCAD6D9D1 /* AudioTrackModal.swift */; };
+		B31BC3BA1C2DA6FBB01E74DB /* KSPlayerViewRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3258A885C52CA28A766FE52 /* KSPlayerViewRepresentable.swift */; };
+		BD0C2DADF8842E2302C0CBFC /* EpisodesPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25A4BA9B8A2B6BBFC246B7E7 /* EpisodesPanel.swift */; };
 		BDCDDABB1BC24F5935F28D3A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1090FE6DB83D71C735613B5A /* Assets.xcassets */; };
+		C32A8CA28A440C07FD3C8BDC /* KSPlayer in Frameworks */ = {isa = PBXBuildFile; productRef = 33971240BF9265D64B84F078 /* KSPlayer */; };
 		CC04D7816468C4295A23224C /* LibraryScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B09F922B13BDAE26C9D8D09 /* LibraryScreen.swift */; };
 		DC87974D2CDD0738F492C161 /* ProfileSelectionScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 602AEA64A4AEEB986BCCF030 /* ProfileSelectionScreen.swift */; };
+		DD8F4B722C61FB78C20EDCEC /* StreamPlaybackDiagnostics.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1D1F4DA63C7DEC7A19A7B29 /* StreamPlaybackDiagnostics.swift */; };
 		DF7E51B56A0B680B99CADF12 /* PlayerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A181B6B8151B673BA741C9D1 /* PlayerScreen.swift */; };
+		E3EB83C25D7C4CC76CFA7A32 /* CachedAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3DCED0ECEB605FB9B1FFDA /* CachedAsyncImage.swift */; };
 		E416FBBA817F1C4807C7DA01 /* StreamSelectionScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C55E48E637AA4A974497787 /* StreamSelectionScreen.swift */; };
 		F66A4C64BB762AEE5764C7E5 /* FolderScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E34EEADD9A5EF5DDF1A16D /* FolderScreen.swift */; };
 		FFEE989D846E33C03915C982 /* LunaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8997E09659D665EA90785B88 /* LunaApp.swift */; };
+		AA1234567890ABCDEF012345 /* VideoPlayerSettingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB9876543210FEDCBA987654 /* VideoPlayerSettingsScreen.swift */; };
+		DD9988776655443322110000 /* SubtitleAppearanceScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0011223344556677889900 /* SubtitleAppearanceScreen.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		00168395CD29DECF58929337 /* ContentCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentCard.swift; sourceTree = "<group>"; };
 		1090FE6DB83D71C735613B5A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		154121DC1EBCCE63654E64A7 /* SearchScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchScreen.swift; sourceTree = "<group>"; };
+		17BDF7BDC8C78D8875849C0D /* SubtitleModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitleModal.swift; sourceTree = "<group>"; };
+		190EBCA186BD638374504440 /* ParallaxHero.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParallaxHero.swift; sourceTree = "<group>"; };
 		1B09F922B13BDAE26C9D8D09 /* LibraryScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryScreen.swift; sourceTree = "<group>"; };
+		218BD3CEEF60EEDDCDF94BC4 /* JetBrainsSans-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "JetBrainsSans-Regular.ttf"; sourceTree = "<group>"; };
+		25A4BA9B8A2B6BBFC246B7E7 /* EpisodesPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodesPanel.swift; sourceTree = "<group>"; };
 		2F6FD24D68DBBAB57E9D8FC0 /* SettingsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsScreen.swift; sourceTree = "<group>"; };
+		36FA246F28A95DFD2B8404AD /* PlayerLockMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerLockMode.swift; sourceTree = "<group>"; };
 		38D997F95CAF97AFFC4D4489 /* LunaCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = LunaCore; path = ../../Packages/LunaCore; sourceTree = SOURCE_ROOT; };
+		39506C8070CEC61F66337ADE /* PlayerBottomBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerBottomBar.swift; sourceTree = "<group>"; };
+		45445AE0DA5D45DA2BCB8FF7 /* ksplayer-clone */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "ksplayer-clone"; path = "../../../../../../tmp/ksplayer-clone"; sourceTree = SOURCE_ROOT; };
+		479508B2D739EC5A11B5756B /* AppearanceSettingsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearanceSettingsScreen.swift; sourceTree = "<group>"; };
+		BB9876543210FEDCBA987654 /* VideoPlayerSettingsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerSettingsScreen.swift; sourceTree = "<group>"; };
+		EE0011223344556677889900 /* SubtitleAppearanceScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitleAppearanceScreen.swift; sourceTree = "<group>"; };
+		4F3DCED0ECEB605FB9B1FFDA /* CachedAsyncImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedAsyncImage.swift; sourceTree = "<group>"; };
+		50B90299650F95A6E85658A8 /* JetBrainsSans-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "JetBrainsSans-SemiBold.ttf"; sourceTree = "<group>"; };
 		5531073B5639881F588923FD /* DetailScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailScreen.swift; sourceTree = "<group>"; };
-		55968AE93644270FC62BDB1F /* LunaApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LunaApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		55968AE93644270FC62BDB1F /* LunaApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = LunaApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		602AEA64A4AEEB986BCCF030 /* ProfileSelectionScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSelectionScreen.swift; sourceTree = "<group>"; };
 		68E00BE18255F4D9413A264A /* AdminDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminDashboard.swift; sourceTree = "<group>"; };
 		7C55E48E637AA4A974497787 /* StreamSelectionScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamSelectionScreen.swift; sourceTree = "<group>"; };
 		8997E09659D665EA90785B88 /* LunaApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LunaApp.swift; sourceTree = "<group>"; };
+		9842A1E7929FFD8D4E7EFDF0 /* home-organizer.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "home-organizer.json"; sourceTree = "<group>"; };
 		9DF866A3E0E86D182E4E9B76 /* ProfilePickerScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePickerScreen.swift; sourceTree = "<group>"; };
 		A181B6B8151B673BA741C9D1 /* PlayerScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerScreen.swift; sourceTree = "<group>"; };
+		A76DC0C148B5FA75E275AB88 /* ToastOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastOverlay.swift; sourceTree = "<group>"; };
 		AAD567E5F1A6F35B412CA5D2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		AC9E52B6F1F02AA0DEB87EFC /* AuthScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthScreen.swift; sourceTree = "<group>"; };
+		B293E446788F7299A213CB02 /* HeroManagementScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeroManagementScreen.swift; sourceTree = "<group>"; };
+		B3258A885C52CA28A766FE52 /* KSPlayerViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KSPlayerViewRepresentable.swift; sourceTree = "<group>"; };
+		B7F114EB0E88978772EB8E84 /* PlayerGestureSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerGestureSystem.swift; sourceTree = "<group>"; };
 		BB1D306A69DBADAA0F197720 /* HomeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeScreen.swift; sourceTree = "<group>"; };
+		C223F48F9A9C0673DC899CB7 /* SourcesPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourcesPanel.swift; sourceTree = "<group>"; };
+		C2EF2802D349464BCAD6D9D1 /* AudioTrackModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioTrackModal.swift; sourceTree = "<group>"; };
+		D0504AB4ED55C9D8B0C44CB6 /* NetworkOfflineBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkOfflineBanner.swift; sourceTree = "<group>"; };
+		D1D1F4DA63C7DEC7A19A7B29 /* StreamPlaybackDiagnostics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamPlaybackDiagnostics.swift; sourceTree = "<group>"; };
+		D5021AFE28BA52BB392BF601 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		D6339D71F786B13FFD083E6C /* ThemeChip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeChip.swift; sourceTree = "<group>"; };
+		DE887B11896ABE26FA685609 /* PlayerFeedbackPill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerFeedbackPill.swift; sourceTree = "<group>"; };
+		E193D392D0AB52E8D8D8232F /* AnimatedRemoteImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedRemoteImage.swift; sourceTree = "<group>"; };
 		E4E34EEADD9A5EF5DDF1A16D /* FolderScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderScreen.swift; sourceTree = "<group>"; };
-		EEAEE2CAF16072C19867A20A /* ParallaxHero.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Sources/Components/ParallaxHero.swift; sourceTree = SOURCE_ROOT; };
+		EC771F481CFCF03773341785 /* ProfileAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileAvatarView.swift; sourceTree = "<group>"; };
+		EE6305607A21DB5FB94092ED /* JetBrainsSans-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "JetBrainsSans-Bold.ttf"; sourceTree = "<group>"; };
+		FEA63A80299BEF7BA301579F /* KSPlayerEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KSPlayerEngine.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,6 +109,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				464711895FE40F3059C744F8 /* LunaCore in Frameworks */,
+				C32A8CA28A440C07FD3C8BDC /* KSPlayer in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,6 +126,16 @@
 			);
 			sourceTree = "<group>";
 		};
+		4A0807CE6EC117F786DB03D1 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				EE6305607A21DB5FB94092ED /* JetBrainsSans-Bold.ttf */,
+				218BD3CEEF60EEDDCDF94BC4 /* JetBrainsSans-Regular.ttf */,
+				50B90299650F95A6E85658A8 /* JetBrainsSans-SemiBold.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
 		4E8E524DFDD82B84D41B0D26 /* Admin */ = {
 			isa = PBXGroup;
 			children = (
@@ -79,11 +144,33 @@
 			path = Admin;
 			sourceTree = "<group>";
 		};
+		CC1122334455667788990011 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				BB9876543210FEDCBA987654 /* VideoPlayerSettingsScreen.swift */,
+				EE0011223344556677889900 /* SubtitleAppearanceScreen.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
 		6046D9FF7FEAA2033F43F916 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				E193D392D0AB52E8D8D8232F /* AnimatedRemoteImage.swift */,
+				4F3DCED0ECEB605FB9B1FFDA /* CachedAsyncImage.swift */,
 				00168395CD29DECF58929337 /* ContentCard.swift */,
-				EEAEE2CAF16072C19867A20A /* ParallaxHero.swift */,
+				FEA63A80299BEF7BA301579F /* KSPlayerEngine.swift */,
+				B3258A885C52CA28A766FE52 /* KSPlayerViewRepresentable.swift */,
+				D0504AB4ED55C9D8B0C44CB6 /* NetworkOfflineBanner.swift */,
+				190EBCA186BD638374504440 /* ParallaxHero.swift */,
+				39506C8070CEC61F66337ADE /* PlayerBottomBar.swift */,
+				DE887B11896ABE26FA685609 /* PlayerFeedbackPill.swift */,
+				B7F114EB0E88978772EB8E84 /* PlayerGestureSystem.swift */,
+				36FA246F28A95DFD2B8404AD /* PlayerLockMode.swift */,
+				EC771F481CFCF03773341785 /* ProfileAvatarView.swift */,
+				D6339D71F786B13FFD083E6C /* ThemeChip.swift */,
+				A76DC0C148B5FA75E275AB88 /* ToastOverlay.swift */,
+				C9CB56AFD56894209BD48C2C /* PlayerModals */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -91,9 +178,11 @@
 		625B6A24F30F4BFE905AF00B /* Screens */ = {
 			isa = PBXGroup;
 			children = (
+				479508B2D739EC5A11B5756B /* AppearanceSettingsScreen.swift */,
 				AC9E52B6F1F02AA0DEB87EFC /* AuthScreen.swift */,
 				5531073B5639881F588923FD /* DetailScreen.swift */,
 				E4E34EEADD9A5EF5DDF1A16D /* FolderScreen.swift */,
+				B293E446788F7299A213CB02 /* HeroManagementScreen.swift */,
 				BB1D306A69DBADAA0F197720 /* HomeScreen.swift */,
 				1B09F922B13BDAE26C9D8D09 /* LibraryScreen.swift */,
 				A181B6B8151B673BA741C9D1 /* PlayerScreen.swift */,
@@ -103,6 +192,7 @@
 				2F6FD24D68DBBAB57E9D8FC0 /* SettingsScreen.swift */,
 				7C55E48E637AA4A974497787 /* StreamSelectionScreen.swift */,
 				4E8E524DFDD82B84D41B0D26 /* Admin */,
+				CC1122334455667788990011 /* Settings */,
 			);
 			path = Screens;
 			sourceTree = "<group>";
@@ -111,8 +201,29 @@
 			isa = PBXGroup;
 			children = (
 				1090FE6DB83D71C735613B5A /* Assets.xcassets */,
+				9842A1E7929FFD8D4E7EFDF0 /* home-organizer.json */,
+				4A0807CE6EC117F786DB03D1 /* Fonts */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		C9CB56AFD56894209BD48C2C /* PlayerModals */ = {
+			isa = PBXGroup;
+			children = (
+				C2EF2802D349464BCAD6D9D1 /* AudioTrackModal.swift */,
+				25A4BA9B8A2B6BBFC246B7E7 /* EpisodesPanel.swift */,
+				C223F48F9A9C0673DC899CB7 /* SourcesPanel.swift */,
+				17BDF7BDC8C78D8875849C0D /* SubtitleModal.swift */,
+			);
+			path = PlayerModals;
+			sourceTree = "<group>";
+		};
+		DEA193CE9E3B130E3FA51963 /* Diagnostics */ = {
+			isa = PBXGroup;
+			children = (
+				D1D1F4DA63C7DEC7A19A7B29 /* StreamPlaybackDiagnostics.swift */,
+			);
+			path = Diagnostics;
 			sourceTree = "<group>";
 		};
 		FA83959789E2C0959454512A /* Products */ = {
@@ -126,6 +237,7 @@
 		FB8CF744AB2BB6CEC4A7158E /* Packages */ = {
 			isa = PBXGroup;
 			children = (
+				45445AE0DA5D45DA2BCB8FF7 /* ksplayer-clone */,
 				38D997F95CAF97AFFC4D4489 /* LunaCore */,
 			);
 			name = Packages;
@@ -134,9 +246,11 @@
 		FF894D15BAF1F72E2304102E /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				D5021AFE28BA52BB392BF601 /* AppDelegate.swift */,
 				AAD567E5F1A6F35B412CA5D2 /* ContentView.swift */,
 				8997E09659D665EA90785B88 /* LunaApp.swift */,
 				6046D9FF7FEAA2033F43F916 /* Components */,
+				DEA193CE9E3B130E3FA51963 /* Diagnostics */,
 				625B6A24F30F4BFE905AF00B /* Screens */,
 			);
 			path = Sources;
@@ -160,6 +274,7 @@
 			name = LunaApp;
 			packageProductDependencies = (
 				4A5D463B7FB6D39EA41A7774 /* LunaCore */,
+				33971240BF9265D64B84F078 /* KSPlayer */,
 			);
 			productName = LunaApp;
 			productReference = 55968AE93644270FC62BDB1F /* LunaApp.app */;
@@ -173,6 +288,12 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					9C33C030FD8B384F6DD265B9 = {
+						DevelopmentTeam = 5TWS8P597N;
+						ProvisioningStyle = Automatic;
+					};
+				};
 			};
 			buildConfigurationList = 3A9E79CCB60B3AF1BAA6CAD1 /* Build configuration list for PBXProject "LunaApp" */;
 			developmentRegion = en;
@@ -184,7 +305,8 @@
 			mainGroup = 384A6FC407F9048C66A7E665;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				33E8A54A211E0CE059F9CBDE /* XCLocalSwiftPackageReference "LunaCore" */,
+				5E1DA73EF253AB7C1BD3D937 /* XCLocalSwiftPackageReference "/tmp/ksplayer-clone" */,
+				33E8A54A211E0CE059F9CBDE /* XCLocalSwiftPackageReference "../../Packages/LunaCore" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = FA83959789E2C0959454512A /* Products */;
@@ -202,6 +324,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				BDCDDABB1BC24F5935F28D3A /* Assets.xcassets in Resources */,
+				55DF7B0D91D5656CF3758D88 /* JetBrainsSans-Bold.ttf in Resources */,
+				8B3451223C0AA260BAF56D11 /* JetBrainsSans-Regular.ttf in Resources */,
+				282C8288BB3ECEDE62B0AE5F /* JetBrainsSans-SemiBold.ttf in Resources */,
+				00BD6F5241188801987D03AF /* home-organizer.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -213,21 +339,43 @@
 			buildActionMask = 2147483647;
 			files = (
 				14392764C3C3CA687F10AADB /* AdminDashboard.swift in Sources */,
+				A7368670B4BEF865ED7A0E0C /* AnimatedRemoteImage.swift in Sources */,
+				05EC772D7FE64E632B3E6874 /* AppDelegate.swift in Sources */,
+				8F21DE4E6386E5B26CEFB126 /* AppearanceSettingsScreen.swift in Sources */,
+				ACDFE6ED8744833E4816959F /* AudioTrackModal.swift in Sources */,
 				686742C906F6505703092384 /* AuthScreen.swift in Sources */,
+				E3EB83C25D7C4CC76CFA7A32 /* CachedAsyncImage.swift in Sources */,
 				5D46158A76F52BE1C09AF19E /* ContentCard.swift in Sources */,
 				A41D3574B0860B92B8B5AEDB /* ContentView.swift in Sources */,
 				4F839D638BC31FAC259A5C3C /* DetailScreen.swift in Sources */,
+				BD0C2DADF8842E2302C0CBFC /* EpisodesPanel.swift in Sources */,
 				F66A4C64BB762AEE5764C7E5 /* FolderScreen.swift in Sources */,
+				676A5B46DB76B09D17842A41 /* HeroManagementScreen.swift in Sources */,
 				51F954F851A3A4639C70B2DC /* HomeScreen.swift in Sources */,
+				841BF9362FC8E57647EAA2D5 /* KSPlayerEngine.swift in Sources */,
+				B31BC3BA1C2DA6FBB01E74DB /* KSPlayerViewRepresentable.swift in Sources */,
 				CC04D7816468C4295A23224C /* LibraryScreen.swift in Sources */,
 				FFEE989D846E33C03915C982 /* LunaApp.swift in Sources */,
+				7C6FFB84664C20B2E53DCA2E /* NetworkOfflineBanner.swift in Sources */,
+				1C55A17124B959DFFB297669 /* ParallaxHero.swift in Sources */,
+				32DFBB2CD3E516785C2E8D2F /* PlayerBottomBar.swift in Sources */,
+				866E29F0C4009F2B144CBD05 /* PlayerFeedbackPill.swift in Sources */,
+				2F5CC1B4A78C4A320B8650F0 /* PlayerGestureSystem.swift in Sources */,
+				1475ED15C25CFA1E053C0E55 /* PlayerLockMode.swift in Sources */,
 				DF7E51B56A0B680B99CADF12 /* PlayerScreen.swift in Sources */,
+				A0FC643E8B35AB45F739D883 /* ProfileAvatarView.swift in Sources */,
 				820BAC8791A33426DA083C58 /* ProfilePickerScreen.swift in Sources */,
 				DC87974D2CDD0738F492C161 /* ProfileSelectionScreen.swift in Sources */,
 				31AD7D46ADA1FA2B777F4FB7 /* SearchScreen.swift in Sources */,
 				9D4E0D93663B1850ADCBF81B /* SettingsScreen.swift in Sources */,
+				AA1234567890ABCDEF012345 /* VideoPlayerSettingsScreen.swift in Sources */,
+				DD9988776655443322110000 /* SubtitleAppearanceScreen.swift in Sources */,
+				07CE1DE22DCA4B2E6B48ACBE /* SourcesPanel.swift in Sources */,
+				DD8F4B722C61FB78C20EDCEC /* StreamPlaybackDiagnostics.swift in Sources */,
 				E416FBBA817F1C4807C7DA01 /* StreamSelectionScreen.swift in Sources */,
-				80C1474A29FA28C2DA7249F3 /* ParallaxHero.swift in Sources */,
+				3B339EE5FDFBCDB880593E55 /* SubtitleModal.swift in Sources */,
+				956E92882C3235F7AEAED699 /* ThemeChip.swift in Sources */,
+				0229DEBF5AFAB0844C38634B /* ToastOverlay.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -239,6 +387,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5TWS8P597N;
 				INFOPLIST_KEY_CFBundleIconName = AppIcon;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
@@ -289,6 +438,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_APP_INTENTS_METADATA_GENERATION = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -307,14 +457,20 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Luna;
+				INFOPLIST_KEY_CFBundleURLTypes = "[[\"CFBundleURLSchemes\": [\"luna\"]], [\"CFBundleURLSchemes\": [\"stremio\"]]]";
+				INFOPLIST_KEY_UIAppFonts = (
+					"JetBrainsSans-Regular.ttf",
+					"JetBrainsSans-SemiBold.ttf",
+					"JetBrainsSans-Bold.ttf",
+				);
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UIRequiredDeviceCapabilities = arm64;
-				INFOPLIST_KEY_UIRequiresFullScreen = NO;
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDarkContent;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "portrait landscapeLeft landscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "portrait portraitUpsideDown landscapeLeft landscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "portrait portraitUpsideDown landscapeLeft landscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 1.0.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -332,6 +488,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5TWS8P597N;
 				INFOPLIST_KEY_CFBundleIconName = AppIcon;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
@@ -382,6 +539,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_APP_INTENTS_METADATA_GENERATION = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -394,14 +552,20 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Luna;
+				INFOPLIST_KEY_CFBundleURLTypes = "[[\"CFBundleURLSchemes\": [\"luna\"]], [\"CFBundleURLSchemes\": [\"stremio\"]]]";
+				INFOPLIST_KEY_UIAppFonts = (
+					"JetBrainsSans-Regular.ttf",
+					"JetBrainsSans-SemiBold.ttf",
+					"JetBrainsSans-Bold.ttf",
+				);
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UIRequiredDeviceCapabilities = arm64;
-				INFOPLIST_KEY_UIRequiresFullScreen = NO;
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDarkContent;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "portrait landscapeLeft landscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "portrait portraitUpsideDown landscapeLeft landscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "portrait portraitUpsideDown landscapeLeft landscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 1.0.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -437,13 +601,21 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		33E8A54A211E0CE059F9CBDE /* XCLocalSwiftPackageReference "LunaCore" */ = {
+		33E8A54A211E0CE059F9CBDE /* XCLocalSwiftPackageReference "../../Packages/LunaCore" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../Packages/LunaCore;
+		};
+		5E1DA73EF253AB7C1BD3D937 /* XCLocalSwiftPackageReference "/tmp/ksplayer-clone" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "/tmp/ksplayer-clone";
 		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		33971240BF9265D64B84F078 /* KSPlayer */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = KSPlayer;
+		};
 		4A5D463B7FB6D39EA41A7774 /* LunaCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = LunaCore;
