@@ -342,33 +342,6 @@ struct PlayerScreen: View {
             VolumeViewRepresentable(volume: $systemVolume)
                 .frame(width: 0, height: 0)
                 .opacity(0)
-
-            Menu {
-                if hasMultiplePlayableSources {
-                    Button("Retry source", systemImage: "arrow.triangle.2.circlepath") {
-                        revealControls(scheduleAutoHide: true)
-                        switchToNextSource()
-                    }
-                    Button("All sources", systemImage: "rectangle.stack") {
-                        pauseControlsAutoHide()
-                        showSources = true
-                    }
-                    Divider()
-                }
-                Button(speedLabel, systemImage: "gauge.with.dots.needle.67percent") {
-                    revealControls(scheduleAutoHide: true)
-                    cyclePlaybackSpeed()
-                }
-                Color.clear.frame(width: 0, height: 0)
-                    .onAppear { hideControlsTask?.cancel() }
-                    .onDisappear { scheduleControlsAutoHide() }
-            } label: {
-                Image(systemName: "ellipsis")
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundColor(.white)
-                    .frame(width: 40, height: 40)
-            }
-            .glassCircle(clear: true)
         }
     }
 
@@ -398,6 +371,7 @@ struct PlayerScreen: View {
                     }
                     ccMenu
                     audioMenu
+                    moreMenu
                 }
             }
 
@@ -518,7 +492,7 @@ struct PlayerScreen: View {
                     scheduleControlsAutoHide()
                 }
         } label: {
-            Image(systemName: "speaker.wave.2")
+            Image(systemName: "waveform")
                 .renderingMode(.template)
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundColor(.white.opacity(0.9))
@@ -526,6 +500,37 @@ struct PlayerScreen: View {
         }
         .tint(.white)
         .glassCapsuleActive(isActive: isActive)
+    }
+
+    @ViewBuilder private var moreMenu: some View {
+        Menu {
+            if hasMultiplePlayableSources {
+                Button("Retry source", systemImage: "arrow.triangle.2.circlepath") {
+                    revealControls(scheduleAutoHide: true)
+                    switchToNextSource()
+                }
+                Button("All sources", systemImage: "rectangle.stack") {
+                    pauseControlsAutoHide()
+                    showSources = true
+                }
+                Divider()
+            }
+            Button(speedLabel, systemImage: "gauge.with.dots.needle.67percent") {
+                revealControls(scheduleAutoHide: true)
+                cyclePlaybackSpeed()
+            }
+            Color.clear.frame(width: 0, height: 0)
+                .onAppear { hideControlsTask?.cancel() }
+                .onDisappear { scheduleControlsAutoHide() }
+        } label: {
+            Image(systemName: "ellipsis")
+                .renderingMode(.template)
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundColor(.white.opacity(0.9))
+                .frame(width: 44, height: 44)
+        }
+        .tint(.white)
+        .glassCapsule(interactive: true, clear: false)
     }
 
     private func subtitleDisplayName(for code: String) -> String {
@@ -992,10 +997,14 @@ private struct GlassVolumeSlider: View {
                 .frame(width: 14)
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
-                    Capsule().fill(Color.white.opacity(0.2)).frame(height: 3)
+                    Capsule().fill(Color.white.opacity(0.2)).frame(height: 4)
                     Capsule()
                         .fill(Color.white.opacity(0.9))
-                        .frame(width: geo.size.width * CGFloat(volume), height: 3)
+                        .frame(width: geo.size.width * CGFloat(volume), height: 4)
+                    Circle()
+                        .fill(Color.white)
+                        .frame(width: 18, height: 18)
+                        .offset(x: max(0, geo.size.width * CGFloat(volume) - 9))
                 }
                 .frame(maxHeight: .infinity, alignment: .center)
                 .gesture(
@@ -1005,7 +1014,7 @@ private struct GlassVolumeSlider: View {
                         }
                 )
             }
-            .frame(width: 72, height: 18)
+            .frame(width: 180, height: 22)
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 7)

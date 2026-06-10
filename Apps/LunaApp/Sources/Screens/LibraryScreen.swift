@@ -1,6 +1,12 @@
 import SwiftUI
 import LunaCore
 
+#Preview("Library") {
+    LibraryScreen()
+        .environmentObject(ProfileManager.shared)
+        .preferredColorScheme(.dark)
+}
+
 struct LibraryScreen: View {
     @StateObject private var libraryRepo = LibraryRepository.shared
     @StateObject private var addonRepo = AddonRepository.shared
@@ -25,7 +31,7 @@ struct LibraryScreen: View {
                 VStack(alignment: .leading, spacing: 0) {
                     watchlistSection
                     likedSection
-                    if !upcomingItems.isEmpty { upcomingSection }
+                    upcomingSection
                     Spacer().frame(height: 40)
                 }
             }
@@ -73,7 +79,7 @@ struct LibraryScreen: View {
 
     private var watchlistSection: some View {
         VStack(alignment: .leading, spacing: 0) {
-            librarySectionHeader(icon: "🔖", title: "Watchlist", count: libraryRepo.libraryItems.count)
+            librarySectionHeader(title: "Watchlist", count: libraryRepo.libraryItems.count)
             filterChips(selection: $watchlistFilter)
 
             if filteredWatchlist.isEmpty {
@@ -156,7 +162,7 @@ struct LibraryScreen: View {
 
     private var likedSection: some View {
         VStack(alignment: .leading, spacing: 0) {
-            librarySectionHeader(icon: "❤️", title: "Liked", count: availableLikedItems.count)
+            librarySectionHeader(systemImage: "heart.fill", imageTint: Color(red: 1, green: 0.25, blue: 0.35), title: "Liked", count: availableLikedItems.count)
             filterChips(selection: $likedFilter)
 
             if availableLikedItems.isEmpty {
@@ -209,27 +215,33 @@ struct LibraryScreen: View {
 
     private var upcomingSection: some View {
         VStack(alignment: .leading, spacing: 0) {
-            librarySectionHeader(icon: "🗓", title: "Upcoming", count: upcomingItems.count)
+            librarySectionHeader(systemImage: "calendar", imageTint: LunaTheme.accent, title: "Upcoming", count: upcomingItems.count)
 
-            VStack(spacing: 0) {
-                ForEach(upcomingItems, id: \.id) { item in
-                    NavigationLink(destination: DetailScreen(
-                        mediaId: item.mediaId,
-                        type: item.mediaType,
-                        name: item.name
-                    )) {
-                        upcomingRow(item)
-                    }
-                    .buttonStyle(.plain)
-                    if item.id != upcomingItems.last?.id {
-                        Divider().background(Color.white.opacity(0.06)).padding(.leading, 72)
-                    }
+            if upcomingItems.isEmpty {
+                emptyState(icon: "calendar", message: "No upcoming releases.\nLike a movie or series to track it.")
+            } else { upcomingList }
+        }
+    }
+
+    private var upcomingList: some View {
+        VStack(spacing: 0) {
+            ForEach(upcomingItems, id: \.id) { item in
+                NavigationLink(destination: DetailScreen(
+                    mediaId: item.mediaId,
+                    type: item.mediaType,
+                    name: item.name
+                )) {
+                    upcomingRow(item)
+                }
+                .buttonStyle(.plain)
+                if item.id != upcomingItems.last?.id {
+                    Divider().background(Color.white.opacity(0.06)).padding(.leading, 72)
                 }
             }
-            .glassCard(cornerRadius: 12)
-            .padding(.horizontal, 16)
-            .padding(.bottom, 8)
         }
+        .glassCard(cornerRadius: 12)
+        .padding(.horizontal, 16)
+        .padding(.bottom, 8)
     }
 
     private func upcomingRow(_ item: LikedItem) -> some View {
@@ -277,9 +289,18 @@ struct LibraryScreen: View {
 
     // MARK: - Shared helpers
 
-    private func librarySectionHeader(icon: String, title: String, count: Int) -> some View {
+    private func librarySectionHeader(
+        systemImage: String? = nil,
+        imageTint: Color = .white,
+        title: String,
+        count: Int
+    ) -> some View {
         HStack(spacing: 6) {
-            Text(icon)
+            if let icon = systemImage {
+                Image(systemName: icon)
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundColor(imageTint)
+            }
             Text(title)
                 .font(.title3.weight(.bold))
                 .foregroundColor(.white)
@@ -303,7 +324,7 @@ struct LibraryScreen: View {
                             .foregroundColor(selection.wrappedValue == filter ? .white : LunaTheme.textSecondary)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 5)
-                            .background(selection.wrappedValue == filter ? LunaTheme.accent : Color.white.opacity(0.08))
+                            .background(selection.wrappedValue == filter ? Color.white.opacity(0.22) : Color.white.opacity(0.08))
                             .cornerRadius(20)
                     }
                 }
