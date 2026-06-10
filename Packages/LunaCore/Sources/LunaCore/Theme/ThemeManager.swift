@@ -5,21 +5,22 @@ public final class ThemeManager: ObservableObject {
     public static let shared = ThemeManager()
     private let storage = ThemeSettingsStorage.shared
 
-    @Published public private(set) var selectedTheme: AppTheme = .violet
+    @Published public private(set) var selectedTheme: AppTheme = .white
     @Published public private(set) var isAmoledEnabled: Bool = false
 
     public var palette: ThemeColorPalette { selectedTheme.palette(amoled: isAmoledEnabled) }
-    public var accent: Color { palette.primary }
+    // App uses a white/black theme — no colored accent anywhere.
+    public var accent: Color { .white }
     public var background: Color { palette.background }
     public var surface: Color { palette.surface }
     public var surfaceElevated: Color { palette.surfaceElevated }
-    public var surfaceContainer: Color { palette.surfaceContainer }
+    public var surfaceContainer: Color { Color(hex: "222222") }
     public var textPrimary: Color { .white }
     public var textSecondary: Color { .white.opacity(0.7) }
     public var textTertiary: Color { .white.opacity(0.5) }
     public var outline: Color { .white.opacity(0.08) }
-    public var focusRing: Color { palette.focusRing }
-    public var focusBackground: Color { palette.focusBackground }
+    public var focusRing: Color { .white.opacity(0.9) }
+    public var focusBackground: Color { .white.opacity(0.12) }
 
     private init() { loadFromDisk() }
 
