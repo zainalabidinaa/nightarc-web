@@ -26,6 +26,7 @@ struct DetailScreen: View {
     @State private var moreLikeThisItems: [MetaPreview] = []
     @State private var streailerTrailers: [Trailer] = []
     @State private var isLiked = false
+    @State private var descriptionSheet: DescriptionSheetData?
     @StateObject private var likedRepo = LikedRepository.shared
 
     private static let streailerBaseURL = "https://streailer.elfhosted.com/%7B%22language%22%3A%22en-US%22%2C%22externalLink%22%3Afalse%2C%22showRecap%22%3Afalse%2C%22onlyRecaps%22%3Afalse%7D"
@@ -227,9 +228,25 @@ struct DetailScreen: View {
 
                     // ── OVERVIEW ──────────────────────────────────────────
                     if let description = detail.description, !description.isEmpty {
-                        ExpandableText(text: description)
-                            .padding(.horizontal, 16)
-                            .padding(.top, 20)
+                        Button {
+                            descriptionSheet = DescriptionSheetData(title: detail.name, text: description)
+                        } label: {
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text(description)
+                                    .font(.subheadline)
+                                    .foregroundColor(LunaTheme.textSecondary)
+                                    .lineLimit(3)
+                                    .multilineTextAlignment(.leading)
+                                Text("More")
+                                    .font(.caption.bold())
+                                    .foregroundColor(.white)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                        .padding(.horizontal, 16)
+                        .padding(.top, 20)
                     }
 
                     // ── DETAILS CHIPS ─────────────────────────────────────
@@ -287,7 +304,16 @@ struct DetailScreen: View {
                                             EpisodeCard(
                                                 episode: ep,
                                                 progressFraction: progress?.progressFraction,
-                                                isWatched: watched
+                                                isWatched: watched,
+                                                onShowDescription: {
+                                                    if let overview = ep.overview, !overview.isEmpty {
+                                                        let epLabel = ep.episode.map { "Episode \($0) · " } ?? ""
+                                                        descriptionSheet = DescriptionSheetData(
+                                                            title: epLabel + ep.title,
+                                                            text: overview
+                                                        )
+                                                    }
+                                                }
                                             ) {
                                                 selectedEpisode = ep
                                                 selectedSeasonNumber = seasonNumber
@@ -462,6 +488,9 @@ struct DetailScreen: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(item: $selectedMedia) { media in
             DetailScreen(mediaId: media.id, type: media.type.rawValue, name: media.name)
+        }
+        .sheet(item: $descriptionSheet) { data in
+            DescriptionSheet(title: data.title, text: data.text)
         }
         .fullScreenCover(item: $playerLaunch) { launch in
             PlayerScreen(launch: launch) {
@@ -1111,26 +1140,53 @@ private struct TrailerCard: View {
     }
 }
 
-// MARK: - Expandable overview text
+// MARK: - Description bottom sheet (liquid glass)
 
-private struct ExpandableText: View {
+struct DescriptionSheetData: Identifiable {
+    let id = UUID()
+    let title: String
     let text: String
-    @State private var expanded = false
+}
+
+struct DescriptionSheet: View {
+    let title: String
+    let text: String
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(text)
-                .font(.subheadline)
-                .foregroundColor(LunaTheme.textSecondary)
-                .lineLimit(expanded ? nil : 3)
-                .animation(.easeInOut(duration: 0.2), value: expanded)
+        VStack(alignment: .leading, spacing: 0) {
+            HStack {
+                Text(title)
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .lineLimit(2)
+                Spacer()
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundColor(.white)
+                        .frame(width: 32, height: 32)
+                }
+                .glassCircle(clear: true)
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 20)
+            .padding(.bottom, 12)
 
-            Button { expanded.toggle() } label: {
-                Text(expanded ? "Less" : "More")
-                    .font(.caption.bold())
-                    .foregroundColor(LunaTheme.accent)
+            ScrollView {
+                Text(text)
+                    .font(.subheadline)
+                    .foregroundColor(.white.opacity(0.85))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 24)
             }
         }
+        .presentationDetents([.medium, .large])
+        .presentationDragIndicator(.visible)
+        .presentationBackground(.ultraThinMaterial)
     }
 }
 
@@ -1140,6 +1196,7 @@ struct EpisodeCard: View {
     let episode: MetaVideo
     let progressFraction: Double?
     let isWatched: Bool
+    var onShowDescription: (() -> Void)? = nil
     let onPlay: () -> Void
 
     var body: some View {
@@ -1211,6 +1268,8 @@ struct EpisodeCard: View {
                     .foregroundColor(LunaTheme.textSecondary)
                     .lineLimit(2)
                     .frame(width: 220, alignment: .leading)
+                    .contentShape(Rectangle())
+                    .onTapGesture { onShowDescription?() }
             }
         }
     }
