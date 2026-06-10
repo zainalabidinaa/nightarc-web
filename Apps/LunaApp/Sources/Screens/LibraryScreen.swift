@@ -162,7 +162,7 @@ struct LibraryScreen: View {
 
     private var likedSection: some View {
         VStack(alignment: .leading, spacing: 0) {
-            librarySectionHeader(systemImage: "heart.fill", imageTint: .white, title: "Liked", count: availableLikedItems.count)
+            librarySectionHeader(systemImage: "heart.fill", imageTint: Color(red: 1, green: 0.25, blue: 0.35), title: "Liked", count: availableLikedItems.count)
             filterChips(selection: $likedFilter)
 
             if availableLikedItems.isEmpty {
