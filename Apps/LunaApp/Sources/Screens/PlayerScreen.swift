@@ -497,8 +497,11 @@ struct PlayerScreen: View {
             Color.clear.frame(width: 0, height: 0)
                 .onAppear {
                     hideControlsTask?.cancel()
-                    audioMenuSnapshot = engine.availableAudioTracks
-                    audioMenuSelectedSnapshot = engine.selectedAudioTrack
+                    // Tracks can appear after the first frame — re-query on open.
+                    ksEngine.refreshAudioTracks()
+                    let tracks = ksEngine.availableAudioTracks
+                    audioMenuSnapshot = tracks.isEmpty ? engine.availableAudioTracks : tracks
+                    audioMenuSelectedSnapshot = ksEngine.selectedAudioTrack ?? engine.selectedAudioTrack
                 }
                 .onDisappear {
                     audioMenuSnapshot = []
@@ -1221,6 +1224,8 @@ private struct SubtitleTextOverlay: View {
 
 private extension View {
     func glassCapsuleActive(isActive: Bool) -> some View {
-        self.glassCapsule(interactive: true, clear: false)
+        // Non-interactive glass: the interactive press effect fights the Menu's
+        // own open/highlight animation and flashes matte for a frame.
+        self.glassCapsule(interactive: false, clear: false)
     }
 }
