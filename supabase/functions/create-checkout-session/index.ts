@@ -10,15 +10,19 @@ const PRICE_IDS: Record<string, string> = {
   premium_plus: Deno.env.get('STRIPE_PREMIUM_PLUS_PRICE_ID')!,
 };
 
+// Premium is monthly subscription; Premium+ is a one-time payment
+const PAYMENT_MODE: Record<string, 'payment' | 'subscription'> = {
+  premium: 'subscription',
+  premium_plus: 'payment',
+};
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: cors });
 
   const { plan, customerId } = await req.json();
-  const priceId = PRICE_IDS[plan];
-  if (!priceId) return new Response(JSON.stringify({ error: 'Invalid plan' }), { status: 400, headers: cors });
 
-  // Portal session (for existing customers)
-  if (req.url.endsWith('/create-portal-session') && customerId) {
+  // Customer Portal session (for existing subscribers)
+  if (customerId) {
     const session = await stripe.billingPortal.sessions.create({
       customer: customerId,
       return_url: Deno.env.get('PORTAL_RETURN_URL')!,
@@ -26,12 +30,16 @@ serve(async (req) => {
     return new Response(JSON.stringify({ url: session.url }), { headers: { ...cors, 'Content-Type': 'application/json' } });
   }
 
-  // Checkout session (new subscriber)
+  const priceId = PRICE_IDS[plan];
+  if (!priceId) return new Response(JSON.stringify({ error: 'Invalid plan' }), { status: 400, headers: cors });
+
+  const mode = PAYMENT_MODE[plan] ?? 'subscription';
+
   const session = await stripe.checkout.sessions.create({
-    mode: 'subscription',
+    mode,
     line_items: [{ price: priceId, quantity: 1 }],
     success_url: Deno.env.get('SUCCESS_URL')! + `?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${Deno.env.get('PORTAL_RETURN_URL')!.replace('/billing', '/pricing')}`,
+    cancel_url: Deno.env.get('PORTAL_RETURN_URL')!.replace('/billing', '/pricing'),
     metadata: { plan },
   });
 
