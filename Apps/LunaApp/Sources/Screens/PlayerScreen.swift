@@ -375,20 +375,33 @@ struct PlayerScreen: View {
                 }
             }
 
-            // Skip Intro button — shown when in intro window
+            // Skip Intro button — liquid glass pill centered above the timeline
             let prefs = VideoPlayerPreferenceStore.shared
             if prefs.showSkipIntroButton,
                let ts = introViewModel.timestamps,
                engine.currentPosition >= ts.introStart && engine.currentPosition < ts.introEnd {
                 HStack {
                     Spacer()
-                    SkipIntroButton { engine.seek(to: ts.introEnd) }
+                    SkipIntroButton(label: "Skip Intro") { engine.seek(to: ts.introEnd) }
+                    Spacer()
                 }
                 .transition(.asymmetric(
                     insertion: .move(edge: .bottom).combined(with: .opacity),
                     removal: .opacity
                 ))
                 .animation(.spring(duration: 0.3), value: introViewModel.timestamps != nil)
+            } else if prefs.showSkipIntroButton, prefs.fallbackSkipEnabled,
+                      introViewModel.timestamps == nil,
+                      engine.currentPosition > 15, engine.currentPosition < 300 {
+                // Plan B: no intro data — offer a fixed-duration skip
+                HStack {
+                    Spacer()
+                    SkipIntroButton(label: "Skip +\(prefs.fallbackSkipSeconds)s") {
+                        engine.seek(to: engine.currentPosition + Double(prefs.fallbackSkipSeconds))
+                    }
+                    Spacer()
+                }
+                .transition(.opacity)
             }
 
             PlayerScrubber(
@@ -1080,20 +1093,21 @@ private struct VolumeViewRepresentable: UIViewRepresentable {
 // MARK: - Skip Intro Button
 
 private struct SkipIntroButton: View {
+    var label: String = "Skip Intro"
     let onSkip: () -> Void
 
     var body: some View {
         Button(action: onSkip) {
             HStack(spacing: 5) {
-                Text("Skip Intro")
-                    .font(.system(size: 13, weight: .semibold))
+                Text(label)
+                    .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(.white)
                 Image(systemName: "forward.end.fill")
                     .font(.system(size: 11, weight: .bold))
                     .foregroundColor(.white)
             }
-            .padding(.horizontal, 13)
-            .padding(.vertical, 8)
+            .padding(.horizontal, 18)
+            .padding(.vertical, 10)
             .background {
                 if #available(iOS 26.0, *) {
                     Capsule().glassEffect()

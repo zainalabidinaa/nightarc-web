@@ -50,7 +50,26 @@ struct VideoPlayerSettingsScreen: View {
                         get: { prefs.showHighlightsOnTimeline },
                         set: { prefs.showHighlightsOnTimeline = $0 }
                     ))
+                    Divider().background(Color.white.opacity(0.08))
+                    toggleRow("Fallback skip when no intro data", isOn: Binding(
+                        get: { prefs.fallbackSkipEnabled },
+                        set: { prefs.fallbackSkipEnabled = $0 }
+                    ))
+                    if prefs.fallbackSkipEnabled {
+                        Divider().background(Color.white.opacity(0.08))
+                        pickerRow("Fallback skip duration", value: "\(prefs.fallbackSkipSeconds)s") {
+                            Picker("", selection: Binding(
+                                get: { prefs.fallbackSkipSeconds },
+                                set: { prefs.fallbackSkipSeconds = $0 }
+                            )) {
+                                ForEach([30, 60, 85, 90, 120], id: \.self) { s in
+                                    Text("\(s) seconds").tag(s)
+                                }
+                            }
+                        }
+                    }
                 }
+                .animation(.easeInOut(duration: 0.2), value: prefs.fallbackSkipEnabled)
                 .glassCard(cornerRadius: 14)
                 .padding(.horizontal, 16)
 

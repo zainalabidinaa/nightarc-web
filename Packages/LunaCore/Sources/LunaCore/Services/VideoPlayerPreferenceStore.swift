@@ -56,6 +56,18 @@ public final class VideoPlayerPreferenceStore: ObservableObject {
         set { objectWillChange.send(); defaults.set(newValue, forKey: "\(prefix).useIntroDB") }
     }
 
+    /// Plan B: when no intro timestamps are available, show a fixed-duration skip button.
+    public var fallbackSkipEnabled: Bool {
+        get { defaults.object(forKey: "\(prefix).fallbackSkipEnabled") as? Bool ?? true }
+        set { objectWillChange.send(); defaults.set(newValue, forKey: "\(prefix).fallbackSkipEnabled") }
+    }
+
+    /// Seconds the Plan B skip button jumps forward.
+    public var fallbackSkipSeconds: Int {
+        get { defaults.object(forKey: "\(prefix).fallbackSkipSeconds") as? Int ?? 85 }
+        set { objectWillChange.send(); defaults.set(newValue, forKey: "\(prefix).fallbackSkipSeconds") }
+    }
+
     public var showHighlightsOnTimeline: Bool {
         get { defaults.object(forKey: "\(prefix).showHighlights") as? Bool ?? true }
         set { objectWillChange.send(); defaults.set(newValue, forKey: "\(prefix).showHighlights") }
