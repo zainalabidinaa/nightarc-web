@@ -22,8 +22,8 @@ export function browserPlaybackScore(stream: StreamItem): number {
   if (text.includes('.mp4') || text.includes(' h.264') || text.includes(' h264') || text.includes('x264') || text.includes(' avc')) score += 80;
   if (text.includes('aac')) score += 30;
   if (text.includes('eac3') || text.includes('dd+') || text.includes('ddp')) score += 10;
-  if (text.includes('720')) score += 35;
-  if (text.includes('1080')) score += 25;
+  if (text.includes('720')) score += 20;
+  if (text.includes('1080')) score += 35;
   if (text.includes('2160') || text.includes('4k')) score -= 35;
   if (text.includes('.mkv')) score -= 80;
   if (text.includes('hevc') || text.includes('h.265') || text.includes('h265') || text.includes('x265')) score -= 100;
@@ -70,7 +70,8 @@ export function getStreamCompatibility(stream: StreamItem): StreamTier {
     // in browsers (Chrome requires OS-level codec support, Firefox doesn't support it).
     // The remux server dowmixes to AAC stereo which works everywhere.
     text.includes('eac3') || text.includes('e-ac3') || text.includes('dd+') ||
-    text.includes('ddp') || text.includes('ddp5') || text.includes('dd5');
+    text.includes('ddp') || text.includes('ddp5');
+    // Note: 'dd5' intentionally omitted — DD5.1 (AC3) is natively supported by browsers
 
   if (badVideo || badAudio) return 'transcode';
 

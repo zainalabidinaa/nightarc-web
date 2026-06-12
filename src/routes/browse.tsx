@@ -8,6 +8,7 @@ import { fetchMeta, fetchStreamsFromAll } from '@/lib/stremio';
 import { isInLibrary, toggleLibrary, getWatchProgress } from '@/lib/services/api';
 import { cacheStreams } from '@/lib/stream-cache';
 import { getPlayableStreamUrl } from '@/lib/player-utils';
+import { TMDB_API_KEY } from '@/lib/supabase';
 
 const PlayIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 ml-0.5">
@@ -41,13 +42,15 @@ export default function DetailPage() {
         detail = await fetchMeta(addon.transportUrl, type, id);
         if (detail) break;
       }
-      const meta = detail || { id, type, name: decodeURIComponent(id) } as MetaDetail;
+      let enrichedMeta: MetaDetail = detail || { id, type, name: decodeURIComponent(id) } as MetaDetail;
 
-      const initialSeason = meta.seasons && meta.seasons.length > 0 ? meta.seasons[0] : null;
+      const initialSeason = enrichedMeta.seasons && enrichedMeta.seasons.length > 0 ? enrichedMeta.seasons[0] : null;
 
       let inLib = false;
       let savedPosition = 0;
       let trailers: { id: string; title: string; youtubeId: string }[] = [];
+      let recentEp: { mediaId: string; positionSec: number } | null = null;
+      let epProgress: Record<string, number> = {};
 
       if (currentProfile) {
         const [lib, progress] = await Promise.all([
@@ -55,8 +58,21 @@ export default function DetailPage() {
           getWatchProgress(currentProfile.id),
         ]);
         inLib = lib;
-        const entry = progress.find(p => p.media_id === id || p.media_id.startsWith(id + ':'));
+        // Decode URL-encoded IDs before comparing (DB may store %3A instead of :)
+        const decoded = progress.map(p => ({ ...p, media_id: decodeURIComponent(p.media_id) }));
+        const entry = decoded.find(p => p.media_id === id || p.media_id.startsWith(id + ':'));
         if (entry && entry.position_seconds > 0) savedPosition = entry.position_seconds;
+        // Most recently watched episode for series resume
+        const recentEpEntry = decoded
+          .filter(p => p.media_id.startsWith(id + ':') && p.position_seconds > 0 && !p.completed)
+          .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())[0] ?? null;
+        if (recentEpEntry) recentEp = { mediaId: recentEpEntry.media_id, positionSec: recentEpEntry.position_seconds };
+        // Map of mediaId → progress fraction for episode thumbnails
+        for (const p of decoded) {
+          if (p.media_id.startsWith(id + ':') && p.duration_seconds > 0) {
+            epProgress[p.media_id] = Math.min(1, p.position_seconds / p.duration_seconds);
+          }
+        }
       }
 
       try {
@@ -75,12 +91,63 @@ export default function DetailPage() {
 
       trailers = [
         ...trailers,
-        ...(meta?.trailers || [])
-          .map((t: any) => ({ id: t.id, title: t.title || 'Trailer', youtubeId: t.youtubeId || '' }))
+        ...(enrichedMeta.trailers || [])
+          // Cinemeta uses `source` as the YouTube ID; others may use `youtubeId`
+          .map((t: any) => ({ id: t.id || t.source, title: t.title || 'Trailer', youtubeId: t.youtubeId || t.source || '' }))
           .filter((t: any) => t.youtubeId),
       ];
 
-      return { meta, inLib, savedPosition, trailers, initialSeason };
+      // Deduplicate trailers by youtubeId
+      const seenIds = new Set<string>();
+      trailers = trailers.filter(t => { if (seenIds.has(t.youtubeId)) return false; seenIds.add(t.youtubeId); return true; });
+
+      // TMDB enrichment: fetch cast with profile photos.
+      // Try tmdbId from the addon first, otherwise look it up via IMDb ID.
+      try {
+        let tmdbId = enrichedMeta.tmdbId;
+        if (!tmdbId && id.startsWith('tt')) {
+          const findRes = await fetch(
+            `https://api.themoviedb.org/3/find/${id}?api_key=${TMDB_API_KEY}&external_source=imdb_id`
+          );
+          if (findRes.ok) {
+            const findData = await findRes.json();
+            const hit = type === 'series'
+              ? findData.tv_results?.[0]
+              : findData.movie_results?.[0];
+            if (hit?.id) tmdbId = String(hit.id);
+          }
+        }
+
+        if (tmdbId) {
+          const tmdbType = type === 'series' ? 'tv' : 'movie';
+          const tmdbRes = await fetch(
+            `https://api.themoviedb.org/3/${tmdbType}/${tmdbId}?api_key=${TMDB_API_KEY}&append_to_response=credits,similar`
+          );
+          if (tmdbRes.ok) {
+            const tmdb = await tmdbRes.json();
+            const updates: Partial<MetaDetail> = {};
+            if (tmdb.credits?.cast?.length) {
+              updates.cast = (tmdb.credits.cast as any[]).slice(0, 25).map((c: any) => ({
+                id: String(c.id),
+                name: c.name,
+                photo: c.profile_path ? `https://image.tmdb.org/t/p/w185${c.profile_path}` : undefined,
+              }));
+            }
+            if (!enrichedMeta.moreLikeThis?.length && tmdb.similar?.results?.length) {
+              updates.moreLikeThis = (tmdb.similar.results as any[]).slice(0, 15).map((r: any) => ({
+                id: String(r.id),
+                type,
+                name: r.name || r.title || 'Unknown',
+                poster: r.poster_path ? `https://image.tmdb.org/t/p/w342${r.poster_path}` : undefined,
+                releaseInfo: (r.first_air_date || r.release_date || '').slice(0, 4),
+              }));
+            }
+            if (Object.keys(updates).length) enrichedMeta = { ...enrichedMeta, ...updates };
+          }
+        }
+      } catch {}
+
+      return { meta: enrichedMeta, inLib, savedPosition, trailers, initialSeason, recentEp, epProgress };
     },
     staleTime: 60 * 60 * 1000,
     enabled: addons.length > 0,
@@ -90,6 +157,8 @@ export default function DetailPage() {
   const inLibrary = data?.inLib ?? false;
   const savedPositionSeconds = data?.savedPosition ?? 0;
   const trailers = data?.trailers ?? [];
+  const recentEp = data?.recentEp ?? null;
+  const epProgress = data?.epProgress ?? {};
 
   // Set initial season once data loads
   if (data?.initialSeason && !selectedSeason) {
@@ -138,7 +207,7 @@ export default function DetailPage() {
     navigate({
       to: '/watch/$type/$id',
       params: { type, id: mediaId },
-      search: { url: streamUrl, cid: cacheKey, title: watchTitle, logo: detail?.logo ?? undefined, pos: savedPositionSeconds > 0 ? savedPositionSeconds : undefined },
+      search: { url: streamUrl, cid: cacheKey, title: watchTitle, logo: detail?.logo ?? undefined, poster: detail?.poster ?? undefined, background: detail?.background ?? undefined, pos: savedPositionSeconds > 0 ? savedPositionSeconds : undefined },
     });
   }
 
@@ -152,7 +221,7 @@ export default function DetailPage() {
     navigate({
       to: '/watch/$type/$id',
       params: { type, id: sid },
-      search: { url: '', cid: cacheKey, title: watchTitle, logo: detail?.logo ?? undefined, pos: savedPositionSeconds > 0 ? savedPositionSeconds : undefined },
+      search: { url: '', cid: cacheKey, title: watchTitle, logo: detail?.logo ?? undefined, poster: detail?.poster ?? undefined, background: detail?.background ?? undefined, pos: savedPositionSeconds > 0 ? savedPositionSeconds : undefined },
     });
   }
 
@@ -236,7 +305,7 @@ export default function DetailPage() {
               <p className="text-sm text-white/50 leading-relaxed mb-6 line-clamp-3">{detail.description}</p>
             )}
             <div className="flex gap-3 flex-wrap">
-              {!isSeries && (
+              {!isSeries ? (
                 <>
                   <button onClick={() => handleAutoPlay()}
                     className="flex items-center gap-2 px-8 py-2.5 bg-white hover:bg-white/90 text-black font-semibold rounded-md transition-all">
@@ -248,7 +317,25 @@ export default function DetailPage() {
                     Sources
                   </button>
                 </>
-              )}
+              ) : recentEp ? (
+                (() => {
+                  const parts = recentEp.mediaId.split(':');
+                  const s = parts[1], e = parts[2];
+                  return (
+                    <button onClick={() => handleAutoPlay(recentEp.mediaId)}
+                      className="flex items-center gap-2 px-8 py-2.5 bg-white hover:bg-white/90 text-black font-semibold rounded-md transition-all">
+                      <PlayIcon />
+                      {s && e ? `Continue · S${s}E${e}` : 'Continue'}
+                    </button>
+                  );
+                })()
+              ) : detail?.seasons?.[0]?.episodes?.[0] ? (
+                <button onClick={() => handleAutoPlay(detail.seasons![0].episodes![0].id)}
+                  className="flex items-center gap-2 px-8 py-2.5 bg-white hover:bg-white/90 text-black font-semibold rounded-md transition-all">
+                  <PlayIcon />
+                  Play First Episode
+                </button>
+              ) : null}
               <button onClick={handleToggleLibrary}
                 className={`flex items-center gap-2 px-6 py-2.5 rounded-md font-semibold transition-all text-sm border ${inLibrary ? 'bg-luna-accent/20 border-luna-accent/40 text-luna-accent' : 'bg-white/10 border-white/10 text-white hover:bg-white/15'}`}>
                 <svg viewBox="0 0 24 24" fill={inLibrary ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
@@ -276,14 +363,14 @@ export default function DetailPage() {
         {detail?.cast && detail.cast.length > 0 && (
           <section>
             <h3 className="text-sm font-bold text-white mb-4">Cast &amp; Creators</h3>
-            <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
-              {detail.cast.slice(0, 20).map(p => (
-                <div key={p.name} className="flex-shrink-0 text-center w-16">
-                  <div className="w-14 h-14 rounded-full bg-white/5 mx-auto mb-2 overflow-hidden ring-1 ring-white/10">
+            <div className="flex gap-5 overflow-x-auto pb-3 scrollbar-hide -mx-6 px-6">
+              {detail.cast.slice(0, 25).map(p => (
+                <div key={p.name} className="flex-shrink-0 text-center w-20">
+                  <div className="w-20 h-20 rounded-full bg-white/5 mx-auto mb-2 overflow-hidden ring-1 ring-white/10">
                     {p.photo ? (
                       <img src={p.photo} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-sm font-semibold text-white/60">{p.name[0]}</div>
+                      <div className="w-full h-full flex items-center justify-center text-base font-semibold text-white/60">{p.name[0]}</div>
                     )}
                   </div>
                   <p className="text-xs text-white/60 truncate">{p.name}</p>
@@ -293,26 +380,31 @@ export default function DetailPage() {
           </section>
         )}
 
-        {detail?.moreLikeThis && detail.moreLikeThis.length > 0 && (
-          <section className="mb-8">
-            <h3 className="text-sm font-bold text-white mb-4">More Like This</h3>
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
-              {detail.moreLikeThis.slice(0, 10).map(item => (
-                <Link key={item.id} to="/browse/$type/$id" params={{ type: item.type, id: item.id }} className="group cursor-pointer">
-                  <div className="relative aspect-[2/3] rounded-lg overflow-hidden bg-luna-elevated mb-2">
-                    {item.poster ? (
-                      <img src={item.poster} alt={item.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
-                    ) : (
-                      <div className="absolute inset-0 flex items-center justify-center text-white/20 text-xs font-semibold text-center px-2">{item.name}</div>
-                    )}
-                  </div>
-                  <p className="text-xs font-medium text-white/80 truncate">{item.name}</p>
-                  {item.releaseInfo && <p className="text-[10px] text-white/40 mt-0.5">{item.releaseInfo}</p>}
-                </Link>
-              ))}
-            </div>
-          </section>
-        )}
+        {(() => {
+          // TMDB similar IDs are numeric; only IMDb-style (tt…) IDs can be browsed
+          const similar = (detail?.moreLikeThis ?? []).filter(item => item.id.startsWith('tt'));
+          if (similar.length === 0) return null;
+          return (
+            <section className="mb-8">
+              <h3 className="text-sm font-bold text-white mb-4">More Like This</h3>
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+                {similar.slice(0, 15).map(item => (
+                  <Link key={item.id} to="/browse/$type/$id" params={{ type: item.type, id: item.id }} className="group cursor-pointer">
+                    <div className="relative aspect-[2/3] rounded-lg overflow-hidden bg-luna-elevated mb-2">
+                      {item.poster ? (
+                        <img src={item.poster} alt={item.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center text-white/20 text-xs font-semibold text-center px-2">{item.name}</div>
+                      )}
+                    </div>
+                    <p className="text-xs font-medium text-white/80 truncate">{item.name}</p>
+                    {item.releaseInfo && <p className="text-[10px] text-white/40 mt-0.5">{item.releaseInfo}</p>}
+                  </Link>
+                ))}
+              </div>
+            </section>
+          );
+        })()}
 
         {detail?.links && detail.links.length > 0 && (() => {
           const networks = detail.links.filter(l => l.category === 'network');
@@ -399,6 +491,11 @@ export default function DetailPage() {
                         <svg viewBox="0 0 24 24" fill="white" className="w-4 h-4 ml-0.5"><polygon points="6,4 20,12 6,20" /></svg>
                       </div>
                     </div>
+                    {epProgress[ep.id] !== undefined && epProgress[ep.id] > 0 && (
+                      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white/20">
+                        <div className="h-full bg-luna-accent" style={{ width: `${Math.round(epProgress[ep.id] * 100)}%` }} />
+                      </div>
+                    )}
                   </div>
                   <p className="text-[10px] text-white/40 mb-0.5">Episode {ep.episode}</p>
                   {ep.released && <p className="text-[10px] text-white/30 mb-0.5">{new Date(ep.released).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>}

@@ -39,6 +39,7 @@ export interface MetaDetail {
   seasons?: Season[];
   links?: MetaLink[];
   moreLikeThis?: MetaPreview[];
+  tmdbId?: string;
 }
 
 export interface Person {

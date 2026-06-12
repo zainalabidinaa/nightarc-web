@@ -75,8 +75,8 @@ export async function fetchMeta(
       released: v.released || v.firstAired,
     }));
 
-    // Build seasons from videos if seasons not provided
-    let seasons = m.seasons || null;
+    // Build seasons from videos if seasons not provided; filter out season 0 (specials)
+    let seasons = (m.seasons || null)?.filter((s: any) => s.number !== 0) ?? null;
     if ((!seasons || seasons.length === 0) && videos.length > 0) {
       const seasonMap = new Map<number, typeof videos>();
       for (const v of videos) {
@@ -121,6 +121,7 @@ export async function fetchMeta(
       })),
       videos,
       seasons,
+      tmdbId: m.moviedb_id ? String(m.moviedb_id) : undefined,
     };
   } catch {
     return null;
