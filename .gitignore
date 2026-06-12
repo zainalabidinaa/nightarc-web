@@ -32,3 +32,15 @@ supabase/.temp/
 LunaWeb/
 .vercel
 .env*
+
+# Build artifacts
+build/
+Apps/LunaMac/build/
+Apps/LunaApp/build/
+
+# Tool caches / session artifacts
+.playwright-mcp/
+Apps/LunaApp/.playwright-mcp/
+.claude/worktrees/
+Apps/LunaApp/.claude/launch.json
+.opencode/
