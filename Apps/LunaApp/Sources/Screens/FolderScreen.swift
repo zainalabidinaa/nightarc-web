@@ -25,10 +25,13 @@ struct FolderScreen: View {
         GridItem(.flexible(), spacing: 10)
     ]
 
-    /// A shape-normalised version of displayRow: uses the row's tileShape when
-    /// set, otherwise falls back to "poster" so all tiles are uniform.
+    /// A shape-normalised version of displayRow: uses the row's tileShape when set,
+    /// but clamps "landscape" to "poster" — landscape cards (230pt) overflow the
+    /// 2-column flexible grid (~166pt per column on a 375pt screen). Falls back
+    /// to "poster" when no shape is specified.
     private var shapeRow: CatalogRow {
-        guard displayRow.tileShape == nil else { return displayRow }
+        let shape = displayRow.tileShape
+        guard shape == nil || shape == "landscape" else { return displayRow }
         return CatalogRow(
             id: displayRow.id,
             title: displayRow.title,
