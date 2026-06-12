@@ -21,8 +21,37 @@ struct FolderScreen: View {
     }
 
     private let columns = [
-        GridItem(.adaptive(minimum: 100), spacing: 10)
+        GridItem(.flexible(), spacing: 10),
+        GridItem(.flexible(), spacing: 10)
     ]
+
+    /// A shape-normalised version of displayRow: uses the row's tileShape when
+    /// set, otherwise falls back to "poster" so all tiles are uniform.
+    private var shapeRow: CatalogRow {
+        guard displayRow.tileShape == nil else { return displayRow }
+        return CatalogRow(
+            id: displayRow.id,
+            title: displayRow.title,
+            items: displayRow.items,
+            addonName: displayRow.addonName,
+            addonId: displayRow.addonId,
+            page: displayRow.page,
+            hasMore: displayRow.hasMore,
+            tileShape: "poster",
+            coverImage: displayRow.coverImage,
+            focusGif: displayRow.focusGif,
+            focusGifEnabled: displayRow.focusGifEnabled,
+            titleLogo: displayRow.titleLogo,
+            heroBackdrop: displayRow.heroBackdrop,
+            heroVideoURL: displayRow.heroVideoURL,
+            hideTitle: displayRow.hideTitle,
+            focusGlowEnabled: displayRow.focusGlowEnabled,
+            viewMode: displayRow.viewMode,
+            showAllTab: displayRow.showAllTab,
+            pinToTop: displayRow.pinToTop,
+            backdropImage: displayRow.backdropImage
+        )
+    }
 
     var body: some View {
         ScrollView {
@@ -61,10 +90,10 @@ struct FolderScreen: View {
                     .padding(.horizontal, 14)
                     .padding(.top, 16)
                 } else {
-                    // Poster grid — pass nil for row so cards render as poster shape
+                    // Poster grid — pass shapeRow so all cards use a uniform tile shape
                     LazyVGrid(columns: columns, spacing: 10) {
                         ForEach(Array(displayRow.items.enumerated()), id: \.element.id) { index, item in
-                            ContentCard(item: item, row: nil, index: index)
+                            ContentCard(item: item, row: shapeRow, index: index)
                                 .onTapGesture {
                                     if item.id.hasPrefix("folder_"),
                                        let folderRow = catalogRepo.allFolderRows[item.id] {
