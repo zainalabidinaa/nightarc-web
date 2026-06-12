@@ -95,6 +95,8 @@ public class KSPlayerEngine: ObservableObject {
                     self.hasRenderedFrame = true
                     self.isLoading = false
                     self.refreshAudioTracks()
+                    // Reveal the player layer now that a real frame has had time to decode.
+                    UIView.animate(withDuration: 0.2) { self.playerView?.alpha = 1 }
                 }
             }
             // Only publish position changes that are meaningfully different (>0.25s)
@@ -132,6 +134,9 @@ public class KSPlayerEngine: ObservableObject {
 
         let view = coordinator.makeView(url: url, options: options)
         view.translatesAutoresizingMaskIntoConstraints = false
+        // Hide the player layer until the first real frame is decoded, so stale
+        // frames from a previous (failed) stream cannot bleed through the loading overlay.
+        view.alpha = 0
         playerView = view
 
         loadSubtitles(from: launch.subtitles ?? [])
