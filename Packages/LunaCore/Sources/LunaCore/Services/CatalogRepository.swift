@@ -144,10 +144,10 @@ public class CatalogRepository: ObservableObject {
                 ?? folder.titleLogo?.nonEmpty
                 ?? first?.poster
                 ?? first?.banner
-            // banner: store heroBackdrop independently from poster so ContentCard
-            // has a genuine fallback when the primary coverImage URL fails (e.g. 404s).
-            let banner = folder.heroBackdrop?.nonEmpty
-                ?? folder.coverImage?.nonEmpty
+            // banner: coverImage first so landscape tiles (which read banner) get the
+            // custom cover art; heroBackdrop is the fallback for 404s.
+            let banner = folder.coverImage?.nonEmpty
+                ?? folder.heroBackdrop?.nonEmpty
                 ?? first?.banner
                 ?? first?.poster
             return MetaPreview(
