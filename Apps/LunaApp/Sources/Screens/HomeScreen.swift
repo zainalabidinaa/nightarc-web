@@ -1,4 +1,6 @@
 import SwiftUI
+import UIKit
+import CoreImage
 import LunaCore
 
 struct HomeScreen: View {
@@ -9,6 +11,7 @@ struct HomeScreen: View {
     @StateObject private var homeRepo = HomeRepository.shared
     @StateObject private var addonRepo = AddonRepository.shared
     @StateObject private var preferenceStore = CollectionDisplayPreferenceStore.shared
+    @StateObject private var rowStyleStore = CollectionRowDisplayStyleStore.shared
     @StateObject private var heroStore = HeroPreferenceStore.shared
     @StateObject private var libraryRepo = LibraryRepository.shared
     @State private var selectedMedia: MetaPreview?
@@ -17,6 +20,8 @@ struct HomeScreen: View {
     @State private var showFolder = false
     @State private var playerLaunch: PlayerLaunch?
     @State private var streamSelectionLaunch: PlayerLaunch?
+    @State private var ambientColor: Color = .clear
+    @AppStorage("luna.cinematicModeEnabled") private var cinematicModeEnabled = false
 
     private let mainRowNames: Set<String> = [
         "Popular Movies", "Popular TV Shows",
@@ -60,12 +65,27 @@ struct HomeScreen: View {
 
     @State private var heroIndex = 0
 
+    private var currentHeroBackdropURL: URL? {
+        guard featuredItems.indices.contains(heroIndex) else { return nil }
+        let item = featuredItems[heroIndex]
+        return (item.banner ?? item.poster).flatMap(URL.init)
+    }
+
     var body: some View {
         NavigationStack {
             GeometryReader { geo in
                 let metrics = ResponsiveMetrics(for: geo.size.width)
                 ZStack {
-                    Color.black.ignoresSafeArea()
+                    FusionAmbientBackground(
+                        ambientColor: ambientColor,
+                        heroBackdropURL: currentHeroBackdropURL,
+                        isEnabled: cinematicModeEnabled,
+                        screenHeight: geo.size.height
+                    )
+                    .animation(.easeInOut(duration: 0.9), value: ambientColor)
+                    .animation(.easeInOut(duration: 0.6), value: currentHeroBackdropURL)
+                    .animation(.easeInOut(duration: 0.35), value: cinematicModeEnabled)
+
                     ScrollView {
                         VStack(spacing: 0) {
                             if !featuredItems.isEmpty {
@@ -90,6 +110,12 @@ struct HomeScreen: View {
                                         }
                                     }
                                 )
+                                .task(id: "\(heroIndex)-\(cinematicModeEnabled)") {
+                                    await updateAmbientColorIfNeeded()
+                                }
+                                .onChange(of: heroIndex) { _, _ in
+                                    Task { await updateAmbientColorIfNeeded() }
+                                }
                             }
 
                     // Continue Watching
@@ -130,10 +156,15 @@ struct HomeScreen: View {
                     if !catalogRepo.catalogRows.isEmpty {
                         LazyVStack(spacing: 28) {
                             ForEach(catalogRepo.catalogRows) { row in
-                                CatalogRowView(row: row, onTap: { item in
-                                    if item.id.hasPrefix("folder_"),
-                                       let folderRow = catalogRepo.allFolderRows[item.id] {
-                                        selectedFolder = folderRow
+                                CollectionRowContainer(row: row, style: rowStyleStore.style(forRowTitle: row.title), onTap: { item in
+                                    if item.id.hasPrefix("folder_") {
+                                        selectedFolder = catalogRepo.allFolderRows[item.id] ?? CatalogRow(
+                                            id: item.id,
+                                            title: item.name,
+                                            items: [],
+                                            tileShape: item.posterShape?.rawValue ?? "poster",
+                                            coverImage: item.poster ?? item.banner
+                                        )
                                         showFolder = true
                                     } else {
                                         selectedMedia = item
@@ -334,9 +365,175 @@ struct HomeScreen: View {
         )
     }
 
+    @MainActor
+    private func updateAmbientColorIfNeeded() async {
+        guard cinematicModeEnabled,
+              featuredItems.indices.contains(heroIndex),
+              let item = Optional(featuredItems[heroIndex]),
+              let url = (item.banner ?? item.poster).flatMap(URL.init) else {
+            ambientColor = .clear
+            return
+        }
+
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            guard let image = UIImage(data: data),
+                  let color = image.lunaDominantColor else { return }
+            ambientColor = color.lunaClampedForAmbient
+        } catch {
+            ambientColor = .clear
+        }
+    }
+
 }
 
 // MARK: - Folder Grid
+
+private struct FusionAmbientBackground: View {
+    let ambientColor: Color
+    let heroBackdropURL: URL?
+    let isEnabled: Bool
+    let screenHeight: CGFloat
+
+    var body: some View {
+        ZStack(alignment: .top) {
+            LunaTheme.background
+
+            if isEnabled, let url = heroBackdropURL {
+                CachedAsyncImage(url: url) { phase in
+                    if case .success(let image) = phase {
+                        image
+                            .resizable()
+                            .scaledToFill()
+                    } else {
+                        Color.clear
+                    }
+                }
+                .frame(height: screenHeight * 0.58)
+                .scaleEffect(1.08)
+                .blur(radius: 32)
+                .saturation(0.85)
+                .brightness(-0.12)
+                .opacity(0.72)
+                .frame(maxWidth: .infinity)
+                .frame(height: screenHeight * 0.58, alignment: .top)
+                .clipped()
+                .id(url)
+                .transition(.opacity)
+            }
+
+            if isEnabled {
+                RadialGradient(
+                    colors: [
+                        ambientColor.opacity(0.38),
+                        ambientColor.opacity(0.18),
+                        .clear
+                    ],
+                    center: .top,
+                    startRadius: 0,
+                    endRadius: screenHeight * 0.72
+                )
+
+                RadialGradient(
+                    colors: [
+                        ambientColor.opacity(0.16),
+                        .clear
+                    ],
+                    center: UnitPoint(x: 0.82, y: 0.04),
+                    startRadius: 0,
+                    endRadius: screenHeight * 0.48
+                )
+
+                LinearGradient(
+                    stops: [
+                        .init(color: .black.opacity(0.04), location: 0.00),
+                        .init(color: .black.opacity(0.18), location: 0.34),
+                        .init(color: LunaTheme.background.opacity(0.68), location: 0.68),
+                        .init(color: LunaTheme.background, location: 1.00)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            }
+        }
+        .ignoresSafeArea()
+    }
+}
+
+struct CollectionRowContainer: View {
+    let row: CatalogRow
+    let style: RowDisplayStyle
+    let onTap: (MetaPreview) -> Void
+    var onHeaderTap: (() -> Void)? = nil
+    var metrics: ResponsiveMetrics? = nil
+
+    var body: some View {
+        switch style {
+        case .standard:
+            CatalogRowView(row: row, onTap: onTap, onHeaderTap: onHeaderTap, metrics: metrics)
+        case .heroBanner:
+            HeroBannerRow(row: row, onTap: onTap, onHeaderTap: onHeaderTap, metrics: metrics)
+        case .cardStack:
+            CardStackRow(row: row, onTap: onTap, onHeaderTap: onHeaderTap, metrics: metrics)
+        case .carouselCinematic:
+            CarouselCinematicRow(row: row, onTap: onTap, metrics: metrics)
+        }
+    }
+}
+
+private extension UIImage {
+    var lunaDominantColor: Color? {
+        guard let inputImage = CIImage(image: self) else { return nil }
+        let extent = inputImage.extent
+        guard let filter = CIFilter(
+            name: "CIAreaAverage",
+            parameters: [
+                kCIInputImageKey: inputImage,
+                kCIInputExtentKey: CIVector(cgRect: extent)
+            ]
+        ),
+        let outputImage = filter.outputImage else { return nil }
+
+        var bitmap = [UInt8](repeating: 0, count: 4)
+        let context = CIContext(options: [.workingColorSpace: kCFNull as Any])
+        context.render(
+            outputImage,
+            toBitmap: &bitmap,
+            rowBytes: 4,
+            bounds: CGRect(x: 0, y: 0, width: 1, height: 1),
+            format: .RGBA8,
+            colorSpace: nil
+        )
+
+        return Color(
+            red: Double(bitmap[0]) / 255,
+            green: Double(bitmap[1]) / 255,
+            blue: Double(bitmap[2]) / 255
+        )
+    }
+}
+
+private extension Color {
+    var lunaClampedForAmbient: Color {
+        #if canImport(UIKit)
+        let uiColor = UIColor(self)
+        var hue: CGFloat = 0
+        var saturation: CGFloat = 0
+        var brightness: CGFloat = 0
+        var alpha: CGFloat = 0
+        guard uiColor.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha) else {
+            return self
+        }
+        return Color(
+            hue: Double(hue),
+            saturation: Double(min(max(saturation * 0.48, 0.10), 0.28)),
+            brightness: Double(min(max(brightness * 0.42, 0.12), 0.24))
+        )
+        #else
+        return self
+        #endif
+    }
+}
 
 struct FolderGridSection: View {
     let rows: [CatalogRow]
@@ -553,11 +750,6 @@ struct ContinueWatchingCard: View {
         (item.thumbnail ?? item.poster).flatMap(URL.init)
     }
 
-    private var episodeBadge: String? {
-        guard let s = item.seasonNumber, let e = item.episodeNumber else { return nil }
-        return "S\(s) E\(e)"
-    }
-
     /// Minutes remaining based on duration and current progress.
     private var minutesRemaining: Int? {
         guard item.durationMs > 0 else { return nil }
@@ -638,8 +830,8 @@ struct ContinueWatchingCard: View {
 
                         // Content row
                         HStack(spacing: 4) {
-                            if let s = item.seasonNumber, let e = item.episodeNumber {
-                                Text("S\(s) · E\(e)")
+                            if let episodeLabel {
+                                Text(episodeLabel)
                                     .font(.system(size: 8, weight: .medium))
                                     .foregroundStyle(.white.opacity(0.55))
                             }
@@ -675,7 +867,7 @@ struct ContinueWatchingCard: View {
 
     private var cardSubtitle: String? {
         if let s = item.seasonNumber, let e = item.episodeNumber {
-            let epLabel = "S\(s) E\(e)"
+            let epLabel = formattedEpisodeLabel(season: s, episode: e).replacingOccurrences(of: " · ", with: " ")
             if let title = item.episodeTitle, !title.isEmpty {
                 return "\(epLabel) · \(title)"
             }
@@ -693,6 +885,15 @@ struct ContinueWatchingCard: View {
             return ts
         }
         return nil
+    }
+
+    private var episodeLabel: String? {
+        guard let s = item.seasonNumber, let e = item.episodeNumber else { return nil }
+        return formattedEpisodeLabel(season: s, episode: e)
+    }
+
+    private func formattedEpisodeLabel(season: Int, episode: Int) -> String {
+        "S\(String(format: "%02d", season)) · E\(String(format: "%02d", episode))"
     }
 
     private var cwPlaceholder: some View {
