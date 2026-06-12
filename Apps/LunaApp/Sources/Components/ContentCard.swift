@@ -7,8 +7,7 @@ struct ContentCard: View {
     let index: Int?
     var width: CGFloat? = nil
     var height: CGFloat? = nil
-    @State private var imageFailed = false
-    @State private var retryCount = 0
+    @State private var primaryFailed = false
 
     init(item: MetaPreview, row: CatalogRow? = nil, index: Int? = nil, width: CGFloat? = nil, height: CGFloat? = nil) {
         self.item = item
@@ -25,8 +24,10 @@ struct ContentCard: View {
                     .fill(LunaTheme.surfaceElevated)
                     .frame(width: cardWidth, height: cardHeight)
 
-                let primaryURL = primaryImageURL
-                if let url = primaryURL, !imageFailed {
+                // Use primary URL first; if it fails switch to the fallback URL (e.g.
+                // heroBackdrop stored in item.banner for folder tiles when coverImage 404s).
+                let displayURL = primaryFailed ? fallbackImageURL : primaryImageURL
+                if let url = displayURL {
                     if url.pathExtension.lowercased() == "gif" {
                         AnimatedRemoteImage(url: url, contentMode: usesFittedArtwork ? .scaleAspectFit : .scaleAspectFill)
                             .frame(width: cardWidth, height: cardHeight)
@@ -44,7 +45,10 @@ struct ContentCard: View {
                                     .clipped()
                                     .clipShape(RoundedRectangle(cornerRadius: 12))
                             case .failure:
-                                placeholderView.onAppear { retryCount += 1 }
+                                // Switch to fallback on first failure if we haven't already.
+                                placeholderView.onAppear {
+                                    if !primaryFailed { primaryFailed = true }
+                                }
                             case .empty:
                                 LunaTheme.surfaceElevated
                             @unknown default:
@@ -70,11 +74,7 @@ struct ContentCard: View {
         }
         .sensoryFeedback(.impact(weight: .light), trigger: item.id)
         .onChange(of: item.id) { _, _ in
-            imageFailed = false
-            retryCount = 0
-        }
-        .onChange(of: retryCount) { _, count in
-            if count >= 2 { imageFailed = true }
+            primaryFailed = false
         }
     }
 
@@ -113,6 +113,25 @@ struct ContentCard: View {
             return (item.banner ?? item.poster).flatMap(URL.init)
         }
         return (item.poster ?? item.banner).flatMap(URL.init)
+    }
+
+    /// Secondary image tried when the primary URL fails to load.
+    /// For poster-shape tiles: try banner (which holds heroBackdrop for folder tiles).
+    /// For landscape tiles: try poster.
+    /// Also falls back to the row-level heroBackdrop or coverImage when available.
+    private var fallbackImageURL: URL? {
+        let primary = primaryImageURL
+        let candidates: [String?]
+        if resolvedShape == .landscape {
+            candidates = [item.poster, row?.heroBackdrop, row?.coverImage, item.banner]
+        } else {
+            candidates = [item.banner, row?.heroBackdrop, row?.coverImage, item.poster]
+        }
+        return candidates
+            .compactMap { $0 }
+            .filter { !$0.isEmpty }
+            .compactMap(URL.init)
+            .first { $0 != primary }
     }
 
     private var cardWidth: CGFloat {

@@ -138,13 +138,16 @@ public class CatalogRepository: ObservableObject {
             let first = row.items.first
             // Group tiles should stay static and readable; animated focus GIFs are
             // intentionally ignored for Home collection rows.
-            let poster = folder.coverImage
-                ?? folder.heroBackdrop
-                ?? folder.titleLogo
+            // poster: primary cover; strip empty strings so fallbacks fire correctly.
+            let poster = folder.coverImage?.nonEmpty
+                ?? folder.heroBackdrop?.nonEmpty
+                ?? folder.titleLogo?.nonEmpty
                 ?? first?.poster
                 ?? first?.banner
-            let banner = folder.coverImage
-                ?? folder.heroBackdrop
+            // banner: store heroBackdrop independently from poster so ContentCard
+            // has a genuine fallback when the primary coverImage URL fails (e.g. 404s).
+            let banner = folder.heroBackdrop?.nonEmpty
+                ?? folder.coverImage?.nonEmpty
                 ?? first?.banner
                 ?? first?.poster
             return MetaPreview(
@@ -904,4 +907,10 @@ private struct TMDBCollectionPart: Decodable {
 private struct TMDBExternalIdsResponse: Decodable {
     let imdbId: String?
     enum CodingKeys: String, CodingKey { case imdbId = "imdb_id" }
+}
+
+private extension String {
+    /// Returns the string itself when non-empty, or nil — so `??` fallback chains
+    /// skip over empty-string placeholders (e.g. `"coverImageUrl": ""`).
+    var nonEmpty: String? { isEmpty ? nil : self }
 }
