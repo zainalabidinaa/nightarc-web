@@ -1,6 +1,6 @@
 import Foundation
 
-public actor StremioHTTPClient {
+public final class StremioHTTPClient: @unchecked Sendable {
     public static let shared = StremioHTTPClient()
 
     private let session: URLSession
@@ -8,9 +8,15 @@ public actor StremioHTTPClient {
 
     private init() {
         let config = URLSessionConfiguration.default
-        config.timeoutIntervalForRequest = 30
-        config.timeoutIntervalForResource = 60
-        config.httpMaximumConnectionsPerHost = 10
+        config.timeoutIntervalForRequest = 12
+        config.timeoutIntervalForResource = 25
+        config.httpMaximumConnectionsPerHost = 3
+        config.urlCache = URLCache(
+            memoryCapacity: 50 * 1024 * 1024,
+            diskCapacity: 100 * 1024 * 1024,
+            diskPath: "luna.httpcache"
+        )
+        config.requestCachePolicy = .useProtocolCachePolicy
         self.session = URLSession(configuration: config)
         self.decoder = JSONDecoder()
     }
@@ -19,12 +25,17 @@ public actor StremioHTTPClient {
         var request = URLRequest(url: URL(string: url)!)
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Accept")
+        // Force HTTP/2 — prevents the iOS QUIC crypto-queue overflow (max 5
+        // simultaneous QUIC handshakes) that blocks startup when many addons load at once
+        request.assumesHTTP3Capable = false
         headers?.forEach { request.setValue($1, forHTTPHeaderField: $0) }
 
         let (data, response) = try await session.data(for: request)
-        guard let httpResponse = response as? HTTPURLResponse,
-              (200...299).contains(httpResponse.statusCode) else {
-            throw StremioError.httpError((response as? HTTPURLResponse)?.statusCode ?? 0)
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw StremioError.networkError(nil)
+        }
+        guard (200...299).contains(httpResponse.statusCode) else {
+            throw StremioError.httpError(httpResponse.statusCode)
         }
         guard let text = String(data: data, encoding: .utf8) else {
             throw StremioError.invalidResponse
@@ -47,5 +58,28 @@ public enum StremioError: Error {
     case invalidManifest
     case manifestNotFound
     case addonUnreachable(String)
-    case networkError(Error)
+    case networkError(Error?)
+
+    public var localizedDescription: String {
+        switch self {
+        case .networkError:
+            return "Check your internet connection and try again"
+        case .httpError(404):
+            return "Content not found on this addon"
+        case .httpError(429):
+            return "Too many requests — try again in a moment"
+        case .httpError(let code) where (500..<600).contains(code):
+            return "Addon server error — try another addon"
+        case .httpError(let code):
+            return "HTTP error \(code)"
+        case .invalidResponse:
+            return "Invalid response from addon"
+        case .invalidManifest:
+            return "Invalid addon manifest"
+        case .manifestNotFound:
+            return "Addon manifest not found"
+        case .addonUnreachable(let url):
+            return "Addon unreachable: \(url)"
+        }
+    }
 }
