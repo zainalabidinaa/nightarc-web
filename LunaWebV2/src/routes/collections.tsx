@@ -64,11 +64,24 @@ export default function FolderDetailPage() {
   }
 
   const { folder, items } = data;
+  const heroImage = folder.cover_image || null;
 
   return (
     <Sidebar>
-      <div className="px-6 pt-24 pb-12">
-        <div className="mb-8">
+      {/* Hero backdrop — matches iOS FolderScreen top image */}
+      {heroImage && (
+        <div className="-mt-14 relative overflow-hidden" style={{ height: '220px' }}>
+          <img
+            src={heroImage}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-[#080808]" />
+        </div>
+      )}
+
+      <div className={`px-4 pb-12 max-w-screen-xl mx-auto ${heroImage ? 'pt-4' : 'pt-24'}`}>
+        <div className="mb-5">
           <h1 className="text-2xl font-bold text-white">{folder.name}</h1>
           <p className="text-sm text-luna-muted mt-1">{items.length} titles</p>
         </div>
@@ -79,28 +92,34 @@ export default function FolderDetailPage() {
             <p className="text-xs mt-1 opacity-60">Check the catalog configuration in the admin panel.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-3">
+          <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))' }}>
             {items.map(item => (
               <Link key={item.id} to="/browse/$type/$id" params={{ type: item.type, id: item.id }}
-                className="media-card group">
-                <div className="media-card-inner h-52 mb-2">
+                className="group cursor-pointer">
+                <div className="relative rounded-xl overflow-hidden bg-luna-elevated mb-1.5" style={{ aspectRatio: '2/3' }}>
                   {item.poster ? (
                     <img src={item.poster} alt={item.name}
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                       loading="lazy" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center">
+                    <div className="absolute inset-0 flex items-center justify-center">
                       <span className="text-luna-muted text-xs text-center px-2">{item.name}</span>
                     </div>
                   )}
-                  <div className="media-card-overlay group-hover:opacity-100" />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <div className="w-9 h-9 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" fill="white" className="w-4 h-4 ml-0.5">
+                        <polygon points="6,4 20,12 6,20" />
+                      </svg>
+                    </div>
+                  </div>
                   {item.imdbRating && (
-                    <span className="absolute top-2 right-2 bg-black/70 backdrop-blur-sm text-xs font-medium px-1.5 py-0.5 rounded text-white/90">
+                    <span className="absolute top-1.5 right-1.5 bg-black/70 backdrop-blur-sm text-[10px] font-medium px-1.5 py-0.5 rounded text-white/90">
                       ★ {item.imdbRating}
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-luna-muted truncate group-hover:text-white transition-colors duration-200">
+                <p className="text-xs font-medium text-white/80 truncate group-hover:text-white transition-colors">
                   {item.name}
                 </p>
               </Link>

@@ -5,95 +5,107 @@ struct MediaCard: View {
     let item: MetaPreview
     @State private var isHovering = false
 
+    private let cardWidth: CGFloat = 160
+    private var cardHeight: CGFloat { cardWidth * 1.5 }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            ZStack(alignment: .topTrailing) {
-                // ── Poster image ──────────────────────────────────────────────
-                Group {
-                    if let poster = item.poster, let url = URL(string: poster) {
-                        AsyncImage(url: url) { phase in
-                            switch phase {
-                            case .success(let image):
-                                image.resizable().aspectRatio(contentMode: .fill)
-                            default:
-                                ZStack {
-                                    Rectangle().fill(LunaTheme.surfaceElevated)
-                                    Text(item.name)
-                                        .font(.caption2)
-                                        .foregroundColor(.white.opacity(0.4))
-                                        .multilineTextAlignment(.center)
-                                        .padding(6)
-                                }
-                            }
-                        }
-                    } else {
-                        ZStack {
-                            Rectangle().fill(LunaTheme.surfaceElevated)
-                            Text(item.name)
-                                .font(.caption2)
-                                .foregroundColor(.white.opacity(0.4))
-                                .multilineTextAlignment(.center)
-                                .padding(6)
-                        }
-                    }
-                }
-                .frame(width: 160, height: 240)
-                .clipped()
-                .cornerRadius(12)
-                .scaleEffect(isHovering ? 1.05 : 1.0)
-                .overlay(
-                    // Hover gradient + play button
-                    ZStack(alignment: .bottom) {
-                        if isHovering {
-                            LinearGradient(
-                                colors: [.clear, .black.opacity(0.8)],
-                                startPoint: .top, endPoint: .bottom
-                            )
-                            .frame(height: 80)
-                            .cornerRadius(12)
+        VStack(alignment: .leading, spacing: 6) {
+            ZStack {
+                // Poster
+                posterView
+                    .frame(width: cardWidth, height: cardHeight)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .shadow(color: .black.opacity(0.3), radius: 8, y: 4)
 
-                            Circle()
-                                .fill(Color.white.opacity(0.2))
-                                .frame(width: 44, height: 44)
-                                .overlay(
-                                    Image(systemName: "play.fill")
-                                        .font(.system(size: 18))
-                                        .foregroundColor(.white)
-                                        .offset(x: 1)
-                                )
-                                .padding(.bottom, 16)
-                                .transition(.opacity)
-                        }
-                    }
-                    .frame(width: 160, height: 240)
-                )
-
-                // ── Rating badge (top-right overlay, mirrors web) ─────────────
+                // Rating badge
                 if let rating = item.imdbRating {
-                    HStack(spacing: 3) {
-                        Image(systemName: "star.fill")
-                            .font(.system(size: 7, weight: .bold))
-                            .foregroundColor(.yellow)
-                        Text(rating)
-                            .font(.system(size: 10, weight: .semibold))
-                            .foregroundColor(.white)
-                    }
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 3)
-                    .background(Color.black.opacity(0.65))
-                    .clipShape(Capsule())
-                    .padding(6)
+                    ratingBadge(rating)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                        .padding(6)
+                }
+
+                // Hover overlay
+                if isHovering {
+                    hoverOverlay
+                        .frame(width: cardWidth, height: cardHeight)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
             }
-            .frame(width: 180, height: 240)
-            .animation(.easeInOut(duration: 0.3), value: isHovering)
-            .onHover { hovering in isHovering = hovering }
+            .frame(width: cardWidth, height: cardHeight)
+            .scaleEffect(isHovering ? 1.04 : 1.0)
+            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isHovering)
+            .onHover { isHovering = $0 }
 
+            // Title
             Text(item.name)
-                .font(.caption)
+                .font(.system(size: 12, weight: .medium))
                 .foregroundColor(LunaTheme.textPrimary)
-                .lineLimit(1)
-                .frame(width: 180, alignment: .leading)
+                .lineLimit(2)
+                .frame(width: cardWidth, alignment: .leading)
         }
+    }
+
+    @ViewBuilder
+    private var posterView: some View {
+        if let poster = item.poster, let url = URL(string: poster) {
+            CachedAsyncImage(url: url) { image in
+                image.resizable().aspectRatio(contentMode: .fill)
+            } placeholder: {
+                fallbackPoster
+            }
+        } else {
+            fallbackPoster
+        }
+    }
+
+    private var fallbackPoster: some View {
+        ZStack {
+            Rectangle().fill(LunaTheme.surfaceElevated)
+            Image(systemName: item.type == .series ? "tv" : "film")
+                .font(.title2)
+                .foregroundColor(.white.opacity(0.15))
+        }
+    }
+
+    private var hoverOverlay: some View {
+        ZStack {
+            LinearGradient(
+                colors: [.clear, .black.opacity(0.7)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            playButton
+        }
+    }
+
+    private var playButton: some View {
+        VStack(spacing: 4) {
+            Spacer()
+            Image(systemName: "play.circle.fill")
+                .font(.system(size: 32))
+                .foregroundColor(.white)
+                .shadow(radius: 4)
+            Text(item.name)
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundColor(.white)
+                .lineLimit(1)
+                .frame(maxWidth: 120)
+        }
+        .padding(.bottom, 20)
+    }
+
+    private func ratingBadge(_ rating: String) -> some View {
+        HStack(spacing: 2) {
+            Image(systemName: "star.fill")
+                .font(.system(size: 8, weight: .bold))
+                .foregroundColor(.yellow)
+            Text(rating)
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundColor(.white)
+        }
+        .padding(.horizontal, 6)
+        .padding(.vertical, 3)
+        .background(.ultraThinMaterial)
+        .clipShape(Capsule())
     }
 }

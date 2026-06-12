@@ -1,0 +1,124 @@
+- generic [ref=e5]:
+  - navigation [ref=e6]:
+    - link "house.fill Home" [ref=e7] [cursor=pointer]:
+      - /url: /home
+      - img "house.fill" [ref=e8]
+      - generic [ref=e9]: Home
+    - link "magnifyingglass Search" [ref=e10] [cursor=pointer]:
+      - /url: /search
+      - img "magnifyingglass" [ref=e11]
+      - generic [ref=e12]: Search
+    - link "book.fill Library" [ref=e13] [cursor=pointer]:
+      - /url: /library
+      - img "book.fill" [ref=e14]
+      - generic [ref=e15]: Library
+    - link "gear Settings" [ref=e16] [cursor=pointer]:
+      - /url: /settings
+      - img "gear" [ref=e17]
+      - generic [ref=e18]: Settings
+    - link "person.fill Admin" [ref=e19] [cursor=pointer]:
+      - /url: /admin
+      - img "person.fill" [ref=e20]
+      - generic [ref=e21]: Admin
+    - button "Switch profile" [ref=e23] [cursor=pointer]:
+      - generic [ref=e24]: Z
+      - generic [ref=e25]: Zain
+  - main [ref=e26]:
+    - heading "Settings" [level=1] [ref=e29]
+    - generic [ref=e30]:
+      - generic [ref=e32]:
+        - generic [ref=e33]: Z
+        - generic [ref=e34]:
+          - paragraph [ref=e35]: Zain
+          - paragraph [ref=e36]: Administrator
+        - button "Switch" [ref=e37] [cursor=pointer]
+      - paragraph [ref=e38]: Content Management
+      - generic [ref=e39]:
+        - button "Addons 7 installed" [active] [ref=e40] [cursor=pointer]:
+          - img [ref=e42]
+          - generic [ref=e44]:
+            - paragraph [ref=e45]: Addons
+            - paragraph [ref=e46]: 7 installed
+          - img [ref=e47]
+        - generic [ref=e49]:
+          - generic [ref=e50]:
+            - generic [ref=e51]:
+              - generic [ref=e53]:
+                - paragraph [ref=e55]: AIOMetadata | ElfHosted
+                - generic [ref=e56]:
+                  - generic [ref=e57]: Catalog
+                  - generic [ref=e58]: Metadata
+                  - generic [ref=e59]: Subtitles
+                - paragraph [ref=e60]: https://aiometadata.elfhosted.com/stremio/bc6c40f4-34bb-451a-9734-cb6a6c7fe56b/manifest.json
+              - button "Remove" [ref=e61] [cursor=pointer]
+            - generic [ref=e64]:
+              - generic [ref=e65]:
+                - paragraph [ref=e66]: AIOStreams | ElfHosted
+                - generic [ref=e67]: Built-in
+              - generic [ref=e68]:
+                - generic [ref=e69]: Streams
+                - generic [ref=e70]: Catalog
+                - generic [ref=e71]: Metadata
+              - paragraph [ref=e72]: https://aiostreams.elfhosted.com/stremio/4a17bbef-9114-4231-82fb-b6baac090c63/eyJpIjoiWEUxR1dGYjJ2OVJqSGJIMURnYlpYUT09IiwiZSI6Ik5mUXRjSWFPaW9CNlhQWW9kOGhYcFZmdU5QaDJVSVM5MnZHMS9uZG1reGc9IiwidCI6ImEifQ/manifest.json
+            - generic [ref=e73]:
+              - generic [ref=e75]:
+                - paragraph [ref=e77]: Meteor
+                - generic [ref=e78]:
+                  - generic [ref=e79]: Streams
+                  - generic [ref=e80]: Metadata
+                  - generic [ref=e81]: Catalog
+                - paragraph [ref=e82]: https://meteorfortheweebs.midnightignite.me/eyJkZWJyaWRTZXJ2aWNlIjoicmVhbGRlYnJpZCIsImRlYnJpZEFwaUtleSI6IkZUT0VEV0lEWFZHQ0xZWkpWVEM3Uk82R0FZVE1GQ1dXSlgyTVMzU0gyNzZDQURCU041VEEiLCJjYWNoZWRPbmx5Ijp0cnVlLCJza2lwUmVsZWFzZUZpbHRlciI6ZmFsc2UsInJlbW92ZVRyYXNoIjp0cnVlLCJyZW1vdmVTYW1wbGVzIjp0cnVlLCJyZW1vdmVBZHVsdCI6ZmFsc2UsImV4Y2x1ZGUzRCI6dHJ1ZSwiZW5hYmxlU2VhRGV4IjpmYWxzZSwiZW5hYmxlVXNlbmV0IjpmYWxzZSwidXNlbmV0Q3VzdG9tRW5naW5lcyI6ZmFsc2UsImVuYWJsZVlvdXJNZWRpYSI6dHJ1ZSwic2hvd1lvdXJNZWRpYVN0cmVhbXMiOnRydWUsInlvdXJNZWRpYVNvdXJjZXMiOlsidXNlbmV0Iiwid2ViZGwiLCJ0b3JyZW50Il0sInlvdXJNZWRpYUxlZ2FjeU1vZGUiOnRydWUsIm1pblNlZWRlcnMiOjAsIm1heFJlc3VsdHMiOjAsIm1heFJlc3VsdHNQZXJSZXMiOjAsIm1heFNpemUiOjAsInJlc29sdXRpb25zIjpbIjRrIiwiMTA4MHAiLCI3MjBwIl0sImxhbmd1YWdlcyI6eyJwcmVmZXJyZWQiOlsiZW4iLCJtdWx0aSJdLCJyZXF1aXJlZCI6W10sImV4Y2x1ZGUiOltdfSwicmVzdWx0Rm9ybWF0IjpbInRpdGxlIiwicXVhbGl0eSIsInNpemUiLCJhdWRpbyJdLCJzb3J0T3JkZXIiOlsiY2FjaGVkIiwieW91cm1lZGlhIiwic2VhZGV4IiwicmVzb2x1dGlvbiIsInF1YWxpdHkiLCJ0eXBlIiwibGFuZ3VhZ2UiLCJzZWVkZXJzIiwic2l6ZSIsInBhY2siXX0/manifest.json
+              - button "Remove" [ref=e83] [cursor=pointer]
+            - generic [ref=e84]:
+              - generic [ref=e86]:
+                - paragraph [ref=e88]: Comet | ElfHosted | RD
+                - generic [ref=e90]: Streams
+                - paragraph [ref=e91]: https://comet.elfhosted.com/eyJtYXhSZXN1bHRzUGVyUmVzb2x1dGlvbiI6MTEsIm1heFNpemUiOjEwNzM3NDE4MjQwMCwiY2FjaGVkT25seSI6ZmFsc2UsInNvcnRDYWNoZWRVbmNhY2hlZFRvZ2V0aGVyIjpmYWxzZSwicmVtb3ZlVHJhc2giOnRydWUsInJlc3VsdEZvcm1hdCI6WyJhbGwiXSwiZGVicmlkU2VydmljZXMiOlt7InNlcnZpY2UiOiJyZWFsZGVicmlkIiwiYXBpS2V5IjoiRlRPRURXSURYVkdDTFlaSlZUQzdSTzZHQVlUTUZDV1dKWDJNUzNTSDI3NkNBREJTTjVUQSJ9XSwiZW5hYmxlVG9ycmVudCI6ZmFsc2UsImRlZHVwbGljYXRlU3RyZWFtcyI6ZmFsc2UsInNjcmFwZURlYnJpZEFjY291bnRUb3JyZW50cyI6ZmFsc2UsImRlYnJpZFN0cmVhbVByb3h5UGFzc3dvcmQiOiIiLCJsYW5ndWFnZXMiOnsicmVxdWlyZWQiOltdLCJhbGxvd2VkIjpbImVuIiwiYXIiLCJlcyJdLCJleGNsdWRlIjpbXSwicHJlZmVycmVkIjpbXX0sInJlc29sdXRpb25zIjp7InI3MjBwIjpmYWxzZSwicjU3NnAiOmZhbHNlLCJyNDgwcCI6ZmFsc2UsInIzNjBwIjpmYWxzZSwicjI0MHAiOmZhbHNlLCJ1bmtub3duIjpmYWxzZX0sIm9wdGlvbnMiOnsicmVtb3ZlX3JhbmtzX3VuZGVyIjotMTAwMDAwMDAwMDAsImFsbG93X2VuZ2xpc2hfaW5fbGFuZ3VhZ2VzIjp0cnVlLCJyZW1vdmVfdW5rbm93bl9sYW5ndWFnZXMiOmZhbHNlfX0=/manifest.json
+              - button "Remove" [ref=e92] [cursor=pointer]
+            - generic [ref=e93]:
+              - generic [ref=e95]:
+                - paragraph [ref=e97]: AIOStreams
+                - generic [ref=e98]:
+                  - generic [ref=e99]: Streams
+                  - generic [ref=e100]: Catalog
+                  - generic [ref=e101]: Metadata
+                - paragraph [ref=e102]: https://aiostreams.viren070.me/stremio/1508978a-4c0e-442c-9989-15c6224dc2a4/eyJpIjoiWC9xNDB1aEYvSktEMU9CQzhaSGtUQT09IiwiZSI6InlnZ2hoN0ZBelJzano4MXlBTHNrRWpkSjlkN1BWTmg1TkhZc2g3TWV0MkVHaFNrZHpmL0YwRFN5L0U3bHdqYnAiLCJ0IjoiYSJ9/manifest.json
+              - button "Remove" [ref=e103] [cursor=pointer]
+            - generic [ref=e104]:
+              - generic [ref=e106]:
+                - paragraph [ref=e108]: Comet | ElfHosted | ED
+                - generic [ref=e110]: Streams
+                - paragraph [ref=e111]: https://comet.elfhosted.com/eyJtYXhSZXN1bHRzUGVyUmVzb2x1dGlvbiI6NSwibWF4U2l6ZSI6MzIyMTIyNTQ3MjAwMDAsImNhY2hlZE9ubHkiOmZhbHNlLCJzb3J0Q2FjaGVkVW5jYWNoZWRUb2dldGhlciI6ZmFsc2UsInJlbW92ZVRyYXNoIjp0cnVlLCJyZXN1bHRGb3JtYXQiOlsiYWxsIl0sImRlYnJpZFNlcnZpY2VzIjpbeyJzZXJ2aWNlIjoiZWFzeWRlYnJpZCIsImFwaUtleSI6InhmemZiMjNhZmdqdWd1OTcifV0sImVuYWJsZVRvcnJlbnQiOmZhbHNlLCJkZWR1cGxpY2F0ZVN0cmVhbXMiOmZhbHNlLCJzY3JhcGVEZWJyaWRBY2NvdW50VG9ycmVudHMiOmZhbHNlLCJkZWJyaWRTdHJlYW1Qcm94eVBhc3N3b3JkIjoiIiwibGFuZ3VhZ2VzIjp7InJlcXVpcmVkIjpbXSwiYWxsb3dlZCI6W10sImV4Y2x1ZGUiOltdLCJwcmVmZXJyZWQiOltdfSwicmVzb2x1dGlvbnMiOnt9LCJvcHRpb25zIjp7InJlbW92ZV9yYW5rc191bmRlciI6LTEwMDAwMDAwMDAwLCJhbGxvd19lbmdsaXNoX2luX2xhbmd1YWdlcyI6ZmFsc2UsInJlbW92ZV91bmtub3duX2xhbmd1YWdlcyI6ZmFsc2V9fQ==/manifest.json
+              - button "Remove" [ref=e112] [cursor=pointer]
+            - generic [ref=e113]:
+              - generic [ref=e115]:
+                - paragraph [ref=e117]: Torrentio RD
+                - generic [ref=e119]: Streams
+                - paragraph [ref=e120]: https://torrentio.strem.fun/qualityfilter=480p,other,scr,cam,unknown%7Cdebridoptions=nodownloadlinks,nocatalog%7Crealdebrid=FTOEDWIDXVGCLYZJVTC7RO6GAYTMFCWWJX2MS3SH276CADBSN5TA/manifest.json
+              - button "Remove" [ref=e121] [cursor=pointer]
+          - generic [ref=e122]:
+            - generic [ref=e123]:
+              - textbox "https://.../manifest.json" [ref=e124]
+              - button "Install" [disabled] [ref=e125]
+            - paragraph [ref=e126]: Paste a Stremio addon manifest URL. Streaming addons will appear immediately in Sources.
+      - paragraph [ref=e127]: Playback
+      - generic [ref=e128]:
+        - button "Streaming Server Not configured Off" [ref=e129] [cursor=pointer]:
+          - img [ref=e131]
+          - generic [ref=e133]:
+            - paragraph [ref=e134]: Streaming Server
+            - paragraph [ref=e135]: Not configured
+          - generic [ref=e136]: "Off"
+          - img [ref=e137]
+        - generic [ref=e139]:
+          - generic [ref=e140]:
+            - textbox "https://luna-stremio-server.up.railway.app" [ref=e141]
+            - button "Save & Test" [ref=e142] [cursor=pointer]
+          - paragraph [ref=e143]: Plays streams the browser can't (MKV, etc.) by remuxing them. Deploy from deploy/stremio-server/ on Railway or Render. Leave blank to use direct play only.
+      - paragraph [ref=e144]: App
+      - button "Luna v1.0.0 Powered by Stremio addon ecosystem" [ref=e146] [cursor=pointer]:
+        - img [ref=e148]
+        - generic [ref=e150]:
+          - paragraph [ref=e151]: Luna v1.0.0
+          - paragraph [ref=e152]: Powered by Stremio addon ecosystem
+      - button "Sign Out" [ref=e153] [cursor=pointer]

@@ -2,18 +2,19 @@ name: LunaApp
 options:
   bundleIdPrefix: com.luna
   deploymentTarget:
-    iOS: "17.0"
+    iOS: "18.0"
   minimumXcodeGenVersion: "2.0"
 
 settings:
   base:
     MARKETING_VERSION: "1.0.0"
     CURRENT_PROJECT_VERSION: "1"
+    ENABLE_APP_INTENTS_METADATA_GENERATION: false
     GENERATE_INFOPLIST_FILE: true
-    INFOPLIST_KEY_CFBundleDisplayName: "Luna"
-    INFOPLIST_KEY_UISupportedInterfaceOrientations: "portrait landscapeLeft landscapeRight"
+    INFOPLIST_KEY_CFBundleDisplayName: "Nightarc"
+    INFOPLIST_KEY_UISupportedInterfaceOrientations: "portrait portraitUpsideDown landscapeLeft landscapeRight"
     INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "portrait portraitUpsideDown landscapeLeft landscapeRight"
-    INFOPLIST_KEY_UIRequiresFullScreen: false
+    INFOPLIST_KEY_UIRequiresFullScreen: true
     INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: true
     INFOPLIST_KEY_UILaunchScreen_Generation: true
     INFOPLIST_KEY_UIRequiredDeviceCapabilities: "arm64"
@@ -31,6 +32,11 @@ settings:
 packages:
   LunaCore:
     path: ../../Packages/LunaCore
+  KSPlayer:
+    path: /tmp/ksplayer-clone
+  SnapshotPreviews:
+    url: https://github.com/getsentry/SnapshotPreviews
+    from: "0.16.0"
 
 targets:
   LunaApp:
@@ -41,11 +47,55 @@ targets:
       - path: Resources
     dependencies:
       - package: LunaCore
+      - package: KSPlayer
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: "com.luna.app"
+        PRODUCT_BUNDLE_IDENTIFIER: "com.nightarc.zain"
+        DEVELOPMENT_TEAM: 5TWS8P597N
+        CODE_SIGN_STYLE: Automatic
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         INFOPLIST_KEY_CFBundleIconName: AppIcon
         INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: false
         INFOPLIST_KEY_NSAppTransportSecurity:
           NSAllowsArbitraryLoads: true
+        VALIDATE_WORKSPACE: NO
+    postBuildScripts:
+      - name: Generate Missing Framework Info.plist
+        basedOnDependencyAnalysis: false
+        script: |
+          FRAMEWORKS_DIR="${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}"
+          [ -d "${FRAMEWORKS_DIR}" ] || exit 0
+          find "${FRAMEWORKS_DIR}" -name '*.framework' -maxdepth 1 -type d | while read -r FRAMEWORK; do
+            PLIST="${FRAMEWORK}/Info.plist"
+            if [ ! -f "${PLIST}" ]; then
+              NAME=$(basename "${FRAMEWORK}" .framework)
+              /usr/libexec/PlistBuddy \
+                -c "Add :CFBundleExecutable string ${NAME}" \
+                -c "Add :CFBundleIdentifier string ${NAME}" \
+                -c "Add :CFBundleInfoDictionaryVersion string 6.0" \
+                -c "Add :CFBundleName string ${NAME}" \
+                -c "Add :CFBundlePackageType string FMWK" \
+                -c "Add :CFBundleShortVersionString string 1.0" \
+                -c "Add :CFBundleVersion string 1" \
+                -c "Add :MinimumOSVersion string 14.0" \
+                "${PLIST}"
+              echo "note: Generated Info.plist for ${NAME}"
+            fi
+          done
+
+  LunaAppTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Tests
+    dependencies:
+      - target: LunaApp
+      - package: SnapshotPreviews
+        product: SnapshottingTests
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: "com.luna.app.tests"
+        DEVELOPMENT_TEAM: 5TWS8P597N
+        CODE_SIGN_STYLE: Automatic
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/LunaApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/LunaApp"
+        BUNDLE_LOADER: "$(TEST_HOST)"

@@ -7,6 +7,9 @@ struct MacSourcePickerView: View {
     let mediaName: String
     let poster: String?
     let logo: String?
+    let videoId: String?
+    let seasonNumber: Int?
+    let episodeNumber: Int?
     let onLaunch: (PlayerLaunch) -> Void
 
     @StateObject private var streamRepo = StreamRepository.shared
@@ -64,10 +67,12 @@ struct MacSourcePickerView: View {
                                             sourceHeaders: stream.behaviorHints?.proxyHeaders?.request,
                                             logo: logo,
                                             poster: poster,
+                                            seasonNumber: seasonNumber,
+                                            episodeNumber: episodeNumber,
                                             streamTitle: stream.displayName,
                                             providerName: stream.addonName,
                                             contentType: mediaType,
-                                            videoId: mediaId
+                                            videoId: videoId ?? mediaId
                                         )
                                         onLaunch(launch)
                                     } label: {
@@ -88,7 +93,7 @@ struct MacSourcePickerView: View {
         .task {
             await streamRepo.fetchStreams(
                 type: mediaType.rawValue,
-                id: mediaId,
+                id: videoId ?? mediaId,
                 addons: addonRepo.enabledAddons
             )
         }

@@ -29,26 +29,37 @@ public class SearchRepository: ObservableObject {
                 guard addon.hasResource("catalog"),
                       let baseURL = addon.transportUrl else { continue }
 
-                group.addTask {
-                    do {
-                        let searchQuery = CatalogService.StremioCatalogQuery(
-                            type: "movie",
-                            id: "top",
-                            baseURL: baseURL,
-                            extras: ["search": query]
-                        )
-                        return try await self.catalogService.fetchCatalog(query: searchQuery)
-                    } catch {
-                        do {
-                            let searchQuery = CatalogService.StremioCatalogQuery(
-                                type: "movie",
-                                id: "search",
-                                baseURL: baseURL,
-                                extras: ["search": query]
+                let searchableCatalogs = (addon.catalogs ?? []).filter { catalog in
+                    catalog.extra?.contains { $0.name == "search" } == true
+                }
+
+                if searchableCatalogs.isEmpty {
+                    // Fallback: try common search catalog patterns for movie and series
+                    for type in ["movie", "series"] {
+                        let addonRef = addon
+                        group.addTask {
+                            return try? await self.catalogService.fetchCatalog(
+                                query: CatalogService.StremioCatalogQuery(
+                                    type: type,
+                                    id: "search",
+                                    baseURL: baseURL,
+                                    extras: ["search": query]
+                                )
                             )
-                            return try await self.catalogService.fetchCatalog(query: searchQuery)
-                        } catch {
-                            return nil
+                        }
+                        _ = addonRef
+                    }
+                } else {
+                    for catalog in searchableCatalogs {
+                        group.addTask {
+                            return try? await self.catalogService.fetchCatalog(
+                                query: CatalogService.StremioCatalogQuery(
+                                    type: catalog.type,
+                                    id: catalog.id,
+                                    baseURL: baseURL,
+                                    extras: ["search": query]
+                                )
+                            )
                         }
                     }
                 }

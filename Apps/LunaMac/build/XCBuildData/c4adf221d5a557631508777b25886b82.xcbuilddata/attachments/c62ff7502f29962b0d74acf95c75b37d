@@ -1,0 +1,181 @@
+{
+  "" : {
+    "const-values" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/LunaCore-primary.swiftconstvalues",
+    "dependencies" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/LunaCore-primary.d",
+    "diagnostics" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/LunaCore-primary.dia",
+    "emit-module-dependencies" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/LunaCore-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/LunaCore-primary-emit-module.dia",
+    "pch" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/LunaCore-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/LunaCore-primary.swiftdeps"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Models/AddonModels.swift" : {
+    "index-unit-output-path" : "/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/AddonModels.o",
+    "llvm-bc" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/AddonModels.bc",
+    "object" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/AddonModels.o"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Models/CollectionModels.swift" : {
+    "index-unit-output-path" : "/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/CollectionModels.o",
+    "llvm-bc" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/CollectionModels.bc",
+    "object" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/CollectionModels.o"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Models/MetaModels.swift" : {
+    "index-unit-output-path" : "/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/MetaModels.o",
+    "llvm-bc" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/MetaModels.bc",
+    "object" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/MetaModels.o"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Models/ProfileModels.swift" : {
+    "index-unit-output-path" : "/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/ProfileModels.o",
+    "llvm-bc" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/ProfileModels.bc",
+    "object" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/ProfileModels.o"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Models/StreamMetadata.swift" : {
+    "index-unit-output-path" : "/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/StreamMetadata.o",
+    "llvm-bc" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/StreamMetadata.bc",
+    "object" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/StreamMetadata.o"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Models/StreamModels.swift" : {
+    "index-unit-output-path" : "/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/StreamModels.o",
+    "llvm-bc" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/StreamModels.bc",
+    "object" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/StreamModels.o"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Models/WatchModels.swift" : {
+    "index-unit-output-path" : "/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/WatchModels.o",
+    "llvm-bc" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/WatchModels.bc",
+    "object" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/WatchModels.o"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Player/PlayerControlsModel.swift" : {
+    "index-unit-output-path" : "/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/PlayerControlsModel.o",
+    "llvm-bc" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/PlayerControlsModel.bc",
+    "object" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/PlayerControlsModel.o"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Player/PlayerEngine.swift" : {
+    "index-unit-output-path" : "/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/PlayerEngine.o",
+    "llvm-bc" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/PlayerEngine.bc",
+    "object" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/PlayerEngine.o"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Services/AddonRepository.swift" : {
+    "index-unit-output-path" : "/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/AddonRepository.o",
+    "llvm-bc" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/AddonRepository.bc",
+    "object" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/AddonRepository.o"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Services/AdminService.swift" : {
+    "index-unit-output-path" : "/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/AdminService.o",
+    "llvm-bc" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/AdminService.bc",
+    "object" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/AdminService.o"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Services/CatalogRepository.swift" : {
+    "index-unit-output-path" : "/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/CatalogRepository.o",
+    "llvm-bc" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/CatalogRepository.bc",
+    "object" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/CatalogRepository.o"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Services/CollectionDisplayPreferenceStore.swift" : {
+    "index-unit-output-path" : "/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/CollectionDisplayPreferenceStore.o",
+    "llvm-bc" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/CollectionDisplayPreferenceStore.bc",
+    "object" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/CollectionDisplayPreferenceStore.o"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Services/CollectionRepository.swift" : {
+    "index-unit-output-path" : "/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/CollectionRepository.o",
+    "llvm-bc" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/CollectionRepository.bc",
+    "object" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/CollectionRepository.o"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Services/HomeRepository.swift" : {
+    "index-unit-output-path" : "/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/HomeRepository.o",
+    "llvm-bc" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/HomeRepository.bc",
+    "object" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/HomeRepository.o"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Services/LibraryRepository.swift" : {
+    "index-unit-output-path" : "/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/LibraryRepository.o",
+    "llvm-bc" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/LibraryRepository.bc",
+    "object" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/LibraryRepository.o"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Services/MetaRepository.swift" : {
+    "index-unit-output-path" : "/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/MetaRepository.o",
+    "llvm-bc" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/MetaRepository.bc",
+    "object" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/MetaRepository.o"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Services/ProfileManager.swift" : {
+    "index-unit-output-path" : "/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/ProfileManager.o",
+    "llvm-bc" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/ProfileManager.bc",
+    "object" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/ProfileManager.o"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Services/RoleManager.swift" : {
+    "index-unit-output-path" : "/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/RoleManager.o",
+    "llvm-bc" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/RoleManager.bc",
+    "object" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/RoleManager.o"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Services/SearchRepository.swift" : {
+    "index-unit-output-path" : "/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/SearchRepository.o",
+    "llvm-bc" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/SearchRepository.bc",
+    "object" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/SearchRepository.o"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Services/StreamRepository.swift" : {
+    "index-unit-output-path" : "/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/StreamRepository.o",
+    "llvm-bc" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/StreamRepository.bc",
+    "object" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/StreamRepository.o"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Services/WatchProgressRepository.swift" : {
+    "index-unit-output-path" : "/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/WatchProgressRepository.o",
+    "llvm-bc" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/WatchProgressRepository.bc",
+    "object" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/WatchProgressRepository.o"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Stremio/AddonManifestParser.swift" : {
+    "index-unit-output-path" : "/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/AddonManifestParser.o",
+    "llvm-bc" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/AddonManifestParser.bc",
+    "object" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/AddonManifestParser.o"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Stremio/CatalogService.swift" : {
+    "index-unit-output-path" : "/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/CatalogService.o",
+    "llvm-bc" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/CatalogService.bc",
+    "object" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/CatalogService.o"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Stremio/MetaService.swift" : {
+    "index-unit-output-path" : "/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/MetaService.o",
+    "llvm-bc" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/MetaService.bc",
+    "object" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/MetaService.o"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Stremio/StreamService.swift" : {
+    "index-unit-output-path" : "/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/StreamService.o",
+    "llvm-bc" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/StreamService.bc",
+    "object" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/StreamService.o"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Stremio/StremioHTTPClient.swift" : {
+    "index-unit-output-path" : "/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/StremioHTTPClient.o",
+    "llvm-bc" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/StremioHTTPClient.bc",
+    "object" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/StremioHTTPClient.o"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Stremio/SubtitleService.swift" : {
+    "index-unit-output-path" : "/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/SubtitleService.o",
+    "llvm-bc" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/SubtitleService.bc",
+    "object" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/SubtitleService.o"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Supabase/SessionStore.swift" : {
+    "index-unit-output-path" : "/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/SessionStore.o",
+    "llvm-bc" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/SessionStore.bc",
+    "object" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/SessionStore.o"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Supabase/SupabaseAuth.swift" : {
+    "index-unit-output-path" : "/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/SupabaseAuth.o",
+    "llvm-bc" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/SupabaseAuth.bc",
+    "object" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/SupabaseAuth.o"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Supabase/SupabaseClient.swift" : {
+    "index-unit-output-path" : "/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/SupabaseClient.o",
+    "llvm-bc" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/SupabaseClient.bc",
+    "object" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/SupabaseClient.o"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Supabase/SupabaseConfig.swift" : {
+    "index-unit-output-path" : "/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/SupabaseConfig.o",
+    "llvm-bc" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/SupabaseConfig.bc",
+    "object" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/SupabaseConfig.o"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Supabase/SyncService.swift" : {
+    "index-unit-output-path" : "/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/SyncService.o",
+    "llvm-bc" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/SyncService.bc",
+    "object" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/SyncService.o"
+  },
+  "/Users/zain/projects/Luna/Packages/LunaCore/Sources/LunaCore/Theme/LunaTheme.swift" : {
+    "index-unit-output-path" : "/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/LunaTheme.o",
+    "llvm-bc" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/LunaTheme.bc",
+    "object" : "/Users/zain/projects/Luna/Packages/LunaCore/build/LunaCore.build/Release/LunaCore.build/Objects-normal/x86_64/LunaTheme.o"
+  }
+}

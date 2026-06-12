@@ -1,0 +1,3015 @@
+{
+  "pack": {
+    "remote_id": 74,
+    "public_id": "b-e-s-t-better-enhanced-simple-tv",
+    "title": "B.E.S.T - Better Enhanced Simple TV (Update)",
+    "description": "# \ud83c\udfa3 Introducing the *B.E.S.T* Collection \ud83d\ude09 \n\n**One-click installation. \ud83d\udc4c**\n\n- **B**etter Posters\n- **E**nhanced with AIOMetadata\n - **S**imple, not complicated\n- **T**V \ud83d\udcfa\n\nIncludes:\n- Trending Shows\n- Trending Movies\n- Popular Shows\n- Popular Movies\n- Top Rated\n- Coming Soon Shows\n- Coming Soon Movies\n- Franchises\n- Streaming (*Shows & Movies*)\n- UK TV\n- Genres\n- Decades\n- Directors\n\n\nDiscussion / Support :- https://www.reddit.com/r/Nuvio/s/9WvAf63JDp\n\n**Torbox Referral link**\nhttps://torbox.app/subscription?referral=de40af80-863e-4384-aa47-7699c11a286c\n\n**When you use someone's referral code:**\n\n*You* (the referred user) receive an extra 7 days times the number of months purchased added to the plan you purchased.\n\nThe other person (the referrer) receives an extra 7 days times the number of months purchased added to their current plan.",
+    "tags": [
+      "better",
+      "best",
+      "b.e.s.t",
+      "enhanced"
+    ],
+    "image_url": "https://i.postimg.cc/pryCFjbX/BESTEST.gif",
+    "likes_count": 42,
+    "reports_count": 3,
+    "installs_count": 1397,
+    "created_at": "2026-05-20 17:48:04",
+    "updated_at": "2026-05-29 20:21:31",
+    "status": "published",
+    "community": {
+      "id": "b-e-s-t-better-enhanced-simple-tv",
+      "version": 1,
+      "author": "simonhumphrey.mail@gmail.com",
+      "submittedAt": "2026-05-20T17:19:40.390Z",
+      "coverImageUrl": "https://i.postimg.cc/pryCFjbX/BESTEST.gif",
+      "updatedAt": "2026-05-29T20:21:31.400Z"
+    },
+    "requirements": {
+      "addons": [
+        {
+          "addonId": "aio-metadata",
+          "addonName": "AIOMetadata",
+          "manifestUrl": "https://aiometadata.fortheweak.cloud/stremio/0385413c-5588-46ef-a3f9-01866c96304d/manifest.json",
+          "requiredCatalogs": [
+            {
+              "type": "series",
+              "catalogId": "mdblist.3882",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "tmdb.discover.series.latest.mpcugvcy",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "mdblist.88306",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "tmdb.trending_movie",
+              "genre": "Day"
+            },
+            {
+              "type": "series",
+              "catalogId": "tmdb.top_series",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "tmdb.top_movie",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "tmdb.top_rated_series",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "trakt.list.2143363",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "tmdb.top_rated_movie",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.2142753",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.1282987",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "mdblist.20340",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "trakt.anticipated.shows",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "mdblist.26816",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.anticipated.movies",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.22202556",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "trakt.list.22757470",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.1642688",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.21869828",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.801240",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.2749609",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.801242",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "mdblist.162329",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "mdblist.162330",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.11723506",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.11723357",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.21226800",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.11723368",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.11214030",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.21273394",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "mdblist.162311",
+              "genre": "None"
+            },
+            {
+              "type": "all",
+              "catalogId": "mdblist.173508",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.9429560",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.22881797",
+              "genre": "None"
+            },
+            {
+              "type": "all",
+              "catalogId": "trakt.list.828103",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.11723321",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.11754060",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.11754031",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.11754010",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.11753990",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.11753899",
+              "genre": "None"
+            },
+            {
+              "type": "all",
+              "catalogId": "trakt.list.22236190",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.33753562",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "mdblist.86620",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "streaming.nfx_series",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "mdblist.86628",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "streaming.nfx_movie",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "mdblist.86624",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "streaming.amp_series",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "mdblist.86623",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "streaming.amp_movie",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "mdblist.89374",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "streaming.pmp_series",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "mdblist.89366",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "streaming.pmp_movie",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "streaming.dnp_series",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "mdblist.86946",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "streaming.dnp_movie",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "mdblist.86945",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "mdblist.86625",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "streaming.atp_series",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "mdblist.86626",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "streaming.atp_movie",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "tmdb.discover.series.top_hbo_shows.mpe9izy7",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "streaming.hbm_series",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "tmdb.discover.movie.top_hbo_movies.mpe9kdzj",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "streaming.hbm_movie",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "tmdb.discover.series.top_starz_shows.mpe9ln7v",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "streaming.sta_series",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "tmdb.discover.movie.top_starz_movies.mpe9mvs2",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "streaming.sta_movie",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "tmdb.discover.series.bbc_shows.mo3f2pnm",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "tmdb.discover.series.itv_shows.mo3f4hdw",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "tmdb.discover.series.channel_4_shows.mo3f7rpz",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "tmdb.discover.series.channel_4_shows.mo3f5vt2",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "tmdb.discover.series.uk_tv.mo8ai6c3",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "tmdb.discover.series.best_of_the_bbc.mo6vmso3",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "tmdb.discover.series.series.mo7biroh",
+              "genre": "Action & Adventure"
+            },
+            {
+              "type": "movie",
+              "catalogId": "tmdb.discover.movie.movies.mo7bd2ar",
+              "genre": "Action"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.4973644",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "tmdb.discover.series.series.mo7biroh",
+              "genre": "Animation"
+            },
+            {
+              "type": "movie",
+              "catalogId": "tmdb.discover.movie.movies.mo7bd2ar",
+              "genre": "Animation"
+            },
+            {
+              "type": "series",
+              "catalogId": "trakt.list.21779826",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.24484523",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.22847039",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "trakt.list.5707382",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.23438792",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "tmdb.discover.movie.studio_ghibli.mpcpum1k",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "tmdb.discover.movie.mappa.mpcq8hnf",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "tmdb.discover.series.series.mo7biroh",
+              "genre": "Comedy"
+            },
+            {
+              "type": "movie",
+              "catalogId": "tmdb.discover.movie.movies.mo7bd2ar",
+              "genre": "Comedy"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.9659389",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.5040627",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "tmdb.discover.series.latest_documentary_shows.mpcqbasr",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.801580",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.10235726",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "trakt.list.33762909",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "tmdb.discover.series.series.mo7biroh",
+              "genre": "Drama"
+            },
+            {
+              "type": "movie",
+              "catalogId": "tmdb.discover.movie.movies.mo7bd2ar",
+              "genre": "Drama"
+            },
+            {
+              "type": "series",
+              "catalogId": "tmdb.discover.series.uk_drama.mo2wdbu8",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.1076151",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.21715794",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.22957181",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "tmdb.discover.series.series.mo7biroh",
+              "genre": "Family"
+            },
+            {
+              "type": "movie",
+              "catalogId": "tmdb.discover.movie.movies.mo7bd2ar",
+              "genre": "Family"
+            },
+            {
+              "type": "movie",
+              "catalogId": "mdblist.2415",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.20580022",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "tvdb.discover.series.fantasy_shows.mo9s284k",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "tmdb.discover.movie.movies.mo7bd2ar",
+              "genre": "Fantasy"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.22847198",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "tvdb.discover.series.food.mo7esx5s",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "tmdb.discover.movie.movies.mo7bd2ar",
+              "genre": "Horror"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.21193458",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.4203408",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.21840363",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.6674425",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.4467615",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.11632332",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.2619099",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.4974101",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "tmdb.discover.series.series.mo7biroh",
+              "genre": "Mystery"
+            },
+            {
+              "type": "movie",
+              "catalogId": "tmdb.discover.movie.movies.mo7bd2ar",
+              "genre": "Mystery"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.19594387",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.5221223",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "trakt.list.6652017",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "trakt.list.23440324",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "trakt.list.26957348",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "mdblist.84487",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "tmdb.discover.series.top_rated.mpcuiqyl",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "tvdb.discover.series.romantic_shows.mo7eaudn",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "tmdb.discover.movie.movies.mo7bd2ar",
+              "genre": "Romance"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.21033097",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.20701912",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "tvdb.discover.series.sci_fi_shows.mo9s3i10",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.797798",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "tmdb.discover.movie.movies.mo7bd2ar",
+              "genre": "Science Fiction"
+            },
+            {
+              "type": "series",
+              "catalogId": "trakt.list.3813071",
+              "genre": "None"
+            },
+            {
+              "type": "series",
+              "catalogId": "tvdb.discover.series.thriller_shows.mo7ecu45",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "tmdb.discover.movie.movies.mo7bd2ar",
+              "genre": "Thriller"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.22803128",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.22096238",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "tmdb.discover.movie.movies.mo7bd2ar",
+              "genre": "War"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.4433767",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "tmdb.discover.movie.movies.mo7bd2ar",
+              "genre": "Western"
+            },
+            {
+              "type": "series",
+              "catalogId": "tmdb.discover.series.series.mo7biroh",
+              "genre": "Western"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.22847467",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.21899611",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "mdblist.91301",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "tmdb.discover.movie.decades.1980s",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "mdblist.91300",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "tmdb.discover.movie.decades.1990s",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "mdblist.91302",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "tmdb.discover.movie.decades.2000s",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "mdblist.91303",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "tmdb.discover.movie.decades.2010s",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "mdblist.91304",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "tmdb.discover.movie.decades.2020s",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.6252074",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.6241345",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.6241270",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.6252088",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.6241522",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.6241276",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.6241405",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.6242091",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.24183553",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.6241250",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.6241387",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.6241187",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.6241367",
+              "genre": "None"
+            },
+            {
+              "type": "movie",
+              "catalogId": "trakt.list.6241445",
+              "genre": "None"
+            }
+          ]
+        }
+      ]
+    },
+    "resources": []
+  },
+  "collections": [
+    {
+      "source_key": "d978a585-bb1a-43fe-9c7d-05d45d74111b",
+      "sort_order": 0,
+      "name": "Trending Shows",
+      "view_mode": "FOLLOW_LAYOUT",
+      "show_all_tab": true,
+      "focus_glow_enabled": true,
+      "pin_to_top": false,
+      "backdrop_image": null
+    },
+    {
+      "source_key": "d978a585-bb1a-43fe-9c7d-05d45d74111c",
+      "sort_order": 1,
+      "name": "Trending Movies",
+      "view_mode": "FOLLOW_LAYOUT",
+      "show_all_tab": true,
+      "focus_glow_enabled": true,
+      "pin_to_top": false,
+      "backdrop_image": null
+    },
+    {
+      "source_key": "d978a585-bb1a-43fe-9c7d-05d45d74111d",
+      "sort_order": 2,
+      "name": "Popular Shows",
+      "view_mode": "FOLLOW_LAYOUT",
+      "show_all_tab": true,
+      "focus_glow_enabled": true,
+      "pin_to_top": false,
+      "backdrop_image": null
+    },
+    {
+      "source_key": "d978a585-bb1a-43fe-9c7d-05d45d74111e",
+      "sort_order": 3,
+      "name": "Popular Movies",
+      "view_mode": "FOLLOW_LAYOUT",
+      "show_all_tab": true,
+      "focus_glow_enabled": true,
+      "pin_to_top": false,
+      "backdrop_image": null
+    },
+    {
+      "source_key": "d978a585-bb1a-43fe-9c7d-05d45d74111f",
+      "sort_order": 4,
+      "name": "Top Rated",
+      "view_mode": "FOLLOW_LAYOUT",
+      "show_all_tab": true,
+      "focus_glow_enabled": true,
+      "pin_to_top": false,
+      "backdrop_image": null
+    },
+    {
+      "source_key": "d978a585-bb1a-43fe-9c7d-05d45d741110",
+      "sort_order": 5,
+      "name": "Coming Soon Shows",
+      "view_mode": "FOLLOW_LAYOUT",
+      "show_all_tab": true,
+      "focus_glow_enabled": true,
+      "pin_to_top": false,
+      "backdrop_image": null
+    },
+    {
+      "source_key": "d978a585-bb1a-43fe-9c7d-05d45d741111",
+      "sort_order": 6,
+      "name": "Coming Soon Movies",
+      "view_mode": "FOLLOW_LAYOUT",
+      "show_all_tab": true,
+      "focus_glow_enabled": true,
+      "pin_to_top": false,
+      "backdrop_image": null
+    },
+    {
+      "source_key": "966190a9-3785-4ef0-9f1b-883478bf618c",
+      "sort_order": 7,
+      "name": "Franchises",
+      "view_mode": "FOLLOW_LAYOUT",
+      "show_all_tab": false,
+      "focus_glow_enabled": true,
+      "pin_to_top": false,
+      "backdrop_image": null
+    },
+    {
+      "source_key": "01c9338a-fcab-444c-bf65-0695a796660f",
+      "sort_order": 8,
+      "name": "Streaming",
+      "view_mode": "FOLLOW_LAYOUT",
+      "show_all_tab": false,
+      "focus_glow_enabled": true,
+      "pin_to_top": false,
+      "backdrop_image": null
+    },
+    {
+      "source_key": "collection-ff23708b",
+      "sort_order": 9,
+      "name": "UK TV",
+      "view_mode": "FOLLOW_LAYOUT",
+      "show_all_tab": false,
+      "focus_glow_enabled": true,
+      "pin_to_top": false,
+      "backdrop_image": null
+    },
+    {
+      "source_key": "collection-a70744af",
+      "sort_order": 10,
+      "name": "Genres",
+      "view_mode": "FOLLOW_LAYOUT",
+      "show_all_tab": false,
+      "focus_glow_enabled": true,
+      "pin_to_top": false,
+      "backdrop_image": null
+    },
+    {
+      "source_key": "5cb30034-9cf0-47a5-b38c-1db1f2ed7e94",
+      "sort_order": 11,
+      "name": "Decades",
+      "view_mode": "FOLLOW_LAYOUT",
+      "show_all_tab": true,
+      "focus_glow_enabled": true,
+      "pin_to_top": false,
+      "backdrop_image": null
+    },
+    {
+      "source_key": "00cfe083-3478-4030-b053-6cbbe1eb5c64",
+      "sort_order": 12,
+      "name": "Directors",
+      "view_mode": "FOLLOW_LAYOUT",
+      "show_all_tab": false,
+      "focus_glow_enabled": true,
+      "pin_to_top": false,
+      "backdrop_image": "https://i.postimg.cc/2S8X7RGv/Directors.png"
+    }
+  ],
+  "folders": [
+    {
+      "source_key": "1b72937f-83dd-480e-b728-d4437cb598d2",
+      "collection_source_key": "d978a585-bb1a-43fe-9c7d-05d45d74111b",
+      "sort_order": 0,
+      "name": "Trending Shows",
+      "cover_image": "https://btttr.cc/dVHLbsIwEPyVaM8gOQ8njq-VekOqSqUeqh7W9hqikjiKDQgh_r2CBkJSOM5oZmdn9wgaA27cyoP8gtDhT5iHjhpTNSuYPSNa12432D3CtVHz4AweRmDu127vr5R2dT9tQGNFcO1t-B6DXm8qH27MGUiLO7ftqkAevmdQU0CQx-nC8ggN1gQSPnoqWlJX0SUIJHg4TTsMlrc_5pFjaHmX4Noo4dHC7QZ1PVb3Jf95niT0dxrkLxciWjrXPMsZXfOx82mfdrLZOwYyo4TJQwb54hB93v9p7Jg-bPC9DuTNdbWdZag1eQ8SSsoMlgqxSFOyBmNmE82sZtySFiLNKCNknBvBsri0nHJjmNKp5iRszguYQUe2I78GCYTEdZHl2qIlEipTQpdFmiXCljFLFGVpyQQZludM8TxOYqsKZQthTJGLsoDT6Rc/cover/series/trakt-trending.png?name=Trending%20Shows",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": false,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": true
+    },
+    {
+      "source_key": "f0a1c172-63e5-4ffd-b16e-eb1336a4485c",
+      "collection_source_key": "d978a585-bb1a-43fe-9c7d-05d45d74111c",
+      "sort_order": 0,
+      "name": "Trending Movies",
+      "cover_image": "https://btttr.cc/dVHLbsIwEPyVaM8gOQ8njq-VekOqSqUeqh7W9hqikjiKDQgh_r2CBkJSOM5oZmdn9wgaA27cyoP8gtDhT5iHjhpTNSuYPSNa12432D3CtVHz4AweRmDu127vr5R2dT9tQGNFcO1t-B6DXm8qH27MGUiLO7ftqkAevmdQU0CQx-nC8ggN1gQSPnoqWlJX0SUIJHg4TTsMlrc_5pFjaHmX4Noo4dHC7QZ1PVb3Jf95niT0dxrkLxciWjrXPMsZXfOx82mfdrLZOwYyo4TJQwb54hB93v9p7Jg-bPC9DuTNdbWdZag1eQ8SSsoMlgqxSFOyBmNmE82sZtySFiLNKCNknBvBsri0nHJjmNKp5iRszguYQUe2I78GCYTEdZHl2qIlEipTQpdFmiXCljFLFGVpyQQZludM8TxOYqsKZQthTJGLsoDT6Rc/cover/movie/trakt-trending.png?name=Trending%20Movies",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": false,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": true
+    },
+    {
+      "source_key": "36b4837e-3b3d-46bf-ac20-a9c967dd5dcb",
+      "collection_source_key": "d978a585-bb1a-43fe-9c7d-05d45d74111d",
+      "sort_order": 0,
+      "name": "Popular Shows",
+      "cover_image": "https://btttr.cc/dVHLbsIwEPyVaM8gOQ8njq-VekOqSqUeqh7W9hqikjiKDQgh_r2CBkJSOM5oZmdn9wgaA27cyoP8gtDhT5iHjhpTNSuYPSNa12432D3CtVHz4AweRmDu127vr5R2dT9tQGNFcO1t-B6DXm8qH27MGUiLO7ftqkAevmdQU0CQx-nC8ggN1gQSPnoqWlJX0SUIJHg4TTsMlrc_5pFjaHmX4Noo4dHC7QZ1PVb3Jf95niT0dxrkLxciWjrXPMsZXfOx82mfdrLZOwYyo4TJQwb54hB93v9p7Jg-bPC9DuTNdbWdZag1eQ8SSsoMlgqxSFOyBmNmE82sZtySFiLNKCNknBvBsri0nHJjmNKp5iRszguYQUe2I78GCYTEdZHl2qIlEipTQpdFmiXCljFLFGVpyQQZludM8TxOYqsKZQthTJGLsoDT6Rc/cover/series/trakt-popular.png?name=Popular%20Shows",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": false,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": true
+    },
+    {
+      "source_key": "24109660-3501-4560-862a-5b8ce827e873",
+      "collection_source_key": "d978a585-bb1a-43fe-9c7d-05d45d74111e",
+      "sort_order": 0,
+      "name": "Popular Movies",
+      "cover_image": "https://btttr.cc/dVHLbsIwEPyVaM8gOQ8njq-VekOqSqUeqh7W9hqikjiKDQgh_r2CBkJSOM5oZmdn9wgaA27cyoP8gtDhT5iHjhpTNSuYPSNa12432D3CtVHz4AweRmDu127vr5R2dT9tQGNFcO1t-B6DXm8qH27MGUiLO7ftqkAevmdQU0CQx-nC8ggN1gQSPnoqWlJX0SUIJHg4TTsMlrc_5pFjaHmX4Noo4dHC7QZ1PVb3Jf95niT0dxrkLxciWjrXPMsZXfOx82mfdrLZOwYyo4TJQwb54hB93v9p7Jg-bPC9DuTNdbWdZag1eQ8SSsoMlgqxSFOyBmNmE82sZtySFiLNKCNknBvBsri0nHJjmNKp5iRszguYQUe2I78GCYTEdZHl2qIlEipTQpdFmiXCljFLFGVpyQQZludM8TxOYqsKZQthTJGLsoDT6Rc/cover/movie/trakt-popular.png?name=Popular%20Movies",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": false,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": true
+    },
+    {
+      "source_key": "ddef7a53-2b1b-4990-81d8-a47984a21ae7",
+      "collection_source_key": "d978a585-bb1a-43fe-9c7d-05d45d74111f",
+      "sort_order": 0,
+      "name": "Top Rated",
+      "cover_image": "https://btttr.cc/dVHLbsIwEPyVaM8gOQ8njq-VekOqSqUeqh7W9hqikjiKDQgh_r2CBkJSOM5oZmdn9wgaA27cyoP8gtDhT5iHjhpTNSuYPSNa12432D3CtVHz4AweRmDu127vr5R2dT9tQGNFcO1t-B6DXm8qH27MGUiLO7ftqkAevmdQU0CQx-nC8ggN1gQSPnoqWlJX0SUIJHg4TTsMlrc_5pFjaHmX4Noo4dHC7QZ1PVb3Jf95niT0dxrkLxciWjrXPMsZXfOx82mfdrLZOwYyo4TJQwb54hB93v9p7Jg-bPC9DuTNdbWdZag1eQ8SSsoMlgqxSFOyBmNmE82sZtySFiLNKCNknBvBsri0nHJjmNKp5iRszguYQUe2I78GCYTEdZHl2qIlEipTQpdFmiXCljFLFGVpyQQZludM8TxOYqsKZQthTJGLsoDT6Rc/cover/movie/tmdb-top.png?name=Top%20Rated",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": false,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": true
+    },
+    {
+      "source_key": "folder-a76d07b6",
+      "collection_source_key": "d978a585-bb1a-43fe-9c7d-05d45d741110",
+      "sort_order": 0,
+      "name": "Coming Soon Shows",
+      "cover_image": "https://btttr.cc/bYwxCoAwEAS_IlubD1xrbZVSLKIGDXg58IIWIX8XbVSw3GFnMkaX3CqzgjokngYzCoc4o34vo4scir4G--RA-XOljOjYg9DcoLIisWplD16vDgiM8hf8N63fHlNRSjkB/cover/series/tmdb-coming-shows.png?name=Coming%20Soon%20Shows",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": false,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false
+    },
+    {
+      "source_key": "b3df045c-eca0-4492-a838-2409daac1a46",
+      "collection_source_key": "d978a585-bb1a-43fe-9c7d-05d45d741111",
+      "sort_order": 0,
+      "name": "Coming Soon Movies",
+      "cover_image": "https://btttr.cc/dVHLbsIwEPyVaM8gOQ8njq-VekOqSqUeqh7W9hqikjiKDQgh_r2CBkJSOM5oZmdn9wgaA27cyoP8gtDhT5iHjhpTNSuYPSNa12432D3CtVHz4AweRmDu127vr5R2dT9tQGNFcO1t-B6DXm8qH27MGUiLO7ftqkAevmdQU0CQx-nC8ggN1gQSPnoqWlJX0SUIJHg4TTsMlrc_5pFjaHmX4Noo4dHC7QZ1PVb3Jf95niT0dxrkLxciWjrXPMsZXfOx82mfdrLZOwYyo4TJQwb54hB93v9p7Jg-bPC9DuTNdbWdZag1eQ8SSsoMlgqxSFOyBmNmE82sZtySFiLNKCNknBvBsri0nHJjmNKp5iRszguYQUe2I78GCYTEdZHl2qIlEipTQpdFmiXCljFLFGVpyQQZludM8TxOYqsKZQthTJGLsoDT6Rc/cover/movie/tmdb-coming.png?name=Coming%20Soon%20Movies",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": false,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": true
+    },
+    {
+      "source_key": "72394705-9eaf-4d7d-8533-6b004f5287fe",
+      "collection_source_key": "966190a9-3785-4ef0-9f1b-883478bf618c",
+      "sort_order": 0,
+      "name": "Star Wars",
+      "cover_image": "https://i.postimg.cc/vHK1D7bP/Star-Wars.jpg",
+      "hero_backdrop": "https://i.postimg.cc/sDtDfKWJ/Star-Wars-BG.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "title_logo": "https://i.postimg.cc/L6r64vPj/Star-Wars-Logo.png"
+    },
+    {
+      "source_key": "80a9fb99-3ec1-44ec-bc65-3a7bae8fc392",
+      "collection_source_key": "966190a9-3785-4ef0-9f1b-883478bf618c",
+      "sort_order": 1,
+      "name": "Middle Earth",
+      "cover_image": "https://i.postimg.cc/qvn2MrXq/Lo-TR-Tile.png",
+      "hero_backdrop": "https://i.postimg.cc/BQRx0bFM/Lo-TR-BG.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "title_logo": "https://i.postimg.cc/XYF97WcJ/Lo-TRLogo.png"
+    },
+    {
+      "source_key": "20f7285a-e5b7-4de3-9fda-046d60850391",
+      "collection_source_key": "966190a9-3785-4ef0-9f1b-883478bf618c",
+      "sort_order": 2,
+      "name": "The Wizarding World",
+      "cover_image": "https://i.postimg.cc/xj44xqMB/Wizarding-World-of-Harry-Potter-Tile.png",
+      "hero_backdrop": "https://i.postimg.cc/sg7mv79C/Harry-Potter-BG.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "title_logo": "https://i.postimg.cc/pXgkWq8W/Wizarding-World-of-Harry-Potter-logo.png"
+    },
+    {
+      "source_key": "3b979d6d-2a1b-4cea-b7c7-a83d39ceb2ea",
+      "collection_source_key": "966190a9-3785-4ef0-9f1b-883478bf618c",
+      "sort_order": 3,
+      "name": "Pixar",
+      "cover_image": "https://i.postimg.cc/5yrL2sh2/5440db5f-be91-4941-b1ba-4b4ea07b0f25.jpg",
+      "hero_backdrop": "https://i.postimg.cc/hj6yHJJv/Pixar-BG.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "title_logo": "https://i.postimg.cc/J0Y4Lsdk/Pixar-Logo.png"
+    },
+    {
+      "source_key": "5b8452e4-50c1-4097-8848-08057442438e",
+      "collection_source_key": "966190a9-3785-4ef0-9f1b-883478bf618c",
+      "sort_order": 4,
+      "name": "Dreamworks",
+      "cover_image": "https://i.postimg.cc/JnVNH8M5/882cf7a8-9aa6-4673-81c1-d3ed7a859e95.jpg",
+      "hero_backdrop": "https://i.postimg.cc/qqVzFhSX/Dream-Works-BG.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": true,
+      "title_logo": "https://i.postimg.cc/J4QCZCzG/Dream-Works-Logo.png"
+    },
+    {
+      "source_key": "52d42c35-ab6c-4f54-9d94-52345fb23391",
+      "collection_source_key": "966190a9-3785-4ef0-9f1b-883478bf618c",
+      "sort_order": 5,
+      "name": "Pirates Of The Caribbean",
+      "cover_image": "https://i.postimg.cc/4xbkvk41/Piratesof-The-Caribbean-Tile.jpg",
+      "hero_backdrop": "https://i.postimg.cc/y8X4h46y/Piratesof-The-Caribbean-BG.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "title_logo": "https://i.postimg.cc/2SFRdRjw/Piratesof-The-Caribbean-Logo.png"
+    },
+    {
+      "source_key": "403a869c-8362-4101-ba1b-aa22f60202b7",
+      "collection_source_key": "966190a9-3785-4ef0-9f1b-883478bf618c",
+      "sort_order": 6,
+      "name": "Back to the Future",
+      "cover_image": "https://i.postimg.cc/63FmJY5K/Backto-The-Future-Tile.png",
+      "hero_backdrop": "https://i.postimg.cc/C19QTmMW/Backto-The-Future-BG.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "title_logo": "https://i.postimg.cc/nzNPb0cb/Backto-The-Future-Logo.png"
+    },
+    {
+      "source_key": "ecb19f57-2b83-4bfc-8846-45919f9c4bbb",
+      "collection_source_key": "966190a9-3785-4ef0-9f1b-883478bf618c",
+      "sort_order": 7,
+      "name": "Indiana Jones",
+      "cover_image": "https://i.postimg.cc/k5zCjN89/Indiana-Jones-Tile.png",
+      "hero_backdrop": "https://i.postimg.cc/jjmT86NV/Indiana-Jones-BG.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": true,
+      "title_logo": "https://i.postimg.cc/vmWxMmzF/Indiana-Jones-Logo.png"
+    },
+    {
+      "source_key": "61ed97f0-6598-4230-9261-fc643336779d",
+      "collection_source_key": "966190a9-3785-4ef0-9f1b-883478bf618c",
+      "sort_order": 8,
+      "name": "The Matrix",
+      "cover_image": "https://i.postimg.cc/k43Gpd3c/The-Matrix-Tile.png",
+      "hero_backdrop": "https://i.postimg.cc/N0rLDjVL/The-Matrix-BG.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "title_logo": "https://i.postimg.cc/Kjwfgzgg/The-Matrix-Logo.webp"
+    },
+    {
+      "source_key": "9727214b-b4b2-4967-bb56-522bd9312b3d",
+      "collection_source_key": "966190a9-3785-4ef0-9f1b-883478bf618c",
+      "sort_order": 9,
+      "name": "The Hunger Games",
+      "cover_image": "https://i.postimg.cc/T1DT4WLq/0d7e0b16-0ad8-454e-8de1-31e42781a305.jpg",
+      "hero_backdrop": "https://i.postimg.cc/JhSZWfmN/The-Hunger-Games-BG.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "title_logo": "https://i.postimg.cc/tTPPRBCc/The-Hunger-Games-Logo.png"
+    },
+    {
+      "source_key": "folder-a225b44b",
+      "collection_source_key": "966190a9-3785-4ef0-9f1b-883478bf618c",
+      "sort_order": 10,
+      "name": "The Planet of the Apes",
+      "cover_image": "https://i.postimg.cc/9FvGHPkB/a453ea55-5840-4dea-a6b8-bc2ba0a1e481.webp",
+      "hero_backdrop": "https://i.postimg.cc/1tKtYwYj/Planetof-The-Apes-BG.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "title_logo": "https://i.postimg.cc/9My83FdH/Planetof-The-Apes-Logo.png"
+    },
+    {
+      "source_key": "55cd98d9-ab77-4cf2-a660-6582cf6f7630",
+      "collection_source_key": "966190a9-3785-4ef0-9f1b-883478bf618c",
+      "sort_order": 11,
+      "name": "Jurassic World",
+      "cover_image": "https://i.postimg.cc/xCpJgLZJ/Jurassic-World-Tile.png",
+      "hero_backdrop": "https://i.postimg.cc/W31qM55p/Jurassic-World-BG.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": true,
+      "title_logo": "https://i.postimg.cc/1zP9F4vn/vle-Ub-BFl-EGdxaazvz-BMo-Z5d-HDo-Y.webp"
+    },
+    {
+      "source_key": "2148c23d-81a4-4ca1-805f-acfb682655dd",
+      "collection_source_key": "966190a9-3785-4ef0-9f1b-883478bf618c",
+      "sort_order": 12,
+      "name": "Men In Black",
+      "cover_image": "https://i.postimg.cc/X7HNTVNC/Men-In-Black-Tile.png",
+      "hero_backdrop": "https://i.postimg.cc/kXXX1VCK/Men-In-Black-BG.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": true,
+      "title_logo": "https://i.postimg.cc/rFFFndT1/Men-In-Black-Logo.png"
+    },
+    {
+      "source_key": "folder-142eed43",
+      "collection_source_key": "966190a9-3785-4ef0-9f1b-883478bf618c",
+      "sort_order": 13,
+      "name": "Ghostbusters",
+      "cover_image": "https://i.postimg.cc/j5vJGHJb/Ghostbusters-Tile.png",
+      "hero_backdrop": "https://i.postimg.cc/x8CbYXK9/Ghostbusters-BG.png",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "title_logo": "https://i.postimg.cc/7htHck4W/e3ed004b-4969-4109-9c9d-aef29189c433-(1)-(1).png"
+    },
+    {
+      "source_key": "folder-a2d3bb63",
+      "collection_source_key": "966190a9-3785-4ef0-9f1b-883478bf618c",
+      "sort_order": 14,
+      "name": "Battlestar Galactica",
+      "cover_image": "https://i.postimg.cc/JzLh2h56/Battle-Star-Tile.png",
+      "hero_backdrop": "https://i.postimg.cc/T27BpNsM/Battlestar-BG.png",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "title_logo": "https://i.postimg.cc/pdjnnSkx/Battlestar-Logo.png"
+    },
+    {
+      "source_key": "33222ebc-e848-48bf-8211-b4e0f1ed5380",
+      "collection_source_key": "966190a9-3785-4ef0-9f1b-883478bf618c",
+      "sort_order": 15,
+      "name": "DC Universe",
+      "cover_image": "https://i.postimg.cc/9fxVdSC1/DC-Universe.jpg",
+      "hero_backdrop": "https://i.postimg.cc/4N45MSg7/ef215e66-54da-4b03-a946-34727ba52766.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": true,
+      "title_logo": "https://i.postimg.cc/3WQ8YQ4b/960px-DC-Comics-logo-svg-png-utm-source-commons-wikimedia.png"
+    },
+    {
+      "source_key": "cd74f767-b492-4a4c-a3a4-7296925e15a3",
+      "collection_source_key": "966190a9-3785-4ef0-9f1b-883478bf618c",
+      "sort_order": 16,
+      "name": "Marvel",
+      "cover_image": "https://i.postimg.cc/TYKW4WdV/Marvel-Tile.png",
+      "hero_backdrop": "https://i.postimg.cc/v8qVhvsn/Marvel-BG.png",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "title_logo": "https://i.postimg.cc/XNHCLgb4/Marvel-Logo.png"
+    },
+    {
+      "source_key": "folder-f66bc973",
+      "collection_source_key": "966190a9-3785-4ef0-9f1b-883478bf618c",
+      "sort_order": 17,
+      "name": "Rocky",
+      "cover_image": "https://i.postimg.cc/V6GryckF/Rocky-Tile.png",
+      "hero_backdrop": "https://i.postimg.cc/cH9gqNLM/Rocky-BG.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "title_logo": "https://i.postimg.cc/Tw7L8X3V/Rocky-Logo.png"
+    },
+    {
+      "source_key": "311f8d8f-ae99-4cc3-bcde-9afdbf34b1cd",
+      "collection_source_key": "966190a9-3785-4ef0-9f1b-883478bf618c",
+      "sort_order": 18,
+      "name": "James Bond",
+      "cover_image": "https://i.postimg.cc/PJRvqd4D/James-Bond-Tile.png",
+      "hero_backdrop": "https://i.postimg.cc/SRszqnWz/James-Bond-BG.png",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "title_logo": "https://i.postimg.cc/RFGnj7nx/007-Logo.png"
+    },
+    {
+      "source_key": "518ba136-5847-4f15-9c58-a1d01b7e1d8b",
+      "collection_source_key": "966190a9-3785-4ef0-9f1b-883478bf618c",
+      "sort_order": 19,
+      "name": "Monty Python",
+      "cover_image": "https://i.postimg.cc/4NRMpgW1/Monty-Python-Button.png",
+      "hero_backdrop": "https://i.postimg.cc/fTQFYN8x/Monty-Python-BG.png",
+      "hide_title": false,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": true,
+      "title_logo": "https://i.postimg.cc/Kv0WqWNq/Python-Logo.png"
+    },
+    {
+      "source_key": "folder-516b0b3d",
+      "collection_source_key": "966190a9-3785-4ef0-9f1b-883478bf618c",
+      "sort_order": 20,
+      "name": "It's Aliens",
+      "cover_image": "https://i.postimg.cc/d33f6Ng3/Aliens.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false
+    },
+    {
+      "source_key": "970d5b2f-ffb4-430f-bf07-b2385bc5c720",
+      "collection_source_key": "01c9338a-fcab-444c-bf65-0695a796660f",
+      "sort_order": 0,
+      "name": "Netflix",
+      "cover_image": "https://i.postimg.cc/FHrH9pYN/469fb054-cbec-46ca-bc91-6ed73a6d647b.png",
+      "hero_backdrop": "https://i.postimg.cc/wTb6vztg/Netflix.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": true,
+      "title_logo": "https://i.postimg.cc/903dVycz/Netflix-Logo.png",
+      "hero_video_url": "https://drive.google.com/uc?export=download&id=1yViFBWoiyPi6cuVdjUoABaEnZUbnnCxc",
+      "focus_gif": "https://i.postimg.cc/mgm2h99c/bb74046420c4c992b8cabc6e667abe40.gif"
+    },
+    {
+      "source_key": "84707fe6-a7a1-4fa6-b45f-c33fbffb5af7",
+      "collection_source_key": "01c9338a-fcab-444c-bf65-0695a796660f",
+      "sort_order": 1,
+      "name": "Prime Video",
+      "cover_image": "https://i.postimg.cc/jSMdCffB/d0476b73-c21d-4c1d-946f-7ce3fef17ccd.png",
+      "hero_backdrop": "https://i.postimg.cc/9FNWM24r/Prime.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": true,
+      "title_logo": "https://i.postimg.cc/5ycB18f6/prime-video-landscape-logo.png",
+      "hero_video_url": "https://drive.google.com/uc?export=download&id=1tilj8ekPSeDQCco00WMYPIEEkPN-lrb_",
+      "focus_gif": "https://media1.tenor.com/m/T7L_NCdPIvAAAAAC/prime-video.gif"
+    },
+    {
+      "source_key": "2558ca1d-d375-4ead-801d-1c4137b65dc0",
+      "collection_source_key": "01c9338a-fcab-444c-bf65-0695a796660f",
+      "sort_order": 2,
+      "name": "Paramount+",
+      "cover_image": "https://i.postimg.cc/TPSdJXC1/12db31b7-ca2e-4980-9c92-c83e58a22949.png",
+      "hero_backdrop": "https://i.postimg.cc/Z5GvWp9q/Paramount.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": true,
+      "title_logo": "https://i.postimg.cc/yYtfx3nP/Paramount-logo-svg.png",
+      "hero_video_url": "https://drive.google.com/uc?export=download&id=1O4iduIsp-tJhIurJiegbPESnHEKYElpw",
+      "focus_gif": "https://i.postimg.cc/zBgJdPcF/Paramount.gif"
+    },
+    {
+      "source_key": "4c917ef0-b03f-485b-9565-71dc70293b47",
+      "collection_source_key": "01c9338a-fcab-444c-bf65-0695a796660f",
+      "sort_order": 3,
+      "name": "Disney+",
+      "cover_image": "https://i.postimg.cc/D037RPV2/e2155ff8-4939-40d1-8dc2-7d28df3ecaa0.png",
+      "hero_backdrop": "https://i.postimg.cc/X7DVJWZW/Disney.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": true,
+      "title_logo": "https://i.postimg.cc/yd3mwLC3/Disney-Plus-logo-svg.png",
+      "focus_gif": "https://i.postimg.cc/Y0Nt7Lk0/1775910668473-8e07b96b-4739-43d4-9475-f2aaeac8e259.gif"
+    },
+    {
+      "source_key": "c3f60fe9-b4d9-43ac-bd66-28f3465eb367",
+      "collection_source_key": "01c9338a-fcab-444c-bf65-0695a796660f",
+      "sort_order": 4,
+      "name": "Apple TV",
+      "cover_image": "https://i.postimg.cc/yWq3QZjQ/d2b77dfd-c14a-4258-ab0f-b610519c96ef.png",
+      "hero_backdrop": "https://i.postimg.cc/m2rLBkrf/Apple-TV.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": true,
+      "title_logo": "https://i.postimg.cc/B6PTdmfK/apple-tv-logo.png",
+      "hero_video_url": "https://drive.google.com/uc?export=download&id=1SBpzMhx5jqVoQpqhK42CsNFiW8pCV3TD",
+      "focus_gif": "https://64.media.tumblr.com/d717319220a7d26bdaa88e72f6f76889/d9a7a808f588d8f4-63/s500x750/959b0ca57f53153b2ca9adaf414859e45e3734e6.gifv"
+    },
+    {
+      "source_key": "83301023-05cd-4cfe-a1d7-9c8594f18e57",
+      "collection_source_key": "01c9338a-fcab-444c-bf65-0695a796660f",
+      "sort_order": 5,
+      "name": "HBO MAX",
+      "cover_image": "https://i.postimg.cc/1RbWh7Yp/af3c0122-cbd1-49ae-94f1-6da0f9f665a8.png",
+      "hero_backdrop": "https://i.postimg.cc/j2kCyF1D/HBOMax.png",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": true,
+      "title_logo": "https://i.postimg.cc/JnmrXqYH/HBO-Max-logo-(May-2025).png",
+      "hero_video_url": "https://drive.google.com/uc?export=download&id=1TeeMKLynx5v4WE2cC03dw3fFIltlzKJ0",
+      "focus_gif": "https://i.postimg.cc/Hs0t4sLJ/4cb9b614191d17d02c946b4ca59548cd333c06fd.gif"
+    },
+    {
+      "source_key": "d41af3ad-1c18-466d-8b7b-f4652f7be404",
+      "collection_source_key": "01c9338a-fcab-444c-bf65-0695a796660f",
+      "sort_order": 6,
+      "name": "Starz",
+      "cover_image": "https://i.postimg.cc/W3Ff8LDH/c7688767-401f-45ad-998a-076ded525df7.png",
+      "hero_backdrop": "https://i.postimg.cc/fygkYrP3/Starz.png",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": true,
+      "title_logo": "https://i.postimg.cc/m20PmKdG/Starz-logo.png",
+      "hero_video_url": "https://drive.google.com/uc?export=download&id=1siM6tqtCtHzE306lVtH0uuSCmjdN5Mtd",
+      "focus_gif": "https://i.postimg.cc/sxJP9wJm/1000390458-(1).gif"
+    },
+    {
+      "source_key": "folder-8ea9ca41",
+      "collection_source_key": "collection-ff23708b",
+      "sort_order": 0,
+      "name": "iPlayer",
+      "cover_image": "https://i.postimg.cc/W3TbWH10/3c471a49-13c3-40e2-8583-b1e9549b1768.jpg",
+      "hero_backdrop": "https://i.postimg.cc/zXfz8vfr/BBC.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "title_logo": "https://i.postimg.cc/6QLvvTx7/BBC-i-Player-Logo.png",
+      "hero_video_url": "https://drive.google.com/uc?export=download&id=1URan1tMAm_y1SnhIXoRWGVEN3ZyX3SIl"
+    },
+    {
+      "source_key": "folder-85f13d7f",
+      "collection_source_key": "collection-ff23708b",
+      "sort_order": 1,
+      "name": "itvX",
+      "cover_image": "https://i.postimg.cc/85NPK0zK/itv-xwefbrjsf.jpg",
+      "hero_backdrop": "https://i.postimg.cc/xTF0CQk2/ITVX.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "title_logo": "https://i.postimg.cc/d0CHC242/ITVX-logo-svg.png",
+      "hero_video_url": "https://drive.google.com/uc?export=download&id=11644rcEdmJINZ7NR8-IQaHyk0LCinDWR"
+    },
+    {
+      "source_key": "folder-4975dd8e",
+      "collection_source_key": "collection-ff23708b",
+      "sort_order": 2,
+      "name": "Channel 4",
+      "cover_image": "https://i.postimg.cc/3R1rPFkS/63a2922f-2d1a-42ce-845e-de7e56aaf92f.jpg",
+      "hero_backdrop": "https://i.postimg.cc/qM7J4q7H/Channel4.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "title_logo": "https://i.postimg.cc/fbd2dcBf/Channel-4.png",
+      "hero_video_url": "https://drive.google.com/uc?export=download&id=11dQSrys5e_QoukwkOaqx-jfPFhuv7CJ2"
+    },
+    {
+      "source_key": "folder-30e4d4ee",
+      "collection_source_key": "collection-ff23708b",
+      "sort_order": 3,
+      "name": "5",
+      "cover_image": "https://i.postimg.cc/ZRHY1x9h/5logo.png",
+      "hero_backdrop": "https://i.postimg.cc/xTdfn8dS/Channel5.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "title_logo": "https://i.postimg.cc/VNtGtqD4/Channel-5-2025-svg.png",
+      "hero_video_url": "https://drive.google.com/uc?export=download&id=1weIEpwOt_g4ZIGauNnaXUtExljnMjCxs"
+    },
+    {
+      "source_key": "folder-1404a270",
+      "collection_source_key": "collection-ff23708b",
+      "sort_order": 4,
+      "name": "U",
+      "cover_image": "https://i.postimg.cc/nr9yZw2w/UPlayer.png",
+      "hero_backdrop": "https://i.postimg.cc/tCmXTb1s/UKTV.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "title_logo": "https://i.postimg.cc/g0hShVNK/UKTV-2024-svg.png",
+      "hero_video_url": "https://drive.google.com/uc?export=download&id=11yixC0AXh76VR8du-VbiStz4U__GAMcx"
+    },
+    {
+      "source_key": "folder-5eed6a5d",
+      "collection_source_key": "collection-a70744af",
+      "sort_order": 0,
+      "name": "Action",
+      "cover_image": "https://i.postimg.cc/85TB12zQ/Action.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "hero_video_url": "https://drive.google.com/uc?export=download&id=1dxNvmeUI7SAm9n1CJu0D8uSo3p5nyXg8"
+    },
+    {
+      "source_key": "folder-39445f19",
+      "collection_source_key": "collection-a70744af",
+      "sort_order": 1,
+      "name": "Animation",
+      "cover_image": "https://i.postimg.cc/QtjkX2d3/Animation.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "hero_video_url": "https://drive.google.com/uc?export=download&id=1FTuhYIirwkpVYcTHfWcw73sUpIf2ihIP"
+    },
+    {
+      "source_key": "2ef072a4-9e05-4c38-bc2d-b3aa42aa7806",
+      "collection_source_key": "collection-a70744af",
+      "sort_order": 2,
+      "name": "Anime",
+      "cover_image": "https://i.postimg.cc/bvdxc0Fk/Anime.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": true,
+      "hero_video_url": "https://drive.google.com/uc?export=download&id=10NI2ty9yrC-e41SJ8ZGAiE2KqXSjsNb_"
+    },
+    {
+      "source_key": "folder-0cb8dadf",
+      "collection_source_key": "collection-a70744af",
+      "sort_order": 3,
+      "name": "Comedy",
+      "cover_image": "https://i.postimg.cc/tTDd7BYc/Comedy.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "hero_video_url": "https://drive.google.com/uc?export=download&id=1QZ1IDK9asCqKpN5PS8m_WxR_BakHcIrI"
+    },
+    {
+      "source_key": "a8a81ab8-7092-4000-99ba-55883dbd274a",
+      "collection_source_key": "collection-a70744af",
+      "sort_order": 4,
+      "name": "Documentaries",
+      "cover_image": "https://i.postimg.cc/8cfxbkvz/Documentaries.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": true,
+      "hero_video_url": "https://drive.google.com/uc?export=download&id=1QJPm1w5qpYaqf1JEnYeJi7Zo_rNW888x"
+    },
+    {
+      "source_key": "folder-66b89399",
+      "collection_source_key": "collection-a70744af",
+      "sort_order": 5,
+      "name": "Drama",
+      "cover_image": "https://i.postimg.cc/W3s62B1j/Drama.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "hero_video_url": "https://drive.google.com/uc?export=download&id=1OeG4x4YZ9lYRmiZw4SzBjccOqScXS2zE"
+    },
+    {
+      "source_key": "folder-46536043",
+      "collection_source_key": "collection-a70744af",
+      "sort_order": 6,
+      "name": "Family",
+      "cover_image": "https://i.postimg.cc/rmgGzfDR/Family.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "hero_video_url": "https://drive.google.com/uc?export=download&id=1mpq4T8jg1kQxMgiBy7XJrr4sWsJkV_qO"
+    },
+    {
+      "source_key": "folder-59257d91",
+      "collection_source_key": "collection-a70744af",
+      "sort_order": 7,
+      "name": "Fantasy",
+      "cover_image": "https://i.postimg.cc/0jQYS7SQ/Fantasy.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "hero_video_url": "https://drive.google.com/uc?export=download&id=1Ci69c42Ow16ezvoBnzySd5Wtt5u8ZPMq"
+    },
+    {
+      "source_key": "a66f5a51-46ff-4b31-8e9b-5eee99f7cedb",
+      "collection_source_key": "collection-a70744af",
+      "sort_order": 8,
+      "name": "Food",
+      "cover_image": "https://i.postimg.cc/vTBrn5nf/Food.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": true,
+      "hero_video_url": "https://drive.google.com/uc?export=download&id=186FvtD1DfGQ9BtIOuEZLQXnNFq6QEjQH"
+    },
+    {
+      "source_key": "918334b7-58f6-4445-a2e0-a02a670b4c70",
+      "collection_source_key": "collection-a70744af",
+      "sort_order": 9,
+      "name": "Horror",
+      "cover_image": "https://i.postimg.cc/KjzPTtTf/Horror.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "hero_video_url": "https://drive.google.com/uc?export=download&id=165bBSkdDWBjncGBHr3SE0zwX91hcfC51"
+    },
+    {
+      "source_key": "f34571d4-6250-4144-9918-444b86a46cfa",
+      "collection_source_key": "collection-a70744af",
+      "sort_order": 10,
+      "name": "Martial Arts",
+      "cover_image": "https://i.postimg.cc/B695gqsn/Martial-Arts.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": true,
+      "hero_video_url": "https://drive.google.com/uc?export=download&id=1SYuGXNXoTX-gdwDta9xHBKfEJprvXDv3"
+    },
+    {
+      "source_key": "a7fc5577-7054-4b38-aeda-2fb0cac1ffea",
+      "collection_source_key": "collection-a70744af",
+      "sort_order": 11,
+      "name": "Musicals",
+      "cover_image": "https://i.postimg.cc/KYhBHKgH/Musicals.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "hero_video_url": "https://drive.google.com/uc?export=download&id=1BsYk7xKGLGjuVCNwOW_8FcQ9ChwREM_A"
+    },
+    {
+      "source_key": "folder-ddf9539a",
+      "collection_source_key": "collection-a70744af",
+      "sort_order": 12,
+      "name": "Mystery",
+      "cover_image": "https://i.postimg.cc/wMGhQ35P/Mystery.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "hero_video_url": "https://drive.google.com/uc?export=download&id=1ZtGIuVxSe3-iZhv1t_otJKCQuGSy1qVS"
+    },
+    {
+      "source_key": "folder-efcb3605",
+      "collection_source_key": "collection-a70744af",
+      "sort_order": 13,
+      "name": "Nature",
+      "cover_image": "https://i.postimg.cc/7Lm3z775/Nature.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "hero_video_url": "https://drive.google.com/uc?export=download&id=1x-EZhP_IszLINr2tBEISVcVDMarIPy81"
+    },
+    {
+      "source_key": "fa18c34d-4b86-4d83-83b0-0bcaa419094f",
+      "collection_source_key": "collection-a70744af",
+      "sort_order": 14,
+      "name": "Reality TV",
+      "cover_image": "https://i.postimg.cc/Kjx14KdH/Reality.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "hero_video_url": "https://drive.google.com/uc?export=download&id=1H4IVJlICYCAO94FgnH-cluwJuTaWkr-4"
+    },
+    {
+      "source_key": "folder-a88aa6f6",
+      "collection_source_key": "collection-a70744af",
+      "sort_order": 15,
+      "name": "Romance",
+      "cover_image": "https://i.postimg.cc/KjHnD4rZ/Romance.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "hero_video_url": "https://drive.google.com/uc?export=download&id=1dDVyiwZ_UhX2lyvoU8HT3zX-nEkRwxo7"
+    },
+    {
+      "source_key": "folder-d012fae7",
+      "collection_source_key": "collection-a70744af",
+      "sort_order": 16,
+      "name": "Sci-Fi",
+      "cover_image": "https://i.postimg.cc/NGJ7cPhX/Sci-Fi.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "hero_video_url": "https://drive.google.com/uc?export=download&id=1gSl6JHJY--Z0HX-6-EWhMWwZWYCSnPO0"
+    },
+    {
+      "source_key": "folder-3a8c2787",
+      "collection_source_key": "collection-a70744af",
+      "sort_order": 17,
+      "name": "Space",
+      "cover_image": "https://i.postimg.cc/Xv17qYKk/Space.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "hero_video_url": "https://drive.google.com/uc?export=download&id=1-KiLdDJId4j29QgpSxvXn6RfCPToKrDs"
+    },
+    {
+      "source_key": "folder-de2c299b",
+      "collection_source_key": "collection-a70744af",
+      "sort_order": 18,
+      "name": "Thriller",
+      "cover_image": "https://i.postimg.cc/v8qLsSRj/Thriller.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "hero_video_url": "https://drive.google.com/uc?export=download&id=1MPHKBR2QIwrCWU9Ir_sLRbz_T7ZrjCjO"
+    },
+    {
+      "source_key": "4982862c-fefc-40f4-a690-43cc8c449568",
+      "collection_source_key": "collection-a70744af",
+      "sort_order": 19,
+      "name": "War",
+      "cover_image": "https://i.postimg.cc/tRStjm08/War.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "hero_video_url": "https://drive.google.com/uc?export=download&id=1khcIurI9a_gPoz4lmJXCziKuFLeyFOTM"
+    },
+    {
+      "source_key": "065932d6-8d8b-4614-a652-5e4e966cc7cc",
+      "collection_source_key": "collection-a70744af",
+      "sort_order": 20,
+      "name": "Western",
+      "cover_image": "https://i.postimg.cc/y6QXHr44/Western.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false,
+      "hero_video_url": "https://drive.google.com/uc?export=download&id=1_Ey9wT7I98-sVF_e2rx2zKC4k2xM51TU"
+    },
+    {
+      "source_key": "c73776da-5480-43f3-a279-6ac96363446f",
+      "collection_source_key": "5cb30034-9cf0-47a5-b38c-1db1f2ed7e94",
+      "sort_order": 0,
+      "name": "1980s",
+      "cover_image": "https://i.postimg.cc/CxP1mxKd/80s.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": true
+    },
+    {
+      "source_key": "4b914923-54f1-4d57-80c2-29c084e9fdff",
+      "collection_source_key": "5cb30034-9cf0-47a5-b38c-1db1f2ed7e94",
+      "sort_order": 1,
+      "name": "1990s",
+      "cover_image": "https://i.postimg.cc/x1xCt1dy/90s.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": true
+    },
+    {
+      "source_key": "697f85be-96b6-4c19-ba73-c5653e3b39ff",
+      "collection_source_key": "5cb30034-9cf0-47a5-b38c-1db1f2ed7e94",
+      "sort_order": 2,
+      "name": "2000s",
+      "cover_image": "https://i.postimg.cc/y8YxmZ70/00s.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": true
+    },
+    {
+      "source_key": "55f81ff6-832d-483e-b5eb-6a52fd4ed08f",
+      "collection_source_key": "5cb30034-9cf0-47a5-b38c-1db1f2ed7e94",
+      "sort_order": 3,
+      "name": "2010s",
+      "cover_image": "https://i.postimg.cc/mg2kYHTF/10s.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": true
+    },
+    {
+      "source_key": "54f85c47-4623-48d7-bc7c-a9305a4a5e37",
+      "collection_source_key": "5cb30034-9cf0-47a5-b38c-1db1f2ed7e94",
+      "sort_order": 4,
+      "name": "2020s",
+      "cover_image": "https://i.postimg.cc/0y2jYw9p/20s.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": true,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": true
+    },
+    {
+      "source_key": "d20d0613-0230-4460-b583-d524502cace5",
+      "collection_source_key": "00cfe083-3478-4030-b053-6cbbe1eb5c64",
+      "sort_order": 0,
+      "name": "Wes Anderson",
+      "cover_image": "https://i.postimg.cc/P55n5nHZ/Wes-Anderson.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": false,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false
+    },
+    {
+      "source_key": "4efbbe36-09bc-46e7-8703-81a031b2d10b",
+      "collection_source_key": "00cfe083-3478-4030-b053-6cbbe1eb5c64",
+      "sort_order": 1,
+      "name": "Danny Boyle",
+      "cover_image": "https://i.postimg.cc/MKD8wKhs/Danny-Boyle.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": false,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false
+    },
+    {
+      "source_key": "55723bb4-2335-4dc4-a510-8934bb75906c",
+      "collection_source_key": "00cfe083-3478-4030-b053-6cbbe1eb5c64",
+      "sort_order": 2,
+      "name": "Tim Burton",
+      "cover_image": "https://i.postimg.cc/RZZxZxmW/Tim-Burton.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": false,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false
+    },
+    {
+      "source_key": "deec1432-c0e6-4201-ae4c-21d7ec9f860a",
+      "collection_source_key": "00cfe083-3478-4030-b053-6cbbe1eb5c64",
+      "sort_order": 3,
+      "name": "James Cameron",
+      "cover_image": "https://i.postimg.cc/hPrqnPHN/James-Cameron.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": false,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false
+    },
+    {
+      "source_key": "3df117e4-e42b-4898-9226-0e4ebaa075f7",
+      "collection_source_key": "00cfe083-3478-4030-b053-6cbbe1eb5c64",
+      "sort_order": 4,
+      "name": "Coen Brothers",
+      "cover_image": "https://i.postimg.cc/02fqv2LZ/Coen-Brothers.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": false,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false
+    },
+    {
+      "source_key": "fe1d5a0a-5075-4919-83c4-781a936085ec",
+      "collection_source_key": "00cfe083-3478-4030-b053-6cbbe1eb5c64",
+      "sort_order": 5,
+      "name": "Ron Howard",
+      "cover_image": "https://i.postimg.cc/TY9XxYz1/Ron-Howard.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": false,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false
+    },
+    {
+      "source_key": "cade12bf-d7fc-4a21-9262-3b96d9f37fe0",
+      "collection_source_key": "00cfe083-3478-4030-b053-6cbbe1eb5c64",
+      "sort_order": 6,
+      "name": "Stanley Kubrick",
+      "cover_image": "https://i.postimg.cc/JzzCzC8z/Stanley-Kubrick.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": false,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false
+    },
+    {
+      "source_key": "a2ac324f-6ec3-43d6-ba77-904b0ee6bb0f",
+      "collection_source_key": "00cfe083-3478-4030-b053-6cbbe1eb5c64",
+      "sort_order": 7,
+      "name": "Christopher Nolan",
+      "cover_image": "https://i.postimg.cc/m2RGKF6X/Christopher-Nolan.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": false,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false
+    },
+    {
+      "source_key": "0bf1438f-3e10-475c-8f3b-4495dda6ad3f",
+      "collection_source_key": "00cfe083-3478-4030-b053-6cbbe1eb5c64",
+      "sort_order": 8,
+      "name": "Martin Scorsese",
+      "cover_image": "https://i.postimg.cc/RCDwJskZ/Martin-Scorsese.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": false,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false
+    },
+    {
+      "source_key": "c40e3a32-0bef-411e-957a-5ca317cafd03",
+      "collection_source_key": "00cfe083-3478-4030-b053-6cbbe1eb5c64",
+      "sort_order": 9,
+      "name": "Ridley Scott",
+      "cover_image": "https://i.postimg.cc/X780W7RJ/Ridley-Scott.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": false,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false
+    },
+    {
+      "source_key": "d7b36d03-0f34-40bf-b9d1-32a226362987",
+      "collection_source_key": "00cfe083-3478-4030-b053-6cbbe1eb5c64",
+      "sort_order": 10,
+      "name": "M. Night Shyamalan",
+      "cover_image": "https://i.postimg.cc/X780W7R3/M-Night-Shyamalan.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": false,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false
+    },
+    {
+      "source_key": "4d324a93-a762-40c2-8388-a57b38b70768",
+      "collection_source_key": "00cfe083-3478-4030-b053-6cbbe1eb5c64",
+      "sort_order": 11,
+      "name": "Steven Spielberg",
+      "cover_image": "https://i.postimg.cc/Z55z5zmq/Steven-Spielberg.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": false,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false
+    },
+    {
+      "source_key": "8b122e7c-5119-42d1-9e4e-a880c364ddd4",
+      "collection_source_key": "00cfe083-3478-4030-b053-6cbbe1eb5c64",
+      "sort_order": 12,
+      "name": "Oliver Stone",
+      "cover_image": "https://i.postimg.cc/L6TMS6cH/Oliver-Stone.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": false,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false
+    },
+    {
+      "source_key": "76d6c08c-cf0b-456a-ae3f-ef94d6833cb7",
+      "collection_source_key": "00cfe083-3478-4030-b053-6cbbe1eb5c64",
+      "sort_order": 13,
+      "name": "Quentin Tarantino",
+      "cover_image": "https://i.postimg.cc/CLNV0L3L/Quentin-Tarantino.png",
+      "hero_backdrop": "https://i.postimg.cc/Wbf23VDp/Playlists.jpg",
+      "hide_title": false,
+      "tile_shape": "LANDSCAPE",
+      "focus_gif_enabled": false
+    }
+  ],
+  "folder_catalogs": [
+    {
+      "folder_source_key": "1b72937f-83dd-480e-b728-d4437cb598d2",
+      "catalog_id": "mdblist.3882",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "1b72937f-83dd-480e-b728-d4437cb598d2",
+      "catalog_id": "tmdb.discover.series.latest.mpcugvcy",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "f0a1c172-63e5-4ffd-b16e-eb1336a4485c",
+      "catalog_id": "mdblist.88306",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "f0a1c172-63e5-4ffd-b16e-eb1336a4485c",
+      "catalog_id": "tmdb.trending_movie",
+      "media_type": "movie",
+      "genre": "Day"
+    },
+    {
+      "folder_source_key": "36b4837e-3b3d-46bf-ac20-a9c967dd5dcb",
+      "catalog_id": "tmdb.top_series",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "24109660-3501-4560-862a-5b8ce827e873",
+      "catalog_id": "tmdb.top_movie",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "ddef7a53-2b1b-4990-81d8-a47984a21ae7",
+      "catalog_id": "tmdb.top_rated_series",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "ddef7a53-2b1b-4990-81d8-a47984a21ae7",
+      "catalog_id": "trakt.list.2143363",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "ddef7a53-2b1b-4990-81d8-a47984a21ae7",
+      "catalog_id": "tmdb.top_rated_movie",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "ddef7a53-2b1b-4990-81d8-a47984a21ae7",
+      "catalog_id": "trakt.list.2142753",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "ddef7a53-2b1b-4990-81d8-a47984a21ae7",
+      "catalog_id": "trakt.list.1282987",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-a76d07b6",
+      "catalog_id": "mdblist.20340",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-a76d07b6",
+      "catalog_id": "trakt.anticipated.shows",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "b3df045c-eca0-4492-a838-2409daac1a46",
+      "catalog_id": "mdblist.26816",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "b3df045c-eca0-4492-a838-2409daac1a46",
+      "catalog_id": "trakt.anticipated.movies",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "72394705-9eaf-4d7d-8533-6b004f5287fe",
+      "catalog_id": "trakt.list.22202556",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "72394705-9eaf-4d7d-8533-6b004f5287fe",
+      "catalog_id": "trakt.list.22757470",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "80a9fb99-3ec1-44ec-bc65-3a7bae8fc392",
+      "catalog_id": "trakt.list.1642688",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "20f7285a-e5b7-4de3-9fda-046d60850391",
+      "catalog_id": "trakt.list.21869828",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "3b979d6d-2a1b-4cea-b7c7-a83d39ceb2ea",
+      "catalog_id": "trakt.list.801240",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "3b979d6d-2a1b-4cea-b7c7-a83d39ceb2ea",
+      "catalog_id": "trakt.list.2749609",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "5b8452e4-50c1-4097-8848-08057442438e",
+      "catalog_id": "trakt.list.801242",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "52d42c35-ab6c-4f54-9d94-52345fb23391",
+      "catalog_id": "mdblist.162329",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "403a869c-8362-4101-ba1b-aa22f60202b7",
+      "catalog_id": "mdblist.162330",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "ecb19f57-2b83-4bfc-8846-45919f9c4bbb",
+      "catalog_id": "trakt.list.11723506",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "61ed97f0-6598-4230-9261-fc643336779d",
+      "catalog_id": "trakt.list.11723357",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "9727214b-b4b2-4967-bb56-522bd9312b3d",
+      "catalog_id": "trakt.list.21226800",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-a225b44b",
+      "catalog_id": "trakt.list.11723368",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "55cd98d9-ab77-4cf2-a660-6582cf6f7630",
+      "catalog_id": "trakt.list.11214030",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "2148c23d-81a4-4ca1-805f-acfb682655dd",
+      "catalog_id": "trakt.list.21273394",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-142eed43",
+      "catalog_id": "mdblist.162311",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-a2d3bb63",
+      "catalog_id": "mdblist.173508",
+      "media_type": "all",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "33222ebc-e848-48bf-8211-b4e0f1ed5380",
+      "catalog_id": "trakt.list.9429560",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "cd74f767-b492-4a4c-a3a4-7296925e15a3",
+      "catalog_id": "trakt.list.22881797",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "cd74f767-b492-4a4c-a3a4-7296925e15a3",
+      "catalog_id": "trakt.list.828103",
+      "media_type": "all",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-f66bc973",
+      "catalog_id": "trakt.list.11723321",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "311f8d8f-ae99-4cc3-bcde-9afdbf34b1cd",
+      "catalog_id": "trakt.list.11754060",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "311f8d8f-ae99-4cc3-bcde-9afdbf34b1cd",
+      "catalog_id": "trakt.list.11754031",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "311f8d8f-ae99-4cc3-bcde-9afdbf34b1cd",
+      "catalog_id": "trakt.list.11754010",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "311f8d8f-ae99-4cc3-bcde-9afdbf34b1cd",
+      "catalog_id": "trakt.list.11753990",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "311f8d8f-ae99-4cc3-bcde-9afdbf34b1cd",
+      "catalog_id": "trakt.list.11753899",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "518ba136-5847-4f15-9c58-a1d01b7e1d8b",
+      "catalog_id": "trakt.list.22236190",
+      "media_type": "all",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-516b0b3d",
+      "catalog_id": "trakt.list.33753562",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "970d5b2f-ffb4-430f-bf07-b2385bc5c720",
+      "catalog_id": "mdblist.86620",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "970d5b2f-ffb4-430f-bf07-b2385bc5c720",
+      "catalog_id": "streaming.nfx_series",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "970d5b2f-ffb4-430f-bf07-b2385bc5c720",
+      "catalog_id": "mdblist.86628",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "970d5b2f-ffb4-430f-bf07-b2385bc5c720",
+      "catalog_id": "streaming.nfx_movie",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "84707fe6-a7a1-4fa6-b45f-c33fbffb5af7",
+      "catalog_id": "mdblist.86624",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "84707fe6-a7a1-4fa6-b45f-c33fbffb5af7",
+      "catalog_id": "streaming.amp_series",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "84707fe6-a7a1-4fa6-b45f-c33fbffb5af7",
+      "catalog_id": "mdblist.86623",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "84707fe6-a7a1-4fa6-b45f-c33fbffb5af7",
+      "catalog_id": "streaming.amp_movie",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "2558ca1d-d375-4ead-801d-1c4137b65dc0",
+      "catalog_id": "mdblist.89374",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "2558ca1d-d375-4ead-801d-1c4137b65dc0",
+      "catalog_id": "streaming.pmp_series",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "2558ca1d-d375-4ead-801d-1c4137b65dc0",
+      "catalog_id": "mdblist.89366",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "2558ca1d-d375-4ead-801d-1c4137b65dc0",
+      "catalog_id": "streaming.pmp_movie",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "4c917ef0-b03f-485b-9565-71dc70293b47",
+      "catalog_id": "streaming.dnp_series",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "4c917ef0-b03f-485b-9565-71dc70293b47",
+      "catalog_id": "mdblist.86946",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "4c917ef0-b03f-485b-9565-71dc70293b47",
+      "catalog_id": "streaming.dnp_movie",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "4c917ef0-b03f-485b-9565-71dc70293b47",
+      "catalog_id": "mdblist.86945",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "c3f60fe9-b4d9-43ac-bd66-28f3465eb367",
+      "catalog_id": "mdblist.86625",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "c3f60fe9-b4d9-43ac-bd66-28f3465eb367",
+      "catalog_id": "streaming.atp_series",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "c3f60fe9-b4d9-43ac-bd66-28f3465eb367",
+      "catalog_id": "mdblist.86626",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "c3f60fe9-b4d9-43ac-bd66-28f3465eb367",
+      "catalog_id": "streaming.atp_movie",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "83301023-05cd-4cfe-a1d7-9c8594f18e57",
+      "catalog_id": "tmdb.discover.series.top_hbo_shows.mpe9izy7",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "83301023-05cd-4cfe-a1d7-9c8594f18e57",
+      "catalog_id": "streaming.hbm_series",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "83301023-05cd-4cfe-a1d7-9c8594f18e57",
+      "catalog_id": "tmdb.discover.movie.top_hbo_movies.mpe9kdzj",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "83301023-05cd-4cfe-a1d7-9c8594f18e57",
+      "catalog_id": "streaming.hbm_movie",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "d41af3ad-1c18-466d-8b7b-f4652f7be404",
+      "catalog_id": "tmdb.discover.series.top_starz_shows.mpe9ln7v",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "d41af3ad-1c18-466d-8b7b-f4652f7be404",
+      "catalog_id": "streaming.sta_series",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "d41af3ad-1c18-466d-8b7b-f4652f7be404",
+      "catalog_id": "tmdb.discover.movie.top_starz_movies.mpe9mvs2",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "d41af3ad-1c18-466d-8b7b-f4652f7be404",
+      "catalog_id": "streaming.sta_movie",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-8ea9ca41",
+      "catalog_id": "tmdb.discover.series.bbc_shows.mo3f2pnm",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-85f13d7f",
+      "catalog_id": "tmdb.discover.series.itv_shows.mo3f4hdw",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-4975dd8e",
+      "catalog_id": "tmdb.discover.series.channel_4_shows.mo3f7rpz",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-30e4d4ee",
+      "catalog_id": "tmdb.discover.series.channel_4_shows.mo3f5vt2",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-1404a270",
+      "catalog_id": "tmdb.discover.series.uk_tv.mo8ai6c3",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-1404a270",
+      "catalog_id": "tmdb.discover.series.best_of_the_bbc.mo6vmso3",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-5eed6a5d",
+      "catalog_id": "tmdb.discover.series.series.mo7biroh",
+      "media_type": "series",
+      "genre": "Action & Adventure"
+    },
+    {
+      "folder_source_key": "folder-5eed6a5d",
+      "catalog_id": "tmdb.discover.movie.movies.mo7bd2ar",
+      "media_type": "movie",
+      "genre": "Action"
+    },
+    {
+      "folder_source_key": "folder-5eed6a5d",
+      "catalog_id": "trakt.list.4973644",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-39445f19",
+      "catalog_id": "tmdb.discover.series.series.mo7biroh",
+      "media_type": "series",
+      "genre": "Animation"
+    },
+    {
+      "folder_source_key": "folder-39445f19",
+      "catalog_id": "tmdb.discover.movie.movies.mo7bd2ar",
+      "media_type": "movie",
+      "genre": "Animation"
+    },
+    {
+      "folder_source_key": "folder-39445f19",
+      "catalog_id": "trakt.list.21779826",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-39445f19",
+      "catalog_id": "trakt.list.24484523",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-39445f19",
+      "catalog_id": "trakt.list.22847039",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "2ef072a4-9e05-4c38-bc2d-b3aa42aa7806",
+      "catalog_id": "trakt.list.5707382",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "2ef072a4-9e05-4c38-bc2d-b3aa42aa7806",
+      "catalog_id": "trakt.list.23438792",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "2ef072a4-9e05-4c38-bc2d-b3aa42aa7806",
+      "catalog_id": "tmdb.discover.movie.studio_ghibli.mpcpum1k",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "2ef072a4-9e05-4c38-bc2d-b3aa42aa7806",
+      "catalog_id": "tmdb.discover.movie.mappa.mpcq8hnf",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-0cb8dadf",
+      "catalog_id": "tmdb.discover.series.series.mo7biroh",
+      "media_type": "series",
+      "genre": "Comedy"
+    },
+    {
+      "folder_source_key": "folder-0cb8dadf",
+      "catalog_id": "tmdb.discover.movie.movies.mo7bd2ar",
+      "media_type": "movie",
+      "genre": "Comedy"
+    },
+    {
+      "folder_source_key": "folder-0cb8dadf",
+      "catalog_id": "trakt.list.9659389",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-0cb8dadf",
+      "catalog_id": "trakt.list.5040627",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "a8a81ab8-7092-4000-99ba-55883dbd274a",
+      "catalog_id": "tmdb.discover.series.latest_documentary_shows.mpcqbasr",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "a8a81ab8-7092-4000-99ba-55883dbd274a",
+      "catalog_id": "trakt.list.801580",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "a8a81ab8-7092-4000-99ba-55883dbd274a",
+      "catalog_id": "trakt.list.10235726",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "a8a81ab8-7092-4000-99ba-55883dbd274a",
+      "catalog_id": "trakt.list.33762909",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-66b89399",
+      "catalog_id": "tmdb.discover.series.series.mo7biroh",
+      "media_type": "series",
+      "genre": "Drama"
+    },
+    {
+      "folder_source_key": "folder-66b89399",
+      "catalog_id": "tmdb.discover.movie.movies.mo7bd2ar",
+      "media_type": "movie",
+      "genre": "Drama"
+    },
+    {
+      "folder_source_key": "folder-66b89399",
+      "catalog_id": "tmdb.discover.series.uk_drama.mo2wdbu8",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-66b89399",
+      "catalog_id": "trakt.list.1076151",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-66b89399",
+      "catalog_id": "trakt.list.21715794",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-66b89399",
+      "catalog_id": "trakt.list.22957181",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-46536043",
+      "catalog_id": "tmdb.discover.series.series.mo7biroh",
+      "media_type": "series",
+      "genre": "Family"
+    },
+    {
+      "folder_source_key": "folder-46536043",
+      "catalog_id": "tmdb.discover.movie.movies.mo7bd2ar",
+      "media_type": "movie",
+      "genre": "Family"
+    },
+    {
+      "folder_source_key": "folder-46536043",
+      "catalog_id": "mdblist.2415",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-46536043",
+      "catalog_id": "trakt.list.20580022",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-59257d91",
+      "catalog_id": "tvdb.discover.series.fantasy_shows.mo9s284k",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-59257d91",
+      "catalog_id": "tmdb.discover.movie.movies.mo7bd2ar",
+      "media_type": "movie",
+      "genre": "Fantasy"
+    },
+    {
+      "folder_source_key": "folder-59257d91",
+      "catalog_id": "trakt.list.22847198",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "a66f5a51-46ff-4b31-8e9b-5eee99f7cedb",
+      "catalog_id": "tvdb.discover.series.food.mo7esx5s",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "918334b7-58f6-4445-a2e0-a02a670b4c70",
+      "catalog_id": "tmdb.discover.movie.movies.mo7bd2ar",
+      "media_type": "movie",
+      "genre": "Horror"
+    },
+    {
+      "folder_source_key": "918334b7-58f6-4445-a2e0-a02a670b4c70",
+      "catalog_id": "trakt.list.21193458",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "918334b7-58f6-4445-a2e0-a02a670b4c70",
+      "catalog_id": "trakt.list.4203408",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "f34571d4-6250-4144-9918-444b86a46cfa",
+      "catalog_id": "trakt.list.21840363",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "f34571d4-6250-4144-9918-444b86a46cfa",
+      "catalog_id": "trakt.list.6674425",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "f34571d4-6250-4144-9918-444b86a46cfa",
+      "catalog_id": "trakt.list.4467615",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "f34571d4-6250-4144-9918-444b86a46cfa",
+      "catalog_id": "trakt.list.11632332",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "a7fc5577-7054-4b38-aeda-2fb0cac1ffea",
+      "catalog_id": "trakt.list.2619099",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "a7fc5577-7054-4b38-aeda-2fb0cac1ffea",
+      "catalog_id": "trakt.list.4974101",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-ddf9539a",
+      "catalog_id": "tmdb.discover.series.series.mo7biroh",
+      "media_type": "series",
+      "genre": "Mystery"
+    },
+    {
+      "folder_source_key": "folder-ddf9539a",
+      "catalog_id": "tmdb.discover.movie.movies.mo7bd2ar",
+      "media_type": "movie",
+      "genre": "Mystery"
+    },
+    {
+      "folder_source_key": "folder-ddf9539a",
+      "catalog_id": "trakt.list.19594387",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-ddf9539a",
+      "catalog_id": "trakt.list.5221223",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-efcb3605",
+      "catalog_id": "trakt.list.6652017",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-efcb3605",
+      "catalog_id": "trakt.list.23440324",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-efcb3605",
+      "catalog_id": "trakt.list.26957348",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-efcb3605",
+      "catalog_id": "mdblist.84487",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "fa18c34d-4b86-4d83-83b0-0bcaa419094f",
+      "catalog_id": "tmdb.discover.series.latest.mpcugvcy",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "fa18c34d-4b86-4d83-83b0-0bcaa419094f",
+      "catalog_id": "tmdb.discover.series.top_rated.mpcuiqyl",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-a88aa6f6",
+      "catalog_id": "tvdb.discover.series.romantic_shows.mo7eaudn",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-a88aa6f6",
+      "catalog_id": "tmdb.discover.movie.movies.mo7bd2ar",
+      "media_type": "movie",
+      "genre": "Romance"
+    },
+    {
+      "folder_source_key": "folder-a88aa6f6",
+      "catalog_id": "trakt.list.21033097",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-a88aa6f6",
+      "catalog_id": "trakt.list.20701912",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-d012fae7",
+      "catalog_id": "tvdb.discover.series.sci_fi_shows.mo9s3i10",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-d012fae7",
+      "catalog_id": "trakt.list.797798",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-d012fae7",
+      "catalog_id": "tmdb.discover.movie.movies.mo7bd2ar",
+      "media_type": "movie",
+      "genre": "Science Fiction"
+    },
+    {
+      "folder_source_key": "folder-3a8c2787",
+      "catalog_id": "trakt.list.3813071",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-de2c299b",
+      "catalog_id": "tvdb.discover.series.thriller_shows.mo7ecu45",
+      "media_type": "series",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-de2c299b",
+      "catalog_id": "tmdb.discover.movie.movies.mo7bd2ar",
+      "media_type": "movie",
+      "genre": "Thriller"
+    },
+    {
+      "folder_source_key": "folder-de2c299b",
+      "catalog_id": "trakt.list.22803128",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "folder-de2c299b",
+      "catalog_id": "trakt.list.22096238",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "4982862c-fefc-40f4-a690-43cc8c449568",
+      "catalog_id": "tmdb.discover.movie.movies.mo7bd2ar",
+      "media_type": "movie",
+      "genre": "War"
+    },
+    {
+      "folder_source_key": "4982862c-fefc-40f4-a690-43cc8c449568",
+      "catalog_id": "trakt.list.4433767",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "065932d6-8d8b-4614-a652-5e4e966cc7cc",
+      "catalog_id": "tmdb.discover.movie.movies.mo7bd2ar",
+      "media_type": "movie",
+      "genre": "Western"
+    },
+    {
+      "folder_source_key": "065932d6-8d8b-4614-a652-5e4e966cc7cc",
+      "catalog_id": "tmdb.discover.series.series.mo7biroh",
+      "media_type": "series",
+      "genre": "Western"
+    },
+    {
+      "folder_source_key": "065932d6-8d8b-4614-a652-5e4e966cc7cc",
+      "catalog_id": "trakt.list.22847467",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "065932d6-8d8b-4614-a652-5e4e966cc7cc",
+      "catalog_id": "trakt.list.21899611",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "c73776da-5480-43f3-a279-6ac96363446f",
+      "catalog_id": "mdblist.91301",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "c73776da-5480-43f3-a279-6ac96363446f",
+      "catalog_id": "tmdb.discover.movie.decades.1980s",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "4b914923-54f1-4d57-80c2-29c084e9fdff",
+      "catalog_id": "mdblist.91300",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "4b914923-54f1-4d57-80c2-29c084e9fdff",
+      "catalog_id": "tmdb.discover.movie.decades.1990s",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "697f85be-96b6-4c19-ba73-c5653e3b39ff",
+      "catalog_id": "mdblist.91302",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "697f85be-96b6-4c19-ba73-c5653e3b39ff",
+      "catalog_id": "tmdb.discover.movie.decades.2000s",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "55f81ff6-832d-483e-b5eb-6a52fd4ed08f",
+      "catalog_id": "mdblist.91303",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "55f81ff6-832d-483e-b5eb-6a52fd4ed08f",
+      "catalog_id": "tmdb.discover.movie.decades.2010s",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "54f85c47-4623-48d7-bc7c-a9305a4a5e37",
+      "catalog_id": "mdblist.91304",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "54f85c47-4623-48d7-bc7c-a9305a4a5e37",
+      "catalog_id": "tmdb.discover.movie.decades.2020s",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "d20d0613-0230-4460-b583-d524502cace5",
+      "catalog_id": "trakt.list.6252074",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "4efbbe36-09bc-46e7-8703-81a031b2d10b",
+      "catalog_id": "trakt.list.6241345",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "55723bb4-2335-4dc4-a510-8934bb75906c",
+      "catalog_id": "trakt.list.6241270",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "deec1432-c0e6-4201-ae4c-21d7ec9f860a",
+      "catalog_id": "trakt.list.6252088",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "3df117e4-e42b-4898-9226-0e4ebaa075f7",
+      "catalog_id": "trakt.list.6241522",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "fe1d5a0a-5075-4919-83c4-781a936085ec",
+      "catalog_id": "trakt.list.6241276",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "cade12bf-d7fc-4a21-9262-3b96d9f37fe0",
+      "catalog_id": "trakt.list.6241405",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "a2ac324f-6ec3-43d6-ba77-904b0ee6bb0f",
+      "catalog_id": "trakt.list.6242091",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "0bf1438f-3e10-475c-8f3b-4495dda6ad3f",
+      "catalog_id": "trakt.list.24183553",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "c40e3a32-0bef-411e-957a-5ca317cafd03",
+      "catalog_id": "trakt.list.6241250",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "d7b36d03-0f34-40bf-b9d1-32a226362987",
+      "catalog_id": "trakt.list.6241387",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "4d324a93-a762-40c2-8388-a57b38b70768",
+      "catalog_id": "trakt.list.6241187",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "8b122e7c-5119-42d1-9e4e-a880c364ddd4",
+      "catalog_id": "trakt.list.6241367",
+      "media_type": "movie",
+      "genre": "None"
+    },
+    {
+      "folder_source_key": "76d6c08c-cf0b-456a-ae3f-ef94d6833cb7",
+      "catalog_id": "trakt.list.6241445",
+      "media_type": "movie",
+      "genre": "None"
+    }
+  ]
+}

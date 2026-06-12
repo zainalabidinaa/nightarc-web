@@ -14,6 +14,35 @@ public class CollectionRepository: ObservableObject {
 
     private init() {}
 
+    public func loadOrganizer(
+        bundledData: Data,
+        remoteURL: URL? = nil,
+        store: CollectionOrganizerStore = .shared
+    ) async {
+        isLoading = true
+        defer { isLoading = false }
+
+        do {
+            apply(try store.cachedOrBundledLayout(bundledData: bundledData))
+        } catch {
+            collections = []
+            folders = []
+            folderCatalogs = []
+            folderSources = []
+        }
+
+        if let refreshed = await store.refresh(remoteURL: remoteURL) {
+            apply(refreshed)
+        }
+    }
+
+    public func apply(_ organized: OrganizedCollections) {
+        collections = organized.collections
+        folders = organized.folders
+        folderCatalogs = organized.folderCatalogs
+        folderSources = organized.folderSources
+    }
+
     public func load() async {
         isLoading = true
         defer { isLoading = false }

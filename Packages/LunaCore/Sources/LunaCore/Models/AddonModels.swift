@@ -65,8 +65,10 @@ public struct AddonManifest: Codable, Sendable, Identifiable {
     public let version: String
     public let description: String?
     public let types: [String]?
+    public let idPrefixes: [String]?
     public let resources: [AddonResource]?
     public let catalogs: [AddonCatalog]?
+    public let addonCatalogs: [AddonCatalog]?
     public let behaviorHints: AddonBehaviorHints?
     public let transportUrl: String?
     public let logo: String?
@@ -78,8 +80,10 @@ public struct AddonManifest: Codable, Sendable, Identifiable {
         version: String,
         description: String? = nil,
         types: [String]? = nil,
+        idPrefixes: [String]? = nil,
         resources: [AddonResource]? = nil,
         catalogs: [AddonCatalog]? = nil,
+        addonCatalogs: [AddonCatalog]? = nil,
         behaviorHints: AddonBehaviorHints? = nil,
         transportUrl: String? = nil,
         logo: String? = nil,
@@ -90,8 +94,10 @@ public struct AddonManifest: Codable, Sendable, Identifiable {
         self.version = version
         self.description = description
         self.types = types
+        self.idPrefixes = idPrefixes
         self.resources = resources
         self.catalogs = catalogs
+        self.addonCatalogs = addonCatalogs
         self.behaviorHints = behaviorHints
         self.transportUrl = transportUrl
         self.logo = logo

@@ -11,11 +11,13 @@ settings:
     CURRENT_PROJECT_VERSION: "1"
     GENERATE_INFOPLIST_FILE: true
     INFOPLIST_KEY_CFBundleDisplayName: "Luna"
-    INFOPLIST_KEY_NSHumanReadableCopyright: "Copyright © 2026 Luna"
+    INFOPLIST_KEY_NSHumanReadableCopyright: "Copyright \u00A9 2026 Luna"
 
 packages:
   LunaCore:
     path: ../../Packages/LunaCore
+  KSPlayer:
+    path: /tmp/ksplayer-clone
 
 targets:
   LunaMac:
@@ -23,11 +25,13 @@ targets:
     platform: macOS
     sources:
       - path: Sources
+      - path: Assets.xcassets
     resources:
       - path: Resources
         type: folder
     dependencies:
       - package: LunaCore
+      - package: KSPlayer
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: "com.luna.mac"

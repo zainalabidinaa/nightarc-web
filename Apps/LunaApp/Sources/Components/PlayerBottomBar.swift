@@ -4,92 +4,88 @@ import LunaCore
 struct PlayerBottomBar: View {
     @ObservedObject var engine: PlayerEngine
 
-    @State private var showSubtitles = false
-    @State private var showAudio = false
-    @State private var showSources = false
-    @State private var showEpisodes = false
-
     let hasMultipleSources: Bool
+    let onTryAnotherSource: () -> Void
+
+    // Kept for call-site compatibility — unused in this simplified bar
+    @Binding var showSubtitles: Bool
+    @Binding var showAudio: Bool
+    @Binding var showSources: Bool
+    let has4KSource: Bool
+    let onChoose4K: () -> Void
     let hasEpisodes: Bool
     let hasExternalUrl: Bool
 
     var body: some View {
         HStack(spacing: 0) {
-            Button { /* cycle aspect ratio */ } label: {
-                Image(systemName: "rectangle.arrowtriangle.2.inward")
-                    .font(.title3)
-                    .foregroundColor(.white)
-            }
-
-            Spacer()
-
+            // Speed cycle
             Button {
-                let speeds: [Float] = [1.0, 1.25, 1.5, 2.0]
+                let speeds: [Float] = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0]
                 let current = engine.playbackSpeed
                 if let idx = speeds.firstIndex(of: current) {
                     engine.setPlaybackSpeed(speeds[(idx + 1) % speeds.count])
+                } else {
+                    engine.setPlaybackSpeed(1.0)
                 }
             } label: {
-                Image(systemName: "speedometer")
-                    .font(.title3)
+                let speed = engine.playbackSpeed
+                let label = speed == 1.0 ? "1× Speed" : String(format: speed.truncatingRemainder(dividingBy: 1) == 0 ? "%.0f× Speed" : "%.2g× Speed", speed)
+                Text(label)
+                    .font(.system(size: 13, weight: .semibold))
                     .foregroundColor(.white)
-            }
-
-            Spacer()
-
-            Button { showSubtitles = true } label: {
-                Image(systemName: "captions.bubble")
-                    .font(.title3)
-                    .foregroundColor(.white)
-            }
-
-            Spacer()
-
-            Button { showAudio = true } label: {
-                Image(systemName: "waveform")
-                    .font(.title3)
-                    .foregroundColor(.white)
+                    .padding(.horizontal, 14)
+                    .frame(height: 36)
             }
 
             if hasMultipleSources {
                 Spacer()
-                Button { showSources = true } label: {
-                    Image(systemName: "arrow.left.arrow.right")
-                        .font(.title3)
-                        .foregroundColor(.white)
-                }
-            }
 
-            if hasEpisodes {
-                Spacer()
-                Button { showEpisodes = true } label: {
-                    Image(systemName: "rectangle.stack")
-                        .font(.title3)
-                        .foregroundColor(.white)
-                }
-            }
-
-            if hasExternalUrl {
-                Spacer()
-                Button {
-                    if let urlString = engine.currentLaunch?.sourceUrl,
-                       let url = URL(string: urlString) {
-                        UIApplication.shared.open(url)
+                // Retry: next ranked source
+                Button(action: onTryAnotherSource) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "arrow.triangle.2.circlepath")
+                            .font(.system(size: 13, weight: .semibold))
+                        Text("Retry")
+                            .font(.system(size: 13, weight: .semibold))
                     }
-                } label: {
-                    Image(systemName: "arrow.up.forward.app")
-                        .font(.title3)
-                        .foregroundColor(.white)
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 14)
+                    .frame(height: 36)
                 }
             }
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .glassCard(cornerRadius: 24)
         .padding(.horizontal, 8)
-        .sheet(isPresented: $showSubtitles) { SubtitleModal(engine: engine) }
-        .sheet(isPresented: $showAudio) { AudioTrackModal(engine: engine) }
-        .sheet(isPresented: $showSources) { SourcesPanel(engine: engine) }
-        .sheet(isPresented: $showEpisodes) { EpisodesPanel(engine: engine) }
+        .padding(.vertical, 6)
+        .glassCard(cornerRadius: 999)
+        .padding(.horizontal, 8)
+    }
+}
+
+private struct PlayerGlassPanelModifier: ViewModifier {
+    let cornerRadius: CGFloat
+
+    func body(content: Content) -> some View {
+        if #available(iOS 26, *) {
+            content
+                .glassEffect(
+                    .clear.interactive(),
+                    in: .rect(cornerRadius: cornerRadius, style: .continuous)
+                )
+        } else {
+            content
+                .background(.ultraThinMaterial)
+                .background(Color.black.opacity(0.58))
+                .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+                .overlay {
+                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                        .stroke(Color.white.opacity(0.12), lineWidth: 0.5)
+                }
+        }
+    }
+}
+
+extension View {
+    func playerGlassPanel(cornerRadius: CGFloat = 14) -> some View {
+        modifier(PlayerGlassPanelModifier(cornerRadius: cornerRadius))
     }
 }

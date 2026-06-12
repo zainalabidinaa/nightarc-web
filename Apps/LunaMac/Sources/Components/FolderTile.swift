@@ -22,12 +22,12 @@ struct FolderTile: View {
 
                 if let coverURL = row.coverImage ?? row.items.first?.poster,
                    let url = URL(string: coverURL) {
-                    AsyncImage(url: url) { phase in
-                        if case .success(let img) = phase {
-                            img.resizable().aspectRatio(contentMode: .fill)
-                                .frame(width: cardWidth, height: cardHeight)
-                                .clipped()
-                        }
+                    CachedAsyncImage(url: url) { img in
+                        img.resizable().aspectRatio(contentMode: .fill)
+                            .frame(width: cardWidth, height: cardHeight)
+                            .clipped()
+                    } placeholder: {
+                        EmptyView()
                     }
                 }
 

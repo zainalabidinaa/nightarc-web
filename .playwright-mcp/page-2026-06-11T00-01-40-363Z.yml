@@ -1,0 +1,26 @@
+- generic [ref=e18]:
+  - navigation [ref=e19]:
+    - link "house.fill Home" [ref=e20] [cursor=pointer]:
+      - /url: /home
+      - img "house.fill" [ref=e21]
+      - generic [ref=e22]: Home
+    - link "magnifyingglass Search" [ref=e23] [cursor=pointer]:
+      - /url: /search
+      - img "magnifyingglass" [ref=e24]
+      - generic [ref=e25]: Search
+    - link "book.fill Library" [ref=e26] [cursor=pointer]:
+      - /url: /library
+      - img "book.fill" [ref=e27]
+      - generic [ref=e28]: Library
+    - link "gear Settings" [ref=e29] [cursor=pointer]:
+      - /url: /settings
+      - img "gear" [ref=e30]
+      - generic [ref=e31]: Settings
+    - link "person.fill Admin" [ref=e32] [cursor=pointer]:
+      - /url: /admin
+      - img "person.fill" [ref=e33]
+      - generic [ref=e34]: Admin
+    - button "Switch profile" [ref=e36] [cursor=pointer]:
+      - generic [ref=e37]: Z
+      - generic [ref=e38]: Zain
+  - main [ref=e39]

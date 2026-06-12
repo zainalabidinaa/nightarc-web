@@ -1,8 +1,11 @@
 import Foundation
 
-public actor SubtitleService {
+public final class SubtitleService: @unchecked Sendable {
     public static let shared = SubtitleService()
     private let client = StremioHTTPClient.shared
+
+    private static let openSubtitlesProURL = "https://opensubtitlesv3-pro.dexter21767.com/eyJsYW5ncyI6WyJlbmdsaXNoIl0sInNvdXJjZSI6ImFsbCIsImFpVHJhbnNsYXRlZCI6ZmFsc2UsImF1dG9BZGp1c3RtZW50IjpmYWxzZX0="
+    private static let openSubtitlesV3URL = "https://opensubtitles-v3.strem.io"
 
     private init() {}
 
@@ -21,10 +24,11 @@ public actor SubtitleService {
 
         do {
             let response: SubtitleResponse = try await client.getJSON(url: url, type: SubtitleResponse.self)
-            return (response.subtitles ?? []).map { raw in
-                SubtitleItem(
+            return (response.subtitles ?? []).compactMap { raw in
+                guard let url = raw.url, !url.isEmpty else { return nil }
+                return SubtitleItem(
                     id: raw.id ?? UUID().uuidString,
-                    url: raw.url ?? "",
+                    url: url,
                     lang: raw.lang ?? "unknown",
                     name: raw.name
                 )
@@ -41,11 +45,17 @@ public actor SubtitleService {
     ) async throws -> [SubtitleItem] {
         var allSubtitles: [SubtitleItem] = []
 
-        await withTaskGroup(of: [SubtitleItem]?.self) { group in
-            for addon in addons {
-                guard addon.hasResource("subtitles"),
-                      let baseURL = addon.transportUrl else { continue }
+        var baseURLs = addons.compactMap { addon -> String? in
+            guard addon.hasResource("subtitles"), let url = addon.transportUrl else { return nil }
+            return url
+        }
+        baseURLs.append(Self.openSubtitlesProURL)
+        baseURLs.append(Self.openSubtitlesV3URL)
 
+        let uniqueURLs = Array(Set(baseURLs))
+
+        await withTaskGroup(of: [SubtitleItem]?.self) { group in
+            for baseURL in uniqueURLs {
                 group.addTask {
                     do {
                         return try await self.fetchSubtitles(type: type, id: id, baseURL: baseURL)
@@ -62,6 +72,7 @@ public actor SubtitleService {
             }
         }
 
-        return allSubtitles
+        var seen = Set<String>()
+        return allSubtitles.filter { seen.insert($0.url).inserted }
     }
 }

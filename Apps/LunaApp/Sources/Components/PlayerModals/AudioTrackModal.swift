@@ -1,43 +1,78 @@
 import SwiftUI
 import LunaCore
 
-struct AudioTrackModal: View {
+struct AudioPickerPanel: View {
     @ObservedObject var engine: PlayerEngine
-    @Environment(\.dismiss) var dismiss
+    @Binding var isShowing: Bool
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                LunaTheme.background.ignoresSafeArea()
+        VStack(alignment: .leading, spacing: 0) {
+            panelHeader(title: "Audio")
 
-                List {
-                    ForEach(engine.availableAudioTracks, id: \.self) { track in
-                        Button {
-                            engine.selectedAudioTrack = track
-                            dismiss()
-                        } label: {
-                            HStack {
-                                Text(track)
-                                    .foregroundColor(.white)
-                                Spacer()
-                                if engine.selectedAudioTrack == track {
-                                    Image(systemName: "checkmark")
-                                        .foregroundColor(LunaTheme.accent)
+            Divider().background(Color.white.opacity(0.15))
+
+            if engine.availableAudioTracks.isEmpty {
+                Text("No audio tracks available")
+                    .font(.system(size: 13))
+                    .foregroundColor(.white.opacity(0.45))
+                    .padding()
+            } else {
+                ScrollView(showsIndicators: false) {
+                    LazyVStack(spacing: 0) {
+                        ForEach(engine.availableAudioTracks, id: \.self) { track in
+                            let isSelected = engine.selectedAudioTrack == track
+                            Button {
+                                engine.setAudioTrack(track)
+                                withAnimation(.easeInOut(duration: 0.2)) { isShowing = false }
+                            } label: {
+                                HStack(spacing: 8) {
+                                    Text(track)
+                                        .font(.system(size: 13, weight: .medium))
+                                        .foregroundColor(.white)
+                                        .lineLimit(1)
+                                    Spacer(minLength: 4)
+                                    if isSelected {
+                                        Image(systemName: "checkmark")
+                                            .font(.system(size: 11, weight: .semibold))
+                                            .foregroundColor(LunaTheme.accent)
+                                    }
                                 }
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 8)
+                                .background(isSelected ? Color.white.opacity(0.07) : Color.clear)
                             }
+                            .buttonStyle(.plain)
+                            Divider().background(Color.white.opacity(0.08))
                         }
-                        .listRowBackground(LunaTheme.surface)
                     }
                 }
-                .scrollContentBackground(.hidden)
-            }
-            .navigationTitle("Audio")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Done") { dismiss() }
-                }
+                .frame(maxHeight: 220)
             }
         }
+        .frame(width: 210)
+        .playerGlassPanel(cornerRadius: 14)
+    }
+
+    @ViewBuilder
+    private func panelHeader(title: String) -> some View {
+        HStack {
+            Text(title)
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundColor(.white)
+            Spacer()
+            Button {
+                withAnimation(.easeInOut(duration: 0.2)) { isShowing = false }
+            } label: {
+                Image(systemName: "xmark")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundColor(.white.opacity(0.7))
+                    .frame(width: 26, height: 26)
+                    .glassCircle(clear: true)
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.horizontal, 14)
+        .padding(.top, 10)
+        .padding(.bottom, 8)
     }
 }

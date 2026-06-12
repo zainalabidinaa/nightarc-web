@@ -62,21 +62,56 @@ public struct WatchProgressEntry: Codable, Sendable, Identifiable {
     }
 }
 
+public extension WatchProgressEntry {
+    var decodedMediaId: String {
+        mediaId.removingPercentEncoding ?? mediaId
+    }
+
+    var parentOrSelfMediaId: String {
+        if let parentMetaId, !parentMetaId.isEmpty {
+            return parentMetaId
+        }
+        return decodedMediaId.split(separator: ":").first.map(String.init) ?? decodedMediaId
+    }
+
+    var inferredSeason: Int? {
+        season ?? decodedMediaId.split(separator: ":").dropFirst().first.flatMap { Int($0) }
+    }
+
+    var inferredEpisode: Int? {
+        episode ?? decodedMediaId.split(separator: ":").dropFirst(2).first.flatMap { Int($0) }
+    }
+
+    var thumbnailFallbackForContinueWatching: String? {
+        guard inferredSeason != nil || inferredEpisode != nil else { return nil }
+        return poster
+    }
+
+    func matchesMedia(id: String) -> Bool {
+        let decodedId = id.removingPercentEncoding ?? id
+        return decodedMediaId == decodedId || parentOrSelfMediaId == decodedId
+    }
+}
+
 public struct ContinueWatchingItem: Codable, Sendable, Identifiable {
     public let mediaId: String
+    public let parentMediaId: String?
     public let mediaType: String
     public let name: String
     public let poster: String?
+    public let logo: String?
     public let resumePositionMs: Double
     public let durationMs: Double
     public let progressFraction: Double
     public let seasonNumber: Int?
     public let episodeNumber: Int?
     public let episodeTitle: String?
+    public let thumbnail: String?
 
     enum CodingKeys: String, CodingKey {
-        case name, poster
+        case name, poster, logo, thumbnail
         case mediaId = "media_id"
+        case parentMediaId = "parent_media_id"
         case mediaType = "media_type"
         case resumePositionMs = "resume_position_ms"
         case durationMs = "duration_ms"
@@ -90,26 +125,32 @@ public struct ContinueWatchingItem: Codable, Sendable, Identifiable {
 
     public init(
         mediaId: String,
+        parentMediaId: String? = nil,
         mediaType: String,
         name: String,
         poster: String? = nil,
+        logo: String? = nil,
         resumePositionMs: Double = 0,
         durationMs: Double = 0,
         progressFraction: Double = 0,
         seasonNumber: Int? = nil,
         episodeNumber: Int? = nil,
-        episodeTitle: String? = nil
+        episodeTitle: String? = nil,
+        thumbnail: String? = nil
     ) {
         self.mediaId = mediaId
+        self.parentMediaId = parentMediaId
         self.mediaType = mediaType
         self.name = name
         self.poster = poster
+        self.logo = logo
         self.resumePositionMs = resumePositionMs
         self.durationMs = durationMs
         self.progressFraction = progressFraction
         self.seasonNumber = seasonNumber
         self.episodeNumber = episodeNumber
         self.episodeTitle = episodeTitle
+        self.thumbnail = thumbnail
     }
 }
 

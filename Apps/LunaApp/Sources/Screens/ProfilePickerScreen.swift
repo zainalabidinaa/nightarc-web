@@ -183,7 +183,7 @@ struct ProfileCreateSheet: View {
                 } label: {
                     HStack {
                         if isLoading {
-                            ProgressView().tint(.white)
+                            ProgressView().tint(.black)
                         }
                         Text("Create")
                             .font(.headline)
@@ -327,11 +327,13 @@ struct EditProfileSheet: View {
     @State private var name: String
     @State private var selectedAvatarId: Int?
     @State private var isLoading = false
+    @State private var gifStill: Bool
 
     init(profile: LunaProfile) {
         self.profile = profile
         _name = State(initialValue: profile.name)
         _selectedAvatarId = State(initialValue: profile.avatarId)
+        _gifStill = State(initialValue: UserDefaults.standard.bool(forKey: "avatar_gif_still_\(profile.id)"))
     }
 
     private let columns = [
@@ -464,12 +466,34 @@ struct EditProfileSheet: View {
                         }
                         .padding(.horizontal)
 
+                        // GIF toggle — only shown when selected avatar is animated
+                        let urls = avatarURLs()
+                        if let id = selectedAvatarId, id < urls.count,
+                           urls[id].hasSuffix(".gif") {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Use Still Frame")
+                                        .foregroundColor(.white)
+                                    Text("Show a static image instead of animating")
+                                        .font(.caption)
+                                        .foregroundColor(LunaTheme.textSecondary)
+                                }
+                                Spacer()
+                                Toggle("", isOn: $gifStill)
+                                    .labelsHidden()
+                                    .tint(LunaTheme.accent)
+                            }
+                            .padding()
+                            .glassCard(cornerRadius: 12)
+                            .padding(.horizontal)
+                        }
+
                         Button {
                             save()
                         } label: {
                             HStack {
                                 if isLoading {
-                                    ProgressView().tint(.white)
+                                    ProgressView().tint(.black)
                                 }
                                 Text("Save")
                                     .font(.headline)
@@ -562,6 +586,7 @@ struct EditProfileSheet: View {
                 createdAt: updated.createdAt
             )
             try? await profileManager.updateProfile(updated)
+            UserDefaults.standard.set(gifStill, forKey: "avatar_gif_still_\(profile.id)")
             isLoading = false
             dismiss()
         }

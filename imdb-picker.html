@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>IMDb Badge Picker</title>
+<style>
+* { box-sizing:border-box;margin:0;padding:0 }
+body { background:#080808;font-family:system-ui,-apple-system,sans-serif;color:#fff;padding:28px 20px;min-height:100vh }
+h1 { font-size:19px;font-weight:700;letter-spacing:-0.3px;margin-bottom:4px }
+.sub { color:rgba(255,255,255,.38);font-size:12px;margin-bottom:26px }
+.row { display:flex;gap:10px;overflow-x:auto;padding-bottom:14px;margin-bottom:28px;scrollbar-width:none }
+.col { display:flex;flex-direction:column;align-items:center;gap:7px;flex-shrink:0;cursor:pointer }
+.card { width:110px;border-radius:12px;overflow:hidden;border:2px solid rgba(255,255,255,.08);background:#0f0f0f;transition:border-color .15s,box-shadow .15s }
+.card.sel { border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.1) }
+.poster { height:155px;display:flex;align-items:center;justify-content:center;font-size:36px }
+.info { padding:6px 8px 9px;background:#0a0a0a }
+.ct { font-size:11px;font-weight:400;margin-bottom:5px;line-height:1.3 }
+.lbl { font-size:10px;text-align:center;color:rgba(255,255,255,.3);transition:color .15s }
+.lbl.sel { color:#fff;font-weight:600 }
+.slabel { color:rgba(255,255,255,.3);font-size:10px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px }
+.cu { background:#141414;border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:18px 22px;display:inline-flex;flex-direction:column;gap:10px }
+.cn { font-size:13px;font-weight:600 }
+.cs { font-size:11px;color:rgba(255,255,255,.35) }
+.hint { margin-top:16px;color:rgba(255,255,255,.4);font-size:11px;display:none }
+.hint b { color:#fff;font-weight:600 }
+
+/* badge base */
+.b { display:inline-flex;align-items:center }
+
+.d1 { gap:5px }
+.d1 .p { background:#F5C518;color:#000;font-size:8px;font-weight:900;border-radius:3px;padding:2px 4px }
+.d1 .s,.d1 .n { font-size:10px }
+.d1 .s { color:#F5C518;font-size:8px }
+.d1 .n { color:rgba(255,255,255,.85);font-weight:600 }
+
+.d2 { gap:5px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:3px 8px }
+.d2 .p { color:#F5C518;font-size:9px;font-weight:900 }
+.d2 .sep { width:1px;height:10px;background:rgba(255,255,255,.18);display:inline-block }
+.d2 .s { color:#F5C518;font-size:9px }
+.d2 .n { color:#fff;font-size:10px;font-weight:600 }
+
+.d3 { gap:4px }
+.d3 .s { color:#F5C518;font-size:13px }
+.d3 .n { color:#fff;font-size:12px;font-weight:700 }
+.d3 .den { color:rgba(255,255,255,.3);font-size:9px }
+
+.d4 { gap:4px;background:#F5C518;border-radius:5px;padding:2px 7px }
+.d4 .p,.d4 .s,.d4 .n { color:#000 }
+.d4 .p { font-size:9px;font-weight:900 }
+.d4 .s { font-size:9px }
+.d4 .n { font-size:10px;font-weight:800 }
+
+.d5 { gap:3px;align-items:baseline }
+.d5 .p { color:#F5C518;font-size:9px;font-weight:900 }
+.d5 .sl { color:rgba(255,255,255,.2);font-size:10px }
+.d5 .s { color:#F5C518;font-size:9px }
+.d5 .n { color:#fff;font-size:13px;font-weight:700;letter-spacing:-.3px }
+
+.d6 { gap:5px }
+.d6 .dot { width:6px;height:6px;border-radius:50%;background:#F5C518;flex-shrink:0;display:inline-block }
+.d6 .n { color:#fff;font-size:11px;font-weight:600 }
+.d6 .p { color:rgba(255,255,255,.3);font-size:9px }
+
+.d7 { gap:5px;background:#1a1a1a;border:1px solid rgba(245,197,24,.27);border-radius:6px;padding:3px 8px }
+.d7 .s { color:#F5C518;font-size:15px }
+.d7 .stk { display:flex;flex-direction:column;line-height:1 }
+.d7 .n { color:#fff;font-size:11px;font-weight:700 }
+.d7 .sub { color:rgba(255,255,255,.3);font-size:7px;letter-spacing:.04em }
+
+.d8 { gap:5px }
+.d8 .p { color:#F5C518;font-size:10px;font-weight:900;letter-spacing:.5px }
+.d8 .s { color:#F5C518;font-size:14px }
+.d8 .n { color:#fff;font-size:14px;font-weight:700 }
+</style>
+</head>
+<body>
+<h1>IMDb Badge Designs</h1>
+<p class="sub">Tap any card to select — shown in context on a poster.</p>
+<div class="row">
+
+  <!-- 1 Current -->
+  <div class="col" data-id="1" onclick="pick(1)">
+    <div class="card sel" id="c1">
+      <div class="poster" style="background:linear-gradient(160deg,#1a2535 0%,#080808 100%)">🎬</div>
+      <div class="info"><div class="ct">FROM</div>
+        <span class="b d1"><span class="p">IMDb</span><span class="s">★</span><span class="n">8.5</span></span>
+      </div>
+    </div>
+    <span class="lbl sel" id="l1">Current ✦</span>
+  </div>
+
+  <!-- 2 Frosted Pill -->
+  <div class="col" data-id="2" onclick="pick(2)">
+    <div class="card" id="c2">
+      <div class="poster" style="background:linear-gradient(160deg,#1f1a35 0%,#080808 100%)">🎬</div>
+      <div class="info"><div class="ct">The Boys</div>
+        <span class="b d2"><span class="p">IMDb</span><span class="sep"></span><span class="s">★</span><span class="n">8.5</span></span>
+      </div>
+    </div>
+    <span class="lbl" id="l2">Frosted Pill</span>
+  </div>
+
+  <!-- 3 Compact Star -->
+  <div class="col" data-id="3" onclick="pick(3)">
+    <div class="card" id="c3">
+      <div class="poster" style="background:linear-gradient(160deg,#1a2520 0%,#080808 100%)">🎬</div>
+      <div class="info"><div class="ct">FROM</div>
+        <span class="b d3"><span class="s">★</span><span class="n">8.5</span><span class="den">/10</span></span>
+      </div>
+    </div>
+    <span class="lbl" id="l3">Compact Star</span>
+  </div>
+
+  <!-- 4 All Yellow -->
+  <div class="col" data-id="4" onclick="pick(4)">
+    <div class="card" id="c4">
+      <div class="poster" style="background:linear-gradient(160deg,#2a1a1a 0%,#080808 100%)">🎬</div>
+      <div class="info"><div class="ct">The Boys</div>
+        <span class="b d4"><span class="p">IMDb</span><span class="s">★</span><span class="n">8.5</span></span>
+      </div>
+    </div>
+    <span class="lbl" id="l4">Yellow Badge</span>
+  </div>
+
+  <!-- 5 Slash -->
+  <div class="col" data-id="5" onclick="pick(5)">
+    <div class="card" id="c5">
+      <div class="poster" style="background:linear-gradient(160deg,#1a2535 0%,#080808 100%)">🎬</div>
+      <div class="info"><div class="ct">FROM</div>
+        <span class="b d5"><span class="p">IMDb</span><span class="sl">/</span><span class="s">★</span><span class="n">8.5</span></span>
+      </div>
+    </div>
+    <span class="lbl" id="l5">Slash</span>
+  </div>
+
+  <!-- 6 Dot Muted -->
+  <div class="col" data-id="6" onclick="pick(6)">
+    <div class="card" id="c6">
+      <div class="poster" style="background:linear-gradient(160deg,#1f1a35 0%,#080808 100%)">🎬</div>
+      <div class="info"><div class="ct">The Boys</div>
+        <span class="b d6"><span class="dot"></span><span class="n">8.5</span><span class="p">IMDb</span></span>
+      </div>
+    </div>
+    <span class="lbl" id="l6">Dot + Muted</span>
+  </div>
+
+  <!-- 7 Dark Card -->
+  <div class="col" data-id="7" onclick="pick(7)">
+    <div class="card" id="c7">
+      <div class="poster" style="background:linear-gradient(160deg,#1a2520 0%,#080808 100%)">🎬</div>
+      <div class="info"><div class="ct">FROM</div>
+        <span class="b d7"><span class="s">★</span><span class="stk"><span class="n">8.5</span><span class="sub">IMDB</span></span></span>
+      </div>
+    </div>
+    <span class="lbl" id="l7">Dark Card</span>
+  </div>
+
+  <!-- 8 Text Only -->
+  <div class="col" data-id="8" onclick="pick(8)">
+    <div class="card" id="c8">
+      <div class="poster" style="background:linear-gradient(160deg,#2a1a1a 0%,#080808 100%)">🎬</div>
+      <div class="info"><div class="ct">The Boys</div>
+        <span class="b d8"><span class="p">IMDb</span><span class="s">★</span><span class="n">8.5</span></span>
+      </div>
+    </div>
+    <span class="lbl" id="l8">Text Only</span>
+  </div>
+
+</div>
+
+<div class="slabel">Close-up</div>
+<div class="cu">
+  <div id="cu-badge"></div>
+  <div><div class="cn" id="cu-name">Current</div><div class="cs" id="cu-sub">Yellow pill + star</div></div>
+</div>
+<p class="hint" id="hint">Tell Claude <b id="hn"></b> and it'll be applied to the app.</p>
+
+<script>
+const data = {
+  1:{label:"Current",        sub:"Yellow pill + star",   cls:"d1", parts:['p:IMDb','s:★','n:8.5']},
+  2:{label:"Frosted Pill",   sub:"Glass border pill",    cls:"d2", parts:['p:IMDb','sep:','s:★','n:8.5']},
+  3:{label:"Compact Star",   sub:"Just star + number",   cls:"d3", parts:['s:★','n:8.5','den:/10']},
+  4:{label:"Yellow Badge",   sub:"All-yellow solid",     cls:"d4", parts:['p:IMDb','s:★','n:8.5']},
+  5:{label:"Slash",          sub:"IMDb / ★ rating",      cls:"d5", parts:['p:IMDb','sl:/','s:★','n:8.5']},
+  6:{label:"Dot + Muted",    sub:"Yellow dot leader",    cls:"d6", parts:['dot:','n:8.5','p:IMDb']},
+  7:{label:"Dark Card",      sub:"Bordered star stack",  cls:"d7", parts:['s:★','stk:8.5']},
+  8:{label:"Text Only",      sub:"Bold minimal",         cls:"d8", parts:['p:IMDb','s:★','n:8.5']},
+};
+
+let cur = 1;
+
+function buildBadge(id) {
+  const d = data[id];
+  const wrap = document.createElement('span');
+  wrap.className = 'b ' + d.cls;
+  d.parts.forEach(part => {
+    const [cls, text] = part.split(':');
+    if (cls === 'stk') {
+      const stk = document.createElement('span');
+      stk.className = 'stk';
+      const n = document.createElement('span'); n.className='n'; n.textContent='8.5';
+      const s = document.createElement('span'); s.className='sub'; s.textContent='IMDB';
+      stk.append(n, s);
+      wrap.appendChild(stk);
+    } else {
+      const el = document.createElement('span');
+      el.className = cls;
+      if (text) el.textContent = text;
+      wrap.appendChild(el);
+    }
+  });
+  return wrap;
+}
+
+function pick(id) {
+  const prev = cur;
+  cur = id;
+  document.getElementById('c'+prev).classList.remove('sel');
+  document.getElementById('l'+prev).classList.remove('sel');
+  document.getElementById('l'+prev).textContent = data[prev].label;
+  document.getElementById('c'+id).classList.add('sel');
+  document.getElementById('l'+id).classList.add('sel');
+  document.getElementById('l'+id).textContent = data[id].label + (id===1?' ✦':'');
+  const cu = document.getElementById('cu-badge');
+  cu.textContent = '';
+  cu.appendChild(buildBadge(id));
+  document.getElementById('cu-name').textContent = data[id].label;
+  document.getElementById('cu-sub').textContent = data[id].sub;
+  const hint = document.getElementById('hint');
+  hint.style.display = id===1 ? 'none' : '';
+  document.getElementById('hn').textContent = '"' + data[id].label + '"';
+}
+
+// init close-up
+document.getElementById('cu-badge').appendChild(buildBadge(1));
+</script>
+</body>
+</html>

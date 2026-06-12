@@ -27,7 +27,8 @@ public final class UpcomingItemsService: ObservableObject {
 
     public func refreshIfNeeded(likedItems: [LikedItem]) async {
         let now = Date()
-        if let last = lastRefresh, now.timeIntervalSince(last) < 86_400 { return }
+        // Throttle to once per 4 hours (not 24) so likes made today show up soon.
+        if let last = lastRefresh, now.timeIntervalSince(last) < 4 * 3600 { return }
         await refresh(likedItems: likedItems)
     }
 
@@ -36,9 +37,17 @@ public final class UpcomingItemsService: ObservableObject {
         var result: [String: UpcomingInfo] = [:]
         await withTaskGroup(of: (String, UpcomingInfo?).self) { group in
             for item in likedItems {
-                guard let tmdbId = item.tmdbId else { continue }
                 group.addTask {
-                    let info = await self.fetchUpcomingInfo(mediaId: item.mediaId, tmdbId: tmdbId, mediaType: item.mediaType, apiKey: key)
+                    // Resolve TMDB ID: use stored value if available, otherwise look up
+                    // from the IMDb ID via the /find endpoint.
+                    let tmdbId: Int?
+                    if let stored = item.tmdbId {
+                        tmdbId = stored
+                    } else {
+                        tmdbId = await self.resolveTMDBId(imdbId: item.mediaId, mediaType: item.mediaType, apiKey: key)
+                    }
+                    guard let resolvedId = tmdbId else { return (item.mediaId, nil) }
+                    let info = await self.fetchUpcomingInfo(mediaId: item.mediaId, tmdbId: resolvedId, mediaType: item.mediaType, apiKey: key)
                     return (item.mediaId, info)
                 }
             }
@@ -48,6 +57,19 @@ public final class UpcomingItemsService: ObservableObject {
         }
         upcomingInfo = result
         lastRefresh = Date()
+    }
+
+    private func resolveTMDBId(imdbId: String, mediaType: String, apiKey: String) async -> Int? {
+        // Only attempt for plain IMDb IDs (tt\d+), not episode IDs.
+        let rootId = imdbId.split(separator: ":").first.map(String.init) ?? imdbId
+        guard rootId.hasPrefix("tt"), rootId.dropFirst(2).allSatisfy(\.isNumber) else { return nil }
+        guard let url = URL(string: "\(base)/find/\(rootId)?api_key=\(apiKey)&external_source=imdb_id") else { return nil }
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let result = try JSONDecoder().decode(TMDBFindResponse.self, from: data)
+            if mediaType == "movie" { return result.movieResults.first?.id }
+            return result.tvResults.first?.id
+        } catch { return nil }
     }
 
     public func isUpcoming(_ mediaId: String) -> Bool { upcomingInfo[mediaId]?.isUpcoming ?? false }
@@ -99,6 +121,16 @@ public final class UpcomingItemsService: ObservableObject {
         let df = DateFormatter(); df.dateStyle = .medium; df.timeStyle = .none; return df.string(from: date)
     }
 }
+
+private struct TMDBFindResponse: Decodable {
+    let movieResults: [TMDBFindResult]
+    let tvResults: [TMDBFindResult]
+    enum CodingKeys: String, CodingKey {
+        case movieResults = "movie_results"
+        case tvResults = "tv_results"
+    }
+}
+private struct TMDBFindResult: Decodable { let id: Int }
 
 private struct TMDBMovieResponse: Decodable {
     let releaseDate: String?

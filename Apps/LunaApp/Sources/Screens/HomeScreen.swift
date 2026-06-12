@@ -139,6 +139,9 @@ struct HomeScreen: View {
                                         selectedMedia = item
                                         showDetail = true
                                     }
+                                }, onHeaderTap: {
+                                    selectedFolder = row
+                                    showFolder = true
                                 }, metrics: metrics)
                                 .onAppear {
                                     if row.id == catalogRepo.catalogRows.last?.id {
@@ -229,6 +232,10 @@ struct HomeScreen: View {
             }
             .task {
                 guard let profile = profileManager.currentProfile else { return }
+                // Show shimmer immediately — isLoading only becomes true inside
+                // loadAllCatalogs/loadFromCollections, which means the gap between
+                // app launch and the first catalog fetch shows a blank screen.
+                catalogRepo.isLoading = true
                 await addonRepo.loadAddons(profileId: profile.id)
                 async let continueWatching: Void = homeRepo.loadContinueWatching(profileId: profile.id)
                 await loadGlobalOrganizer()
@@ -242,16 +249,35 @@ struct HomeScreen: View {
                             addons: addonRepo.enabledAddons
                         )
                     }
+                } else {
+                    catalogRepo.isLoading = false
                 }
                 await continueWatching
+                warmupContinueWatching()
             }
             .onChange(of: preferenceStore.revision) { _, _ in
                 Task { await reloadCatalogRows() }
             }
             .onChange(of: scenePhase) { _, phase in
                 guard phase == .active, let profile = profileManager.currentProfile else { return }
-                Task { await homeRepo.loadContinueWatching(profileId: profile.id) }
+                Task {
+                    await homeRepo.loadContinueWatching(profileId: profile.id)
+                    warmupContinueWatching()
+                }
             }
+        }
+    }
+
+    private func warmupContinueWatching() {
+        let items = homeRepo.continueWatchingItems
+        let addons = addonRepo.enabledAddons
+        guard !items.isEmpty, !addons.isEmpty else { return }
+        // Pre-warm streams for the first 5 continue-watching items in background.
+        // By the time the user taps play, streams are already cached.
+        for item in items.prefix(5) {
+            let type = item.mediaType
+            let id = item.mediaId
+            Task { await StreamWarmupRepository.shared.warmup(type: type, id: id, addons: addons) }
         }
     }
 
@@ -394,31 +420,36 @@ struct FolderCell: View {
 struct CatalogRowView: View {
     let row: CatalogRow
     let onTap: (MetaPreview) -> Void
+    var onHeaderTap: (() -> Void)? = nil
     var metrics: ResponsiveMetrics? = nil
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                if let titleLogo = row.titleLogo, let url = URL(string: titleLogo) {
-                    AsyncImage(url: url) { phase in
-                        if case .success(let image) = phase {
-                            image
-                                .resizable()
-                                .scaledToFit()
-                                .frame(height: 24)
+            Button(action: { onHeaderTap?() }) {
+                HStack {
+                    if let titleLogo = row.titleLogo, let url = URL(string: titleLogo) {
+                        AsyncImage(url: url) { phase in
+                            if case .success(let image) = phase {
+                                image
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(height: 24)
+                            }
                         }
+                    } else if !(row.hideTitle ?? false) {
+                        Text(row.title)
+                            .font(.system(size: 20, weight: .semibold))
+                            .foregroundColor(.white)
                     }
-                } else if !(row.hideTitle ?? false) {
-                    Text(row.title)
-                        .font(.system(size: 17, weight: .semibold))
-                        .foregroundColor(.white)
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundColor(LunaTheme.textSecondary)
                 }
-                Spacer()
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundColor(LunaTheme.textSecondary)
+                .padding(.horizontal)
             }
-            .padding(.horizontal)
+            .buttonStyle(.plain)
+            .disabled(onHeaderTap == nil)
 
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 12) {
@@ -452,7 +483,7 @@ struct ContinueWatchingRow: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Text("Continue Watching")
-                    .font(.system(size: 17, weight: .semibold))
+                    .font(.system(size: 20, weight: .semibold))
                     .foregroundColor(.white)
                 Spacer()
                 Image(systemName: "chevron.right")

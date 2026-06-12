@@ -26,6 +26,7 @@ supabase/.temp/
 # Misc
 *.log
 *.tmp
+.superpowers/
 
 # Separate repos / submodules
 LunaWeb/

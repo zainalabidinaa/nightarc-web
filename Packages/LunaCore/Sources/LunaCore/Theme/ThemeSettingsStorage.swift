@@ -1,6 +1,7 @@
 import Foundation
 
-public final class ThemeSettingsStorage: @unchecked Sendable {
+@MainActor
+public final class ThemeSettingsStorage {
     public static let shared = ThemeSettingsStorage()
     private let defaults = UserDefaults.standard
     private let themeKey = "luna_selected_theme"
@@ -9,7 +10,7 @@ public final class ThemeSettingsStorage: @unchecked Sendable {
 
     public func loadTheme() -> AppTheme {
         guard let raw = defaults.string(forKey: themeKey),
-              let theme = AppTheme(rawValue: raw) else { return .violet }
+              let theme = AppTheme(rawValue: raw) else { return .white }
         return theme
     }
     public func saveTheme(_ theme: AppTheme) {

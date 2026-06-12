@@ -42,7 +42,12 @@ public class LibraryRepository: ObservableObject {
         )
 
         libraryItems.insert(item, at: 0)
-        try? await syncService.pushLibraryItem(item: item)
+        do {
+            try await syncService.pushLibraryItem(item: item)
+            NSLog("[Library] push succeeded for %@", mediaId)
+        } catch {
+            NSLog("[Library] push FAILED for %@: %@", mediaId, String(describing: error))
+        }
     }
 
     public func removeFromLibrary(profileId: String, mediaId: String) async {

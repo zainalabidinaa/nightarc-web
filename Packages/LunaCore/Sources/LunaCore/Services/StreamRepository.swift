@@ -11,16 +11,60 @@ public class StreamRepository: ObservableObject {
 
     private init() {}
 
-    public func fetchStreams(type: String, id: String, addons: [AddonManifest]) async {
-        isLoading = true
-        defer { isLoading = false }
+    public func clearStreams() {
+        streams = []
+        isLoading = false
+    }
 
-        do {
-            let found = try await streamService.fetchStreamsFromAddons(type: type, id: id, addons: addons)
-            self.streams = found
-        } catch {
-            self.streams = []
+    public func fetchStreams(type: String, id: String, addons: [AddonManifest]) async {
+        streams = []
+        isLoading = true
+
+        let eligible = addons.filter {
+            $0.hasResource("stream") &&
+            ($0.types?.contains(type) ?? false) &&
+            $0.transportUrl != nil
         }
+
+        guard !eligible.isEmpty else {
+            isLoading = false
+            return
+        }
+
+        // Fire all addon requests in parallel and publish each result immediately
+        // as it arrives instead of waiting for the slowest addon.
+        await withTaskGroup(of: [StreamItem].self) { group in
+            for addon in eligible {
+                guard let baseURL = addon.transportUrl else { continue }
+                group.addTask {
+                    guard let raw = try? await self.streamService.fetchStreams(
+                        type: type, id: id, baseURL: baseURL
+                    ) else { return [] }
+                    let mapped = raw.map { stream in
+                        StreamItem(
+                            name: stream.name, title: stream.title,
+                            description: stream.description, url: stream.url,
+                            infoHash: stream.infoHash, fileIdx: stream.fileIdx,
+                            externalUrl: stream.externalUrl, ytId: stream.ytId,
+                            playerFrameUrl: stream.playerFrameUrl, sources: stream.sources,
+                            sourceName: stream.sourceName,
+                            addonName: addon.name, addonId: addon.id,
+                            behaviorHints: stream.behaviorHints, subtitles: stream.subtitles
+                        )
+                    }
+                    return mapped.filter { StreamMatchGuard.shouldKeep($0, type: type, id: id) }
+                }
+            }
+
+            // Each addon result publishes immediately — UI updates as addons respond.
+            for await addonStreams in group {
+                if !addonStreams.isEmpty {
+                    self.streams.append(contentsOf: addonStreams)
+                }
+            }
+        }
+
+        isLoading = false
     }
 
     public func fetchStreamsFromSingleAddon(type: String, id: String, addon: AddonManifest) async throws -> [StreamItem] {
@@ -30,16 +74,20 @@ public class StreamRepository: ObservableObject {
             StreamItem(
                 name: stream.name, title: stream.title, description: stream.description,
                 url: stream.url, infoHash: stream.infoHash, fileIdx: stream.fileIdx,
-                externalUrl: stream.externalUrl, sources: stream.sources,
+                externalUrl: stream.externalUrl, ytId: stream.ytId,
+                playerFrameUrl: stream.playerFrameUrl, sources: stream.sources,
                 sourceName: stream.sourceName, addonName: addon.name, addonId: addon.id,
-                behaviorHints: stream.behaviorHints
+                behaviorHints: stream.behaviorHints, subtitles: stream.subtitles
             )
         }
+        .filter { StreamMatchGuard.shouldKeep($0, type: type, id: id) }
     }
 
     public func bestStream(for type: String, id: String, from addons: [AddonManifest]) async -> StreamItem? {
         await fetchStreams(type: type, id: id, addons: addons)
-        return streams.first { $0.hasDirectUrl }
-            ?? streams.first
+        // Use the same ranked selector as PlayerScreen:
+        // bolt ⚡ (10 000 pts) → cached (5 000 pts) → highest mbps (≤ 1 000 pts)
+        // then resolution/codec tie-breakers.
+        return StreamSourceSelector.initialStream(from: streams, prefer4K: false)
     }
 }

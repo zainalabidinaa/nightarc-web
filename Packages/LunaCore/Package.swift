@@ -5,7 +5,7 @@ let package = Package(
     name: "LunaCore",
     platforms: [
         .iOS(.v17),
-        .macOS("26.0")
+        .macOS("14.0")
     ],
     products: [
         .library(
@@ -17,6 +17,11 @@ let package = Package(
         .target(
             name: "LunaCore",
             path: "Sources/LunaCore"
+        ),
+        .testTarget(
+            name: "LunaCoreTests",
+            dependencies: ["LunaCore"],
+            path: "Tests/LunaCoreTests"
         )
     ]
 )

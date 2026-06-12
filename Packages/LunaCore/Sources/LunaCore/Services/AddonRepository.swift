@@ -8,17 +8,30 @@ public class AddonRepository: ObservableObject {
     @Published public var isLoading = false
     @Published public var errorMessage: String?
 
-    private let syncService = SyncService()
+    private let syncService = SyncService.shared
     private var currentProfileId: String?
 
     // Caches parsed manifests for 5 minutes so repeated loads (e.g. tab switches)
     // don't re-hit the network. AIOMetadata sends no-store headers so URLCache
     // doesn't help here; we cache at the app layer instead.
-    private nonisolated(unsafe) static var manifestCache: [String: (AddonManifest, Date)] = [:]
+    @MainActor
+    private static var manifestCache: [String: (AddonManifest, Date)] = [:]
     private static let manifestTTL: TimeInterval = 300
     private var systemAddonUrl: String?
+    private var disabledAddonUrls: Set<String> = []
 
     private init() {}
+
+    private func disabledKey(for profileId: String) -> String { "luna.disabledAddons.\(profileId)" }
+
+    private func loadDisabledUrls(profileId: String) {
+        let raw = UserDefaults.standard.stringArray(forKey: disabledKey(for: profileId)) ?? []
+        disabledAddonUrls = Set(raw)
+    }
+
+    private func saveDisabledUrls(profileId: String) {
+        UserDefaults.standard.set(Array(disabledAddonUrls), forKey: disabledKey(for: profileId))
+    }
 
     /// URLs that are provided automatically (defaults + admin system addon) and must
     /// NOT be written back into the per-user `installed_addons` table. Mirrors the web
@@ -42,6 +55,7 @@ public class AddonRepository: ObservableObject {
     public func loadAddons(profileId: String, systemAddonUrl: String? = nil) async {
         self.currentProfileId = profileId
         self.systemAddonUrl = systemAddonUrl
+        loadDisabledUrls(profileId: profileId)
         isLoading = true
         defer { isLoading = false }
 
@@ -64,6 +78,7 @@ public class AddonRepository: ObservableObject {
         var addons: [ManagedAddon] = []
         let existing = managedAddons
 
+        let disabledSnapshot = disabledAddonUrls
         await withTaskGroup(of: ManagedAddon?.self) { group in
             for (index, url) in urls.enumerated() {
                 group.addTask {
@@ -72,7 +87,7 @@ public class AddonRepository: ObservableObject {
                         return ManagedAddon(
                             manifest: manifest,
                             manifestUrl: url,
-                            enabled: true,
+                            enabled: !disabledSnapshot.contains(url),
                             sortOrder: index
                         )
                     } catch {
@@ -107,14 +122,14 @@ public class AddonRepository: ObservableObject {
 
     private func fetchManifest(url: String) async throws -> AddonManifest {
         // Return cached manifest if fresh (server sends no-store so URLCache is useless)
-        if let (cached, stamp) = AddonRepository.manifestCache[url],
-           Date().timeIntervalSince(stamp) < AddonRepository.manifestTTL {
+        if let (cached, stamp) = Self.manifestCache[url],
+           Date().timeIntervalSince(stamp) < Self.manifestTTL {
             return cached
         }
         // No cache-buster: the timestamp suffix was defeating ETags on every launch
         let text = try await StremioHTTPClient.shared.getText(url: url)
         let manifest = try AddonManifestParser.parse(json: text, manifestUrl: url)
-        AddonRepository.manifestCache[url] = (manifest, Date())
+        Self.manifestCache[url] = (manifest, Date())
         return manifest
     }
 
@@ -141,10 +156,16 @@ public class AddonRepository: ObservableObject {
     }
 
     public func toggleAddon(url: String) {
-        if let index = managedAddons.firstIndex(where: { $0.manifestUrl == url }) {
-            managedAddons[index].enabled.toggle()
-            Task { await persistAddons() }
+        guard let index = managedAddons.firstIndex(where: { $0.manifestUrl == url }) else { return }
+        managedAddons[index].enabled.toggle()
+        let isNowEnabled = managedAddons[index].enabled
+        if isNowEnabled {
+            disabledAddonUrls.remove(url)
+        } else {
+            disabledAddonUrls.insert(url)
         }
+        if let profileId = currentProfileId { saveDisabledUrls(profileId: profileId) }
+        Task { await persistAddons() }
     }
 
     public func reorderAddons(from source: IndexSet, to destination: Int) {
@@ -193,12 +214,6 @@ public class AddonRepository: ObservableObject {
     }
 
     public func findAddonWithMetaResource(type: String?) -> [AddonManifest] {
-        enabledAddons.filter { addon in
-            guard addon.hasResource("meta") else { return false }
-            if let type = type, let types = addon.types {
-                return types.contains(type)
-            }
-            return true
-        }
+        enabledAddons.filter { $0.hasResource("meta") }
     }
 }

@@ -3,12 +3,19 @@ import LunaCore
 
 @main
 struct LunaApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var profileManager = ProfileManager.shared
     @StateObject private var roleManager = RoleManager.shared
     @StateObject private var themeManager = ThemeManager.shared
 
     init() {
         LunaTypography.registerFonts()
+        let appearance = UITabBarAppearance()
+        appearance.configureWithDefaultBackground()
+        UITabBar.appearance().tintColor = .systemBlue
+        UITabBar.appearance().unselectedItemTintColor = UIColor.white.withAlphaComponent(0.55)
+        UITabBar.appearance().standardAppearance = appearance
+        UITabBar.appearance().scrollEdgeAppearance = appearance
     }
 
     var body: some Scene {
@@ -18,6 +25,8 @@ struct LunaApp: App {
                 .environmentObject(roleManager)
                 .environmentObject(themeManager)
                 .preferredColorScheme(.dark)
+                .tint(.blue)
+                .accentColor(.blue)
                 .onOpenURL { handleDeepLink($0) }
         }
     }

@@ -1,6 +1,6 @@
 import Foundation
 
-public actor StreamService {
+public final class StreamService: @unchecked Sendable {
     public static let shared = StreamService()
     private let client = StremioHTTPClient.shared
 
@@ -17,13 +17,26 @@ public actor StreamService {
             let infoHash: String?
             let fileIdx: Int?
             let externalUrl: String?
+            let ytId: String?
+            let playerFrameUrl: String?
             let sources: [String]?
             let behaviorHints: RawBehaviorHints?
+            let subtitles: [RawSubtitle]?
+        }
+        struct RawSubtitle: Codable {
+            let id: String?
+            let url: String?
+            let lang: String?
+            let name: String?
         }
         struct RawBehaviorHints: Codable {
             let notWebReady: Bool?
             let bingeGroup: String?
+            let countryWhitelist: [String]?
             let proxyHeaders: RawProxyHeaders?
+            let filename: String?
+            let videoHash: String?
+            let videoSize: Int64?
         }
         struct RawProxyHeaders: Codable {
             let request: [String: String]?
@@ -44,6 +57,8 @@ public actor StreamService {
                     infoHash: raw.infoHash,
                     fileIdx: raw.fileIdx,
                     externalUrl: raw.externalUrl,
+                    ytId: raw.ytId,
+                    playerFrameUrl: raw.playerFrameUrl,
                     sources: raw.sources,
                     sourceName: nil,
                     addonName: nil,
@@ -52,12 +67,24 @@ public actor StreamService {
                         StreamBehaviorHints(
                             notWebReady: $0.notWebReady,
                             bingeGroup: $0.bingeGroup,
+                            countryWhitelist: $0.countryWhitelist,
                             proxyHeaders: $0.proxyHeaders.map {
                                 StreamProxyHeaders(
                                     request: $0.request,
                                     response: $0.response
                                 )
-                            }
+                            },
+                            filename: $0.filename,
+                            videoHash: $0.videoHash,
+                            videoSize: $0.videoSize
+                        )
+                    },
+                    subtitles: raw.subtitles?.map {
+                        SubtitleItem(
+                            id: $0.id ?? UUID().uuidString,
+                            url: $0.url ?? "",
+                            lang: $0.lang ?? "unknown",
+                            name: $0.name
                         )
                     }
                 )
@@ -93,11 +120,14 @@ public actor StreamService {
                                 infoHash: stream.infoHash,
                                 fileIdx: stream.fileIdx,
                                 externalUrl: stream.externalUrl,
+                                ytId: stream.ytId,
+                                playerFrameUrl: stream.playerFrameUrl,
                                 sources: stream.sources,
                                 sourceName: stream.sourceName,
                                 addonName: addon.name,
                                 addonId: addon.id,
-                                behaviorHints: stream.behaviorHints
+                                behaviorHints: stream.behaviorHints,
+                                subtitles: stream.subtitles
                             )
                         }
                         return (addon.name, enriched)

@@ -13,6 +13,8 @@ public class KSPlayerEngine: ObservableObject {
     private var lastPlaybackSpeed: Float = 1.0
     private var pendingInitialSeekSeconds: Double?
     private var didApplyInitialSeek = false
+    private var launchToken = 0
+    private var didScheduleFirstFrameReveal = false
 
     @Published public var isPlaying = false
     @Published public var isLoading = true
@@ -29,6 +31,7 @@ public class KSPlayerEngine: ObservableObject {
     @Published public var isMuted = false
     @Published public var loadedCues: [SubtitleCue] = []
     @Published public var isFillingVideo = false
+    @Published public var didEncounterError = false
 
     public init() {}
 
@@ -75,14 +78,24 @@ public class KSPlayerEngine: ObservableObject {
             if state == .error {
                 self.isLoading = false
                 self.isPlaying = false
+                self.didEncounterError = true
             }
         }
         coordinator.onPlay = { [weak self] current, total in
             guard let self else { return }
-            if !self.hasRenderedFrame {
-                self.hasRenderedFrame = true
-                self.isLoading = false
-                self.refreshAudioTracks()
+            // Delay revealing the video layer to give the video decoder time to render
+            // its first frame. Without this, audio starts (triggering onPlay) before the
+            // video track has decoded, leaving the player UIView showing solid black.
+            if !self.hasRenderedFrame, !self.didScheduleFirstFrameReveal {
+                self.didScheduleFirstFrameReveal = true
+                let token = self.launchToken
+                Task { @MainActor [weak self] in
+                    try? await Task.sleep(for: .milliseconds(350))
+                    guard let self, self.launchToken == token, !self.hasRenderedFrame else { return }
+                    self.hasRenderedFrame = true
+                    self.isLoading = false
+                    self.refreshAudioTracks()
+                }
             }
             // Only publish position changes that are meaningfully different (>0.25s)
             // to avoid triggering SwiftUI re-renders on every decoder callback
@@ -212,7 +225,10 @@ public class KSPlayerEngine: ObservableObject {
         currentLaunch = nil
         pendingInitialSeekSeconds = nil
         didApplyInitialSeek = false
+        didScheduleFirstFrameReveal = false
+        launchToken += 1
         isPlaying = false; isLoading = true; isEnded = false; hasRenderedFrame = false
+        didEncounterError = false
         currentPosition = 0; duration = 0; lastPlaybackSpeed = 1.0
         bufferedPosition = 0
         availableSubtitles = []

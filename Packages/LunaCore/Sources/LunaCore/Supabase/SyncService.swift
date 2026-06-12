@@ -92,7 +92,38 @@ public actor SyncService {
             season: entry.season,
             episode: entry.episode
         )
-        try await client.upsert(into: "watch_progress", onConflict: "profile_id,media_id", value: row)
+        do {
+            try await client.upsert(into: "watch_progress", onConflict: "profile_id,media_id", value: row)
+        } catch {
+            struct LegacyProgressRow: Codable {
+                let id: String
+                let profile_id: String
+                let media_id: String
+                let media_type: String
+                let position_seconds: Double
+                let duration_seconds: Double
+                let completed: Bool
+                let updated_at: String
+                let parent_meta_id: String?
+                let season: Int?
+                let episode: Int?
+            }
+
+            let legacyRow = LegacyProgressRow(
+                id: row.id,
+                profile_id: row.profile_id,
+                media_id: row.media_id,
+                media_type: row.media_type,
+                position_seconds: row.position_seconds,
+                duration_seconds: row.duration_seconds,
+                completed: row.completed,
+                updated_at: row.updated_at,
+                parent_meta_id: row.parent_meta_id,
+                season: row.season,
+                episode: row.episode
+            )
+            try await client.upsert(into: "watch_progress", onConflict: "profile_id,media_id", value: legacyRow)
+        }
     }
 
     public func pullWatchProgress(profileId: String) async throws -> [WatchProgressEntry] {
@@ -135,6 +166,10 @@ public actor SyncService {
                 episode: row.episode
             )
         }
+    }
+
+    public func deleteWatchProgress(id: String) async throws {
+        try await client.delete(from: "watch_progress", where: ["id": id])
     }
 
     public func pushWatchedItem(item: WatchedItem) async throws {

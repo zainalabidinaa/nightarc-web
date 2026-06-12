@@ -1,0 +1,2989 @@
+- generic [ref=e5]:
+  - navigation [ref=e6]:
+    - link "house.fill Home" [ref=e7] [cursor=pointer]:
+      - /url: /home
+      - img "house.fill" [ref=e8]
+      - generic [ref=e9]: Home
+    - link "magnifyingglass Search" [ref=e10] [cursor=pointer]:
+      - /url: /search
+      - img "magnifyingglass" [ref=e11]
+      - generic [ref=e12]: Search
+    - link "book.fill Library" [ref=e13] [cursor=pointer]:
+      - /url: /library
+      - img "book.fill" [ref=e14]
+      - generic [ref=e15]: Library
+    - link "gear Settings" [ref=e16] [cursor=pointer]:
+      - /url: /settings
+      - img "gear" [ref=e17]
+      - generic [ref=e18]: Settings
+    - link "person.fill Admin" [ref=e19] [cursor=pointer]:
+      - /url: /admin
+      - img "person.fill" [ref=e20]
+      - generic [ref=e21]: Admin
+    - button "Switch profile" [ref=e23] [cursor=pointer]:
+      - generic [ref=e24]: Z
+      - generic [ref=e25]: Zain
+  - main [ref=e26]:
+    - generic [ref=e28]:
+      - generic [ref=e29]:
+        - paragraph [ref=e30]: Popular Movies
+        - heading "Office Romance" [level=1] [ref=e31]
+        - paragraph [ref=e32]: Movie · Romance · Comedy · 2026 · ★ 6
+        - paragraph [ref=e33]: Jackie, President and CEO of Air Cruz, runs a tight ship in her business, including a rigid anti-fraternization policy for all her employees. When a new sexy lawyer begins working for her, that policy becomes very tested.
+        - generic [ref=e34]:
+          - link "Watch Now" [ref=e35] [cursor=pointer]:
+            - /url: /browse/movie/tt33397980
+            - img [ref=e36]
+            - text: Watch Now
+          - link "+ My List" [ref=e38] [cursor=pointer]:
+            - /url: /browse/movie/tt33397980
+      - generic [ref=e39]:
+        - button "Go to item 1" [ref=e40] [cursor=pointer]
+        - button "Go to item 2" [ref=e41] [cursor=pointer]
+        - button "Go to item 3" [ref=e42] [cursor=pointer]
+        - button "Go to item 4" [ref=e43] [cursor=pointer]
+        - button "Go to item 5" [ref=e44] [cursor=pointer]
+    - generic [ref=e45]:
+      - generic [ref=e46]:
+        - heading "Continue Watching" [level=2] [ref=e47]
+        - generic [ref=e48]:
+          - button "tt30460310 - Episode 1 S1 E1 · 12% watched" [ref=e49] [cursor=pointer]:
+            - generic [ref=e50]:
+              - img [ref=e52]
+              - img [ref=e56]
+            - paragraph [ref=e60]: tt30460310 - Episode 1
+            - paragraph [ref=e61]: S1 E1 · 12% watched
+          - button "tt9813792 - Episode 2 S1 E2 · 25% watched" [ref=e62] [cursor=pointer]:
+            - generic [ref=e63]:
+              - img [ref=e65]
+              - img [ref=e69]
+            - paragraph [ref=e73]: tt9813792 - Episode 2
+            - paragraph [ref=e74]: S1 E2 · 25% watched
+          - button "tt9813792 - Episode 6 S4 E6 · 32% watched" [ref=e75] [cursor=pointer]:
+            - generic [ref=e76]:
+              - img [ref=e78]
+              - img [ref=e82]
+            - paragraph [ref=e86]: tt9813792 - Episode 6
+            - paragraph [ref=e87]: S4 E6 · 32% watched
+          - button "tt34675596 - Episode 1 S1 E1 · 1% watched" [ref=e88] [cursor=pointer]:
+            - generic [ref=e89]:
+              - img [ref=e91]
+              - img [ref=e95]
+            - paragraph [ref=e99]: tt34675596 - Episode 1
+            - paragraph [ref=e100]: S1 E1 · 1% watched
+          - button "tt1190634 - Episode 1 S1 E1 · 6% watched" [ref=e101] [cursor=pointer]:
+            - generic [ref=e102]:
+              - img [ref=e104]
+              - img [ref=e108]
+            - paragraph [ref=e112]: tt1190634 - Episode 1
+            - paragraph [ref=e113]: S1 E1 · 6% watched
+          - button "tt9813792 - Episode 1 S1 E1 · 4% watched" [ref=e114] [cursor=pointer]:
+            - generic [ref=e115]:
+              - img [ref=e117]
+              - img [ref=e121]
+            - paragraph [ref=e125]: tt9813792 - Episode 1
+            - paragraph [ref=e126]: S1 E1 · 4% watched
+          - button "tt9813792 - Episode 9 S4 E9 · 10% watched" [ref=e127] [cursor=pointer]:
+            - generic [ref=e128]:
+              - img [ref=e130]
+              - img [ref=e134]
+            - paragraph [ref=e138]: tt9813792 - Episode 9
+            - paragraph [ref=e139]: S4 E9 · 10% watched
+          - button "tt9813792 - Episode 2 S4 E2 · 13% watched" [ref=e140] [cursor=pointer]:
+            - generic [ref=e141]:
+              - img [ref=e143]
+              - img [ref=e147]
+            - paragraph [ref=e151]: tt9813792 - Episode 2
+            - paragraph [ref=e152]: S4 E2 · 13% watched
+          - button "tt9813792 - Episode 1 S4 E1 · 18% watched" [ref=e153] [cursor=pointer]:
+            - generic [ref=e154]:
+              - img [ref=e156]
+              - img [ref=e160]
+            - paragraph [ref=e164]: tt9813792 - Episode 1
+            - paragraph [ref=e165]: S4 E1 · 18% watched
+          - button "tt9813792 - Episode 7 S4 E7 · 24% watched" [ref=e166] [cursor=pointer]:
+            - generic [ref=e167]:
+              - img [ref=e169]
+              - img [ref=e173]
+            - paragraph [ref=e177]: tt9813792 - Episode 7
+            - paragraph [ref=e178]: S4 E7 · 24% watched
+      - generic [ref=e179]:
+        - heading "Popular TV Shows" [level=2] [ref=e180]
+        - generic [ref=e181]:
+          - link "FROM 7.8 FROM 2022-" [ref=e182] [cursor=pointer]:
+            - /url: /browse/series/tt9813792
+            - generic [ref=e183]:
+              - img "FROM" [ref=e184]
+              - img [ref=e187]
+              - generic [ref=e189]: "7.8"
+            - paragraph [ref=e190]: FROM
+            - paragraph [ref=e191]: 2022-
+          - link "Off Campus 8 Off Campus 2026-" [ref=e192] [cursor=pointer]:
+            - /url: /browse/series/tt33546863
+            - generic [ref=e193]:
+              - img "Off Campus" [ref=e194]
+              - img [ref=e197]
+              - generic [ref=e199]: "8"
+            - paragraph [ref=e200]: Off Campus
+            - paragraph [ref=e201]: 2026-
+          - link "The Boys 8.5 The Boys 2019-2026" [ref=e202] [cursor=pointer]:
+            - /url: /browse/series/tt1190634
+            - generic [ref=e203]:
+              - img "The Boys" [ref=e204]
+              - img [ref=e207]
+              - generic [ref=e209]: "8.5"
+            - paragraph [ref=e210]: The Boys
+            - paragraph [ref=e211]: 2019-2026
+          - link "Teach You a Lesson 8.7 Teach You a Lesson 2026" [ref=e212] [cursor=pointer]:
+            - /url: /browse/series/tt34809853
+            - generic [ref=e213]:
+              - img "Teach You a Lesson" [ref=e214]
+              - img [ref=e217]
+              - generic [ref=e219]: "8.7"
+            - paragraph [ref=e220]: Teach You a Lesson
+            - paragraph [ref=e221]: "2026"
+          - 'link "Law & Order: Special Victims Unit 8.1 Law & Order: Special Victims Unit 1999-" [ref=e222] [cursor=pointer]':
+            - /url: /browse/series/tt0203259
+            - generic [ref=e223]:
+              - 'img "Law & Order: Special Victims Unit" [ref=e224]'
+              - img [ref=e227]
+              - generic [ref=e229]: "8.1"
+            - paragraph [ref=e230]: "Law & Order: Special Victims Unit"
+            - paragraph [ref=e231]: 1999-
+          - link "Spider-Noir 8 Spider-Noir 2026-" [ref=e232] [cursor=pointer]:
+            - /url: /browse/series/tt30460310
+            - generic [ref=e233]:
+              - img "Spider-Noir" [ref=e234]
+              - img [ref=e237]
+              - generic [ref=e239]: "8"
+            - paragraph [ref=e240]: Spider-Noir
+            - paragraph [ref=e241]: 2026-
+          - link "The Rookie 8 The Rookie 2018-" [ref=e242] [cursor=pointer]:
+            - /url: /browse/series/tt7587890
+            - generic [ref=e243]:
+              - img "The Rookie" [ref=e244]
+              - img [ref=e247]
+              - generic [ref=e249]: "8"
+            - paragraph [ref=e250]: The Rookie
+            - paragraph [ref=e251]: 2018-
+          - link "Grey's Anatomy 7.6 Grey's Anatomy 2005-" [ref=e252] [cursor=pointer]:
+            - /url: /browse/series/tt0413573
+            - generic [ref=e253]:
+              - img "Grey's Anatomy" [ref=e254]
+              - img [ref=e257]
+              - generic [ref=e259]: "7.6"
+            - paragraph [ref=e260]: Grey's Anatomy
+            - paragraph [ref=e261]: 2005-
+          - link "Law & Order 7.8 Law & Order 1990-" [ref=e262] [cursor=pointer]:
+            - /url: /browse/series/tt0098844
+            - generic [ref=e263]:
+              - img "Law & Order" [ref=e264]
+              - img [ref=e267]
+              - generic [ref=e269]: "7.8"
+            - paragraph [ref=e270]: Law & Order
+            - paragraph [ref=e271]: 1990-
+          - link "Euphoria (US) 8.1 Euphoria (US) 2019-2026" [ref=e272] [cursor=pointer]:
+            - /url: /browse/series/tt8772296
+            - generic [ref=e273]:
+              - img "Euphoria (US)" [ref=e274]
+              - img [ref=e277]
+              - generic [ref=e279]: "8.1"
+            - paragraph [ref=e280]: Euphoria (US)
+            - paragraph [ref=e281]: 2019-2026
+          - link "Game of Thrones 9.2 Game of Thrones 2011-2019" [ref=e282] [cursor=pointer]:
+            - /url: /browse/series/tt0944947
+            - generic [ref=e283]:
+              - img "Game of Thrones" [ref=e284]
+              - img [ref=e287]
+              - generic [ref=e289]: "9.2"
+            - paragraph [ref=e290]: Game of Thrones
+            - paragraph [ref=e291]: 2011-2019
+          - link "Supernatural 8.4 Supernatural 2005-2020" [ref=e292] [cursor=pointer]:
+            - /url: /browse/series/tt0460681
+            - generic [ref=e293]:
+              - img "Supernatural" [ref=e294]
+              - img [ref=e297]
+              - generic [ref=e299]: "8.4"
+            - paragraph [ref=e300]: Supernatural
+            - paragraph [ref=e301]: 2005-2020
+          - link "Family Guy 8.1 Family Guy 1999-" [ref=e302] [cursor=pointer]:
+            - /url: /browse/series/tt0182576
+            - generic [ref=e303]:
+              - img "Family Guy" [ref=e304]
+              - img [ref=e307]
+              - generic [ref=e309]: "8.1"
+            - paragraph [ref=e310]: Family Guy
+            - paragraph [ref=e311]: 1999-
+          - link "NCIS 7.8 NCIS 2003-" [ref=e312] [cursor=pointer]:
+            - /url: /browse/series/tt0364845
+            - generic [ref=e313]:
+              - img "NCIS" [ref=e314]
+              - img [ref=e317]
+              - generic [ref=e319]: "7.8"
+            - paragraph [ref=e320]: NCIS
+            - paragraph [ref=e321]: 2003-
+          - link "The Mentalist 8.2 The Mentalist 2008-2015" [ref=e322] [cursor=pointer]:
+            - /url: /browse/series/tt1196946
+            - generic [ref=e323]:
+              - img "The Mentalist" [ref=e324]
+              - img [ref=e327]
+              - generic [ref=e329]: "8.2"
+            - paragraph [ref=e330]: The Mentalist
+            - paragraph [ref=e331]: 2008-2015
+          - link "Criminal Minds 8.1 Criminal Minds 2005-" [ref=e332] [cursor=pointer]:
+            - /url: /browse/series/tt0452046
+            - generic [ref=e333]:
+              - img "Criminal Minds" [ref=e334]
+              - img [ref=e337]
+              - generic [ref=e339]: "8.1"
+            - paragraph [ref=e340]: Criminal Minds
+            - paragraph [ref=e341]: 2005-
+          - link "Chronicles of the Sun 5.1 Chronicles of the Sun 2018-" [ref=e342] [cursor=pointer]:
+            - /url: /browse/series/tt8883922
+            - generic [ref=e343]:
+              - img "Chronicles of the Sun" [ref=e344]
+              - img [ref=e347]
+              - generic [ref=e349]: "5.1"
+            - paragraph [ref=e350]: Chronicles of the Sun
+            - paragraph [ref=e351]: 2018-
+          - link "Yellowstone (2018) 8.6 Yellowstone (2018) 2018-2024" [ref=e352] [cursor=pointer]:
+            - /url: /browse/series/tt4236770
+            - generic [ref=e353]:
+              - img "Yellowstone (2018)" [ref=e354]
+              - img [ref=e357]
+              - generic [ref=e359]: "8.6"
+            - paragraph [ref=e360]: Yellowstone (2018)
+            - paragraph [ref=e361]: 2018-2024
+          - link "The Simpsons 8.6 The Simpsons 1989-" [ref=e362] [cursor=pointer]:
+            - /url: /browse/series/tt0096697
+            - generic [ref=e363]:
+              - img "The Simpsons" [ref=e364]
+              - img [ref=e367]
+              - generic [ref=e369]: "8.6"
+            - paragraph [ref=e370]: The Simpsons
+            - paragraph [ref=e371]: 1989-
+          - link "Breaking Bad 9.5 Breaking Bad 2008-2013" [ref=e372] [cursor=pointer]:
+            - /url: /browse/series/tt0903747
+            - generic [ref=e373]:
+              - img "Breaking Bad" [ref=e374]
+              - img [ref=e377]
+              - generic [ref=e379]: "9.5"
+            - paragraph [ref=e380]: Breaking Bad
+            - paragraph [ref=e381]: 2008-2013
+      - generic [ref=e382]:
+        - heading "Trending TV Shows" [level=2] [ref=e383]
+        - generic [ref=e384]:
+          - link "Every Year After 7 Every Year After 2026-" [ref=e385] [cursor=pointer]:
+            - /url: /browse/series/tt33055254
+            - generic [ref=e386]:
+              - img "Every Year After" [ref=e387]
+              - img [ref=e390]
+              - generic [ref=e392]: "7"
+            - paragraph [ref=e393]: Every Year After
+            - paragraph [ref=e394]: 2026-
+          - link "Teach You a Lesson 8.7 Teach You a Lesson 2026" [ref=e395] [cursor=pointer]:
+            - /url: /browse/series/tt34809853
+            - generic [ref=e396]:
+              - img "Teach You a Lesson" [ref=e397]
+              - img [ref=e400]
+              - generic [ref=e402]: "8.7"
+            - paragraph [ref=e403]: Teach You a Lesson
+            - paragraph [ref=e404]: "2026"
+          - link "FROM 7.8 FROM 2022-" [ref=e405] [cursor=pointer]:
+            - /url: /browse/series/tt9813792
+            - generic [ref=e406]:
+              - img "FROM" [ref=e407]
+              - img [ref=e410]
+              - generic [ref=e412]: "7.8"
+            - paragraph [ref=e413]: FROM
+            - paragraph [ref=e414]: 2022-
+          - link "Spider-Noir 8 Spider-Noir 2026-" [ref=e415] [cursor=pointer]:
+            - /url: /browse/series/tt30460310
+            - generic [ref=e416]:
+              - img "Spider-Noir" [ref=e417]
+              - img [ref=e420]
+              - generic [ref=e422]: "8"
+            - paragraph [ref=e423]: Spider-Noir
+            - paragraph [ref=e424]: 2026-
+          - link "Widow's Bay 8.3 Widow's Bay 2026-" [ref=e425] [cursor=pointer]:
+            - /url: /browse/series/tt33332385
+            - generic [ref=e426]:
+              - img "Widow's Bay" [ref=e427]
+              - img [ref=e430]
+              - generic [ref=e432]: "8.3"
+            - paragraph [ref=e433]: Widow's Bay
+            - paragraph [ref=e434]: 2026-
+          - link "The Boys 8.5 The Boys 2019-2026" [ref=e435] [cursor=pointer]:
+            - /url: /browse/series/tt1190634
+            - generic [ref=e436]:
+              - img "The Boys" [ref=e437]
+              - img [ref=e440]
+              - generic [ref=e442]: "8.5"
+            - paragraph [ref=e443]: The Boys
+            - paragraph [ref=e444]: 2019-2026
+          - link "The First Jasmine 7.8 The First Jasmine 2026-" [ref=e445] [cursor=pointer]:
+            - /url: /browse/series/tt37096911
+            - generic [ref=e446]:
+              - img "The First Jasmine" [ref=e447]
+              - img [ref=e450]
+              - generic [ref=e452]: "7.8"
+            - paragraph [ref=e453]: The First Jasmine
+            - paragraph [ref=e454]: 2026-
+          - link "Cape Fear 7.2 Cape Fear 2026-" [ref=e455] [cursor=pointer]:
+            - /url: /browse/series/tt34675596
+            - generic [ref=e456]:
+              - img "Cape Fear" [ref=e457]
+              - img [ref=e460]
+              - generic [ref=e462]: "7.2"
+            - paragraph [ref=e463]: Cape Fear
+            - paragraph [ref=e464]: 2026-
+          - link "Dragon Striker N/A Dragon Striker 2026-" [ref=e465] [cursor=pointer]:
+            - /url: /browse/series/tt21056976
+            - generic [ref=e466]:
+              - img "Dragon Striker" [ref=e467]
+              - img [ref=e470]
+              - generic [ref=e472]: N/A
+            - paragraph [ref=e473]: Dragon Striker
+            - paragraph [ref=e474]: 2026-
+          - link "Among Us 7.3 Among Us 2026-" [ref=e475] [cursor=pointer]:
+            - /url: /browse/series/tt28230655
+            - generic [ref=e476]:
+              - img "Among Us" [ref=e477]
+              - img [ref=e480]
+              - generic [ref=e482]: "7.3"
+            - paragraph [ref=e483]: Among Us
+            - paragraph [ref=e484]: 2026-
+          - link "Rick and Morty 9 Rick and Morty 2013-" [ref=e485] [cursor=pointer]:
+            - /url: /browse/series/tt2861424
+            - generic [ref=e486]:
+              - img "Rick and Morty" [ref=e487]
+              - img [ref=e490]
+              - generic [ref=e492]: "9"
+            - paragraph [ref=e493]: Rick and Morty
+            - paragraph [ref=e494]: 2013-
+          - link "Euphoria (US) 8.1 Euphoria (US) 2019-2026" [ref=e495] [cursor=pointer]:
+            - /url: /browse/series/tt8772296
+            - generic [ref=e496]:
+              - img "Euphoria (US)" [ref=e497]
+              - img [ref=e500]
+              - generic [ref=e502]: "8.1"
+            - paragraph [ref=e503]: Euphoria (US)
+            - paragraph [ref=e504]: 2019-2026
+          - link "Re:ZERO -Starting Life in Another World- 7.9 Re:ZERO -Starting Life in Another World- 2016-" [ref=e505] [cursor=pointer]:
+            - /url: /browse/series/tmdb%3A65942
+            - generic [ref=e506]:
+              - img "Re:ZERO -Starting Life in Another World-" [ref=e507]
+              - img [ref=e510]
+              - generic [ref=e512]: "7.9"
+            - paragraph [ref=e513]: Re:ZERO -Starting Life in Another World-
+            - paragraph [ref=e514]: 2016-
+          - link "Off Campus 8 Off Campus 2026-" [ref=e515] [cursor=pointer]:
+            - /url: /browse/series/tt33546863
+            - generic [ref=e516]:
+              - img "Off Campus" [ref=e517]
+              - img [ref=e520]
+              - generic [ref=e522]: "8"
+            - paragraph [ref=e523]: Off Campus
+            - paragraph [ref=e524]: 2026-
+          - link "My Family (2025) 7.2 My Family (2025) 2025-" [ref=e525] [cursor=pointer]:
+            - /url: /browse/series/tt29242849
+            - generic [ref=e526]:
+              - img "My Family (2025)" [ref=e527]
+              - img [ref=e530]
+              - generic [ref=e532]: "7.2"
+            - paragraph [ref=e533]: My Family (2025)
+            - paragraph [ref=e534]: 2025-
+          - link "Love Island USA 5.3 Love Island USA 2019-" [ref=e535] [cursor=pointer]:
+            - /url: /browse/series/tt8819906
+            - generic [ref=e536]:
+              - img "Love Island USA" [ref=e537]
+              - img [ref=e540]
+              - generic [ref=e542]: "5.3"
+            - paragraph [ref=e543]: Love Island USA
+            - paragraph [ref=e544]: 2019-
+          - link "One Piece 8.7 One Piece 1999-" [ref=e545] [cursor=pointer]:
+            - /url: /browse/series/tmdb%3A37854
+            - generic [ref=e546]:
+              - img "One Piece" [ref=e547]
+              - img [ref=e550]
+              - generic [ref=e552]: "8.7"
+            - paragraph [ref=e553]: One Piece
+            - paragraph [ref=e554]: 1999-
+          - link "The Vampire Lestat 5.9 The Vampire Lestat 2026-" [ref=e555] [cursor=pointer]:
+            - /url: /browse/series/tmdb%3A323411
+            - generic [ref=e556]:
+              - img "The Vampire Lestat" [ref=e557]
+              - img [ref=e560]
+              - generic [ref=e562]: "5.9"
+            - paragraph [ref=e563]: The Vampire Lestat
+            - paragraph [ref=e564]: 2026-
+          - link "Alice and Steve 6.5 Alice and Steve 2026" [ref=e565] [cursor=pointer]:
+            - /url: /browse/series/tt35728748
+            - generic [ref=e566]:
+              - img "Alice and Steve" [ref=e567]
+              - img [ref=e570]
+              - generic [ref=e572]: "6.5"
+            - paragraph [ref=e573]: Alice and Steve
+            - paragraph [ref=e574]: "2026"
+          - 'link "Outlast: The Jungle N/A Outlast: The Jungle 2026-" [ref=e575] [cursor=pointer]':
+            - /url: /browse/series/tmdb%3A322803
+            - generic [ref=e576]:
+              - 'img "Outlast: The Jungle" [ref=e577]'
+              - img [ref=e580]
+              - generic [ref=e582]: N/A
+            - paragraph [ref=e583]: "Outlast: The Jungle"
+            - paragraph [ref=e584]: 2026-
+      - generic [ref=e585]:
+        - heading "Popular Movies" [level=2] [ref=e586]
+        - generic [ref=e587]:
+          - link "Office Romance 6 Office Romance 2026" [ref=e588] [cursor=pointer]:
+            - /url: /browse/movie/tt33397980
+            - generic [ref=e589]:
+              - img "Office Romance" [ref=e590]
+              - img [ref=e593]
+              - generic [ref=e595]: "6"
+            - paragraph [ref=e596]: Office Romance
+            - paragraph [ref=e597]: "2026"
+          - link "Scary Movie 5.5 Scary Movie 2026" [ref=e598] [cursor=pointer]:
+            - /url: /browse/movie/tt32093575
+            - generic [ref=e599]:
+              - img "Scary Movie" [ref=e600]
+              - img [ref=e603]
+              - generic [ref=e605]: "5.5"
+            - paragraph [ref=e606]: Scary Movie
+            - paragraph [ref=e607]: "2026"
+          - link "Masters of the Universe 7.1 Masters of the Universe 2026" [ref=e608] [cursor=pointer]:
+            - /url: /browse/movie/tt0427340
+            - generic [ref=e609]:
+              - img "Masters of the Universe" [ref=e610]
+              - img [ref=e613]
+              - generic [ref=e615]: "7.1"
+            - paragraph [ref=e616]: Masters of the Universe
+            - paragraph [ref=e617]: "2026"
+          - link "Backrooms 7.1 Backrooms 2026" [ref=e618] [cursor=pointer]:
+            - /url: /browse/movie/tt26657236
+            - generic [ref=e619]:
+              - img "Backrooms" [ref=e620]
+              - img [ref=e623]
+              - generic [ref=e625]: "7.1"
+            - paragraph [ref=e626]: Backrooms
+            - paragraph [ref=e627]: "2026"
+          - link "Mexico 86 6.5 Mexico 86 2026" [ref=e628] [cursor=pointer]:
+            - /url: /browse/movie/tt37961742
+            - generic [ref=e629]:
+              - img "Mexico 86" [ref=e630]
+              - img [ref=e633]
+              - generic [ref=e635]: "6.5"
+            - paragraph [ref=e636]: Mexico 86
+            - paragraph [ref=e637]: "2026"
+          - link "Colony 6.9 Colony 2026" [ref=e638] [cursor=pointer]:
+            - /url: /browse/movie/tt34385135
+            - generic [ref=e639]:
+              - img "Colony" [ref=e640]
+              - img [ref=e643]
+              - generic [ref=e645]: "6.9"
+            - paragraph [ref=e646]: Colony
+            - paragraph [ref=e647]: "2026"
+          - link "Ladies First 5.8 Ladies First 2026" [ref=e648] [cursor=pointer]:
+            - /url: /browse/movie/tt34611082
+            - generic [ref=e649]:
+              - img "Ladies First" [ref=e650]
+              - img [ref=e653]
+              - generic [ref=e655]: "5.8"
+            - paragraph [ref=e656]: Ladies First
+            - paragraph [ref=e657]: "2026"
+          - 'link "Tom Clancy''s Jack Ryan: Ghost War 5.7 Tom Clancy''s Jack Ryan: Ghost War 2026" [ref=e658] [cursor=pointer]':
+            - /url: /browse/movie/tt34378301
+            - generic [ref=e659]:
+              - 'img "Tom Clancy''s Jack Ryan: Ghost War" [ref=e660]'
+              - img [ref=e663]
+              - generic [ref=e665]: "5.7"
+            - paragraph [ref=e666]: "Tom Clancy's Jack Ryan: Ghost War"
+            - paragraph [ref=e667]: "2026"
+          - link "Passenger 5.6 Passenger 2026" [ref=e668] [cursor=pointer]:
+            - /url: /browse/movie/tt33763941
+            - generic [ref=e669]:
+              - img "Passenger" [ref=e670]
+              - img [ref=e673]
+              - generic [ref=e675]: "5.6"
+            - paragraph [ref=e676]: Passenger
+            - paragraph [ref=e677]: "2026"
+          - link "The Mandalorian and Grogu 7 The Mandalorian and Grogu 2026" [ref=e678] [cursor=pointer]:
+            - /url: /browse/movie/tt30825738
+            - generic [ref=e679]:
+              - img "The Mandalorian and Grogu" [ref=e680]
+              - img [ref=e683]
+              - generic [ref=e685]: "7"
+            - paragraph [ref=e686]: The Mandalorian and Grogu
+            - paragraph [ref=e687]: "2026"
+          - link "The Crash 6.5 The Crash 2026" [ref=e688] [cursor=pointer]:
+            - /url: /browse/movie/tt40792117
+            - generic [ref=e689]:
+              - img "The Crash" [ref=e690]
+              - img [ref=e693]
+              - generic [ref=e695]: "6.5"
+            - paragraph [ref=e696]: The Crash
+            - paragraph [ref=e697]: "2026"
+          - link "Obsession 8.1 Obsession 2026" [ref=e698] [cursor=pointer]:
+            - /url: /browse/movie/tt37287335
+            - generic [ref=e699]:
+              - img "Obsession" [ref=e700]
+              - img [ref=e703]
+              - generic [ref=e705]: "8.1"
+            - paragraph [ref=e706]: Obsession
+            - paragraph [ref=e707]: "2026"
+          - link "In the Grey 6.3 In the Grey 2026" [ref=e708] [cursor=pointer]:
+            - /url: /browse/movie/tt27681354
+            - generic [ref=e709]:
+              - img "In the Grey" [ref=e710]
+              - img [ref=e713]
+              - generic [ref=e715]: "6.3"
+            - paragraph [ref=e716]: In the Grey
+            - paragraph [ref=e717]: "2026"
+          - link "La Vénus électrique 6.7 La Vénus électrique 2026" [ref=e718] [cursor=pointer]:
+            - /url: /browse/movie/tt37163509
+            - generic [ref=e719]:
+              - img "La Vénus électrique" [ref=e720]
+              - img [ref=e723]
+              - generic [ref=e725]: "6.7"
+            - paragraph [ref=e726]: La Vénus électrique
+            - paragraph [ref=e727]: "2026"
+          - 'link "The Punisher: One Last Kill 7.1 The Punisher: One Last Kill 2026" [ref=e728] [cursor=pointer]':
+            - /url: /browse/movie/tt36042156
+            - generic [ref=e729]:
+              - 'img "The Punisher: One Last Kill" [ref=e730]'
+              - img [ref=e733]
+              - generic [ref=e735]: "7.1"
+            - paragraph [ref=e736]: "The Punisher: One Last Kill"
+            - paragraph [ref=e737]: "2026"
+          - link "No Place to Be Single 5.4 No Place to Be Single 2026" [ref=e738] [cursor=pointer]:
+            - /url: /browse/movie/tt34906817
+            - generic [ref=e739]:
+              - img "No Place to Be Single" [ref=e740]
+              - img [ref=e743]
+              - generic [ref=e745]: "5.4"
+            - paragraph [ref=e746]: No Place to Be Single
+            - paragraph [ref=e747]: "2026"
+          - link "Remarkably Bright Creatures 7.7 Remarkably Bright Creatures 2026" [ref=e748] [cursor=pointer]:
+            - /url: /browse/movie/tt33100314
+            - generic [ref=e749]:
+              - img "Remarkably Bright Creatures" [ref=e750]
+              - img [ref=e753]
+              - generic [ref=e755]: "7.7"
+            - paragraph [ref=e756]: Remarkably Bright Creatures
+            - paragraph [ref=e757]: "2026"
+          - link "My Dearest Assassin 5.7 My Dearest Assassin 2026" [ref=e758] [cursor=pointer]:
+            - /url: /browse/movie/tt39749979
+            - generic [ref=e759]:
+              - img "My Dearest Assassin" [ref=e760]
+              - img [ref=e763]
+              - generic [ref=e765]: "5.7"
+            - paragraph [ref=e766]: My Dearest Assassin
+            - paragraph [ref=e767]: "2026"
+          - link "Mortal Kombat II 6.6 Mortal Kombat II 2026" [ref=e768] [cursor=pointer]:
+            - /url: /browse/movie/tt17490712
+            - generic [ref=e769]:
+              - img "Mortal Kombat II" [ref=e770]
+              - img [ref=e773]
+              - generic [ref=e775]: "6.6"
+            - paragraph [ref=e776]: Mortal Kombat II
+            - paragraph [ref=e777]: "2026"
+          - link "Swapped 7.3 Swapped 2026" [ref=e778] [cursor=pointer]:
+            - /url: /browse/movie/tt29552248
+            - generic [ref=e779]:
+              - img "Swapped" [ref=e780]
+              - img [ref=e783]
+              - generic [ref=e785]: "7.3"
+            - paragraph [ref=e786]: Swapped
+            - paragraph [ref=e787]: "2026"
+      - generic [ref=e788]:
+        - heading "Trending Movies" [level=2] [ref=e789]
+        - generic [ref=e790]:
+          - link "Michael 7.6 Michael 2026" [ref=e791] [cursor=pointer]:
+            - /url: /browse/movie/tt11378946
+            - generic [ref=e792]:
+              - img "Michael" [ref=e793]
+              - img [ref=e796]
+              - generic [ref=e798]: "7.6"
+            - paragraph [ref=e799]: Michael
+            - paragraph [ref=e800]: "2026"
+          - link "Disclosure Day 8.1 Disclosure Day 2026" [ref=e801] [cursor=pointer]:
+            - /url: /browse/movie/tt15047880
+            - generic [ref=e802]:
+              - img "Disclosure Day" [ref=e803]
+              - img [ref=e806]
+              - generic [ref=e808]: "8.1"
+            - paragraph [ref=e809]: Disclosure Day
+            - paragraph [ref=e810]: "2026"
+          - link "Obsession 8.1 Obsession 2026" [ref=e811] [cursor=pointer]:
+            - /url: /browse/movie/tt37287335
+            - generic [ref=e812]:
+              - img "Obsession" [ref=e813]
+              - img [ref=e816]
+              - generic [ref=e818]: "8.1"
+            - paragraph [ref=e819]: Obsession
+            - paragraph [ref=e820]: "2026"
+          - 'link "Colors of Evil: Black 7.0 Colors of Evil: Black 2026" [ref=e821] [cursor=pointer]':
+            - /url: /browse/movie/tt38681832
+            - generic [ref=e822]:
+              - 'img "Colors of Evil: Black" [ref=e823]'
+              - img [ref=e826]
+              - generic [ref=e828]: "7.0"
+            - paragraph [ref=e829]: "Colors of Evil: Black"
+            - paragraph [ref=e830]: "2026"
+          - link "Over Your Dead Body 6.4 Over Your Dead Body 2026" [ref=e831] [cursor=pointer]:
+            - /url: /browse/movie/tt34685692
+            - generic [ref=e832]:
+              - img "Over Your Dead Body" [ref=e833]
+              - img [ref=e836]
+              - generic [ref=e838]: "6.4"
+            - paragraph [ref=e839]: Over Your Dead Body
+            - paragraph [ref=e840]: "2026"
+          - link "Mortal Kombat II 6.6 Mortal Kombat II 2026" [ref=e841] [cursor=pointer]:
+            - /url: /browse/movie/tt17490712
+            - generic [ref=e842]:
+              - img "Mortal Kombat II" [ref=e843]
+              - img [ref=e846]
+              - generic [ref=e848]: "6.6"
+            - paragraph [ref=e849]: Mortal Kombat II
+            - paragraph [ref=e850]: "2026"
+          - link "Backrooms 7.1 Backrooms 2026" [ref=e851] [cursor=pointer]:
+            - /url: /browse/movie/tt26657236
+            - generic [ref=e852]:
+              - img "Backrooms" [ref=e853]
+              - img [ref=e856]
+              - generic [ref=e858]: "7.1"
+            - paragraph [ref=e859]: Backrooms
+            - paragraph [ref=e860]: "2026"
+          - link "Toy Story 5 7.0 Toy Story 5 2026" [ref=e861] [cursor=pointer]:
+            - /url: /browse/movie/tt29355505
+            - generic [ref=e862]:
+              - img "Toy Story 5" [ref=e863]
+              - img [ref=e866]
+              - generic [ref=e868]: "7.0"
+            - paragraph [ref=e869]: Toy Story 5
+            - paragraph [ref=e870]: "2026"
+          - link "Scary Movie 5.5 Scary Movie 2026" [ref=e871] [cursor=pointer]:
+            - /url: /browse/movie/tt32093575
+            - generic [ref=e872]:
+              - img "Scary Movie" [ref=e873]
+              - img [ref=e876]
+              - generic [ref=e878]: "5.5"
+            - paragraph [ref=e879]: Scary Movie
+            - paragraph [ref=e880]: "2026"
+          - link "Masters of the Universe 7.1 Masters of the Universe 2026" [ref=e881] [cursor=pointer]:
+            - /url: /browse/movie/tt0427340
+            - generic [ref=e882]:
+              - img "Masters of the Universe" [ref=e883]
+              - img [ref=e886]
+              - generic [ref=e888]: "7.1"
+            - paragraph [ref=e889]: Masters of the Universe
+            - paragraph [ref=e890]: "2026"
+          - link "Moana 0.0 Moana 2026" [ref=e891] [cursor=pointer]:
+            - /url: /browse/movie/tt27419466
+            - generic [ref=e892]:
+              - img "Moana" [ref=e893]
+              - img [ref=e896]
+              - generic [ref=e898]: "0.0"
+            - paragraph [ref=e899]: Moana
+            - paragraph [ref=e900]: "2026"
+          - link "Office Romance 6 Office Romance 2026" [ref=e901] [cursor=pointer]:
+            - /url: /browse/movie/tt33397980
+            - generic [ref=e902]:
+              - img "Office Romance" [ref=e903]
+              - img [ref=e906]
+              - generic [ref=e908]: "6"
+            - paragraph [ref=e909]: Office Romance
+            - paragraph [ref=e910]: "2026"
+          - 'link "Spider-Man: Brand New Day 0.0 Spider-Man: Brand New Day 2026" [ref=e911] [cursor=pointer]':
+            - /url: /browse/movie/tt22084616
+            - generic [ref=e912]:
+              - 'img "Spider-Man: Brand New Day" [ref=e913]'
+              - img [ref=e916]
+              - generic [ref=e918]: "0.0"
+            - paragraph [ref=e919]: "Spider-Man: Brand New Day"
+            - paragraph [ref=e920]: "2026"
+          - link "Project Hail Mary 8.3 Project Hail Mary 2026" [ref=e921] [cursor=pointer]:
+            - /url: /browse/movie/tt12042730
+            - generic [ref=e922]:
+              - img "Project Hail Mary" [ref=e923]
+              - img [ref=e926]
+              - generic [ref=e928]: "8.3"
+            - paragraph [ref=e929]: Project Hail Mary
+            - paragraph [ref=e930]: "2026"
+          - link "The Super Mario Galaxy Movie 6.3 The Super Mario Galaxy Movie 2026" [ref=e931] [cursor=pointer]:
+            - /url: /browse/movie/tt28650488
+            - generic [ref=e932]:
+              - img "The Super Mario Galaxy Movie" [ref=e933]
+              - img [ref=e936]
+              - generic [ref=e938]: "6.3"
+            - paragraph [ref=e939]: The Super Mario Galaxy Movie
+            - paragraph [ref=e940]: "2026"
+          - link "In the Grey 6.3 In the Grey 2026" [ref=e941] [cursor=pointer]:
+            - /url: /browse/movie/tt27681354
+            - generic [ref=e942]:
+              - img "In the Grey" [ref=e943]
+              - img [ref=e946]
+              - generic [ref=e948]: "6.3"
+            - paragraph [ref=e949]: In the Grey
+            - paragraph [ref=e950]: "2026"
+          - link "Hokum 6.9 Hokum 2026" [ref=e951] [cursor=pointer]:
+            - /url: /browse/movie/tt35672862
+            - generic [ref=e952]:
+              - img "Hokum" [ref=e953]
+              - img [ref=e956]
+              - generic [ref=e958]: "6.9"
+            - paragraph [ref=e959]: Hokum
+            - paragraph [ref=e960]: "2026"
+          - link "The Odyssey 0.0 The Odyssey 2026" [ref=e961] [cursor=pointer]:
+            - /url: /browse/movie/tt33764258
+            - generic [ref=e962]:
+              - img "The Odyssey" [ref=e963]
+              - img [ref=e966]
+              - generic [ref=e968]: "0.0"
+            - paragraph [ref=e969]: The Odyssey
+            - paragraph [ref=e970]: "2026"
+          - link "Whalefall 0.0 Whalefall 2026" [ref=e971] [cursor=pointer]:
+            - /url: /browse/movie/tt28535715
+            - generic [ref=e972]:
+              - img "Whalefall" [ref=e973]
+              - img [ref=e976]
+              - generic [ref=e978]: "0.0"
+            - paragraph [ref=e979]: Whalefall
+            - paragraph [ref=e980]: "2026"
+          - link "Neglected 4.2 Neglected 2026" [ref=e981] [cursor=pointer]:
+            - /url: /browse/movie/tt35224721
+            - generic [ref=e982]:
+              - img "Neglected" [ref=e983]
+              - img [ref=e986]
+              - generic [ref=e988]: "4.2"
+            - paragraph [ref=e989]: Neglected
+            - paragraph [ref=e990]: "2026"
+      - generic [ref=e991]:
+        - heading "Franchises" [level=2] [ref=e992]
+        - generic [ref=e993]:
+          - link "Star Wars Star Wars" [ref=e994] [cursor=pointer]:
+            - /url: /collections/3fb85637-0695-4a9c-9abf-22f79afb224b
+            - generic [ref=e995]:
+              - img "Star Wars" [ref=e996]
+              - img [ref=e999]
+            - paragraph [ref=e1001]: Star Wars
+          - link "Middle Earth Middle Earth" [ref=e1002] [cursor=pointer]:
+            - /url: /collections/fca04c29-b8bd-4700-9ad3-c6933558c015
+            - generic [ref=e1003]:
+              - img "Middle Earth" [ref=e1004]
+              - img [ref=e1007]
+            - paragraph [ref=e1009]: Middle Earth
+          - link "The Wizarding World The Wizarding World" [ref=e1010] [cursor=pointer]:
+            - /url: /collections/2549c862-07f0-46bd-a42b-44da77d3e933
+            - generic [ref=e1011]:
+              - img "The Wizarding World" [ref=e1012]
+              - img [ref=e1015]
+            - paragraph [ref=e1017]: The Wizarding World
+          - link "Pixar Pixar" [ref=e1018] [cursor=pointer]:
+            - /url: /collections/894fe710-e8e4-429d-8010-0c8cd498a492
+            - generic [ref=e1019]:
+              - img "Pixar" [ref=e1020]
+              - img [ref=e1023]
+            - paragraph [ref=e1025]: Pixar
+          - link "Dreamworks Dreamworks" [ref=e1026] [cursor=pointer]:
+            - /url: /collections/d6fcbb0a-2592-406e-9354-0bcc07a480d6
+            - generic [ref=e1027]:
+              - img "Dreamworks" [ref=e1028]
+              - img [ref=e1031]
+            - paragraph [ref=e1033]: Dreamworks
+          - link "Pirates Of The Caribbean Pirates Of The Caribbean" [ref=e1034] [cursor=pointer]:
+            - /url: /collections/74f804b4-b522-47d9-89a6-6cf043db19a6
+            - generic [ref=e1035]:
+              - img "Pirates Of The Caribbean" [ref=e1036]
+              - img [ref=e1039]
+            - paragraph [ref=e1041]: Pirates Of The Caribbean
+          - link "Back to the Future Back to the Future" [ref=e1042] [cursor=pointer]:
+            - /url: /collections/f31dd0ff-1771-4bbf-bf1d-90c7b5fc204e
+            - generic [ref=e1043]:
+              - img "Back to the Future" [ref=e1044]
+              - img [ref=e1047]
+            - paragraph [ref=e1049]: Back to the Future
+          - link "Indiana Jones Indiana Jones" [ref=e1050] [cursor=pointer]:
+            - /url: /collections/1d339c85-1880-4421-8d51-9a8b37797a3d
+            - generic [ref=e1051]:
+              - img "Indiana Jones" [ref=e1052]
+              - img [ref=e1055]
+            - paragraph [ref=e1057]: Indiana Jones
+          - link "The Matrix The Matrix" [ref=e1058] [cursor=pointer]:
+            - /url: /collections/32bb0fd3-549e-422d-b4a0-f1287e89f6e0
+            - generic [ref=e1059]:
+              - img "The Matrix" [ref=e1060]
+              - img [ref=e1063]
+            - paragraph [ref=e1065]: The Matrix
+          - link "The Hunger Games The Hunger Games" [ref=e1066] [cursor=pointer]:
+            - /url: /collections/eb9fcf7e-6b9d-4dab-aabd-d6f93866b3cb
+            - generic [ref=e1067]:
+              - img "The Hunger Games" [ref=e1068]
+              - img [ref=e1071]
+            - paragraph [ref=e1073]: The Hunger Games
+          - link "The Planet of the Apes The Planet of the Apes" [ref=e1074] [cursor=pointer]:
+            - /url: /collections/9e8c8658-8a85-4c2a-99c3-5dcac2cd156c
+            - generic [ref=e1075]:
+              - img "The Planet of the Apes" [ref=e1076]
+              - img [ref=e1079]
+            - paragraph [ref=e1081]: The Planet of the Apes
+          - link "Jurassic World Jurassic World" [ref=e1082] [cursor=pointer]:
+            - /url: /collections/5d270dbc-9db9-44f9-b416-c1a83ff63362
+            - generic [ref=e1083]:
+              - img "Jurassic World" [ref=e1084]
+              - img [ref=e1087]
+            - paragraph [ref=e1089]: Jurassic World
+          - link "Men In Black Men In Black" [ref=e1090] [cursor=pointer]:
+            - /url: /collections/000e8d9f-949c-42eb-83c1-9b467c847867
+            - generic [ref=e1091]:
+              - img "Men In Black" [ref=e1092]
+              - img [ref=e1095]
+            - paragraph [ref=e1097]: Men In Black
+          - link "Ghostbusters Ghostbusters" [ref=e1098] [cursor=pointer]:
+            - /url: /collections/65048754-e150-482f-9525-7fbee75fb9a1
+            - generic [ref=e1099]:
+              - img "Ghostbusters" [ref=e1100]
+              - img [ref=e1103]
+            - paragraph [ref=e1105]: Ghostbusters
+          - link "Battlestar Galactica Battlestar Galactica" [ref=e1106] [cursor=pointer]:
+            - /url: /collections/eaa73c83-8ede-468b-a301-233c8261cef2
+            - generic [ref=e1107]:
+              - img "Battlestar Galactica" [ref=e1108]
+              - img [ref=e1111]
+            - paragraph [ref=e1113]: Battlestar Galactica
+          - link "DC Universe DC Universe" [ref=e1114] [cursor=pointer]:
+            - /url: /collections/0bbfc009-b75c-4eee-b332-57d0aad0a6bb
+            - generic [ref=e1115]:
+              - img "DC Universe" [ref=e1116]
+              - img [ref=e1119]
+            - paragraph [ref=e1121]: DC Universe
+          - link "Marvel Marvel" [ref=e1122] [cursor=pointer]:
+            - /url: /collections/82ce05b1-0e97-4888-a9e6-c8fc767cfb3e
+            - generic [ref=e1123]:
+              - img "Marvel" [ref=e1124]
+              - img [ref=e1127]
+            - paragraph [ref=e1129]: Marvel
+          - link "Rocky Rocky" [ref=e1130] [cursor=pointer]:
+            - /url: /collections/29989d97-ff35-4d8c-83b7-16855fdb1a91
+            - generic [ref=e1131]:
+              - img "Rocky" [ref=e1132]
+              - img [ref=e1135]
+            - paragraph [ref=e1137]: Rocky
+          - link "James Bond James Bond" [ref=e1138] [cursor=pointer]:
+            - /url: /collections/e5f28dfc-9e6c-4731-9183-78ad3b96aa66
+            - generic [ref=e1139]:
+              - img "James Bond" [ref=e1140]
+              - img [ref=e1143]
+            - paragraph [ref=e1145]: James Bond
+          - link "Monty Python Monty Python" [ref=e1146] [cursor=pointer]:
+            - /url: /collections/6bb5680e-0396-4881-bae9-6af25c53401f
+            - generic [ref=e1147]:
+              - img "Monty Python" [ref=e1148]
+              - img [ref=e1151]
+            - paragraph [ref=e1153]: Monty Python
+          - link "It's Aliens It's Aliens" [ref=e1154] [cursor=pointer]:
+            - /url: /collections/5a285927-4238-4e4c-918e-18c9af90c02d
+            - generic [ref=e1155]:
+              - img "It's Aliens" [ref=e1156]
+              - img [ref=e1159]
+            - paragraph [ref=e1161]: It's Aliens
+      - generic [ref=e1162]:
+        - heading "Streaming" [level=2] [ref=e1163]
+        - generic [ref=e1164]:
+          - link "Netflix Netflix" [ref=e1165] [cursor=pointer]:
+            - /url: /collections/260adb47-1dc8-40d6-8a89-f32e7b916d84
+            - generic [ref=e1166]:
+              - img "Netflix" [ref=e1167]
+              - img [ref=e1170]
+            - paragraph [ref=e1172]: Netflix
+          - link "Prime Video Prime Video" [ref=e1173] [cursor=pointer]:
+            - /url: /collections/f196208a-eaaa-41a7-bef9-ee981179a9bd
+            - generic [ref=e1174]:
+              - img "Prime Video" [ref=e1175]
+              - img [ref=e1178]
+            - paragraph [ref=e1180]: Prime Video
+          - link "Paramount+ Paramount+" [ref=e1181] [cursor=pointer]:
+            - /url: /collections/8e981b4b-2f21-443f-9d01-07255e024ff1
+            - generic [ref=e1182]:
+              - img "Paramount+" [ref=e1183]
+              - img [ref=e1186]
+            - paragraph [ref=e1188]: Paramount+
+          - link "Disney+ Disney+" [ref=e1189] [cursor=pointer]:
+            - /url: /collections/725ca240-a88a-46a6-ac8c-0543e667150f
+            - generic [ref=e1190]:
+              - img "Disney+" [ref=e1191]
+              - img [ref=e1194]
+            - paragraph [ref=e1196]: Disney+
+          - link "Apple TV Apple TV" [ref=e1197] [cursor=pointer]:
+            - /url: /collections/3cd7089f-e36a-47e8-b7bf-f8f912f64dae
+            - generic [ref=e1198]:
+              - img "Apple TV" [ref=e1199]
+              - img [ref=e1202]
+            - paragraph [ref=e1204]: Apple TV
+          - link "HBO MAX HBO MAX" [ref=e1205] [cursor=pointer]:
+            - /url: /collections/7ac2e4ef-9cf3-4cf4-bdf8-0a8fe65d2e8d
+            - generic [ref=e1206]:
+              - img "HBO MAX" [ref=e1207]
+              - img [ref=e1210]
+            - paragraph [ref=e1212]: HBO MAX
+          - link "Starz Starz" [ref=e1213] [cursor=pointer]:
+            - /url: /collections/15386d45-5cbe-4a32-ad6f-c9ed86d7fb06
+            - generic [ref=e1214]:
+              - img "Starz" [ref=e1215]
+              - img [ref=e1218]
+            - paragraph [ref=e1220]: Starz
+      - generic [ref=e1221]:
+        - heading "Decades" [level=2] [ref=e1222]
+        - generic [ref=e1223]:
+          - link "1980s 1980s" [ref=e1224] [cursor=pointer]:
+            - /url: /collections/2248c17d-cc39-4769-bccb-342a9f71b9f3
+            - generic [ref=e1225]:
+              - img "1980s" [ref=e1226]
+              - img [ref=e1229]
+            - paragraph [ref=e1231]: 1980s
+          - link "1990s 1990s" [ref=e1232] [cursor=pointer]:
+            - /url: /collections/22debae2-4d03-4a54-91e1-8b05f5be2d53
+            - generic [ref=e1233]:
+              - img "1990s" [ref=e1234]
+              - img [ref=e1237]
+            - paragraph [ref=e1239]: 1990s
+          - link "2000s 2000s" [ref=e1240] [cursor=pointer]:
+            - /url: /collections/7d24f2ce-6065-4b92-9d96-745b5ac9c643
+            - generic [ref=e1241]:
+              - img "2000s" [ref=e1242]
+              - img [ref=e1245]
+            - paragraph [ref=e1247]: 2000s
+          - link "2010s 2010s" [ref=e1248] [cursor=pointer]:
+            - /url: /collections/e01fee92-c881-4e18-837c-98681a9c83ca
+            - generic [ref=e1249]:
+              - img "2010s" [ref=e1250]
+              - img [ref=e1253]
+            - paragraph [ref=e1255]: 2010s
+          - link "2020s 2020s" [ref=e1256] [cursor=pointer]:
+            - /url: /collections/cc86c15a-3833-4c6b-9bb6-a268476b2708
+            - generic [ref=e1257]:
+              - img "2020s" [ref=e1258]
+              - img [ref=e1261]
+            - paragraph [ref=e1263]: 2020s
+      - generic [ref=e1264]:
+        - heading "Directors" [level=2] [ref=e1265]
+        - generic [ref=e1266]:
+          - link "Wes Anderson Wes Anderson" [ref=e1267] [cursor=pointer]:
+            - /url: /collections/2ce4ce51-97ca-47a6-8252-fde84449ff4e
+            - generic [ref=e1268]:
+              - img "Wes Anderson" [ref=e1269]
+              - img [ref=e1272]
+            - paragraph [ref=e1274]: Wes Anderson
+          - link "Danny Boyle Danny Boyle" [ref=e1275] [cursor=pointer]:
+            - /url: /collections/b82b9d4e-c2ed-445f-94a8-24c95dc06bc7
+            - generic [ref=e1276]:
+              - img "Danny Boyle" [ref=e1277]
+              - img [ref=e1280]
+            - paragraph [ref=e1282]: Danny Boyle
+          - link "Tim Burton Tim Burton" [ref=e1283] [cursor=pointer]:
+            - /url: /collections/0b434f9e-9dfa-42b2-aec6-5f193f6326aa
+            - generic [ref=e1284]:
+              - img "Tim Burton" [ref=e1285]
+              - img [ref=e1288]
+            - paragraph [ref=e1290]: Tim Burton
+          - link "James Cameron James Cameron" [ref=e1291] [cursor=pointer]:
+            - /url: /collections/c72c4bee-596c-42e1-a271-f335d27b39b5
+            - generic [ref=e1292]:
+              - img "James Cameron" [ref=e1293]
+              - img [ref=e1296]
+            - paragraph [ref=e1298]: James Cameron
+          - link "Coen Brothers Coen Brothers" [ref=e1299] [cursor=pointer]:
+            - /url: /collections/4511e9ff-d72c-4dd8-85ce-dab4cce08cd9
+            - generic [ref=e1300]:
+              - img "Coen Brothers" [ref=e1301]
+              - img [ref=e1304]
+            - paragraph [ref=e1306]: Coen Brothers
+          - link "Ron Howard Ron Howard" [ref=e1307] [cursor=pointer]:
+            - /url: /collections/c508022c-7f77-4e57-8d97-08a596f6c93b
+            - generic [ref=e1308]:
+              - img "Ron Howard" [ref=e1309]
+              - img [ref=e1312]
+            - paragraph [ref=e1314]: Ron Howard
+          - link "Stanley Kubrick Stanley Kubrick" [ref=e1315] [cursor=pointer]:
+            - /url: /collections/d1824f54-d54f-4f12-ab8d-44a6352ca40b
+            - generic [ref=e1316]:
+              - img "Stanley Kubrick" [ref=e1317]
+              - img [ref=e1320]
+            - paragraph [ref=e1322]: Stanley Kubrick
+          - link "Christopher Nolan Christopher Nolan" [ref=e1323] [cursor=pointer]:
+            - /url: /collections/f11e1afa-3536-459c-8c6b-937e711beb35
+            - generic [ref=e1324]:
+              - img "Christopher Nolan" [ref=e1325]
+              - img [ref=e1328]
+            - paragraph [ref=e1330]: Christopher Nolan
+          - link "Martin Scorsese Martin Scorsese" [ref=e1331] [cursor=pointer]:
+            - /url: /collections/7f593493-27bf-48fd-af19-f38de1db6894
+            - generic [ref=e1332]:
+              - img "Martin Scorsese" [ref=e1333]
+              - img [ref=e1336]
+            - paragraph [ref=e1338]: Martin Scorsese
+          - link "Ridley Scott Ridley Scott" [ref=e1339] [cursor=pointer]:
+            - /url: /collections/33908521-762d-401a-9369-b3b864383e1b
+            - generic [ref=e1340]:
+              - img "Ridley Scott" [ref=e1341]
+              - img [ref=e1344]
+            - paragraph [ref=e1346]: Ridley Scott
+          - link "M. Night Shyamalan M. Night Shyamalan" [ref=e1347] [cursor=pointer]:
+            - /url: /collections/a0764577-f7ad-4753-b94b-fc9e6a9785d2
+            - generic [ref=e1348]:
+              - img "M. Night Shyamalan" [ref=e1349]
+              - img [ref=e1352]
+            - paragraph [ref=e1354]: M. Night Shyamalan
+          - link "Steven Spielberg Steven Spielberg" [ref=e1355] [cursor=pointer]:
+            - /url: /collections/e9620be6-c0ce-4943-8833-8922bccf063e
+            - generic [ref=e1356]:
+              - img "Steven Spielberg" [ref=e1357]
+              - img [ref=e1360]
+            - paragraph [ref=e1362]: Steven Spielberg
+          - link "Oliver Stone Oliver Stone" [ref=e1363] [cursor=pointer]:
+            - /url: /collections/734b8d5c-b97e-457f-a110-43ea33f38217
+            - generic [ref=e1364]:
+              - img "Oliver Stone" [ref=e1365]
+              - img [ref=e1368]
+            - paragraph [ref=e1370]: Oliver Stone
+          - link "Quentin Tarantino Quentin Tarantino" [ref=e1371] [cursor=pointer]:
+            - /url: /collections/d238cf3b-d27b-4659-9ae4-23c83417f7b7
+            - generic [ref=e1372]:
+              - img "Quentin Tarantino" [ref=e1373]
+              - img [ref=e1376]
+            - paragraph [ref=e1378]: Quentin Tarantino
+      - generic [ref=e1379]:
+        - heading "Actors" [level=2] [ref=e1380]
+        - generic [ref=e1381]:
+          - link "Adam Sandler Adam Sandler" [ref=e1382] [cursor=pointer]:
+            - /url: /collections/90bbb2cf-0c43-4af2-9bbc-6984479258b7
+            - generic [ref=e1383]:
+              - img "Adam Sandler" [ref=e1384]
+              - img [ref=e1387]
+            - paragraph [ref=e1389]: Adam Sandler
+          - link "Angelina Jolie Angelina Jolie" [ref=e1390] [cursor=pointer]:
+            - /url: /collections/a1b3ebae-5d47-4541-a669-c0a65b6966c4
+            - generic [ref=e1391]:
+              - img "Angelina Jolie" [ref=e1392]
+              - img [ref=e1395]
+            - paragraph [ref=e1397]: Angelina Jolie
+          - link "Anne Hathaway Anne Hathaway" [ref=e1398] [cursor=pointer]:
+            - /url: /collections/6ca5e24f-1246-41fd-bf03-18c7e2e33baa
+            - generic [ref=e1399]:
+              - img "Anne Hathaway" [ref=e1400]
+              - img [ref=e1403]
+            - paragraph [ref=e1405]: Anne Hathaway
+          - link "Arnold Schwarzenegger Arnold Schwarzenegger" [ref=e1406] [cursor=pointer]:
+            - /url: /collections/f5077e6a-a6a2-4c80-bb55-660bc9b8dda8
+            - generic [ref=e1407]:
+              - img "Arnold Schwarzenegger" [ref=e1408]
+              - img [ref=e1411]
+            - paragraph [ref=e1413]: Arnold Schwarzenegger
+          - link "Ben Stiller Ben Stiller" [ref=e1414] [cursor=pointer]:
+            - /url: /collections/63e31b03-1731-4180-bb6f-cbf8f9280854
+            - generic [ref=e1415]:
+              - img "Ben Stiller" [ref=e1416]
+              - img [ref=e1419]
+            - paragraph [ref=e1421]: Ben Stiller
+          - link "Benedict Cumberbatch Benedict Cumberbatch" [ref=e1422] [cursor=pointer]:
+            - /url: /collections/3e8d7aac-8203-42d6-81b9-c3f036314049
+            - generic [ref=e1423]:
+              - img "Benedict Cumberbatch" [ref=e1424]
+              - img [ref=e1427]
+            - paragraph [ref=e1429]: Benedict Cumberbatch
+          - link "Bill Murray Bill Murray" [ref=e1430] [cursor=pointer]:
+            - /url: /collections/1992f1f0-4594-4c11-a2b9-15b49ef46458
+            - generic [ref=e1431]:
+              - img "Bill Murray" [ref=e1432]
+              - img [ref=e1435]
+            - paragraph [ref=e1437]: Bill Murray
+          - link "Brad Pitt Brad Pitt" [ref=e1438] [cursor=pointer]:
+            - /url: /collections/32b597ab-4e5d-4eac-b8d3-ff414e0518a5
+            - generic [ref=e1439]:
+              - img "Brad Pitt" [ref=e1440]
+              - img [ref=e1443]
+            - paragraph [ref=e1445]: Brad Pitt
+          - link "Christian Bale Christian Bale" [ref=e1446] [cursor=pointer]:
+            - /url: /collections/45112186-ceab-4a58-85e1-fcd0d4371b90
+            - generic [ref=e1447]:
+              - img "Christian Bale" [ref=e1448]
+              - img [ref=e1451]
+            - paragraph [ref=e1453]: Christian Bale
+          - link "Chuck Norris Chuck Norris" [ref=e1454] [cursor=pointer]:
+            - /url: /collections/b207cd08-54d1-4a63-a346-033658e9cde9
+            - generic [ref=e1455]:
+              - img "Chuck Norris" [ref=e1456]
+              - img [ref=e1459]
+            - paragraph [ref=e1461]: Chuck Norris
+          - link "Daniel Craig Daniel Craig" [ref=e1462] [cursor=pointer]:
+            - /url: /collections/03d0a5ec-2105-4b6e-947e-741ea60c3936
+            - generic [ref=e1463]:
+              - img "Daniel Craig" [ref=e1464]
+              - img [ref=e1467]
+            - paragraph [ref=e1469]: Daniel Craig
+          - link "Denzel Washington Denzel Washington" [ref=e1470] [cursor=pointer]:
+            - /url: /collections/f4fd8497-dd6c-4842-96fb-20f00710ddd9
+            - generic [ref=e1471]:
+              - img "Denzel Washington" [ref=e1472]
+              - img [ref=e1475]
+            - paragraph [ref=e1477]: Denzel Washington
+          - link "Dwayne Johnson Dwayne Johnson" [ref=e1478] [cursor=pointer]:
+            - /url: /collections/89a642b9-3310-49c3-8c55-c769f4c2c434
+            - generic [ref=e1479]:
+              - img "Dwayne Johnson" [ref=e1480]
+              - img [ref=e1483]
+            - paragraph [ref=e1485]: Dwayne Johnson
+          - link "Emma Stone Emma Stone" [ref=e1486] [cursor=pointer]:
+            - /url: /collections/d0bcf271-d86c-413c-9d04-6e889107316a
+            - generic [ref=e1487]:
+              - img "Emma Stone" [ref=e1488]
+              - img [ref=e1491]
+            - paragraph [ref=e1493]: Emma Stone
+          - link "Florence Pugh Florence Pugh" [ref=e1494] [cursor=pointer]:
+            - /url: /collections/9e700bbb-d135-4595-8500-3770a299aa4a
+            - generic [ref=e1495]:
+              - img "Florence Pugh" [ref=e1496]
+              - img [ref=e1499]
+            - paragraph [ref=e1501]: Florence Pugh
+          - link "George Clooney George Clooney" [ref=e1502] [cursor=pointer]:
+            - /url: /collections/1770673f-b631-4297-8529-af0fcf7a647d
+            - generic [ref=e1503]:
+              - img "George Clooney" [ref=e1504]
+              - img [ref=e1507]
+            - paragraph [ref=e1509]: George Clooney
+          - link "Harrison Ford Harrison Ford" [ref=e1510] [cursor=pointer]:
+            - /url: /collections/0edd1f74-28d0-48a2-bad4-0efa1cb07d29
+            - generic [ref=e1511]:
+              - img "Harrison Ford" [ref=e1512]
+              - img [ref=e1515]
+            - paragraph [ref=e1517]: Harrison Ford
+          - link "Jack Black Jack Black" [ref=e1518] [cursor=pointer]:
+            - /url: /collections/0141b614-e867-4270-ae97-87c9b10593bb
+            - generic [ref=e1519]:
+              - img "Jack Black" [ref=e1520]
+              - img [ref=e1523]
+            - paragraph [ref=e1525]: Jack Black
+          - link "Jackie Chan Jackie Chan" [ref=e1526] [cursor=pointer]:
+            - /url: /collections/3f99d5f0-4f72-460d-8870-f2dd15ca1b7e
+            - generic [ref=e1527]:
+              - img "Jackie Chan" [ref=e1528]
+              - img [ref=e1531]
+            - paragraph [ref=e1533]: Jackie Chan
+          - link "Jake Gyllenhaal Jake Gyllenhaal" [ref=e1534] [cursor=pointer]:
+            - /url: /collections/43db29cd-cdd7-428f-9ae3-54a9d0c2c84e
+            - generic [ref=e1535]:
+              - img "Jake Gyllenhaal" [ref=e1536]
+              - img [ref=e1539]
+            - paragraph [ref=e1541]: Jake Gyllenhaal
+          - link "Jason Statham Jason Statham" [ref=e1542] [cursor=pointer]:
+            - /url: /collections/e3998f7e-41ea-4a45-924c-9a940e8f48f4
+            - generic [ref=e1543]:
+              - img "Jason Statham" [ref=e1544]
+              - img [ref=e1547]
+            - paragraph [ref=e1549]: Jason Statham
+          - link "Jenna Ortega Jenna Ortega" [ref=e1550] [cursor=pointer]:
+            - /url: /collections/e5a9be57-ba57-4aca-b700-c9f761a64b6e
+            - generic [ref=e1551]:
+              - img "Jenna Ortega" [ref=e1552]
+              - img [ref=e1555]
+            - paragraph [ref=e1557]: Jenna Ortega
+          - link "Jennifer Aniston Jennifer Aniston" [ref=e1558] [cursor=pointer]:
+            - /url: /collections/6e936a4c-5c88-48fc-8877-53a1ee492f42
+            - generic [ref=e1559]:
+              - img "Jennifer Aniston" [ref=e1560]
+              - img [ref=e1563]
+            - paragraph [ref=e1565]: Jennifer Aniston
+          - link "Jennifer Lawrence Jennifer Lawrence" [ref=e1566] [cursor=pointer]:
+            - /url: /collections/d3acd513-2209-41f7-b3ad-074aa9939ddf
+            - generic [ref=e1567]:
+              - img "Jennifer Lawrence" [ref=e1568]
+              - img [ref=e1571]
+            - paragraph [ref=e1573]: Jennifer Lawrence
+          - link "Jim Carrey Jim Carrey" [ref=e1574] [cursor=pointer]:
+            - /url: /collections/2fd33e36-651a-4c86-90ae-50ed34e2bdda
+            - generic [ref=e1575]:
+              - img "Jim Carrey" [ref=e1576]
+              - img [ref=e1579]
+            - paragraph [ref=e1581]: Jim Carrey
+          - link "Johnny Depp Johnny Depp" [ref=e1582] [cursor=pointer]:
+            - /url: /collections/e724b2b3-ec8b-4387-9c2e-4b0ebf4270dc
+            - generic [ref=e1583]:
+              - img "Johnny Depp" [ref=e1584]
+              - img [ref=e1587]
+            - paragraph [ref=e1589]: Johnny Depp
+          - link "Jonah Hill Jonah Hill" [ref=e1590] [cursor=pointer]:
+            - /url: /collections/ea12a190-6165-4cfa-a64a-6c76fb1528a6
+            - generic [ref=e1591]:
+              - img "Jonah Hill" [ref=e1592]
+              - img [ref=e1595]
+            - paragraph [ref=e1597]: Jonah Hill
+          - link "Julia Roberts Julia Roberts" [ref=e1598] [cursor=pointer]:
+            - /url: /collections/87237f7c-8a48-404a-aec1-20180470c5ae
+            - generic [ref=e1599]:
+              - img "Julia Roberts" [ref=e1600]
+              - img [ref=e1603]
+            - paragraph [ref=e1605]: Julia Roberts
+          - link "Katherine Heigl Katherine Heigl" [ref=e1606] [cursor=pointer]:
+            - /url: /collections/3f068731-710e-465c-89df-3e6cd80eaaee
+            - generic [ref=e1607]:
+              - img "Katherine Heigl" [ref=e1608]
+              - img [ref=e1611]
+            - paragraph [ref=e1613]: Katherine Heigl
+          - link "Leonardo DiCaprio Leonardo DiCaprio" [ref=e1614] [cursor=pointer]:
+            - /url: /collections/7713e9db-4322-4b30-9747-be7264456c75
+            - generic [ref=e1615]:
+              - img "Leonardo DiCaprio" [ref=e1616]
+              - img [ref=e1619]
+            - paragraph [ref=e1621]: Leonardo DiCaprio
+          - link "Lily Collins Lily Collins" [ref=e1622] [cursor=pointer]:
+            - /url: /collections/3b4778e8-aaa2-4756-b03d-c449cbbb1a8c
+            - generic [ref=e1623]:
+              - img "Lily Collins" [ref=e1624]
+              - img [ref=e1627]
+            - paragraph [ref=e1629]: Lily Collins
+          - link "Margot Robbie Margot Robbie" [ref=e1630] [cursor=pointer]:
+            - /url: /collections/23d8d2ee-4153-4131-a8ae-3d95af9940ea
+            - generic [ref=e1631]:
+              - img "Margot Robbie" [ref=e1632]
+              - img [ref=e1635]
+            - paragraph [ref=e1637]: Margot Robbie
+          - link "Matt Damon Matt Damon" [ref=e1638] [cursor=pointer]:
+            - /url: /collections/a539dc39-46cd-4b6b-b89a-467afe8dcb60
+            - generic [ref=e1639]:
+              - img "Matt Damon" [ref=e1640]
+              - img [ref=e1643]
+            - paragraph [ref=e1645]: Matt Damon
+          - link "Matthew McConaughey Matthew McConaughey" [ref=e1646] [cursor=pointer]:
+            - /url: /collections/040d6466-bb86-48e3-ae74-b73b99018787
+            - generic [ref=e1647]:
+              - img "Matthew McConaughey" [ref=e1648]
+              - img [ref=e1651]
+            - paragraph [ref=e1653]: Matthew McConaughey
+          - link "Melissa McCarthy Melissa McCarthy" [ref=e1654] [cursor=pointer]:
+            - /url: /collections/08d6b5cc-7cf4-40b8-9d98-4074444fb4be
+            - generic [ref=e1655]:
+              - img "Melissa McCarthy" [ref=e1656]
+              - img [ref=e1659]
+            - paragraph [ref=e1661]: Melissa McCarthy
+          - link "Meryl Streep Meryl Streep" [ref=e1662] [cursor=pointer]:
+            - /url: /collections/fa9cf8d8-fc51-413e-b07b-8c9732ce689b
+            - generic [ref=e1663]:
+              - img "Meryl Streep" [ref=e1664]
+              - img [ref=e1667]
+            - paragraph [ref=e1669]: Meryl Streep
+          - link "Michael Herbig Michael Herbig" [ref=e1670] [cursor=pointer]:
+            - /url: /collections/dec90caa-7e34-42d3-a588-180a4c27fe19
+            - generic [ref=e1671]:
+              - img "Michael Herbig" [ref=e1672]
+              - img [ref=e1675]
+            - paragraph [ref=e1677]: Michael Herbig
+          - link "Mila Kunis Mila Kunis" [ref=e1678] [cursor=pointer]:
+            - /url: /collections/016a4ebd-9700-4b90-b608-00e8debaa9f7
+            - generic [ref=e1679]:
+              - img "Mila Kunis" [ref=e1680]
+              - img [ref=e1683]
+            - paragraph [ref=e1685]: Mila Kunis
+          - link "Millie Bobby Brown Millie Bobby Brown" [ref=e1686] [cursor=pointer]:
+            - /url: /collections/7f22d979-7475-4684-bdde-4a7fbdd19080
+            - generic [ref=e1687]:
+              - img "Millie Bobby Brown" [ref=e1688]
+              - img [ref=e1691]
+            - paragraph [ref=e1693]: Millie Bobby Brown
+          - link "Morgan Freeman Morgan Freeman" [ref=e1694] [cursor=pointer]:
+            - /url: /collections/517db505-5186-43ba-b139-933b199b4b49
+            - generic [ref=e1695]:
+              - img "Morgan Freeman" [ref=e1696]
+              - img [ref=e1699]
+            - paragraph [ref=e1701]: Morgan Freeman
+          - link "Nicolas Cage Nicolas Cage" [ref=e1702] [cursor=pointer]:
+            - /url: /collections/75777b35-ee27-4135-aabb-aa63ea2ce4d5
+            - generic [ref=e1703]:
+              - img "Nicolas Cage" [ref=e1704]
+              - img [ref=e1707]
+            - paragraph [ref=e1709]: Nicolas Cage
+          - link "Nicole Kidman Nicole Kidman" [ref=e1710] [cursor=pointer]:
+            - /url: /collections/66e2ff0e-5d48-48db-8d96-19165db4f5bf
+            - generic [ref=e1711]:
+              - img "Nicole Kidman" [ref=e1712]
+              - img [ref=e1715]
+            - paragraph [ref=e1717]: Nicole Kidman
+          - link "Owen Wilson Owen Wilson" [ref=e1718] [cursor=pointer]:
+            - /url: /collections/d242c223-fd33-4bde-a2ba-7771a2db29dc
+            - generic [ref=e1719]:
+              - img "Owen Wilson" [ref=e1720]
+              - img [ref=e1723]
+            - paragraph [ref=e1725]: Owen Wilson
+          - link "Reese Witherspoon Reese Witherspoon" [ref=e1726] [cursor=pointer]:
+            - /url: /collections/3b87a0fa-0c46-4e30-ac56-3da254d9f79d
+            - generic [ref=e1727]:
+              - img "Reese Witherspoon" [ref=e1728]
+              - img [ref=e1731]
+            - paragraph [ref=e1733]: Reese Witherspoon
+          - link "Robert Downey Jr. Robert Downey Jr." [ref=e1734] [cursor=pointer]:
+            - /url: /collections/066591ad-ece7-4d05-accd-7a433697cf92
+            - generic [ref=e1735]:
+              - img "Robert Downey Jr." [ref=e1736]
+              - img [ref=e1739]
+            - paragraph [ref=e1741]: Robert Downey Jr.
+          - link "Robin Williams Robin Williams" [ref=e1742] [cursor=pointer]:
+            - /url: /collections/61ac575e-4e85-4456-bee2-dd73000f25a7
+            - generic [ref=e1743]:
+              - img "Robin Williams" [ref=e1744]
+              - img [ref=e1747]
+            - paragraph [ref=e1749]: Robin Williams
+          - link "Ryan Reynolds Ryan Reynolds" [ref=e1750] [cursor=pointer]:
+            - /url: /collections/370790f3-bffd-4ee8-975a-d9502beff9ac
+            - generic [ref=e1751]:
+              - img "Ryan Reynolds" [ref=e1752]
+              - img [ref=e1755]
+            - paragraph [ref=e1757]: Ryan Reynolds
+          - link "Samuel L. Jackson Samuel L. Jackson" [ref=e1758] [cursor=pointer]:
+            - /url: /collections/e4265bb2-fb05-4146-865b-f8ea7199c4d9
+            - generic [ref=e1759]:
+              - img "Samuel L. Jackson" [ref=e1760]
+              - img [ref=e1763]
+            - paragraph [ref=e1765]: Samuel L. Jackson
+          - link "Sandra Bullock Sandra Bullock" [ref=e1766] [cursor=pointer]:
+            - /url: /collections/966300b8-b8d3-4447-8c24-9e284a421fd5
+            - generic [ref=e1767]:
+              - img "Sandra Bullock" [ref=e1768]
+              - img [ref=e1771]
+            - paragraph [ref=e1773]: Sandra Bullock
+          - link "Steve Carell Steve Carell" [ref=e1774] [cursor=pointer]:
+            - /url: /collections/37a27994-18eb-435e-b9a3-6be6f0d501d1
+            - generic [ref=e1775]:
+              - img "Steve Carell" [ref=e1776]
+              - img [ref=e1779]
+            - paragraph [ref=e1781]: Steve Carell
+          - link "Sydney Sweeney Sydney Sweeney" [ref=e1782] [cursor=pointer]:
+            - /url: /collections/ae5c4f79-265c-4717-828d-85dcd2f7525e
+            - generic [ref=e1783]:
+              - img "Sydney Sweeney" [ref=e1784]
+              - img [ref=e1787]
+            - paragraph [ref=e1789]: Sydney Sweeney
+          - link "Sylvester Stallone Sylvester Stallone" [ref=e1790] [cursor=pointer]:
+            - /url: /collections/70ee369d-a755-4e8d-9505-8bb9c49e032f
+            - generic [ref=e1791]:
+              - img "Sylvester Stallone" [ref=e1792]
+              - img [ref=e1795]
+            - paragraph [ref=e1797]: Sylvester Stallone
+          - link "Timothée Chalamet Timothée Chalamet" [ref=e1798] [cursor=pointer]:
+            - /url: /collections/8e8a1f8f-45e9-4c29-aec1-a5a8e814b321
+            - generic [ref=e1799]:
+              - img "Timothée Chalamet" [ref=e1800]
+              - img [ref=e1803]
+            - paragraph [ref=e1805]: Timothée Chalamet
+          - link "Tom Cruise Tom Cruise" [ref=e1806] [cursor=pointer]:
+            - /url: /collections/474a3c17-c9c7-459b-a080-28f6904e3507
+            - generic [ref=e1807]:
+              - img "Tom Cruise" [ref=e1808]
+              - img [ref=e1811]
+            - paragraph [ref=e1813]: Tom Cruise
+          - link "Tom Holland Tom Holland" [ref=e1814] [cursor=pointer]:
+            - /url: /collections/1b8542ba-5cf7-468f-abc5-622791c7ac36
+            - generic [ref=e1815]:
+              - img "Tom Holland" [ref=e1816]
+              - img [ref=e1819]
+            - paragraph [ref=e1821]: Tom Holland
+          - link "Zendaya Zendaya" [ref=e1822] [cursor=pointer]:
+            - /url: /collections/e7bc4014-6e82-4dba-a62f-ae85d3f57fa8
+            - generic [ref=e1823]:
+              - img "Zendaya" [ref=e1824]
+              - img [ref=e1827]
+            - paragraph [ref=e1829]: Zendaya
+      - generic [ref=e1830]:
+        - heading "Anime" [level=2] [ref=e1831]
+        - generic [ref=e1832]:
+          - link "Latest Release Latest Release" [ref=e1833] [cursor=pointer]:
+            - /url: /collections/b9d584f9-ddaf-4fd8-9c39-53986d901176
+            - generic [ref=e1834]:
+              - img "Latest Release" [ref=e1835]
+              - img [ref=e1838]
+            - paragraph [ref=e1840]: Latest Release
+          - link "Popular Popular" [ref=e1841] [cursor=pointer]:
+            - /url: /collections/1233f80b-5616-4dcb-86ca-651862c8a3ba
+            - generic [ref=e1842]:
+              - img "Popular" [ref=e1843]
+              - img [ref=e1846]
+            - paragraph [ref=e1848]: Popular
+          - link "Most Watched Most Watched" [ref=e1849] [cursor=pointer]:
+            - /url: /collections/3ba52d90-c53e-4f8e-a6f2-ea17c7e88b7b
+            - generic [ref=e1850]:
+              - img "Most Watched" [ref=e1851]
+              - img [ref=e1854]
+            - paragraph [ref=e1856]: Most Watched
+          - link "Upcoming Upcoming" [ref=e1857] [cursor=pointer]:
+            - /url: /collections/bc6b6e86-f6e0-4f36-8d62-be3999062f48
+            - generic [ref=e1858]:
+              - img "Upcoming" [ref=e1859]
+              - img [ref=e1862]
+            - paragraph [ref=e1864]: Upcoming
+          - link "Dubbed Only Dubbed Only" [ref=e1865] [cursor=pointer]:
+            - /url: /collections/d4e2b76e-61de-44f5-b2ad-f10c6d249233
+            - generic [ref=e1866]:
+              - img "Dubbed Only" [ref=e1867]
+              - img [ref=e1870]
+            - paragraph [ref=e1872]: Dubbed Only
+      - generic [ref=e1873]:
+        - heading "Awards" [level=2] [ref=e1874]
+        - link "Academy Awards Academy Awards" [ref=e1876] [cursor=pointer]:
+          - /url: /collections/3818e784-c37c-45b1-b172-db18b249ffe9
+          - generic [ref=e1877]:
+            - img "Academy Awards" [ref=e1878]
+            - img [ref=e1881]
+          - paragraph [ref=e1883]: Academy Awards
+      - generic [ref=e1884]:
+        - heading "Genres" [level=2] [ref=e1885]
+        - generic [ref=e1886]:
+          - link "Action Action" [ref=e1887] [cursor=pointer]:
+            - /url: /collections/f1425616-899d-43c6-b290-7dbfea523e6d
+            - generic [ref=e1888]:
+              - img "Action" [ref=e1889]
+              - img [ref=e1892]
+            - paragraph [ref=e1894]: Action
+          - link "Adventure Adventure" [ref=e1895] [cursor=pointer]:
+            - /url: /collections/c2e5b2d4-1f1e-4e7f-af4b-3eb08b900a71
+            - generic [ref=e1896]:
+              - img "Adventure" [ref=e1897]
+              - img [ref=e1900]
+            - paragraph [ref=e1902]: Adventure
+          - link "Animation Animation" [ref=e1903] [cursor=pointer]:
+            - /url: /collections/71216912-1c40-479a-95b8-9460dea526d8
+            - generic [ref=e1904]:
+              - img "Animation" [ref=e1905]
+              - img [ref=e1908]
+            - paragraph [ref=e1910]: Animation
+          - link "Anime Anime" [ref=e1911] [cursor=pointer]:
+            - /url: /collections/413a72a9-a1df-44ed-b5f6-049c8818bfc0
+            - generic [ref=e1912]:
+              - img "Anime" [ref=e1913]
+              - img [ref=e1916]
+            - paragraph [ref=e1918]: Anime
+          - link "Comedy Comedy" [ref=e1919] [cursor=pointer]:
+            - /url: /collections/b2097b57-dc03-4d54-94b2-1658fa7b9bfa
+            - generic [ref=e1920]:
+              - img "Comedy" [ref=e1921]
+              - img [ref=e1924]
+            - paragraph [ref=e1926]: Comedy
+          - link "Crime Crime" [ref=e1927] [cursor=pointer]:
+            - /url: /collections/f559aa10-39a0-469b-9225-8bd49728e62f
+            - generic [ref=e1928]:
+              - img "Crime" [ref=e1929]
+              - img [ref=e1932]
+            - paragraph [ref=e1934]: Crime
+          - link "Dark Fantasy Thriller Dark Fantasy Thriller" [ref=e1935] [cursor=pointer]:
+            - /url: /collections/333e41b5-cb97-40f9-90ad-d72beac1c86e
+            - generic [ref=e1936]:
+              - img "Dark Fantasy Thriller" [ref=e1937]
+              - img [ref=e1940]
+            - paragraph [ref=e1942]: Dark Fantasy Thriller
+          - link "Documentary Documentary" [ref=e1943] [cursor=pointer]:
+            - /url: /collections/bdfd2c5a-4929-4025-8ef4-21c3346a8efb
+            - generic [ref=e1944]:
+              - img "Documentary" [ref=e1945]
+              - img [ref=e1948]
+            - paragraph [ref=e1950]: Documentary
+          - link "Drama Drama" [ref=e1951] [cursor=pointer]:
+            - /url: /collections/69282e3d-ede8-4c7a-ac1b-daffd41baf2b
+            - generic [ref=e1952]:
+              - img "Drama" [ref=e1953]
+              - img [ref=e1956]
+            - paragraph [ref=e1958]: Drama
+          - link "Dubbed Only Dubbed Only" [ref=e1959] [cursor=pointer]:
+            - /url: /collections/881a4613-6077-4a43-8683-df6907d326fa
+            - generic [ref=e1960]:
+              - img "Dubbed Only" [ref=e1961]
+              - img [ref=e1964]
+            - paragraph [ref=e1966]: Dubbed Only
+          - link "Family Family" [ref=e1967] [cursor=pointer]:
+            - /url: /collections/c90af15f-2e9c-42dd-9aca-4cc0b6946599
+            - generic [ref=e1968]:
+              - img "Family" [ref=e1969]
+              - img [ref=e1972]
+            - paragraph [ref=e1974]: Family
+          - link "Fantasy Fantasy" [ref=e1975] [cursor=pointer]:
+            - /url: /collections/18f2bf29-e589-4dcd-b3fe-c45f36e2c93a
+            - generic [ref=e1976]:
+              - img "Fantasy" [ref=e1977]
+              - img [ref=e1980]
+            - paragraph [ref=e1982]: Fantasy
+          - link "Fantasy Isekai Worlds Fantasy Isekai Worlds" [ref=e1983] [cursor=pointer]:
+            - /url: /collections/faa70c37-0b19-45ee-84ff-cb0e77772654
+            - generic [ref=e1984]:
+              - img "Fantasy Isekai Worlds" [ref=e1985]
+              - img [ref=e1988]
+            - paragraph [ref=e1990]: Fantasy Isekai Worlds
+          - link "History History" [ref=e1991] [cursor=pointer]:
+            - /url: /collections/94b6b7aa-e3e2-4a2d-ae27-f4e499cc1918
+            - generic [ref=e1992]:
+              - img "History" [ref=e1993]
+              - img [ref=e1996]
+            - paragraph [ref=e1998]: History
+          - link "Horror Horror" [ref=e1999] [cursor=pointer]:
+            - /url: /collections/217c89f4-8dbc-4d94-8e4f-554fe3d2647c
+            - generic [ref=e2000]:
+              - img "Horror" [ref=e2001]
+              - img [ref=e2004]
+            - paragraph [ref=e2006]: Horror
+          - link "Latest Release Latest Release" [ref=e2007] [cursor=pointer]:
+            - /url: /collections/cac2b3c0-3679-4d43-bf1c-9ab852d9ee58
+            - generic [ref=e2008]:
+              - img "Latest Release" [ref=e2009]
+              - img [ref=e2012]
+            - paragraph [ref=e2014]: Latest Release
+          - link "Mystery Mystery" [ref=e2015] [cursor=pointer]:
+            - /url: /collections/308c156e-bdce-422b-b589-a2781b547e2f
+            - generic [ref=e2016]:
+              - img "Mystery" [ref=e2017]
+              - img [ref=e2020]
+            - paragraph [ref=e2022]: Mystery
+          - link "Popular Popular" [ref=e2023] [cursor=pointer]:
+            - /url: /collections/739c7aa1-809e-44c9-8f55-7cce365154b0
+            - generic [ref=e2024]:
+              - img "Popular" [ref=e2025]
+              - img [ref=e2028]
+            - paragraph [ref=e2030]: Popular
+          - link "Reality TV Reality TV" [ref=e2031] [cursor=pointer]:
+            - /url: /collections/2c70c0ce-fcec-4a59-81d3-bafa5797e65a
+            - generic [ref=e2032]:
+              - img "Reality TV" [ref=e2033]
+              - img [ref=e2036]
+            - paragraph [ref=e2038]: Reality TV
+          - link "Romance Romance" [ref=e2039] [cursor=pointer]:
+            - /url: /collections/0a544096-a503-4f05-8d45-7dbb3215d3c0
+            - generic [ref=e2040]:
+              - img "Romance" [ref=e2041]
+              - img [ref=e2044]
+            - paragraph [ref=e2046]: Romance
+          - link "Romantic Comedy Romantic Comedy" [ref=e2047] [cursor=pointer]:
+            - /url: /collections/0eb3f30c-6f5b-4721-998e-196cfc79dbaf
+            - generic [ref=e2048]:
+              - img "Romantic Comedy" [ref=e2049]
+              - img [ref=e2052]
+            - paragraph [ref=e2054]: Romantic Comedy
+          - link "Science Fiction Science Fiction" [ref=e2055] [cursor=pointer]:
+            - /url: /collections/273bceee-bceb-414f-b9ec-63bb2c7439f5
+            - generic [ref=e2056]:
+              - img "Science Fiction" [ref=e2057]
+              - img [ref=e2060]
+            - paragraph [ref=e2062]: Science Fiction
+          - link "Shonen Action Hits Shonen Action Hits" [ref=e2063] [cursor=pointer]:
+            - /url: /collections/bbfde1dd-9383-4581-bd76-99cfa717cb7b
+            - generic [ref=e2064]:
+              - img "Shonen Action Hits" [ref=e2065]
+              - img [ref=e2068]
+            - paragraph [ref=e2070]: Shonen Action Hits
+          - link "Stand-Up Comedy Stand-Up Comedy" [ref=e2071] [cursor=pointer]:
+            - /url: /collections/0acc9686-0b98-44c4-abc4-f67c2680a61e
+            - generic [ref=e2072]:
+              - img "Stand-Up Comedy" [ref=e2073]
+              - img [ref=e2076]
+            - paragraph [ref=e2078]: Stand-Up Comedy
+          - link "Studio Ghibli Masterpieces Studio Ghibli Masterpieces" [ref=e2079] [cursor=pointer]:
+            - /url: /collections/a405fedb-aff8-4ea4-9b5c-9c54f1f359a0
+            - generic [ref=e2080]:
+              - img "Studio Ghibli Masterpieces" [ref=e2081]
+              - img [ref=e2084]
+            - paragraph [ref=e2086]: Studio Ghibli Masterpieces
+          - link "Studio Spotlight MAPPA ufotable Studio Spotlight MAPPA ufotable" [ref=e2087] [cursor=pointer]:
+            - /url: /collections/142bb59e-a45a-47dc-b200-70a9032ea37a
+            - generic [ref=e2088]:
+              - img "Studio Spotlight MAPPA ufotable" [ref=e2089]
+              - img [ref=e2092]
+            - paragraph [ref=e2094]: Studio Spotlight MAPPA ufotable
+          - link "Thriller Thriller" [ref=e2095] [cursor=pointer]:
+            - /url: /collections/d1453068-4112-48b3-a6fd-719c288193e6
+            - generic [ref=e2096]:
+              - img "Thriller" [ref=e2097]
+              - img [ref=e2100]
+            - paragraph [ref=e2102]: Thriller
+          - link "Top Rated All-Time Top Rated All-Time" [ref=e2103] [cursor=pointer]:
+            - /url: /collections/2df0fdb0-0e41-42a6-9718-3f3fa1b1aed5
+            - generic [ref=e2104]:
+              - img "Top Rated All-Time" [ref=e2105]
+              - img [ref=e2108]
+            - paragraph [ref=e2110]: Top Rated All-Time
+          - link "Upcoming Upcoming" [ref=e2111] [cursor=pointer]:
+            - /url: /collections/d002b06a-7870-4106-a9c8-72396aa0e598
+            - generic [ref=e2112]:
+              - img "Upcoming" [ref=e2113]
+              - img [ref=e2116]
+            - paragraph [ref=e2118]: Upcoming
+          - link "War War" [ref=e2119] [cursor=pointer]:
+            - /url: /collections/86b79e5d-2b8f-4000-8e56-dac1d7ca277c
+            - generic [ref=e2120]:
+              - img "War" [ref=e2121]
+              - img [ref=e2124]
+            - paragraph [ref=e2126]: War
+          - link "Western Western" [ref=e2127] [cursor=pointer]:
+            - /url: /collections/088fea44-18c3-485b-89eb-26c5d296664a
+            - generic [ref=e2128]:
+              - img "Western" [ref=e2129]
+              - img [ref=e2132]
+            - paragraph [ref=e2134]: Western
+      - generic [ref=e2135]:
+        - heading "Legendary Directors" [level=2] [ref=e2136]
+        - generic [ref=e2137]:
+          - link "Alfred Hitchcock Alfred Hitchcock" [ref=e2138] [cursor=pointer]:
+            - /url: /collections/d7560621-4da0-46b1-b394-2c9e213dcbe9
+            - generic [ref=e2139]:
+              - img "Alfred Hitchcock" [ref=e2140]
+              - img [ref=e2143]
+            - paragraph [ref=e2145]: Alfred Hitchcock
+          - link "Brian De Palma Brian De Palma" [ref=e2146] [cursor=pointer]:
+            - /url: /collections/54b47436-d8d7-4702-aeee-a9c3617b193a
+            - generic [ref=e2147]:
+              - img "Brian De Palma" [ref=e2148]
+              - img [ref=e2151]
+            - paragraph [ref=e2153]: Brian De Palma
+          - link "Christopher Nolan Christopher Nolan" [ref=e2154] [cursor=pointer]:
+            - /url: /collections/dde261b7-93c8-4247-a036-7992ca4c1f19
+            - generic [ref=e2155]:
+              - img "Christopher Nolan" [ref=e2156]
+              - img [ref=e2159]
+            - paragraph [ref=e2161]: Christopher Nolan
+          - link "David Fincher David Fincher" [ref=e2162] [cursor=pointer]:
+            - /url: /collections/cd46a16d-cf02-4406-8f25-37f184ab3469
+            - generic [ref=e2163]:
+              - img "David Fincher" [ref=e2164]
+              - img [ref=e2167]
+            - paragraph [ref=e2169]: David Fincher
+          - link "David Lynch David Lynch" [ref=e2170] [cursor=pointer]:
+            - /url: /collections/631a54fb-00c0-4393-bdd0-29e3856b8882
+            - generic [ref=e2171]:
+              - img "David Lynch" [ref=e2172]
+              - img [ref=e2175]
+            - paragraph [ref=e2177]: David Lynch
+          - link "Denis Villeneuve Denis Villeneuve" [ref=e2178] [cursor=pointer]:
+            - /url: /collections/7efb00cd-7b91-4cfc-a9bb-b2aad70bf4fc
+            - generic [ref=e2179]:
+              - img "Denis Villeneuve" [ref=e2180]
+              - img [ref=e2183]
+            - paragraph [ref=e2185]: Denis Villeneuve
+          - link "Francis Ford Coppola Francis Ford Coppola" [ref=e2186] [cursor=pointer]:
+            - /url: /collections/ce1dccfb-9278-4500-bcfb-0d1e82ec90c9
+            - generic [ref=e2187]:
+              - img "Francis Ford Coppola" [ref=e2188]
+              - img [ref=e2191]
+            - paragraph [ref=e2193]: Francis Ford Coppola
+          - link "George Lucas George Lucas" [ref=e2194] [cursor=pointer]:
+            - /url: /collections/50e372ed-8e25-4ed2-94f2-684d1b98364c
+            - generic [ref=e2195]:
+              - img "George Lucas" [ref=e2196]
+              - img [ref=e2199]
+            - paragraph [ref=e2201]: George Lucas
+          - link "Greta Gerwig Greta Gerwig" [ref=e2202] [cursor=pointer]:
+            - /url: /collections/4f004869-d578-4092-9665-5298190fa849
+            - generic [ref=e2203]:
+              - img "Greta Gerwig" [ref=e2204]
+              - img [ref=e2207]
+            - paragraph [ref=e2209]: Greta Gerwig
+          - link "Guillermo del Toro Guillermo del Toro" [ref=e2210] [cursor=pointer]:
+            - /url: /collections/c52adcc9-9a74-4313-b2c7-c565a8a780ff
+            - generic [ref=e2211]:
+              - img "Guillermo del Toro" [ref=e2212]
+              - img [ref=e2215]
+            - paragraph [ref=e2217]: Guillermo del Toro
+          - link "James Cameron James Cameron" [ref=e2218] [cursor=pointer]:
+            - /url: /collections/4f017fb6-0576-4dc7-b426-c32a5e99f898
+            - generic [ref=e2219]:
+              - img "James Cameron" [ref=e2220]
+              - img [ref=e2223]
+            - paragraph [ref=e2225]: James Cameron
+          - link "John Carpenter John Carpenter" [ref=e2226] [cursor=pointer]:
+            - /url: /collections/e8eeb0d5-709d-4ef9-8b41-6b3becfe6eb5
+            - generic [ref=e2227]:
+              - img "John Carpenter" [ref=e2228]
+              - img [ref=e2231]
+            - paragraph [ref=e2233]: John Carpenter
+          - link "Martin Scorsese Martin Scorsese" [ref=e2234] [cursor=pointer]:
+            - /url: /collections/e1ff0bfe-05d8-48ff-b42a-191bc3fce0d4
+            - generic [ref=e2235]:
+              - img "Martin Scorsese" [ref=e2236]
+              - img [ref=e2239]
+            - paragraph [ref=e2241]: Martin Scorsese
+          - link "Paul Thomas Anderson Paul Thomas Anderson" [ref=e2242] [cursor=pointer]:
+            - /url: /collections/cb82c937-0473-4474-9b88-23a44367070f
+            - generic [ref=e2243]:
+              - img "Paul Thomas Anderson" [ref=e2244]
+              - img [ref=e2247]
+            - paragraph [ref=e2249]: Paul Thomas Anderson
+          - link "Peter Jackson Peter Jackson" [ref=e2250] [cursor=pointer]:
+            - /url: /collections/08ad69cd-d793-482d-91db-b1695d60c4a9
+            - generic [ref=e2251]:
+              - img "Peter Jackson" [ref=e2252]
+              - img [ref=e2255]
+            - paragraph [ref=e2257]: Peter Jackson
+          - link "Quentin Tarantino Quentin Tarantino" [ref=e2258] [cursor=pointer]:
+            - /url: /collections/fe6ea826-dff6-4411-bb1a-cba752db833c
+            - generic [ref=e2259]:
+              - img "Quentin Tarantino" [ref=e2260]
+              - img [ref=e2263]
+            - paragraph [ref=e2265]: Quentin Tarantino
+          - link "Ridley Scott Ridley Scott" [ref=e2266] [cursor=pointer]:
+            - /url: /collections/48e8da31-9c90-4660-b7e0-3e76b4e3671f
+            - generic [ref=e2267]:
+              - img "Ridley Scott" [ref=e2268]
+              - img [ref=e2271]
+            - paragraph [ref=e2273]: Ridley Scott
+          - link "Spike Lee Spike Lee" [ref=e2274] [cursor=pointer]:
+            - /url: /collections/000970b5-210c-42f1-a8c2-69257cd161dd
+            - generic [ref=e2275]:
+              - img "Spike Lee" [ref=e2276]
+              - img [ref=e2279]
+            - paragraph [ref=e2281]: Spike Lee
+          - link "Stanley Kubrick Stanley Kubrick" [ref=e2282] [cursor=pointer]:
+            - /url: /collections/1aca7982-80e9-433d-ad24-9cc9fe43bccf
+            - generic [ref=e2283]:
+              - img "Stanley Kubrick" [ref=e2284]
+              - img [ref=e2287]
+            - paragraph [ref=e2289]: Stanley Kubrick
+          - link "Steven Spielberg Steven Spielberg" [ref=e2290] [cursor=pointer]:
+            - /url: /collections/154ead47-6fdf-4537-a6ea-74021f6fd037
+            - generic [ref=e2291]:
+              - img "Steven Spielberg" [ref=e2292]
+              - img [ref=e2295]
+            - paragraph [ref=e2297]: Steven Spielberg
+          - link "Wes Anderson Wes Anderson" [ref=e2298] [cursor=pointer]:
+            - /url: /collections/9eff0270-3213-4050-803d-b3f0b9e04504
+            - generic [ref=e2299]:
+              - img "Wes Anderson" [ref=e2300]
+              - img [ref=e2303]
+            - paragraph [ref=e2305]: Wes Anderson
+      - generic [ref=e2306]:
+        - heading "By Decade" [level=2] [ref=e2307]
+        - generic [ref=e2308]:
+          - link "2020s Movies 2020s Movies" [ref=e2309] [cursor=pointer]:
+            - /url: /collections/42b0de52-e625-484b-af60-38184919e05c
+            - generic [ref=e2310]:
+              - img "2020s Movies" [ref=e2311]
+              - img [ref=e2314]
+            - paragraph [ref=e2316]: 2020s Movies
+          - link "10s Movies 10s Movies" [ref=e2317] [cursor=pointer]:
+            - /url: /collections/bba166b1-0878-44f4-9366-7ee6538b2271
+            - generic [ref=e2318]:
+              - img "10s Movies" [ref=e2319]
+              - img [ref=e2322]
+            - paragraph [ref=e2324]: 10s Movies
+          - link "00s Movies 00s Movies" [ref=e2325] [cursor=pointer]:
+            - /url: /collections/5774f3fd-782e-45a2-891e-b48d4552ccce
+            - generic [ref=e2326]:
+              - img "00s Movies" [ref=e2327]
+              - img [ref=e2330]
+            - paragraph [ref=e2332]: 00s Movies
+          - link "90s Movies 90s Movies" [ref=e2333] [cursor=pointer]:
+            - /url: /collections/33b76100-6cc2-466c-96b8-5387d2477cbb
+            - generic [ref=e2334]:
+              - img "90s Movies" [ref=e2335]
+              - img [ref=e2338]
+            - paragraph [ref=e2340]: 90s Movies
+          - link "80s Movies 80s Movies" [ref=e2341] [cursor=pointer]:
+            - /url: /collections/257aae1f-1d15-49b1-96de-02d942d19591
+            - generic [ref=e2342]:
+              - img "80s Movies" [ref=e2343]
+              - img [ref=e2346]
+            - paragraph [ref=e2348]: 80s Movies
+          - link "70s Movies 70s Movies" [ref=e2349] [cursor=pointer]:
+            - /url: /collections/d05e9020-43e5-4bc9-85d0-56da1d42a182
+            - generic [ref=e2350]:
+              - img "70s Movies" [ref=e2351]
+              - img [ref=e2354]
+            - paragraph [ref=e2356]: 70s Movies
+          - link "60s Movies 60s Movies" [ref=e2357] [cursor=pointer]:
+            - /url: /collections/b8051375-3df6-404f-80fb-42ff9771cd3e
+            - generic [ref=e2358]:
+              - img "60s Movies" [ref=e2359]
+              - img [ref=e2362]
+            - paragraph [ref=e2364]: 60s Movies
+          - link "50s Movies 50s Movies" [ref=e2365] [cursor=pointer]:
+            - /url: /collections/34e90df9-eddf-4d20-99cb-218a25af3263
+            - generic [ref=e2366]:
+              - img "50s Movies" [ref=e2367]
+              - img [ref=e2370]
+            - paragraph [ref=e2372]: 50s Movies
+      - generic [ref=e2373]:
+        - heading "Streaming Services" [level=2] [ref=e2374]
+        - generic [ref=e2375]:
+          - link "Netflix Netflix" [ref=e2376] [cursor=pointer]:
+            - /url: /collections/10b87148-482b-448f-a4a4-8e537bbaf3f1
+            - generic [ref=e2377]:
+              - img "Netflix" [ref=e2378]
+              - img [ref=e2381]
+            - paragraph [ref=e2383]: Netflix
+          - link "Prime Video Prime Video" [ref=e2384] [cursor=pointer]:
+            - /url: /collections/351c004f-b5d1-4cce-bea1-e0b82b0fcb32
+            - generic [ref=e2385]:
+              - img "Prime Video" [ref=e2386]
+              - img [ref=e2389]
+            - paragraph [ref=e2391]: Prime Video
+          - link "HBO Max HBO Max" [ref=e2392] [cursor=pointer]:
+            - /url: /collections/a6427711-9bec-4f76-af93-2c7cbac6a23b
+            - generic [ref=e2393]:
+              - img "HBO Max" [ref=e2394]
+              - img [ref=e2397]
+            - paragraph [ref=e2399]: HBO Max
+          - link "Disney+ Disney+" [ref=e2400] [cursor=pointer]:
+            - /url: /collections/269918a6-702e-4f83-9229-4783e66a7f8e
+            - generic [ref=e2401]:
+              - img "Disney+" [ref=e2402]
+              - img [ref=e2405]
+            - paragraph [ref=e2407]: Disney+
+          - link "Apple TV+ Apple TV+" [ref=e2408] [cursor=pointer]:
+            - /url: /collections/a7851928-6080-4334-aff3-05b5acbf3101
+            - generic [ref=e2409]:
+              - img "Apple TV+" [ref=e2410]
+              - img [ref=e2413]
+            - paragraph [ref=e2415]: Apple TV+
+          - link "Hulu Hulu" [ref=e2416] [cursor=pointer]:
+            - /url: /collections/811b6e66-c83f-4701-93a8-84d963184e13
+            - generic [ref=e2417]:
+              - img "Hulu" [ref=e2418]
+              - img [ref=e2421]
+            - paragraph [ref=e2423]: Hulu
+          - link "Paramount+ Paramount+" [ref=e2424] [cursor=pointer]:
+            - /url: /collections/dfc6da7d-4a82-4301-9906-7369cd53d6f1
+            - generic [ref=e2425]:
+              - img "Paramount+" [ref=e2426]
+              - img [ref=e2429]
+            - paragraph [ref=e2431]: Paramount+
+          - link "Peacock Peacock" [ref=e2432] [cursor=pointer]:
+            - /url: /collections/5dd6e8c9-925f-466b-8486-2ae975f4a411
+            - generic [ref=e2433]:
+              - img "Peacock" [ref=e2434]
+              - img [ref=e2437]
+            - paragraph [ref=e2439]: Peacock
+          - link "Shudder Shudder" [ref=e2440] [cursor=pointer]:
+            - /url: /collections/89687b4c-9f6c-425d-bb1f-7e3cdc2233c0
+            - generic [ref=e2441]:
+              - img "Shudder" [ref=e2442]
+              - img [ref=e2445]
+            - paragraph [ref=e2447]: Shudder
+          - link "MGM+ MGM+" [ref=e2448] [cursor=pointer]:
+            - /url: /collections/2a89ac1b-6229-44b9-a975-31f52b79d241
+            - generic [ref=e2449]:
+              - img "MGM+" [ref=e2450]
+              - img [ref=e2453]
+            - paragraph [ref=e2455]: MGM+
+          - link "Starz Starz" [ref=e2456] [cursor=pointer]:
+            - /url: /collections/5da02f0a-79ed-4c6a-b5b8-b88b6a2fb1e0
+            - generic [ref=e2457]:
+              - img "Starz" [ref=e2458]
+              - img [ref=e2461]
+            - paragraph [ref=e2463]: Starz
+          - link "Discovery+ Discovery+" [ref=e2464] [cursor=pointer]:
+            - /url: /collections/9e8ffa5f-17ec-4a6c-a89b-86a011474767
+            - generic [ref=e2465]:
+              - img "Discovery+" [ref=e2466]
+              - img [ref=e2469]
+            - paragraph [ref=e2471]: Discovery+
+          - link "Crunchyroll Crunchyroll" [ref=e2472] [cursor=pointer]:
+            - /url: /collections/03dc2de7-a1f7-4043-b7ba-94766386947b
+            - generic [ref=e2473]:
+              - img "Crunchyroll" [ref=e2474]
+              - img [ref=e2477]
+            - paragraph [ref=e2479]: Crunchyroll
+          - link "Curiosity Stream Curiosity Stream" [ref=e2480] [cursor=pointer]:
+            - /url: /collections/3a44358a-7bf6-4642-9872-c84c7e3b6ca7
+            - generic [ref=e2481]:
+              - img "Curiosity Stream" [ref=e2482]
+              - img [ref=e2485]
+            - paragraph [ref=e2487]: Curiosity Stream
+          - link "Criterion Criterion" [ref=e2488] [cursor=pointer]:
+            - /url: /collections/dcdae84d-6aed-44e8-80ae-7eb12112d86e
+            - generic [ref=e2489]:
+              - img "Criterion" [ref=e2490]
+              - img [ref=e2493]
+            - paragraph [ref=e2495]: Criterion
+          - link "Mubi Mubi" [ref=e2496] [cursor=pointer]:
+            - /url: /collections/d3f40557-da22-4e43-884a-7b38658a2dff
+            - generic [ref=e2497]:
+              - img "Mubi" [ref=e2498]
+              - img [ref=e2501]
+            - paragraph [ref=e2503]: Mubi
+      - generic [ref=e2504]:
+        - heading "Film Collections" [level=2] [ref=e2505]
+        - generic [ref=e2506]:
+          - link "🎬 Action Collections 🎬 Action Collections" [ref=e2507] [cursor=pointer]:
+            - /url: /collections/e3b7793f-f68c-4210-a876-4a97d7e79482
+            - generic [ref=e2508]:
+              - img "🎬 Action Collections" [ref=e2509]
+              - img [ref=e2512]
+            - paragraph [ref=e2514]: 🎬 Action Collections
+          - link "😂 Comedy Collections 😂 Comedy Collections" [ref=e2515] [cursor=pointer]:
+            - /url: /collections/bb10d444-f87b-4bca-89c3-9f7097c35b01
+            - generic [ref=e2516]:
+              - img "😂 Comedy Collections" [ref=e2517]
+              - img [ref=e2520]
+            - paragraph [ref=e2522]: 😂 Comedy Collections
+          - link "🔫 Crime Collections 🔫 Crime Collections" [ref=e2523] [cursor=pointer]:
+            - /url: /collections/ea59d6df-cb8b-40fe-82c1-4ee89b87f775
+            - generic [ref=e2524]:
+              - img "🔫 Crime Collections" [ref=e2525]
+              - img [ref=e2528]
+            - paragraph [ref=e2530]: 🔫 Crime Collections
+          - link "🎭 Drama Collections 🎭 Drama Collections" [ref=e2531] [cursor=pointer]:
+            - /url: /collections/5b0a8358-1889-41d7-86a3-f788a703bdb1
+            - generic [ref=e2532]:
+              - img "🎭 Drama Collections" [ref=e2533]
+              - img [ref=e2536]
+            - paragraph [ref=e2538]: 🎭 Drama Collections
+          - link "👨‍👩‍👧‍👦 Family & Animation Collections 👨‍👩‍👧‍👦 Family & Animation Collections" [ref=e2539] [cursor=pointer]:
+            - /url: /collections/61b35767-24ec-44bb-a721-8da7736cd29e
+            - generic [ref=e2540]:
+              - img "👨‍👩‍👧‍👦 Family & Animation Collections" [ref=e2541]
+              - img [ref=e2544]
+            - paragraph [ref=e2546]: 👨‍👩‍👧‍👦 Family & Animation Collections
+          - link "🧙 Fantasy & Adventure Collections 🧙 Fantasy & Adventure Collections" [ref=e2547] [cursor=pointer]:
+            - /url: /collections/f8ce3b76-bc01-452d-bb82-c28bc7255b34
+            - generic [ref=e2548]:
+              - img "🧙 Fantasy & Adventure Collections" [ref=e2549]
+              - img [ref=e2552]
+            - paragraph [ref=e2554]: 🧙 Fantasy & Adventure Collections
+          - link "🔪 Horror Collections 🔪 Horror Collections" [ref=e2555] [cursor=pointer]:
+            - /url: /collections/0dd54882-6eef-410c-a582-e6e5089a5b14
+            - generic [ref=e2556]:
+              - img "🔪 Horror Collections" [ref=e2557]
+              - img [ref=e2560]
+            - paragraph [ref=e2562]: 🔪 Horror Collections
+          - link "🔍 Mystery Collections 🔍 Mystery Collections" [ref=e2563] [cursor=pointer]:
+            - /url: /collections/cbb36b62-9df7-4c43-ae03-23ca48abf6ba
+            - generic [ref=e2564]:
+              - img "🔍 Mystery Collections" [ref=e2565]
+              - img [ref=e2568]
+            - paragraph [ref=e2570]: 🔍 Mystery Collections
+          - link "🚀 Sci-Fi Collections 🚀 Sci-Fi Collections" [ref=e2571] [cursor=pointer]:
+            - /url: /collections/967c3a08-755c-456b-bc5a-c3afca9828e9
+            - generic [ref=e2572]:
+              - img "🚀 Sci-Fi Collections" [ref=e2573]
+              - img [ref=e2576]
+            - paragraph [ref=e2578]: 🚀 Sci-Fi Collections
+          - link "😰 Thriller Collections 😰 Thriller Collections" [ref=e2579] [cursor=pointer]:
+            - /url: /collections/d49c4282-ae1e-4ddf-9e0a-b795761b53ba
+            - generic [ref=e2580]:
+              - img "😰 Thriller Collections" [ref=e2581]
+              - img [ref=e2584]
+            - paragraph [ref=e2586]: 😰 Thriller Collections
+          - link "⚔️ War Collections ⚔️ War Collections" [ref=e2587] [cursor=pointer]:
+            - /url: /collections/d51251a5-967d-48d7-8732-74e42651e97d
+            - generic [ref=e2588]:
+              - img "⚔️ War Collections" [ref=e2589]
+              - img [ref=e2592]
+            - paragraph [ref=e2594]: ⚔️ War Collections
+          - link "A Nightmare on Elm Street A Nightmare on Elm Street" [ref=e2595] [cursor=pointer]:
+            - /url: /collections/37686753-1a52-4fc9-a41d-1bdeb212fcb5
+            - generic [ref=e2596]:
+              - img "A Nightmare on Elm Street" [ref=e2597]
+              - img [ref=e2600]
+            - paragraph [ref=e2602]: A Nightmare on Elm Street
+          - link "A Quiet Place A Quiet Place" [ref=e2603] [cursor=pointer]:
+            - /url: /collections/578783c9-fc56-4911-82d0-b22056a0a622
+            - generic [ref=e2604]:
+              - img "A Quiet Place" [ref=e2605]
+              - img [ref=e2608]
+            - paragraph [ref=e2610]: A Quiet Place
+          - link "Ace Ventura Ace Ventura" [ref=e2611] [cursor=pointer]:
+            - /url: /collections/eeff45a5-d888-42aa-9a62-8b0768edf3e0
+            - generic [ref=e2612]:
+              - img "Ace Ventura" [ref=e2613]
+              - img [ref=e2616]
+            - paragraph [ref=e2618]: Ace Ventura
+          - link "Alien Alien" [ref=e2619] [cursor=pointer]:
+            - /url: /collections/5d018022-e4a8-49c8-8ed7-dd38805c2209
+            - generic [ref=e2620]:
+              - img "Alien" [ref=e2621]
+              - img [ref=e2624]
+            - paragraph [ref=e2626]: Alien
+          - link "Alvin and the Chipmunks Alvin and the Chipmunks" [ref=e2627] [cursor=pointer]:
+            - /url: /collections/1b32ab13-8d1e-4cae-928d-8c5d520672b6
+            - generic [ref=e2628]:
+              - img "Alvin and the Chipmunks" [ref=e2629]
+              - img [ref=e2632]
+            - paragraph [ref=e2634]: Alvin and the Chipmunks
+          - link "American Pie American Pie" [ref=e2635] [cursor=pointer]:
+            - /url: /collections/1719c1da-44c6-4330-8e4b-c3459ae41368
+            - generic [ref=e2636]:
+              - img "American Pie" [ref=e2637]
+              - img [ref=e2640]
+            - paragraph [ref=e2642]: American Pie
+          - link "Anchorman Anchorman" [ref=e2643] [cursor=pointer]:
+            - /url: /collections/d2ceb602-5532-455d-b9ed-8c633ce8624b
+            - generic [ref=e2644]:
+              - img "Anchorman" [ref=e2645]
+              - img [ref=e2648]
+            - paragraph [ref=e2650]: Anchorman
+          - link "Austin Powers Austin Powers" [ref=e2651] [cursor=pointer]:
+            - /url: /collections/ee8b0530-6e92-42d8-89fb-64e5ee2f500f
+            - generic [ref=e2652]:
+              - img "Austin Powers" [ref=e2653]
+              - img [ref=e2656]
+            - paragraph [ref=e2658]: Austin Powers
+          - link "Back to the Future Back to the Future" [ref=e2659] [cursor=pointer]:
+            - /url: /collections/60734e6f-2a7c-4182-92af-4a9ec20d4d80
+            - generic [ref=e2660]:
+              - img "Back to the Future" [ref=e2661]
+              - img [ref=e2664]
+            - paragraph [ref=e2666]: Back to the Future
+          - link "Bad Boys Bad Boys" [ref=e2667] [cursor=pointer]:
+            - /url: /collections/8b635716-3f34-43f8-a8e6-60cf04dbf095
+            - generic [ref=e2668]:
+              - img "Bad Boys" [ref=e2669]
+              - img [ref=e2672]
+            - paragraph [ref=e2674]: Bad Boys
+          - link "Behind Enemy Lines Behind Enemy Lines" [ref=e2675] [cursor=pointer]:
+            - /url: /collections/47b6bf01-1c6a-4f1e-8580-ca93be2a1fb0
+            - generic [ref=e2676]:
+              - img "Behind Enemy Lines" [ref=e2677]
+              - img [ref=e2680]
+            - paragraph [ref=e2682]: Behind Enemy Lines
+          - link "Beverly Hills Cop Beverly Hills Cop" [ref=e2683] [cursor=pointer]:
+            - /url: /collections/a1521d23-e2ca-494a-a3aa-6fb7fa60073e
+            - generic [ref=e2684]:
+              - img "Beverly Hills Cop" [ref=e2685]
+              - img [ref=e2688]
+            - paragraph [ref=e2690]: Beverly Hills Cop
+          - link "Big Momma's House Big Momma's House" [ref=e2691] [cursor=pointer]:
+            - /url: /collections/ae6466ff-b2e3-4116-a440-c7033e59b5f3
+            - generic [ref=e2692]:
+              - img "Big Momma's House" [ref=e2693]
+              - img [ref=e2696]
+            - paragraph [ref=e2698]: Big Momma's House
+          - link "Blade Blade" [ref=e2699] [cursor=pointer]:
+            - /url: /collections/298d2d27-b323-46f9-9ef2-304b261f40e2
+            - generic [ref=e2700]:
+              - img "Blade" [ref=e2701]
+              - img [ref=e2704]
+            - paragraph [ref=e2706]: Blade
+          - link "Blade Runner Blade Runner" [ref=e2707] [cursor=pointer]:
+            - /url: /collections/449e0fb6-bf6a-404c-876d-2e3f087e7d08
+            - generic [ref=e2708]:
+              - img "Blade Runner" [ref=e2709]
+              - img [ref=e2712]
+            - paragraph [ref=e2714]: Blade Runner
+          - link "Bridget Jones Bridget Jones" [ref=e2715] [cursor=pointer]:
+            - /url: /collections/80ed298d-283d-4d5d-b89d-c5bf671ef7dd
+            - generic [ref=e2716]:
+              - img "Bridget Jones" [ref=e2717]
+              - img [ref=e2720]
+            - paragraph [ref=e2722]: Bridget Jones
+          - link "Bring It On Bring It On" [ref=e2723] [cursor=pointer]:
+            - /url: /collections/d108b76f-bf81-435a-a5e1-c1e59ba8b03a
+            - generic [ref=e2724]:
+              - img "Bring It On" [ref=e2725]
+              - img [ref=e2728]
+            - paragraph [ref=e2730]: Bring It On
+          - link "Cars Cars" [ref=e2731] [cursor=pointer]:
+            - /url: /collections/aa9e8f17-7b0d-405f-960a-c4053cc9871d
+            - generic [ref=e2732]:
+              - img "Cars" [ref=e2733]
+              - img [ref=e2736]
+            - paragraph [ref=e2738]: Cars
+          - link "Child's Play Child's Play" [ref=e2739] [cursor=pointer]:
+            - /url: /collections/5b89b5b8-dbb5-4e14-b05d-a53ece57325d
+            - generic [ref=e2740]:
+              - img "Child's Play" [ref=e2741]
+              - img [ref=e2744]
+            - paragraph [ref=e2746]: Child's Play
+          - link "Clerks Clerks" [ref=e2747] [cursor=pointer]:
+            - /url: /collections/a8a1f41b-6119-4557-9644-bda42a05cfd7
+            - generic [ref=e2748]:
+              - img "Clerks" [ref=e2749]
+              - img [ref=e2752]
+            - paragraph [ref=e2754]: Clerks
+          - link "Creed Creed" [ref=e2755] [cursor=pointer]:
+            - /url: /collections/624c6755-9ae5-4eea-97c4-67a04718cbc8
+            - generic [ref=e2756]:
+              - img "Creed" [ref=e2757]
+              - img [ref=e2760]
+            - paragraph [ref=e2762]: Creed
+          - link "Daddy's Home Daddy's Home" [ref=e2763] [cursor=pointer]:
+            - /url: /collections/135121af-b252-44d6-92e9-393176ecb774
+            - generic [ref=e2764]:
+              - img "Daddy's Home" [ref=e2765]
+              - img [ref=e2768]
+            - paragraph [ref=e2770]: Daddy's Home
+          - link "Demon Slayer Demon Slayer" [ref=e2771] [cursor=pointer]:
+            - /url: /collections/60b0a086-bf4e-490c-95b6-214541bb4c6d
+            - generic [ref=e2772]:
+              - img "Demon Slayer" [ref=e2773]
+              - img [ref=e2776]
+            - paragraph [ref=e2778]: Demon Slayer
+          - link "Despicable Me Despicable Me" [ref=e2779] [cursor=pointer]:
+            - /url: /collections/411fd874-a942-4993-9611-e88bc47ebc5c
+            - generic [ref=e2780]:
+              - img "Despicable Me" [ref=e2781]
+              - img [ref=e2784]
+            - paragraph [ref=e2786]: Despicable Me
+          - link "Detective Conan Detective Conan" [ref=e2787] [cursor=pointer]:
+            - /url: /collections/08b39bdd-0424-40b0-be94-eca92c985887
+            - generic [ref=e2788]:
+              - img "Detective Conan" [ref=e2789]
+              - img [ref=e2792]
+            - paragraph [ref=e2794]: Detective Conan
+          - link "Diary of a Wimpy Kid Diary of a Wimpy Kid" [ref=e2795] [cursor=pointer]:
+            - /url: /collections/c38f5340-d48f-4ced-a222-ec1ca815556d
+            - generic [ref=e2796]:
+              - img "Diary of a Wimpy Kid" [ref=e2797]
+              - img [ref=e2800]
+            - paragraph [ref=e2802]: Diary of a Wimpy Kid
+          - link "Die Hard Die Hard" [ref=e2803] [cursor=pointer]:
+            - /url: /collections/1e12aafa-be78-497f-b315-7714f9701406
+            - generic [ref=e2804]:
+              - img "Die Hard" [ref=e2805]
+              - img [ref=e2808]
+            - paragraph [ref=e2810]: Die Hard
+          - link "Dirty Harry Dirty Harry" [ref=e2811] [cursor=pointer]:
+            - /url: /collections/835ec46f-589a-4e4a-bae7-7b862341350b
+            - generic [ref=e2812]:
+              - img "Dirty Harry" [ref=e2813]
+              - img [ref=e2816]
+            - paragraph [ref=e2818]: Dirty Harry
+          - link "Divergent Divergent" [ref=e2819] [cursor=pointer]:
+            - /url: /collections/17375f73-96b9-413c-a8e9-69e4626f4b81
+            - generic [ref=e2820]:
+              - img "Divergent" [ref=e2821]
+              - img [ref=e2824]
+            - paragraph [ref=e2826]: Divergent
+          - link "Don't Breathe Don't Breathe" [ref=e2827] [cursor=pointer]:
+            - /url: /collections/3b7d22f4-12a2-48c9-be19-3b809e1cd40c
+            - generic [ref=e2828]:
+              - img "Don't Breathe" [ref=e2829]
+              - img [ref=e2832]
+            - paragraph [ref=e2834]: Don't Breathe
+          - link "Dragon Ball Dragon Ball" [ref=e2835] [cursor=pointer]:
+            - /url: /collections/b56a6171-efae-4448-a11c-96c346a4f510
+            - generic [ref=e2836]:
+              - img "Dragon Ball" [ref=e2837]
+              - img [ref=e2840]
+            - paragraph [ref=e2842]: Dragon Ball
+          - link "Dune Dune" [ref=e2843] [cursor=pointer]:
+            - /url: /collections/8083c46c-9d91-4ab8-91d4-699a253ec8a0
+            - generic [ref=e2844]:
+              - img "Dune" [ref=e2845]
+              - img [ref=e2848]
+            - paragraph [ref=e2850]: Dune
+          - link "Enola Holmes Enola Holmes" [ref=e2851] [cursor=pointer]:
+            - /url: /collections/a270b316-259b-49ce-a01c-8e70f3d48fe0
+            - generic [ref=e2852]:
+              - img "Enola Holmes" [ref=e2853]
+              - img [ref=e2856]
+            - paragraph [ref=e2858]: Enola Holmes
+          - link "Escape Room Escape Room" [ref=e2859] [cursor=pointer]:
+            - /url: /collections/a1f9e004-7e8f-4607-9151-4f1075fa8985
+            - generic [ref=e2860]:
+              - img "Escape Room" [ref=e2861]
+              - img [ref=e2864]
+            - paragraph [ref=e2866]: Escape Room
+          - link "Evangelion Evangelion" [ref=e2867] [cursor=pointer]:
+            - /url: /collections/1c1986f0-b65f-4e9f-92e0-78fe0f6b34b0
+            - generic [ref=e2868]:
+              - img "Evangelion" [ref=e2869]
+              - img [ref=e2872]
+            - paragraph [ref=e2874]: Evangelion
+          - link "Evil Dead Evil Dead" [ref=e2875] [cursor=pointer]:
+            - /url: /collections/b9764da1-becf-4635-ba00-af0c55553866
+            - generic [ref=e2876]:
+              - img "Evil Dead" [ref=e2877]
+              - img [ref=e2880]
+            - paragraph [ref=e2882]: Evil Dead
+          - link "Fantastic Beasts Fantastic Beasts" [ref=e2883] [cursor=pointer]:
+            - /url: /collections/8e8b48c1-6f26-4b26-b194-5bf422593091
+            - generic [ref=e2884]:
+              - img "Fantastic Beasts" [ref=e2885]
+              - img [ref=e2888]
+            - paragraph [ref=e2890]: Fantastic Beasts
+          - link "Fifty Shades Fifty Shades" [ref=e2891] [cursor=pointer]:
+            - /url: /collections/b32a8609-f2f4-4ee2-9dcf-e1f4c01909aa
+            - generic [ref=e2892]:
+              - img "Fifty Shades" [ref=e2893]
+              - img [ref=e2896]
+            - paragraph [ref=e2898]: Fifty Shades
+          - link "Final Destination Final Destination" [ref=e2899] [cursor=pointer]:
+            - /url: /collections/057dd3ea-58b2-49a1-a0e9-7197e79808d0
+            - generic [ref=e2900]:
+              - img "Final Destination" [ref=e2901]
+              - img [ref=e2904]
+            - paragraph [ref=e2906]: Final Destination
+          - link "Finding Nemo Finding Nemo" [ref=e2907] [cursor=pointer]:
+            - /url: /collections/ddfffd0a-faab-44f5-850b-3be3c58eecd4
+            - generic [ref=e2908]:
+              - img "Finding Nemo" [ref=e2909]
+              - img [ref=e2912]
+            - paragraph [ref=e2914]: Finding Nemo
+          - link "Friday the 13th Friday the 13th" [ref=e2915] [cursor=pointer]:
+            - /url: /collections/d45bba27-a4cc-426f-967e-ae5ab770103b
+            - generic [ref=e2916]:
+              - img "Friday the 13th" [ref=e2917]
+              - img [ref=e2920]
+            - paragraph [ref=e2922]: Friday the 13th
+          - link "Ghostbusters Ghostbusters" [ref=e2923] [cursor=pointer]:
+            - /url: /collections/4143b0da-fb94-43ac-89cf-a041aea9f46a
+            - generic [ref=e2924]:
+              - img "Ghostbusters" [ref=e2925]
+              - img [ref=e2928]
+            - paragraph [ref=e2930]: Ghostbusters
+          - link "Goal! Goal!" [ref=e2931] [cursor=pointer]:
+            - /url: /collections/dab16e6f-4698-44f4-923a-0d31d94340e9
+            - generic [ref=e2932]:
+              - img "Goal!" [ref=e2933]
+              - img [ref=e2936]
+            - paragraph [ref=e2938]: Goal!
+          - link "Godzilla Godzilla" [ref=e2939] [cursor=pointer]:
+            - /url: /collections/95d9d8db-5d61-460e-b9fe-06531eae87de
+            - generic [ref=e2940]:
+              - img "Godzilla" [ref=e2941]
+              - img [ref=e2944]
+            - paragraph [ref=e2946]: Godzilla
+          - link "Guardians of the Galaxy Guardians of the Galaxy" [ref=e2947] [cursor=pointer]:
+            - /url: /collections/6718788f-afe1-4b41-83c9-1b7a3fe710bf
+            - generic [ref=e2948]:
+              - img "Guardians of the Galaxy" [ref=e2949]
+              - img [ref=e2952]
+            - paragraph [ref=e2954]: Guardians of the Galaxy
+          - link "Halloween Halloween" [ref=e2955] [cursor=pointer]:
+            - /url: /collections/48f21bfe-bed8-474c-a94d-765682aea911
+            - generic [ref=e2956]:
+              - img "Halloween" [ref=e2957]
+              - img [ref=e2960]
+            - paragraph [ref=e2962]: Halloween
+          - link "Hannibal Lecter Hannibal Lecter" [ref=e2963] [cursor=pointer]:
+            - /url: /collections/9c648515-9299-4b93-af8e-1acf0bedf326
+            - generic [ref=e2964]:
+              - img "Hannibal Lecter" [ref=e2965]
+              - img [ref=e2968]
+            - paragraph [ref=e2970]: Hannibal Lecter
+          - link "Harry Potter Harry Potter" [ref=e2971] [cursor=pointer]:
+            - /url: /collections/96bdbe83-be62-4c38-bf29-0f54f8c6626a
+            - generic [ref=e2972]:
+              - img "Harry Potter" [ref=e2973]
+              - img [ref=e2976]
+            - paragraph [ref=e2978]: Harry Potter
+          - link "Hellraiser Hellraiser" [ref=e2979] [cursor=pointer]:
+            - /url: /collections/9095bdf4-4da7-4619-972e-fcf423377b75
+            - generic [ref=e2980]:
+              - img "Hellraiser" [ref=e2981]
+              - img [ref=e2984]
+            - paragraph [ref=e2986]: Hellraiser
+          - link "Home Alone Home Alone" [ref=e2987] [cursor=pointer]:
+            - /url: /collections/5af1c669-ba6a-45d5-98af-5f5508f395a6
+            - generic [ref=e2988]:
+              - img "Home Alone" [ref=e2989]
+              - img [ref=e2992]
+            - paragraph [ref=e2994]: Home Alone
+          - link "Hotel Transylvania Hotel Transylvania" [ref=e2995] [cursor=pointer]:
+            - /url: /collections/a0b130ce-cfc2-47cb-b65d-2efe00b005ba
+            - generic [ref=e2996]:
+              - img "Hotel Transylvania" [ref=e2997]
+              - img [ref=e3000]
+            - paragraph [ref=e3002]: Hotel Transylvania
+          - link "How to Train Your Dragon How to Train Your Dragon" [ref=e3003] [cursor=pointer]:
+            - /url: /collections/088d5584-1e90-4da2-8f90-26c75aa9e1ff
+            - generic [ref=e3004]:
+              - img "How to Train Your Dragon" [ref=e3005]
+              - img [ref=e3008]
+            - paragraph [ref=e3010]: How to Train Your Dragon
+          - link "Ice Age Ice Age" [ref=e3011] [cursor=pointer]:
+            - /url: /collections/74195c0a-10b6-461a-95ef-d74b51cd6143
+            - generic [ref=e3012]:
+              - img "Ice Age" [ref=e3013]
+              - img [ref=e3016]
+            - paragraph [ref=e3018]: Ice Age
+          - link "Indiana Jones Indiana Jones" [ref=e3019] [cursor=pointer]:
+            - /url: /collections/4f374c69-6ae5-473e-812e-b6a89a55100c
+            - generic [ref=e3020]:
+              - img "Indiana Jones" [ref=e3021]
+              - img [ref=e3024]
+            - paragraph [ref=e3026]: Indiana Jones
+          - link "Insidious Insidious" [ref=e3027] [cursor=pointer]:
+            - /url: /collections/defafec8-14e3-418d-9e8e-729620082d7f
+            - generic [ref=e3028]:
+              - img "Insidious" [ref=e3029]
+              - img [ref=e3032]
+            - paragraph [ref=e3034]: Insidious
+          - link "It It" [ref=e3035] [cursor=pointer]:
+            - /url: /collections/78d58bd2-501d-4091-a820-829fb9c24b8a
+            - generic [ref=e3036]:
+              - img "It" [ref=e3037]
+              - img [ref=e3040]
+            - paragraph [ref=e3042]: It
+          - link "James Bond James Bond" [ref=e3043] [cursor=pointer]:
+            - /url: /collections/389c26ae-189a-4d02-a4ea-925f373cd901
+            - generic [ref=e3044]:
+              - img "James Bond" [ref=e3045]
+              - img [ref=e3048]
+            - paragraph [ref=e3050]: James Bond
+          - link "Jarhead Jarhead" [ref=e3051] [cursor=pointer]:
+            - /url: /collections/7f2afbc1-1979-4ad6-9776-5cf2d0649790
+            - generic [ref=e3052]:
+              - img "Jarhead" [ref=e3053]
+              - img [ref=e3056]
+            - paragraph [ref=e3058]: Jarhead
+          - link "Jaws Jaws" [ref=e3059] [cursor=pointer]:
+            - /url: /collections/1f3af8bf-fe55-4a8a-bcda-85798447b8a4
+            - generic [ref=e3060]:
+              - img "Jaws" [ref=e3061]
+              - img [ref=e3064]
+            - paragraph [ref=e3066]: Jaws
+          - link "John Wick John Wick" [ref=e3067] [cursor=pointer]:
+            - /url: /collections/c77d4926-7ce2-4dac-8e00-e07ec8ffab99
+            - generic [ref=e3068]:
+              - img "John Wick" [ref=e3069]
+              - img [ref=e3072]
+            - paragraph [ref=e3074]: John Wick
+          - link "Jumanji Jumanji" [ref=e3075] [cursor=pointer]:
+            - /url: /collections/59303706-c302-45ca-9281-58e24c2f0194
+            - generic [ref=e3076]:
+              - img "Jumanji" [ref=e3077]
+              - img [ref=e3080]
+            - paragraph [ref=e3082]: Jumanji
+          - link "Jump Street Jump Street" [ref=e3083] [cursor=pointer]:
+            - /url: /collections/a30e98af-7281-4e8e-bc9b-98d2fe080161
+            - generic [ref=e3084]:
+              - img "Jump Street" [ref=e3085]
+              - img [ref=e3088]
+            - paragraph [ref=e3090]: Jump Street
+          - link "Jurassic Park Jurassic Park" [ref=e3091] [cursor=pointer]:
+            - /url: /collections/2d3f42ce-de5d-4f37-a007-8f60c83f772e
+            - generic [ref=e3092]:
+              - img "Jurassic Park" [ref=e3093]
+              - img [ref=e3096]
+            - paragraph [ref=e3098]: Jurassic Park
+          - link "King Kong (1976) King Kong (1976)" [ref=e3099] [cursor=pointer]:
+            - /url: /collections/52c79871-6ede-448a-ad2f-829ee3897246
+            - generic [ref=e3100]:
+              - img "King Kong (1976)" [ref=e3101]
+              - img [ref=e3104]
+            - paragraph [ref=e3106]: King Kong (1976)
+          - link "Kingsman Kingsman" [ref=e3107] [cursor=pointer]:
+            - /url: /collections/a5c286e9-0c90-47d7-ab1a-e8c8230931e0
+            - generic [ref=e3108]:
+              - img "Kingsman" [ref=e3109]
+              - img [ref=e3112]
+            - paragraph [ref=e3114]: Kingsman
+          - link "Knives Out Knives Out" [ref=e3115] [cursor=pointer]:
+            - /url: /collections/7c303050-c3d8-45e3-929b-381f0f3f9c1a
+            - generic [ref=e3116]:
+              - img "Knives Out" [ref=e3117]
+              - img [ref=e3120]
+            - paragraph [ref=e3122]: Knives Out
+          - link "Kung Fu Panda Kung Fu Panda" [ref=e3123] [cursor=pointer]:
+            - /url: /collections/c0621d87-8e60-4014-9598-66c7b15a9469
+            - generic [ref=e3124]:
+              - img "Kung Fu Panda" [ref=e3125]
+              - img [ref=e3128]
+            - paragraph [ref=e3130]: Kung Fu Panda
+          - link "Legally Blonde Legally Blonde" [ref=e3131] [cursor=pointer]:
+            - /url: /collections/105be0cb-38aa-4dd1-aa7b-486fc3765d9c
+            - generic [ref=e3132]:
+              - img "Legally Blonde" [ref=e3133]
+              - img [ref=e3136]
+            - paragraph [ref=e3138]: Legally Blonde
+          - link "Lethal Weapon Lethal Weapon" [ref=e3139] [cursor=pointer]:
+            - /url: /collections/f4400234-7448-4683-ace1-b9e67e5245a2
+            - generic [ref=e3140]:
+              - img "Lethal Weapon" [ref=e3141]
+              - img [ref=e3144]
+            - paragraph [ref=e3146]: Lethal Weapon
+          - link "Mad Max Mad Max" [ref=e3147] [cursor=pointer]:
+            - /url: /collections/8b776082-a4b7-4c8c-a877-ff75fb46e640
+            - generic [ref=e3148]:
+              - img "Mad Max" [ref=e3149]
+              - img [ref=e3152]
+            - paragraph [ref=e3154]: Mad Max
+          - link "Madagascar Madagascar" [ref=e3155] [cursor=pointer]:
+            - /url: /collections/0733e31f-3f60-4635-877c-66cd7f1b3013
+            - generic [ref=e3156]:
+              - img "Madagascar" [ref=e3157]
+              - img [ref=e3160]
+            - paragraph [ref=e3162]: Madagascar
+          - link "Magic Mike Magic Mike" [ref=e3163] [cursor=pointer]:
+            - /url: /collections/e1bb95b5-b8c7-4681-90cf-cae03c3b6407
+            - generic [ref=e3164]:
+              - img "Magic Mike" [ref=e3165]
+              - img [ref=e3168]
+            - paragraph [ref=e3170]: Magic Mike
+          - link "Major League Major League" [ref=e3171] [cursor=pointer]:
+            - /url: /collections/2b58744b-7d32-4103-bcc8-d9fcd27478e3
+            - generic [ref=e3172]:
+              - img "Major League" [ref=e3173]
+              - img [ref=e3176]
+            - paragraph [ref=e3178]: Major League
+          - link "Man of Steel Man of Steel" [ref=e3179] [cursor=pointer]:
+            - /url: /collections/ea690578-4491-4480-8390-c2941f2a600a
+            - generic [ref=e3180]:
+              - img "Man of Steel" [ref=e3181]
+              - img [ref=e3184]
+            - paragraph [ref=e3186]: Man of Steel
+          - link "Meet the Parents Meet the Parents" [ref=e3187] [cursor=pointer]:
+            - /url: /collections/81e71ef2-8612-4199-bd49-5d007d6e2c88
+            - generic [ref=e3188]:
+              - img "Meet the Parents" [ref=e3189]
+              - img [ref=e3192]
+            - paragraph [ref=e3194]: Meet the Parents
+          - link "Men in Black Collection Men in Black Collection" [ref=e3195] [cursor=pointer]:
+            - /url: /collections/0604e87b-335d-4316-bc70-b0cb81c0e51b
+            - generic [ref=e3196]:
+              - img "Men in Black Collection" [ref=e3197]
+              - img [ref=e3200]
+            - paragraph [ref=e3202]: Men in Black Collection
+          - link "Missing in Action Missing in Action" [ref=e3203] [cursor=pointer]:
+            - /url: /collections/fed9c682-ef1e-4e33-9956-49325f0c6b53
+            - generic [ref=e3204]:
+              - img "Missing in Action" [ref=e3205]
+              - img [ref=e3208]
+            - paragraph [ref=e3210]: Missing in Action
+          - 'link "Mission: Impossible Mission: Impossible" [ref=e3211] [cursor=pointer]':
+            - /url: /collections/a299ea98-aece-4db1-b5e0-fa44515fda70
+            - generic [ref=e3212]:
+              - 'img "Mission: Impossible" [ref=e3213]'
+              - img [ref=e3216]
+            - paragraph [ref=e3218]: "Mission: Impossible"
+          - link "Monsters, Inc. Monsters, Inc." [ref=e3219] [cursor=pointer]:
+            - /url: /collections/377267ea-1e52-4628-9a2f-727ab30fe634
+            - generic [ref=e3220]:
+              - img "Monsters, Inc." [ref=e3221]
+              - img [ref=e3224]
+            - paragraph [ref=e3226]: Monsters, Inc.
+          - link "My Hero Academia My Hero Academia" [ref=e3227] [cursor=pointer]:
+            - /url: /collections/1cc9db05-8c15-45d0-8dda-329bdaa1bd3a
+            - generic [ref=e3228]:
+              - img "My Hero Academia" [ref=e3229]
+              - img [ref=e3232]
+            - paragraph [ref=e3234]: My Hero Academia
+          - link "Naruto Naruto" [ref=e3235] [cursor=pointer]:
+            - /url: /collections/7cb31465-bb0b-4252-89c5-be409595e615
+            - generic [ref=e3236]:
+              - img "Naruto" [ref=e3237]
+              - img [ref=e3240]
+            - paragraph [ref=e3242]: Naruto
+          - link "National Lampoon's Vacation National Lampoon's Vacation" [ref=e3243] [cursor=pointer]:
+            - /url: /collections/a9a6f1c1-c353-4fc6-ad4b-6ca78daabddb
+            - generic [ref=e3244]:
+              - img "National Lampoon's Vacation" [ref=e3245]
+              - img [ref=e3248]
+            - paragraph [ref=e3250]: National Lampoon's Vacation
+          - link "National Treasure National Treasure" [ref=e3251] [cursor=pointer]:
+            - /url: /collections/c3cd9c6b-1f42-4e55-ad1a-31bf569fd34a
+            - generic [ref=e3252]:
+              - img "National Treasure" [ref=e3253]
+              - img [ref=e3256]
+            - paragraph [ref=e3258]: National Treasure
+          - link "Night at the Museum Night at the Museum" [ref=e3259] [cursor=pointer]:
+            - /url: /collections/d9ff5188-581f-453c-beff-5f7ee8b3def5
+            - generic [ref=e3260]:
+              - img "Night at the Museum" [ref=e3261]
+              - img [ref=e3264]
+            - paragraph [ref=e3266]: Night at the Museum
+          - link "Now You See Me Now You See Me" [ref=e3267] [cursor=pointer]:
+            - /url: /collections/f6af5897-97fb-4c38-8be8-733b57b673b4
+            - generic [ref=e3268]:
+              - img "Now You See Me" [ref=e3269]
+              - img [ref=e3272]
+            - paragraph [ref=e3274]: Now You See Me
+          - link "Ocean's Ocean's" [ref=e3275] [cursor=pointer]:
+            - /url: /collections/215dde8a-9c0c-4a65-8a70-68d0ba9ef979
+            - generic [ref=e3276]:
+              - img "Ocean's" [ref=e3277]
+              - img [ref=e3280]
+            - paragraph [ref=e3282]: Ocean's
+          - link "One Piece One Piece" [ref=e3283] [cursor=pointer]:
+            - /url: /collections/5d512469-ba9b-400f-8ab7-7360d21f84e6
+            - generic [ref=e3284]:
+              - img "One Piece" [ref=e3285]
+              - img [ref=e3288]
+            - paragraph [ref=e3290]: One Piece
+          - link "Pacific Rim Pacific Rim" [ref=e3291] [cursor=pointer]:
+            - /url: /collections/effa3ee9-46a9-49a2-8c68-7c04f44334cd
+            - generic [ref=e3292]:
+              - img "Pacific Rim" [ref=e3293]
+              - img [ref=e3296]
+            - paragraph [ref=e3298]: Pacific Rim
+          - link "Paddington Paddington" [ref=e3299] [cursor=pointer]:
+            - /url: /collections/6133ee4b-ddc5-4915-ab42-1f2a9ad6deb9
+            - generic [ref=e3300]:
+              - img "Paddington" [ref=e3301]
+              - img [ref=e3304]
+            - paragraph [ref=e3306]: Paddington
+          - link "Paranormal Activity Paranormal Activity" [ref=e3307] [cursor=pointer]:
+            - /url: /collections/3fdf4932-9a9d-4341-af54-16cfb372b1ac
+            - generic [ref=e3308]:
+              - img "Paranormal Activity" [ref=e3309]
+              - img [ref=e3312]
+            - paragraph [ref=e3314]: Paranormal Activity
+          - link "Percy Jackson Percy Jackson" [ref=e3315] [cursor=pointer]:
+            - /url: /collections/727318aa-393b-4b23-82f3-ee356022e8b3
+            - generic [ref=e3316]:
+              - img "Percy Jackson" [ref=e3317]
+              - img [ref=e3320]
+            - paragraph [ref=e3322]: Percy Jackson
+          - link "Pirates of the Caribbean Pirates of the Caribbean" [ref=e3323] [cursor=pointer]:
+            - /url: /collections/314ee4af-13e2-49e8-a094-61702e77a631
+            - generic [ref=e3324]:
+              - img "Pirates of the Caribbean" [ref=e3325]
+              - img [ref=e3328]
+            - paragraph [ref=e3330]: Pirates of the Caribbean
+          - link "Pitch Perfect Pitch Perfect" [ref=e3331] [cursor=pointer]:
+            - /url: /collections/4dbbe1a1-2da8-4d2a-857e-8d21c4e9f012
+            - generic [ref=e3332]:
+              - img "Pitch Perfect" [ref=e3333]
+              - img [ref=e3336]
+            - paragraph [ref=e3338]: Pitch Perfect
+          - link "Planet of the Apes (Original) Planet of the Apes (Original)" [ref=e3339] [cursor=pointer]:
+            - /url: /collections/b90600ff-e0c8-473a-b9d3-36a1121ee130
+            - generic [ref=e3340]:
+              - img "Planet of the Apes (Original)" [ref=e3341]
+              - img [ref=e3344]
+            - paragraph [ref=e3346]: Planet of the Apes (Original)
+          - link "Pokémon Pokémon" [ref=e3347] [cursor=pointer]:
+            - /url: /collections/a61c3412-e72c-44af-bf68-da0fe42611ce
+            - generic [ref=e3348]:
+              - img "Pokémon" [ref=e3349]
+              - img [ref=e3352]
+            - paragraph [ref=e3354]: Pokémon
+          - link "Poltergeist Poltergeist" [ref=e3355] [cursor=pointer]:
+            - /url: /collections/bbdf3b1a-ca3d-4cc3-8a2f-b493f0da8a8b
+            - generic [ref=e3356]:
+              - img "Poltergeist" [ref=e3357]
+              - img [ref=e3360]
+            - paragraph [ref=e3362]: Poltergeist
+          - link "Predator Predator" [ref=e3363] [cursor=pointer]:
+            - /url: /collections/071f80d5-8b69-447f-985d-1ce37297368a
+            - generic [ref=e3364]:
+              - img "Predator" [ref=e3365]
+              - img [ref=e3368]
+            - paragraph [ref=e3370]: Predator
+          - link "Rambo Rambo" [ref=e3371] [cursor=pointer]:
+            - /url: /collections/3b1303b0-d297-4c97-b034-52cd9fec4578
+            - generic [ref=e3372]:
+              - img "Rambo" [ref=e3373]
+              - img [ref=e3376]
+            - paragraph [ref=e3378]: Rambo
+          - link "Resident Evil Resident Evil" [ref=e3379] [cursor=pointer]:
+            - /url: /collections/a7ab671f-fe4b-46b8-ba9c-b79c0d98df52
+            - generic [ref=e3380]:
+              - img "Resident Evil" [ref=e3381]
+              - img [ref=e3384]
+            - paragraph [ref=e3386]: Resident Evil
+          - link "Robert Langdon Robert Langdon" [ref=e3387] [cursor=pointer]:
+            - /url: /collections/44d31c94-4641-4360-bf3a-f56bee177cd0
+            - generic [ref=e3388]:
+              - img "Robert Langdon" [ref=e3389]
+              - img [ref=e3392]
+            - paragraph [ref=e3394]: Robert Langdon
+          - link "RoboCop RoboCop" [ref=e3395] [cursor=pointer]:
+            - /url: /collections/6bd2cbfb-6f44-4854-a14f-fad863e32a57
+            - generic [ref=e3396]:
+              - img "RoboCop" [ref=e3397]
+              - img [ref=e3400]
+            - paragraph [ref=e3402]: RoboCop
+          - link "Rocky Rocky" [ref=e3403] [cursor=pointer]:
+            - /url: /collections/46c6e85a-286c-4412-8a35-ecd154804f94
+            - generic [ref=e3404]:
+              - img "Rocky" [ref=e3405]
+              - img [ref=e3408]
+            - paragraph [ref=e3410]: Rocky
+          - link "Rush Hour Rush Hour" [ref=e3411] [cursor=pointer]:
+            - /url: /collections/fcafb0c9-99a2-46f1-b2c0-3a6e4e0abaa4
+            - generic [ref=e3412]:
+              - img "Rush Hour" [ref=e3413]
+              - img [ref=e3416]
+            - paragraph [ref=e3418]: Rush Hour
+          - link "Saw Saw" [ref=e3419] [cursor=pointer]:
+            - /url: /collections/f1447e7d-93d4-4bac-9a70-7fa43f6a7449
+            - generic [ref=e3420]:
+              - img "Saw" [ref=e3421]
+              - img [ref=e3424]
+            - paragraph [ref=e3426]: Saw
+          - link "Scary Movie Scary Movie" [ref=e3427] [cursor=pointer]:
+            - /url: /collections/9e22a777-2eb4-450b-8595-ade72b16d4b0
+            - generic [ref=e3428]:
+              - img "Scary Movie" [ref=e3429]
+              - img [ref=e3432]
+            - paragraph [ref=e3434]: Scary Movie
+          - link "Scooby-Doo Scooby-Doo" [ref=e3435] [cursor=pointer]:
+            - /url: /collections/964087a5-450f-4d62-a318-11a72a470156
+            - generic [ref=e3436]:
+              - img "Scooby-Doo" [ref=e3437]
+              - img [ref=e3440]
+            - paragraph [ref=e3442]: Scooby-Doo
+          - link "Scream Scream" [ref=e3443] [cursor=pointer]:
+            - /url: /collections/ba0a93b4-207b-46fa-b5de-b1630bb81610
+            - generic [ref=e3444]:
+              - img "Scream" [ref=e3445]
+              - img [ref=e3448]
+            - paragraph [ref=e3450]: Scream
+          - link "Sherlock Holmes Sherlock Holmes" [ref=e3451] [cursor=pointer]:
+            - /url: /collections/810024c2-4d5e-41ce-9aba-15d364ee1ae2
+            - generic [ref=e3452]:
+              - img "Sherlock Holmes" [ref=e3453]
+              - img [ref=e3456]
+            - paragraph [ref=e3458]: Sherlock Holmes
+          - link "Shrek Shrek" [ref=e3459] [cursor=pointer]:
+            - /url: /collections/d237fcbb-2b82-407f-9e22-803f82ae7268
+            - generic [ref=e3460]:
+              - img "Shrek" [ref=e3461]
+              - img [ref=e3464]
+            - paragraph [ref=e3466]: Shrek
+          - link "Sicario Sicario" [ref=e3467] [cursor=pointer]:
+            - /url: /collections/dc95782d-5473-4e09-952e-872fc5b3268d
+            - generic [ref=e3468]:
+              - img "Sicario" [ref=e3469]
+              - img [ref=e3472]
+            - paragraph [ref=e3474]: Sicario
+          - link "Sing Sing" [ref=e3475] [cursor=pointer]:
+            - /url: /collections/70e0fe50-977e-48aa-aa97-2cdcc948bca7
+            - generic [ref=e3476]:
+              - img "Sing" [ref=e3477]
+              - img [ref=e3480]
+            - paragraph [ref=e3482]: Sing
+          - link "Sniper Sniper" [ref=e3483] [cursor=pointer]:
+            - /url: /collections/fe1911d2-6cdf-4507-a29b-be48415455f3
+            - generic [ref=e3484]:
+              - img "Sniper" [ref=e3485]
+              - img [ref=e3488]
+            - paragraph [ref=e3490]: Sniper
+          - link "Spider-Man Spider-Man" [ref=e3491] [cursor=pointer]:
+            - /url: /collections/96822954-507e-4212-82a5-ef2a8fa09b82
+            - generic [ref=e3492]:
+              - img "Spider-Man" [ref=e3493]
+              - img [ref=e3496]
+            - paragraph [ref=e3498]: Spider-Man
+          - 'link "Spider-Man: Spider-Verse Spider-Man: Spider-Verse" [ref=e3499] [cursor=pointer]':
+            - /url: /collections/85dd33b1-a6d3-4a87-880e-4afd3b60be83
+            - generic [ref=e3500]:
+              - 'img "Spider-Man: Spider-Verse" [ref=e3501]'
+              - img [ref=e3504]
+            - paragraph [ref=e3506]: "Spider-Man: Spider-Verse"
+          - 'link "Star Trek: Alternate Reality Star Trek: Alternate Reality" [ref=e3507] [cursor=pointer]':
+            - /url: /collections/6c6eeff6-e32d-4f42-b6a7-f7c2d2638b2a
+            - generic [ref=e3508]:
+              - 'img "Star Trek: Alternate Reality" [ref=e3509]'
+              - img [ref=e3512]
+            - paragraph [ref=e3514]: "Star Trek: Alternate Reality"
+          - link "Star Wars Star Wars" [ref=e3515] [cursor=pointer]:
+            - /url: /collections/f027eeb2-9498-4f61-bd8a-19d5e609ec74
+            - generic [ref=e3516]:
+              - img "Star Wars" [ref=e3517]
+              - img [ref=e3520]
+            - paragraph [ref=e3522]: Star Wars
+          - link "Starship Troopers Starship Troopers" [ref=e3523] [cursor=pointer]:
+            - /url: /collections/c746914b-0f74-48c2-b7fd-3c1c0ed026b3
+            - generic [ref=e3524]:
+              - img "Starship Troopers" [ref=e3525]
+              - img [ref=e3528]
+            - paragraph [ref=e3530]: Starship Troopers
+          - link "Step Up Step Up" [ref=e3531] [cursor=pointer]:
+            - /url: /collections/4a80c4da-2d9c-4f27-aae0-dde433d0f6c4
+            - generic [ref=e3532]:
+              - img "Step Up" [ref=e3533]
+              - img [ref=e3536]
+            - paragraph [ref=e3538]: Step Up
+          - link "The Addams Family (Animated) The Addams Family (Animated)" [ref=e3539] [cursor=pointer]:
+            - /url: /collections/f7423af8-75b7-4a10-bf61-d5e729787029
+            - generic [ref=e3540]:
+              - img "The Addams Family (Animated)" [ref=e3541]
+              - img [ref=e3544]
+            - paragraph [ref=e3546]: The Addams Family (Animated)
+          - link "The Boondock Saints The Boondock Saints" [ref=e3547] [cursor=pointer]:
+            - /url: /collections/74e310ee-c598-4712-825f-31f6dc6f6687
+            - generic [ref=e3548]:
+              - img "The Boondock Saints" [ref=e3549]
+              - img [ref=e3552]
+            - paragraph [ref=e3554]: The Boondock Saints
+          - link "The Boss Baby The Boss Baby" [ref=e3555] [cursor=pointer]:
+            - /url: /collections/cc242db7-66c4-4a0f-afdf-6c6f12cecb5a
+            - generic [ref=e3556]:
+              - img "The Boss Baby" [ref=e3557]
+              - img [ref=e3560]
+            - paragraph [ref=e3562]: The Boss Baby
+          - link "The Bourne The Bourne" [ref=e3563] [cursor=pointer]:
+            - /url: /collections/8246bff9-38de-4d56-a8f5-800730fb5296
+            - generic [ref=e3564]:
+              - img "The Bourne" [ref=e3565]
+              - img [ref=e3568]
+            - paragraph [ref=e3570]: The Bourne
+          - link "The Chronicles of Narnia The Chronicles of Narnia" [ref=e3571] [cursor=pointer]:
+            - /url: /collections/7705df1c-e8c7-4f36-ab73-1501723eed8e
+            - generic [ref=e3572]:
+              - img "The Chronicles of Narnia" [ref=e3573]
+              - img [ref=e3576]
+            - paragraph [ref=e3578]: The Chronicles of Narnia
+          - link "The Conjuring The Conjuring" [ref=e3579] [cursor=pointer]:
+            - /url: /collections/00b73ab1-1743-4793-b15a-6dc81f950b0f
+            - generic [ref=e3580]:
+              - img "The Conjuring" [ref=e3581]
+              - img [ref=e3584]
+            - paragraph [ref=e3586]: The Conjuring
+          - link "The Dark Knight The Dark Knight" [ref=e3587] [cursor=pointer]:
+            - /url: /collections/dca77015-25d4-4a6c-ab33-930a2f0addee
+            - generic [ref=e3588]:
+              - img "The Dark Knight" [ref=e3589]
+              - img [ref=e3592]
+            - paragraph [ref=e3594]: The Dark Knight
+          - link "The Dirty Dozen The Dirty Dozen" [ref=e3595] [cursor=pointer]:
+            - /url: /collections/955c4d8d-584c-465e-a418-53ab22f12150
+            - generic [ref=e3596]:
+              - img "The Dirty Dozen" [ref=e3597]
+              - img [ref=e3600]
+            - paragraph [ref=e3602]: The Dirty Dozen
+          - link "The Equalizer The Equalizer" [ref=e3603] [cursor=pointer]:
+            - /url: /collections/7e8d0797-bbd3-4099-90a5-e68515a1ad26
+            - generic [ref=e3604]:
+              - img "The Equalizer" [ref=e3605]
+              - img [ref=e3608]
+            - paragraph [ref=e3610]: The Equalizer
+          - link "The Exorcist The Exorcist" [ref=e3611] [cursor=pointer]:
+            - /url: /collections/4c0155ec-668e-43ab-b1fa-5defff8cc6e0
+            - generic [ref=e3612]:
+              - img "The Exorcist" [ref=e3613]
+              - img [ref=e3616]
+            - paragraph [ref=e3618]: The Exorcist
+          - link "The Expendables The Expendables" [ref=e3619] [cursor=pointer]:
+            - /url: /collections/4848c46b-d0df-45cd-81c8-1427c92d5cbf
+            - generic [ref=e3620]:
+              - img "The Expendables" [ref=e3621]
+              - img [ref=e3624]
+            - paragraph [ref=e3626]: The Expendables
+          - link "The Fast and the Furious The Fast and the Furious" [ref=e3627] [cursor=pointer]:
+            - /url: /collections/34f7e5ab-307e-4bed-aa0f-d4b7975f529f
+            - generic [ref=e3628]:
+              - img "The Fast and the Furious" [ref=e3629]
+              - img [ref=e3632]
+            - paragraph [ref=e3634]: The Fast and the Furious
+          - link "The Godfather The Godfather" [ref=e3635] [cursor=pointer]:
+            - /url: /collections/fde4de4c-4cfa-4fbf-a727-ab5bb02b658a
+            - generic [ref=e3636]:
+              - img "The Godfather" [ref=e3637]
+              - img [ref=e3640]
+            - paragraph [ref=e3642]: The Godfather
+          - link "The Grudge The Grudge" [ref=e3643] [cursor=pointer]:
+            - /url: /collections/4c03a18a-c8ce-4f41-a872-fc5f52dec63a
+            - generic [ref=e3644]:
+              - img "The Grudge" [ref=e3645]
+              - img [ref=e3648]
+            - paragraph [ref=e3650]: The Grudge
+          - link "The Hangover The Hangover" [ref=e3651] [cursor=pointer]:
+            - /url: /collections/34831162-d6cd-4a52-8481-063cdbb8d629
+            - generic [ref=e3652]:
+              - img "The Hangover" [ref=e3653]
+              - img [ref=e3656]
+            - paragraph [ref=e3658]: The Hangover
+          - link "The Hannibal Lecter The Hannibal Lecter" [ref=e3659] [cursor=pointer]:
+            - /url: /collections/6e14665c-578f-412b-90ec-f8955d7d204d
+            - generic [ref=e3660]:
+              - img "The Hannibal Lecter" [ref=e3661]
+              - img [ref=e3664]
+            - paragraph [ref=e3666]: The Hannibal Lecter
+          - link "The Hobbit The Hobbit" [ref=e3667] [cursor=pointer]:
+            - /url: /collections/5f732606-3448-4e1c-b40b-7986e1f9110b
+            - generic [ref=e3668]:
+              - img "The Hobbit" [ref=e3669]
+              - img [ref=e3672]
+            - paragraph [ref=e3674]: The Hobbit
+          - link "The Hunger Games The Hunger Games" [ref=e3675] [cursor=pointer]:
+            - /url: /collections/372521e3-8453-4aee-935c-82cdb61388f2
+            - generic [ref=e3676]:
+              - img "The Hunger Games" [ref=e3677]
+              - img [ref=e3680]
+            - paragraph [ref=e3682]: The Hunger Games
+          - link "The Incredibles The Incredibles" [ref=e3683] [cursor=pointer]:
+            - /url: /collections/14c72eb6-bfa0-4c55-9d69-7ea9c5585cab
+            - generic [ref=e3684]:
+              - img "The Incredibles" [ref=e3685]
+              - img [ref=e3688]
+            - paragraph [ref=e3690]: The Incredibles
+          - link "The Karate Kid The Karate Kid" [ref=e3691] [cursor=pointer]:
+            - /url: /collections/cd528448-36ec-462d-abf1-47d31748cf9e
+            - generic [ref=e3692]:
+              - img "The Karate Kid" [ref=e3693]
+              - img [ref=e3696]
+            - paragraph [ref=e3698]: The Karate Kid
+          - link "The Lego Movie The Lego Movie" [ref=e3699] [cursor=pointer]:
+            - /url: /collections/3f5022d9-04f7-49db-81d7-4188edb7cd70
+            - generic [ref=e3700]:
+              - img "The Lego Movie" [ref=e3701]
+              - img [ref=e3704]
+            - paragraph [ref=e3706]: The Lego Movie
+          - link "The Lord of the Rings The Lord of the Rings" [ref=e3707] [cursor=pointer]:
+            - /url: /collections/d5ec07a5-e9b7-4255-a621-1d3b35114ef7
+            - generic [ref=e3708]:
+              - img "The Lord of the Rings" [ref=e3709]
+              - img [ref=e3712]
+            - paragraph [ref=e3714]: The Lord of the Rings
+          - link "The Matrix The Matrix" [ref=e3715] [cursor=pointer]:
+            - /url: /collections/bd825836-548f-402e-a6d0-e6c2bdc64acb
+            - generic [ref=e3716]:
+              - img "The Matrix" [ref=e3717]
+              - img [ref=e3720]
+            - paragraph [ref=e3722]: The Matrix
+          - link "The Maze Runner The Maze Runner" [ref=e3723] [cursor=pointer]:
+            - /url: /collections/56a43ac5-bcbd-4c6b-b4ba-a5132fffe080
+            - generic [ref=e3724]:
+              - img "The Maze Runner" [ref=e3725]
+              - img [ref=e3728]
+            - paragraph [ref=e3730]: The Maze Runner
+          - link "The Mighty Ducks The Mighty Ducks" [ref=e3731] [cursor=pointer]:
+            - /url: /collections/2124694a-51ed-42a0-8be7-38ccdf51a816
+            - generic [ref=e3732]:
+              - img "The Mighty Ducks" [ref=e3733]
+              - img [ref=e3736]
+            - paragraph [ref=e3738]: The Mighty Ducks
+          - link "The Mummy The Mummy" [ref=e3739] [cursor=pointer]:
+            - /url: /collections/ec6972e3-5cb9-49a2-aae6-a139302e4c89
+            - generic [ref=e3740]:
+              - img "The Mummy" [ref=e3741]
+              - img [ref=e3744]
+            - paragraph [ref=e3746]: The Mummy
+          - link "The Omen The Omen" [ref=e3747] [cursor=pointer]:
+            - /url: /collections/fec55d47-1221-40c6-bb46-4ad69304c308
+            - generic [ref=e3748]:
+              - img "The Omen" [ref=e3749]
+              - img [ref=e3752]
+            - paragraph [ref=e3754]: The Omen
+          - link "The Purge The Purge" [ref=e3755] [cursor=pointer]:
+            - /url: /collections/65daf212-cd49-4a4d-a651-c4c68ef134e4
+            - generic [ref=e3756]:
+              - img "The Purge" [ref=e3757]
+              - img [ref=e3760]
+            - paragraph [ref=e3762]: The Purge
+          - link "The Ring The Ring" [ref=e3763] [cursor=pointer]:
+            - /url: /collections/2c831027-8a04-4978-bc94-c510f0120e1a
+            - generic [ref=e3764]:
+              - img "The Ring" [ref=e3765]
+              - img [ref=e3768]
+            - paragraph [ref=e3770]: The Ring
+          - link "The Secret Life of Pets The Secret Life of Pets" [ref=e3771] [cursor=pointer]:
+            - /url: /collections/8054641f-1f3f-4688-a9c6-e64ecbad4f6b
+            - generic [ref=e3772]:
+              - img "The Secret Life of Pets" [ref=e3773]
+              - img [ref=e3776]
+            - paragraph [ref=e3778]: The Secret Life of Pets
+          - link "The Terminator The Terminator" [ref=e3779] [cursor=pointer]:
+            - /url: /collections/323075c9-3c5a-4a13-b987-67efe11be767
+            - generic [ref=e3780]:
+              - img "The Terminator" [ref=e3781]
+              - img [ref=e3784]
+            - paragraph [ref=e3786]: The Terminator
+          - link "The Transporter The Transporter" [ref=e3787] [cursor=pointer]:
+            - /url: /collections/94feba81-4457-4593-af06-4fbcd222529b
+            - generic [ref=e3788]:
+              - img "The Transporter" [ref=e3789]
+              - img [ref=e3792]
+            - paragraph [ref=e3794]: The Transporter
+          - link "The Twilight The Twilight" [ref=e3795] [cursor=pointer]:
+            - /url: /collections/1f5213da-cd3d-4734-b834-787f4c170523
+            - generic [ref=e3796]:
+              - img "The Twilight" [ref=e3797]
+              - img [ref=e3800]
+            - paragraph [ref=e3802]: The Twilight
+          - link "Top Gun Top Gun" [ref=e3803] [cursor=pointer]:
+            - /url: /collections/5f27eafc-70cb-489d-874d-0ce0ab829078
+            - generic [ref=e3804]:
+              - img "Top Gun" [ref=e3805]
+              - img [ref=e3808]
+            - paragraph [ref=e3810]: Top Gun
+          - link "Toy Story Toy Story" [ref=e3811] [cursor=pointer]:
+            - /url: /collections/352f74b5-14f0-4a49-a692-26485e6992a7
+            - generic [ref=e3812]:
+              - img "Toy Story" [ref=e3813]
+              - img [ref=e3816]
+            - paragraph [ref=e3818]: Toy Story
+          - link "Transformers Transformers" [ref=e3819] [cursor=pointer]:
+            - /url: /collections/61270017-83c0-4ada-947f-4b7db36d510b
+            - generic [ref=e3820]:
+              - img "Transformers" [ref=e3821]
+              - img [ref=e3824]
+            - paragraph [ref=e3826]: Transformers
+          - link "Tremors Tremors" [ref=e3827] [cursor=pointer]:
+            - /url: /collections/c39d2605-1156-4aea-8031-9f2ac988a4c5
+            - generic [ref=e3828]:
+              - img "Tremors" [ref=e3829]
+              - img [ref=e3832]
+            - paragraph [ref=e3834]: Tremors
+          - link "Trolls Holiday Trolls Holiday" [ref=e3835] [cursor=pointer]:
+            - /url: /collections/d1e0d075-c7a3-4b5d-89ba-2534bc074e60
+            - generic [ref=e3836]:
+              - img "Trolls Holiday" [ref=e3837]
+              - img [ref=e3840]
+            - paragraph [ref=e3842]: Trolls Holiday
+          - link "TRON TRON" [ref=e3843] [cursor=pointer]:
+            - /url: /collections/b95ff22f-050c-4b29-831a-2644b64291b4
+            - generic [ref=e3844]:
+              - img "TRON" [ref=e3845]
+              - img [ref=e3848]
+            - paragraph [ref=e3850]: TRON
+          - link "Underworld Underworld" [ref=e3851] [cursor=pointer]:
+            - /url: /collections/7fb7b158-8944-4032-8b97-8631aac80ff7
+            - generic [ref=e3852]:
+              - img "Underworld" [ref=e3853]
+              - img [ref=e3856]
+            - paragraph [ref=e3858]: Underworld
+          - link "V/H/S V/H/S" [ref=e3859] [cursor=pointer]:
+            - /url: /collections/aad0bafe-a52c-4b44-b525-e6b8d232ff13
+            - generic [ref=e3860]:
+              - img "V/H/S" [ref=e3861]
+              - img [ref=e3864]
+            - paragraph [ref=e3866]: V/H/S
+          - link "Wayne's World Wayne's World" [ref=e3867] [cursor=pointer]:
+            - /url: /collections/af4d97cc-588e-4adf-83e1-fddb1121f3b6
+            - generic [ref=e3868]:
+              - img "Wayne's World" [ref=e3869]
+              - img [ref=e3872]
+            - paragraph [ref=e3874]: Wayne's World
+          - link "Wreck-It Ralph Wreck-It Ralph" [ref=e3875] [cursor=pointer]:
+            - /url: /collections/5c2940ff-b723-480d-97dc-e75ba79955ac
+            - generic [ref=e3876]:
+              - img "Wreck-It Ralph" [ref=e3877]
+              - img [ref=e3880]
+            - paragraph [ref=e3882]: Wreck-It Ralph
+          - link "X-Men X-Men" [ref=e3883] [cursor=pointer]:
+            - /url: /collections/fc8db821-7644-4561-a51b-e178aa312dfc
+            - generic [ref=e3884]:
+              - img "X-Men" [ref=e3885]
+              - img [ref=e3888]
+            - paragraph [ref=e3890]: X-Men
+          - link "xXx xXx" [ref=e3891] [cursor=pointer]:
+            - /url: /collections/8cf4ef97-a119-44f1-a5ec-83fb58bcc827
+            - generic [ref=e3892]:
+              - img "xXx" [ref=e3893]
+              - img [ref=e3896]
+            - paragraph [ref=e3898]: xXx
+          - link "Zoolander Zoolander" [ref=e3899] [cursor=pointer]:
+            - /url: /collections/f7488a49-5a42-485a-bb9c-b190bd480394
+            - generic [ref=e3900]:
+              - img "Zoolander" [ref=e3901]
+              - img [ref=e3904]
+            - paragraph [ref=e3906]: Zoolander
+      - generic [ref=e3907]:
+        - heading "Trending & New" [level=2] [ref=e3908]
+        - generic [ref=e3909]:
+          - link "For You For You" [ref=e3910] [cursor=pointer]:
+            - /url: /collections/674095a5-5603-4a1d-8536-b880c6fa8470
+            - generic [ref=e3911]:
+              - img "For You" [ref=e3912]
+              - img [ref=e3915]
+            - paragraph [ref=e3917]: For You
+          - link "New Movies New Movies" [ref=e3918] [cursor=pointer]:
+            - /url: /collections/2429ed50-6adc-4862-bd0a-815dca979d88
+            - generic [ref=e3919]:
+              - img "New Movies" [ref=e3920]
+              - img [ref=e3923]
+            - paragraph [ref=e3925]: New Movies
+          - link "New Series New Series" [ref=e3926] [cursor=pointer]:
+            - /url: /collections/c4314874-de79-4c07-bf0f-b9c02c2e34bc
+            - generic [ref=e3927]:
+              - img "New Series" [ref=e3928]
+              - img [ref=e3931]
+            - paragraph [ref=e3933]: New Series
+          - link "Trending Movies Trending Movies" [ref=e3934] [cursor=pointer]:
+            - /url: /collections/76d62cbe-b3a1-481b-a02b-0bd052a0afae
+            - generic [ref=e3935]:
+              - img "Trending Movies" [ref=e3936]
+              - img [ref=e3939]
+            - paragraph [ref=e3941]: Trending Movies
+          - link "Trending TV Trending TV" [ref=e3942] [cursor=pointer]:
+            - /url: /collections/6a5f29fe-59a4-4a6a-9fac-b3005cef9e72
+            - generic [ref=e3943]:
+              - img "Trending TV" [ref=e3944]
+              - img [ref=e3947]
+            - paragraph [ref=e3949]: Trending TV

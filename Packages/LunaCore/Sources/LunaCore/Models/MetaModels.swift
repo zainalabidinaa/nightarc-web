@@ -18,14 +18,16 @@ public struct MetaPreview: Codable, Sendable, Identifiable, Hashable {
     public let description: String?
     public let releaseInfo: String?
     public let rawReleaseDate: String?
+    public let released: String?
+    public let runtime: String?
     public let popularity: Double?
     public let voteCount: Int?
     public let imdbRating: String?
     public let genres: [String]?
-    public let released: String?
     public let status: String?
     public let behaviorHints: BehaviorHints?
     public let rankHint: Int?
+    public let trailerStreams: [StreamItem]?
 
     public init(
         id: String,
@@ -38,14 +40,16 @@ public struct MetaPreview: Codable, Sendable, Identifiable, Hashable {
         description: String? = nil,
         releaseInfo: String? = nil,
         rawReleaseDate: String? = nil,
+        released: String? = nil,
+        runtime: String? = nil,
         popularity: Double? = nil,
         voteCount: Int? = nil,
         imdbRating: String? = nil,
         genres: [String]? = nil,
-        released: String? = nil,
         status: String? = nil,
         behaviorHints: BehaviorHints? = nil,
-        rankHint: Int? = nil
+        rankHint: Int? = nil,
+        trailerStreams: [StreamItem]? = nil
     ) {
         self.id = id
         self.type = type
@@ -57,14 +61,16 @@ public struct MetaPreview: Codable, Sendable, Identifiable, Hashable {
         self.description = description
         self.releaseInfo = releaseInfo
         self.rawReleaseDate = rawReleaseDate
+        self.released = released
+        self.runtime = runtime
         self.popularity = popularity
         self.voteCount = voteCount
         self.imdbRating = imdbRating
         self.genres = genres
-        self.released = released
         self.status = status
         self.behaviorHints = behaviorHints
         self.rankHint = rankHint
+        self.trailerStreams = trailerStreams
     }
 }
 
@@ -73,70 +79,7 @@ public struct BehaviorHints: Codable, Sendable, Hashable {
     public let hasScheduledVideos: Bool?
 }
 
-public struct ContentBadge: Codable, Sendable, Identifiable, Hashable {
-    public let id: String
-    public let text: String
-    public let style: BadgeStyle
 
-    public init(text: String, style: BadgeStyle) {
-        self.id = text
-        self.text = text
-        self.style = style
-    }
-}
-
-public enum BadgeStyle: String, Codable, Sendable {
-    case accent
-    case warning
-    case info
-}
-
-public extension MetaPreview {
-    func derivedBadges(index: Int? = nil) -> [ContentBadge] {
-        var badges: [ContentBadge] = []
-
-        if let released = released {
-            let formatter = ISO8601DateFormatter()
-            formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-            if let date = formatter.date(from: released) {
-                let now = Date()
-                if date > now {
-                    let display = DateFormatter()
-                    display.dateFormat = "d MMM"
-                    badges.append(ContentBadge(
-                        text: "Coming \(display.string(from: date))",
-                        style: .accent
-                    ))
-                }
-            }
-        }
-
-        if let status = status?.lowercased() {
-            if status == "pilot" {
-                badges.append(ContentBadge(text: "Pilot", style: .accent))
-            } else if status == "continuing" || status == "returning series" {
-                if let released = released {
-                    let formatter = ISO8601DateFormatter()
-                    formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-                    if let date = formatter.date(from: released) {
-                        let weekAgo = Calendar.current.date(byAdding: .day, value: -14, to: Date()) ?? Date()
-                        if date > weekAgo {
-                            badges.append(ContentBadge(text: "New Series", style: .accent))
-                        }
-                    }
-                }
-            } else if status == "ended" {
-                badges.append(ContentBadge(text: "Complete", style: .info))
-            }
-        }
-
-        if let idx = index, idx < 5 {
-            badges.append(ContentBadge(text: "#\(idx + 1) Today", style: .warning))
-        }
-
-        return badges
-    }
-}
 
 public enum PosterShape: String, Codable, Sendable {
     case poster
@@ -149,6 +92,7 @@ public struct MetaDetail: Codable, Sendable, Identifiable {
     public let type: MediaType
     public let name: String
     public let poster: String?
+    public let rawPosterUrl: String?
     public let background: String?
     public let logo: String?
     public let description: String?
@@ -158,10 +102,11 @@ public struct MetaDetail: Codable, Sendable, Identifiable {
     public let ageRating: String?
     public let runtime: String?
     public let genres: [String]?
-    public let director: [String]?
-    public let writer: [String]?
+    public let director: [Person]?
+    public let writer: [Person]?
     public let cast: [Person]?
     public let trailers: [Trailer]?
+    public let trailerStreams: [StreamItem]?
     public let videos: [MetaVideo]?
     public let seasons: [Season]?
     public let links: [MetaLink]?
@@ -173,6 +118,7 @@ public struct MetaDetail: Codable, Sendable, Identifiable {
         type: MediaType,
         name: String,
         poster: String? = nil,
+        rawPosterUrl: String? = nil,
         background: String? = nil,
         logo: String? = nil,
         description: String? = nil,
@@ -182,10 +128,11 @@ public struct MetaDetail: Codable, Sendable, Identifiable {
         ageRating: String? = nil,
         runtime: String? = nil,
         genres: [String]? = nil,
-        director: [String]? = nil,
-        writer: [String]? = nil,
+        director: [Person]? = nil,
+        writer: [Person]? = nil,
         cast: [Person]? = nil,
         trailers: [Trailer]? = nil,
+        trailerStreams: [StreamItem]? = nil,
         videos: [MetaVideo]? = nil,
         seasons: [Season]? = nil,
         links: [MetaLink]? = nil,
@@ -196,6 +143,7 @@ public struct MetaDetail: Codable, Sendable, Identifiable {
         self.type = type
         self.name = name
         self.poster = poster
+        self.rawPosterUrl = rawPosterUrl
         self.background = background
         self.logo = logo
         self.description = description
@@ -209,11 +157,19 @@ public struct MetaDetail: Codable, Sendable, Identifiable {
         self.writer = writer
         self.cast = cast
         self.trailers = trailers
+        self.trailerStreams = trailerStreams
         self.videos = videos
         self.seasons = seasons
         self.links = links
         self.moreLikeThis = moreLikeThis
         self.collectionItems = collectionItems
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id, type, name, poster, background, logo, description, releaseInfo
+        case status, imdbRating, ageRating, runtime, genres, director, writer, cast
+        case trailers, trailerStreams, videos, seasons, links, moreLikeThis, collectionItems
+        case rawPosterUrl = "_rawPosterUrl"
     }
 }
 
@@ -248,6 +204,8 @@ public struct MetaVideo: Codable, Sendable, Identifiable {
     public let episode: Int?
     public let overview: String?
     public let runtime: String?
+    public let streams: [StreamItem]?
+    public let trailerStreams: [StreamItem]?
 
     public init(
         id: String,
@@ -257,7 +215,9 @@ public struct MetaVideo: Codable, Sendable, Identifiable {
         season: Int? = nil,
         episode: Int? = nil,
         overview: String? = nil,
-        runtime: String? = nil
+        runtime: String? = nil,
+        streams: [StreamItem]? = nil,
+        trailerStreams: [StreamItem]? = nil
     ) {
         self.id = id
         self.title = title
@@ -267,6 +227,8 @@ public struct MetaVideo: Codable, Sendable, Identifiable {
         self.episode = episode
         self.overview = overview
         self.runtime = runtime
+        self.streams = streams
+        self.trailerStreams = trailerStreams
     }
 }
 
@@ -274,11 +236,13 @@ public struct Person: Codable, Sendable, Identifiable {
     public let id: String
     public let name: String
     public let photo: String?
+    public let character: String?
 
-    public init(id: String, name: String, photo: String? = nil) {
+    public init(id: String, name: String, photo: String? = nil, character: String? = nil) {
         self.id = id
         self.name = name
         self.photo = photo
+        self.character = character
     }
 }
 
@@ -315,6 +279,7 @@ public struct CatalogRow: Codable, Sendable, Identifiable {
     public let title: String
     public var items: [MetaPreview]
     public let addonName: String?
+    public let addonId: String?
     public var page: Int
     public var hasMore: Bool
 
@@ -337,6 +302,7 @@ public struct CatalogRow: Codable, Sendable, Identifiable {
         title: String,
         items: [MetaPreview],
         addonName: String? = nil,
+        addonId: String? = nil,
         page: Int = 0,
         hasMore: Bool = false,
         tileShape: String? = nil,
@@ -357,6 +323,7 @@ public struct CatalogRow: Codable, Sendable, Identifiable {
         self.title = title
         self.items = items
         self.addonName = addonName
+        self.addonId = addonId
         self.page = page
         self.hasMore = hasMore
         self.tileShape = tileShape

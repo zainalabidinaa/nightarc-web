@@ -14,33 +14,36 @@ struct LunaMacApp: App {
                 .environmentObject(roleManager)
                 .frame(minWidth: 900, minHeight: 600)
                 .background(LunaTheme.background)
-                .onAppear {
-                    configureWindow()
-                }
         }
         .windowStyle(.hiddenTitleBar)
         .windowToolbarStyle(.unified)
         .defaultSize(width: 1200, height: 800)
-    }
 
-    private func configureWindow() {
-        guard let window = NSApp.windows.first(where: {
-            $0.identifier?.rawValue == "luna-main" || $0.identifier == nil
-        }) else { return }
-        window.titlebarAppearsTransparent = true
-        window.titleVisibility = .hidden
-        window.styleMask.insert(.fullSizeContentView)
-        window.isMovableByWindowBackground = true
-        window.backgroundColor = NSColor(
-            red: 0.031, green: 0.031, blue: 0.031, alpha: 1.0
-        )
+        WindowGroup(id: "player", for: PlayerLaunch.self) { $launch in
+            if let launch = launch {
+                MacPlayerView(launch: launch)
+                    .environmentObject(profileManager)
+                    .frame(minWidth: 900, minHeight: 550)
+                    .background(Color.black)
+            }
+        }
+        .windowStyle(.hiddenTitleBar)
+        .defaultSize(width: 1200, height: 700)
     }
 }
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
-        if let window = NSApp.windows.first {
+        DispatchQueue.main.async {
+            guard let window = NSApp.windows.first else { return }
             window.identifier = NSUserInterfaceItemIdentifier("luna-main")
+            window.titlebarAppearsTransparent = true
+            window.titleVisibility = .hidden
+            window.styleMask.insert(.fullSizeContentView)
+            window.isMovableByWindowBackground = true
+            window.backgroundColor = NSColor(
+                red: 0.031, green: 0.031, blue: 0.031, alpha: 1.0
+            )
         }
     }
 }

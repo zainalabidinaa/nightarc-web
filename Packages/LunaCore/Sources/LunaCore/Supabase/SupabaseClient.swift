@@ -22,7 +22,9 @@ public actor SupabaseClient {
         self.encoder.dateEncodingStrategy = .formatted(dateFormatter)
 
         let config = URLSessionConfiguration.default
-        config.timeoutIntervalForRequest = 30
+        config.timeoutIntervalForRequest = 10
+        config.timeoutIntervalForResource = 20
+        config.httpMaximumConnectionsPerHost = 3
         self.session = URLSession(configuration: config)
     }
 
@@ -39,6 +41,7 @@ public actor SupabaseClient {
         let url = URL(string: "\(baseURL)/rest/v1\(path)")!
         var request = URLRequest(url: url)
         request.httpMethod = method
+        request.assumesHTTP3Capable = false
         request.setValue(anonKey, forHTTPHeaderField: "apikey")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         if let token = accessToken {

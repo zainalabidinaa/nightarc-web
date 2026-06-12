@@ -112,9 +112,11 @@ public struct DBFolderCatalog: Codable, Identifiable, Sendable {
     public let catalogId: String
     public let mediaType: String
     public let genre: String?
+    /// Additional extras passed as-is to the catalog query URL (e.g. release year ranges).
+    public let extras: [String: String]?
 
     enum CodingKeys: String, CodingKey {
-        case id, genre
+        case id, genre, extras
         case folderId = "folder_id"
         case catalogId = "catalog_id"
         case mediaType = "media_type"
@@ -125,13 +127,15 @@ public struct DBFolderCatalog: Codable, Identifiable, Sendable {
         folderId: String = "",
         catalogId: String = "",
         mediaType: String = "",
-        genre: String? = nil
+        genre: String? = nil,
+        extras: [String: String]? = nil
     ) {
         self.id = id
         self.folderId = folderId
         self.catalogId = catalogId
         self.mediaType = mediaType
         self.genre = genre
+        self.extras = extras
     }
 }
 
@@ -188,5 +192,21 @@ public struct DBFolderSource: Codable, Identifiable, Sendable {
         self.rawJson = rawJson
         self.sortOrder = sortOrder
         self.createdAt = createdAt
+    }
+}
+
+public struct CollectionDisplayPreferences: Codable, Sendable, Equatable {
+    public let enabledCollectionIds: Set<String>
+    public let expandedCollectionIds: Set<String>
+    public let hiddenFolderIds: Set<String>
+
+    public init(
+        enabledCollectionIds: Set<String>,
+        expandedCollectionIds: Set<String>,
+        hiddenFolderIds: Set<String>
+    ) {
+        self.enabledCollectionIds = enabledCollectionIds
+        self.expandedCollectionIds = expandedCollectionIds
+        self.hiddenFolderIds = hiddenFolderIds
     }
 }

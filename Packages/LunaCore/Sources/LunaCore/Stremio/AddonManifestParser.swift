@@ -14,8 +14,10 @@ public enum AddonManifestParser {
             let version: String?
             let description: String?
             let types: [String]?
+            let idPrefixes: [String]?
             let resources: [RawResource]?
             let catalogs: [RawCatalog]?
+            let addonCatalogs: [RawCatalog]?
             let behaviorHints: RawBehaviorHints?
             let transportUrl: String?
             let logo: String?
@@ -75,6 +77,7 @@ public enum AddonManifestParser {
             version: raw.version ?? "0.0.0",
             description: raw.description,
             types: raw.types,
+            idPrefixes: raw.idPrefixes,
             resources: raw.resources?.map {
                 AddonResource(
                     name: $0.name ?? "",
@@ -83,6 +86,21 @@ public enum AddonManifestParser {
                 )
             },
             catalogs: raw.catalogs?.map {
+                AddonCatalog(
+                    type: $0.type ?? "",
+                    id: $0.id ?? "",
+                    name: $0.name,
+                    extra: $0.extra?.map {
+                        AddonCatalogExtra(
+                            name: $0.name ?? "",
+                            isRequired: $0.isRequired,
+                            options: $0.options,
+                            optionsLimit: $0.optionsLimit
+                        )
+                    }
+                )
+            },
+            addonCatalogs: raw.addonCatalogs?.map {
                 AddonCatalog(
                     type: $0.type ?? "",
                     id: $0.id ?? "",

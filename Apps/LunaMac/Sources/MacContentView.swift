@@ -4,7 +4,6 @@ import LunaCore
 struct MacContentView: View {
     @EnvironmentObject var profileManager: ProfileManager
     @EnvironmentObject var roleManager: RoleManager
-    @StateObject private var addonRepo = AddonRepository.shared
 
     var body: some View {
         Group {

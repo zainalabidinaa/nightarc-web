@@ -1,0 +1,56 @@
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - link "house.fill Home" [ref=e5] [cursor=pointer]:
+      - /url: /home
+      - img "house.fill" [ref=e6]
+      - generic [ref=e7]: Home
+    - link "magnifyingglass Search" [ref=e8] [cursor=pointer]:
+      - /url: /search
+      - img "magnifyingglass" [ref=e9]
+      - generic [ref=e10]: Search
+    - link "book.fill Library" [ref=e11] [cursor=pointer]:
+      - /url: /library
+      - img "book.fill" [ref=e12]
+      - generic [ref=e13]: Library
+    - link "gear Settings" [ref=e14] [cursor=pointer]:
+      - /url: /settings
+      - img "gear" [ref=e15]
+      - generic [ref=e16]: Settings
+    - link "person.fill Admin" [ref=e17] [cursor=pointer]:
+      - /url: /admin
+      - img "person.fill" [ref=e18]
+      - generic [ref=e19]: Admin
+    - button "Switch profile" [ref=e21] [cursor=pointer]:
+      - generic [ref=e22]: Z
+      - generic [ref=e23]: Zain
+  - main [ref=e24]:
+    - heading "Settings" [level=1] [ref=e27]
+    - generic [ref=e28]:
+      - generic [ref=e30]:
+        - generic [ref=e31]: Z
+        - generic [ref=e32]:
+          - paragraph [ref=e33]: Zain
+          - paragraph [ref=e34]: Administrator
+        - button "Switch" [ref=e35] [cursor=pointer]
+      - paragraph [ref=e36]: Content Management
+      - button "Addons 7 installed" [ref=e38] [cursor=pointer]:
+        - img [ref=e40]
+        - generic [ref=e42]:
+          - paragraph [ref=e43]: Addons
+          - paragraph [ref=e44]: 7 installed
+        - img [ref=e45]
+      - paragraph [ref=e47]: Playback
+      - button "Streaming Server Not configured Off" [ref=e49] [cursor=pointer]:
+        - img [ref=e51]
+        - generic [ref=e53]:
+          - paragraph [ref=e54]: Streaming Server
+          - paragraph [ref=e55]: Not configured
+        - generic [ref=e56]: "Off"
+        - img [ref=e57]
+      - paragraph [ref=e59]: App
+      - button "Luna v1.0.0 Powered by Stremio addon ecosystem" [ref=e61] [cursor=pointer]:
+        - img [ref=e63]
+        - generic [ref=e65]:
+          - paragraph [ref=e66]: Luna v1.0.0
+          - paragraph [ref=e67]: Powered by Stremio addon ecosystem
+      - button "Sign Out" [ref=e68] [cursor=pointer]

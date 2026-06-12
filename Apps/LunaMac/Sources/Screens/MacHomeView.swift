@@ -2,6 +2,7 @@ import SwiftUI
 import LunaCore
 
 struct MacHomeView: View {
+    let onSelectMedia: (MetaPreview) -> Void
     @EnvironmentObject var profileManager: ProfileManager
     @StateObject private var catalogRepo = CatalogRepository.shared
     @StateObject private var collectionRepo = CollectionRepository.shared
@@ -9,29 +10,24 @@ struct MacHomeView: View {
     @StateObject private var addonRepo = AddonRepository.shared
     @State private var heroIndex = 0
     @State private var heroTimer: Timer?
-    @State private var selectedMedia: MetaPreview?
-    @State private var showDetail = false
-    @State private var autoPlayLaunch: PlayerLaunch?
     @State private var isResumingItemId: String?
+    @Environment(\.openWindow) private var openWindow
 
     private var allRows: [CatalogRow] {
         catalogRepo.catalogRows + catalogRepo.collectionRows
     }
 
-    /// Rows good enough to feature in the hero (Popular / Trending), matched loosely
-    /// since addon catalog names vary (e.g. "TMDB Popular", "Trending Movies").
+    /// Rows good enough to feature in the hero — Popular Movies / Popular TV Shows
     private func isFeaturedRow(_ row: CatalogRow) -> Bool {
         let t = row.title.lowercased()
-        return t.contains("popular") || t.contains("trending")
+        let id = row.id.lowercased()
+        let isPopularMovie = (t.contains("popular") || id.contains("popular")) && (t.contains("movie") || id.contains("movie"))
+        let isPopularTv = (t.contains("popular") || id.contains("popular")) && (t.contains("tv") || t.contains("series") || id.contains("series"))
+        let isTrending = t.contains("trending")
+        return isPopularMovie || isPopularTv || isTrending
     }
 
-    /// Featured rows first, then the rest — keeps the best content at the top.
-    private var orderedRows: [CatalogRow] {
-        allRows.filter { isFeaturedRow($0) } + allRows.filter { !isFeaturedRow($0) }
-    }
-
-    // Mirror LunaWebV2's pickFeaturedItems: interleave up to 3 movies + 3 series
-    // from Popular/Trending rows, sorted by popularity, capped at 5 total.
+    /// Featured items: interleave Popular Movies (up to 3) + Popular TV Shows (up to 3), max 5
     private var featuredItems: [MetaPreview] {
         let featured = allRows.filter { isFeaturedRow($0) }
         let source = featured.isEmpty ? Array(allRows.prefix(2)) : featured
@@ -73,8 +69,7 @@ struct MacHomeView: View {
                         item: featuredItems[safeIndex],
                         rowTitle: rowTitle,
                         onTap: {
-                            selectedMedia = featuredItems[safeIndex]
-                            showDetail = true
+                            onSelectMedia(featuredItems[safeIndex])
                         },
                         dotCount: featuredItems.count,
                         activeIndex: safeIndex,
@@ -115,10 +110,9 @@ struct MacHomeView: View {
 
                 if !allRows.isEmpty {
                     VStack(spacing: 28) {
-                        ForEach(orderedRows) { row in
+                        ForEach(allRows) { row in
                             MediaRow(title: row.title, items: row.items) { item in
-                                selectedMedia = item
-                                showDetail = true
+                                onSelectMedia(item)
                             }
                         }
                     }
@@ -132,19 +126,6 @@ struct MacHomeView: View {
             }
         }
         .background(LunaTheme.background)
-        .sheet(isPresented: $showDetail) {
-            if let media = selectedMedia {
-                MacDetailView(
-                    mediaId: media.id,
-                    type: media.type.rawValue,
-                    name: media.name
-                )
-                .frame(minWidth: 800, minHeight: 600)
-            }
-        }
-        .sheet(item: $autoPlayLaunch) { launch in
-            MacPlayerView(launch: launch)
-        }
         .task {
             guard let profile = profileManager.currentProfile else { return }
 
@@ -158,18 +139,23 @@ struct MacHomeView: View {
             await collectionsLoad
             await cwLoad
 
-            let enabled = addonRepo.enabledAddons
-            // Mirror LunaWebV2: home catalog rows come from the SYSTEM ADDON only.
-            let catalogAddon: AddonManifest?
-            if let sysUrl = systemAddonUrl {
-                catalogAddon = addonRepo.managedAddons
-                    .first(where: { $0.manifestUrl == sysUrl })?.manifest
-            } else {
-                catalogAddon = enabled.first(where: { !($0.catalogs?.isEmpty ?? true) })
+            // Only fetch catalogs on first load — tab switches recreate the view
+            // so we guard against redundant network calls.
+            if catalogRepo.catalogRows.isEmpty {
+                let enabled = addonRepo.enabledAddons
+                // Mirror LunaWebV2: home catalog rows come from the SYSTEM ADDON only.
+                if collectionRepo.collections.isEmpty {
+                    if let sysUrl = systemAddonUrl,
+                       let catalogAddon = addonRepo.managedAddons.first(where: { $0.manifestUrl == sysUrl })?.manifest {
+                        await catalogRepo.loadAllCatalogs(addons: [catalogAddon])
+                    } else if let fallback = enabled.first(where: { !($0.catalogs?.isEmpty ?? true) }) {
+                        await catalogRepo.loadAllCatalogs(addons: [fallback])
+                    }
+                } else {
+                    await catalogRepo.loadFromCollections(collectionRepo: collectionRepo, addons: enabled)
+                    await catalogRepo.supplementWithAddonCatalogs(addons: enabled)
+                }
             }
-            let catalogAddons = catalogAddon.map { [$0] } ?? []
-            await catalogRepo.loadAllCatalogs(addons: catalogAddons)
-            await catalogRepo.loadFromCollections(collectionRepo: collectionRepo, addons: enabled)
             startHeroTimer()
         }
         .onDisappear {
@@ -194,7 +180,7 @@ struct MacHomeView: View {
                 from: addons
             ), let url = stream.url else { return }
 
-            autoPlayLaunch = PlayerLaunch(
+            openWindow(id: "player", value: PlayerLaunch(
                 title: item.name,
                 sourceUrl: url,
                 sourceHeaders: stream.behaviorHints?.proxyHeaders?.request,
@@ -206,7 +192,7 @@ struct MacHomeView: View {
                 contentType: item.mediaType == "movie" ? .movie : .series,
                 videoId: item.mediaId,
                 initialPositionMs: item.resumePositionMs
-            )
+            ))
         }
     }
 

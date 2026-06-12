@@ -47,7 +47,7 @@ struct LibraryScreen: View {
             await libraryRepo.loadLibrary(profileId: profile.id)
             await watchProgressRepo.loadAll(profileId: profile.id)
             await likedRepo.loadLibrary()
-            await upcomingService.refreshIfNeeded(likedItems: likedRepo.likedItems)
+            await upcomingService.refresh(likedItems: likedRepo.likedItems)
             await resolveLibraryArtwork()
         }
     }
@@ -186,7 +186,8 @@ struct LibraryScreen: View {
             name: item.name
         )) {
             Group {
-                if let poster = item.poster, let url = URL(string: poster) {
+                let posterURLStr = PosterService.posterURL(forImdbId: item.mediaId) ?? item.poster
+                if let urlStr = posterURLStr, let url = URL(string: urlStr) {
                     CachedAsyncImage(url: url) { phase in
                         if case .success(let img) = phase {
                             img.resizable().scaledToFill()
@@ -351,6 +352,8 @@ struct LibraryScreen: View {
     // MARK: - Artwork resolution (preserved from original)
 
     private func artworkURL(for item: LunaCore.LibraryItem) -> URL? {
+        // Prefer btttr poster for any IMDb-id item — always up to date.
+        if let bttr = PosterService.posterURL(forImdbId: item.mediaId) { return URL(string: bttr) }
         if let resolved = resolvedArtwork[item.mediaId] { return URL(string: resolved) }
         guard let poster = item.poster, !isStaleSavedArtwork(poster) else { return nil }
         return URL(string: poster)
@@ -358,7 +361,8 @@ struct LibraryScreen: View {
 
     private func isStaleSavedArtwork(_ url: String) -> Bool {
         let l = url.lowercased()
-        return l.contains("btttr.cc") || l.contains("betterposters")
+        // btttr.cc is now our primary poster source — never stale.
+        return l.contains("betterposters")
             || l.contains("ratingposterdb") || l.contains("api.top-posters.com")
     }
 

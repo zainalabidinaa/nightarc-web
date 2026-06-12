@@ -8,16 +8,16 @@ TRUNCATE collections CASCADE;
 DO $$
 DECLARE
   c1 UUID; c2 UUID; c3 UUID; c4 UUID; c5 UUID; c6 UUID; c7 UUID;
+  c8 UUID; c9 UUID; c10 UUID; c11 UUID; c12 UUID; c13 UUID;
   f  UUID;
 BEGIN
 
 -- ============================================
--- COLLECTION 1: Discover
+-- COLLECTION 1: Trending Shows
 -- ============================================
 INSERT INTO collections (name, sort_order, show_all_tab, focus_glow_enabled)
-VALUES ('Discover', 0, true, true) RETURNING id INTO c1;
+VALUES ('Trending Shows', 0, true, true) RETURNING id INTO c1;
 
--- Trending Shows
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hero_backdrop, focus_gif_enabled)
 VALUES (c1, 'Trending Shows', 0,
   'https://btttr.cc/dVHLbsIwEPyVaM8gOQ8njq-VekOqSqUeqh7W9hqikjiKDQgh_r2CBkJSOM5oZmdn9wgaA27cyoP8gtDhT5iHjhpTNSuYPSNa12432D3CtVHz4AweRmDu127vr5R2dT9tQGNFcO1t-B6DXm8qH27MGUiLO7ftqkAevmdQU0CQx-nC8ggN1gQSPnoqWlJX0SUIJHg4TTsMlrc_5pFjaHmX4Noo4dHC7QZ1PVb3Jf95niT0dxrkLxciWjrXPMsZXfOx82mfdrLZOwYyo4TJQwb54hB93v9p7Jg-bPC9DuTNdbWdZag1eQ8SSsoMlgqxSFOyBmNmE82sZtySFiLNKCNknBvBsri0nHJjmNKp5iRszguYQUe2I78GCYTEdZHl2qIlEipTQpdFmiXCljFLFGVpyQQZludM8TxOYqsKZQthTJGLsoDT6Rc/cover/series/trakt-trending.png?name=Trending%20Shows',
@@ -27,9 +27,14 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
   (f, 'mdblist.3882', 'series', 'None'),
   (f, 'tmdb.discover.series.latest.mpcugvcy', 'series', 'None');
 
--- Trending Movies
+-- ============================================
+-- COLLECTION 2: Trending Movies
+-- ============================================
+INSERT INTO collections (name, sort_order, show_all_tab, focus_glow_enabled)
+VALUES ('Trending Movies', 1, true, true) RETURNING id INTO c2;
+
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hero_backdrop, focus_gif_enabled)
-VALUES (c1, 'Trending Movies', 1,
+VALUES (c2, 'Trending Movies', 0,
   'https://btttr.cc/dVHLbsIwEPyVaM8gOQ8njq-VekOqSqUeqh7W9hqikjiKDQgh_r2CBkJSOM5oZmdn9wgaA27cyoP8gtDhT5iHjhpTNSuYPSNa12432D3CtVHz4AweRmDu127vr5R2dT9tQGNFcO1t-B6DXm8qH27MGUiLO7ftqkAevmdQU0CQx-nC8ggN1gQSPnoqWlJX0SUIJHg4TTsMlrc_5pFjaHmX4Noo4dHC7QZ1PVb3Jf95niT0dxrkLxciWjrXPMsZXfOx82mfdrLZOwYyo4TJQwb54hB93v9p7Jg-bPC9DuTNdbWdZag1eQ8SSsoMlgqxSFOyBmNmE82sZtySFiLNKCNknBvBsri0nHJjmNKp5iRszguYQUe2I78GCYTEdZHl2qIlEipTQpdFmiXCljFLFGVpyQQZludM8TxOYqsKZQthTJGLsoDT6Rc/cover/movie/trakt-trending.png?name=Trending%20Movies',
   'https://i.postimg.cc/Wbf23VDp/Playlists.jpg', true)
 RETURNING id INTO f;
@@ -37,27 +42,42 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
   (f, 'mdblist.88306', 'movie', 'None'),
   (f, 'tmdb.trending_movie', 'movie', 'Day');
 
--- Popular Shows
+-- ============================================
+-- COLLECTION 3: Popular Shows
+-- ============================================
+INSERT INTO collections (name, sort_order, show_all_tab, focus_glow_enabled)
+VALUES ('Popular Shows', 2, true, true) RETURNING id INTO c3;
+
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hero_backdrop, focus_gif_enabled)
-VALUES (c1, 'Popular Shows', 2,
+VALUES (c3, 'Popular Shows', 0,
   'https://btttr.cc/dVHLbsIwEPyVaM8gOQ8njq-VekOqSqUeqh7W9hqikjiKDQgh_r2CBkJSOM5oZmdn9wgaA27cyoP8gtDhT5iHjhpTNSuYPSNa12432D3CtVHz4AweRmDu127vr5R2dT9tQGNFcO1t-B6DXm8qH27MGUiLO7ftqkAevmdQU0CQx-nC8ggN1gQSPnoqWlJX0SUIJHg4TTsMlrc_5pFjaHmX4Noo4dHC7QZ1PVb3Jf95niT0dxrkLxciWjrXPMsZXfOx82mfdrLZOwYyo4TJQwb54hB93v9p7Jg-bPC9DuTNdbWdZag1eQ8SSsoMlgqxSFOyBmNmE82sZtySFiLNKCNknBvBsri0nHJjmNKp5iRszguYQUe2I78GCYTEdZHl2qIlEipTQpdFmiXCljFLFGVpyQQZludM8TxOYqsKZQthTJGLsoDT6Rc/cover/series/trakt-popular.png?name=Popular%20Shows',
   'https://i.postimg.cc/Wbf23VDp/Playlists.jpg', true)
 RETURNING id INTO f;
 INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
   (f, 'tmdb.top_series', 'series', 'None');
 
--- Popular Movies
+-- ============================================
+-- COLLECTION 4: Popular Movies
+-- ============================================
+INSERT INTO collections (name, sort_order, show_all_tab, focus_glow_enabled)
+VALUES ('Popular Movies', 3, true, true) RETURNING id INTO c4;
+
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hero_backdrop, focus_gif_enabled)
-VALUES (c1, 'Popular Movies', 3,
+VALUES (c4, 'Popular Movies', 0,
   'https://btttr.cc/dVHLbsIwEPyVaM8gOQ8njq-VekOqSqUeqh7W9hqikjiKDQgh_r2CBkJSOM5oZmdn9wgaA27cyoP8gtDhT5iHjhpTNSuYPSNa12432D3CtVHz4AweRmDu127vr5R2dT9tQGNFcO1t-B6DXm8qH27MGUiLO7ftqkAevmdQU0CQx-nC8ggN1gQSPnoqWlJX0SUIJHg4TTsMlrc_5pFjaHmX4Noo4dHC7QZ1PVb3Jf95niT0dxrkLxciWjrXPMsZXfOx82mfdrLZOwYyo4TJQwb54hB93v9p7Jg-bPC9DuTNdbWdZag1eQ8SSsoMlgqxSFOyBmNmE82sZtySFiLNKCNknBvBsri0nHJjmNKp5iRszguYQUe2I78GCYTEdZHl2qIlEipTQpdFmiXCljFLFGVpyQQZludM8TxOYqsKZQthTJGLsoDT6Rc/cover/movie/trakt-popular.png?name=Popular%20Movies',
   'https://i.postimg.cc/Wbf23VDp/Playlists.jpg', true)
 RETURNING id INTO f;
 INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
   (f, 'tmdb.top_movie', 'movie', 'None');
 
--- Top Rated
+-- ============================================
+-- COLLECTION 5: Top Rated
+-- ============================================
+INSERT INTO collections (name, sort_order, show_all_tab, focus_glow_enabled)
+VALUES ('Top Rated', 4, true, true) RETURNING id INTO c5;
+
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hero_backdrop, focus_gif_enabled)
-VALUES (c1, 'Top Rated', 4,
+VALUES (c5, 'Top Rated', 0,
   'https://btttr.cc/dVHLbsIwEPyVaM8gOQ8njq-VekOqSqUeqh7W9hqikjiKDQgh_r2CBkJSOM5oZmdn9wgaA27cyoP8gtDhT5iHjhpTNSuYPSNa12432D3CtVHz4AweRmDu127vr5R2dT9tQGNFcO1t-B6DXm8qH27MGUiLO7ftqkAevmdQU0CQx-nC8ggN1gQSPnoqWlJX0SUIJHg4TTsMlrc_5pFjaHmX4Noo4dHC7QZ1PVb3Jf95niT0dxrkLxciWjrXPMsZXfOx82mfdrLZOwYyo4TJQwb54hB93v9p7Jg-bPC9DuTNdbWdZag1eQ8SSsoMlgqxSFOyBmNmE82sZtySFiLNKCNknBvBsri0nHJjmNKp5iRszguYQUe2I78GCYTEdZHl2qIlEipTQpdFmiXCljFLFGVpyQQZludM8TxOYqsKZQthTJGLsoDT6Rc/cover/movie/tmdb-top.png?name=Top%20Rated',
   'https://i.postimg.cc/Wbf23VDp/Playlists.jpg', true)
 RETURNING id INTO f;
@@ -68,9 +88,14 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
   (f, 'trakt.list.2142753',    'movie',  'None'),
   (f, 'trakt.list.1282987',    'movie',  'None');
 
--- Coming Soon Shows
+-- ============================================
+-- COLLECTION 6: Coming Soon Shows
+-- ============================================
+INSERT INTO collections (name, sort_order, show_all_tab, focus_glow_enabled)
+VALUES ('Coming Soon Shows', 5, true, true) RETURNING id INTO c6;
+
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hero_backdrop, focus_gif_enabled)
-VALUES (c1, 'Coming Soon Shows', 5,
+VALUES (c6, 'Coming Soon Shows', 0,
   'https://btttr.cc/bYwxCoAwEAS_IlubD1xrbZVSLKIGDXg58IIWIX8XbVSw3GFnMkaX3CqzgjokngYzCoc4o34vo4scir4G--RA-XOljOjYg9DcoLIisWplD16vDgiM8hf8N63fHlNRSjkB/cover/series/tmdb-coming-shows.png?name=Coming%20Soon%20Shows',
   'https://i.postimg.cc/Wbf23VDp/Playlists.jpg', false)
 RETURNING id INTO f;
@@ -78,9 +103,14 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
   (f, 'mdblist.20340',          'series', 'None'),
   (f, 'trakt.anticipated.shows','series', 'None');
 
--- Coming Soon Movies
+-- ============================================
+-- COLLECTION 7: Coming Soon Movies
+-- ============================================
+INSERT INTO collections (name, sort_order, show_all_tab, focus_glow_enabled)
+VALUES ('Coming Soon Movies', 6, true, true) RETURNING id INTO c7;
+
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hero_backdrop, focus_gif_enabled)
-VALUES (c1, 'Coming Soon Movies', 6,
+VALUES (c7, 'Coming Soon Movies', 0,
   'https://btttr.cc/dVHLbsIwEPyVaM8gOQ8njq-VekOqSqUeqh7W9hqikjiKDQgh_r2CBkJSOM5oZmdn9wgaA27cyoP8gtDhT5iHjhpTNSuYPSNa12432D3CtVHz4AweRmDu127vr5R2dT9tQGNFcO1t-B6DXm8qH27MGUiLO7ftqkAevmdQU0CQx-nC8ggN1gQSPnoqWlJX0SUIJHg4TTsMlrc_5pFjaHmX4Noo4dHC7QZ1PVb3Jf95niT0dxrkLxciWjrXPMsZXfOx82mfdrLZOwYyo4TJQwb54hB93v9p7Jg-bPC9DuTNdbWdZag1eQ8SSsoMlgqxSFOyBmNmE82sZtySFiLNKCNknBvBsri0nHJjmNKp5iRszguYQUe2I78GCYTEdZHl2qIlEipTQpdFmiXCljFLFGVpyQQZludM8TxOYqsKZQthTJGLsoDT6Rc/cover/movie/tmdb-coming.png?name=Coming%20Soon%20Movies',
   'https://i.postimg.cc/Wbf23VDp/Playlists.jpg', true)
 RETURNING id INTO f;
@@ -89,15 +119,14 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
   (f, 'trakt.anticipated.movies','movie', 'None');
 
 
--- ============================================
--- COLLECTION 2: Franchises
+-- COLLECTION 8: Franchises
 -- ============================================
 INSERT INTO collections (name, sort_order, show_all_tab, focus_glow_enabled)
-VALUES ('Franchises', 1, false, true) RETURNING id INTO c2;
+VALUES ('Franchises', 7, false, true) RETURNING id INTO c8;
 
 -- Star Wars
 INSERT INTO folders (collection_id, name, sort_order, cover_image, title_logo, hero_backdrop, hide_title, focus_gif_enabled)
-VALUES (c2, 'Star Wars', 0,
+VALUES (c8, 'Star Wars', 0,
   'https://i.postimg.cc/vHK1D7bP/Star-Wars.jpg',
   'https://i.postimg.cc/L6r64vPj/Star-Wars-Logo.png',
   'https://i.postimg.cc/sDtDfKWJ/Star-Wars-BG.jpg', true, false)
@@ -108,7 +137,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Middle Earth
 INSERT INTO folders (collection_id, name, sort_order, cover_image, title_logo, hero_backdrop, hide_title, focus_gif_enabled)
-VALUES (c2, 'Middle Earth', 1,
+VALUES (c8, 'Middle Earth', 1,
   'https://i.postimg.cc/qvn2MrXq/Lo-TR-Tile.png',
   'https://i.postimg.cc/XYF97WcJ/Lo-TRLogo.png',
   'https://i.postimg.cc/BQRx0bFM/Lo-TR-BG.jpg', true, false)
@@ -118,7 +147,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- The Wizarding World
 INSERT INTO folders (collection_id, name, sort_order, cover_image, title_logo, hero_backdrop, hide_title, focus_gif_enabled)
-VALUES (c2, 'The Wizarding World', 2,
+VALUES (c8, 'The Wizarding World', 2,
   'https://i.postimg.cc/xj44xqMB/Wizarding-World-of-Harry-Potter-Tile.png',
   'https://i.postimg.cc/pXgkWq8W/Wizarding-World-of-Harry-Potter-logo.png',
   'https://i.postimg.cc/sg7mv79C/Harry-Potter-BG.jpg', true, false)
@@ -128,7 +157,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Pixar
 INSERT INTO folders (collection_id, name, sort_order, cover_image, title_logo, hero_backdrop, hide_title, focus_gif_enabled)
-VALUES (c2, 'Pixar', 3,
+VALUES (c8, 'Pixar', 3,
   'https://i.postimg.cc/5yrL2sh2/5440db5f-be91-4941-b1ba-4b4ea07b0f25.jpg',
   'https://i.postimg.cc/J0Y4Lsdk/Pixar-Logo.png',
   'https://i.postimg.cc/hj6yHJJv/Pixar-BG.jpg', true, false)
@@ -139,7 +168,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Dreamworks
 INSERT INTO folders (collection_id, name, sort_order, cover_image, title_logo, hero_backdrop, hide_title, focus_gif_enabled)
-VALUES (c2, 'Dreamworks', 4,
+VALUES (c8, 'Dreamworks', 4,
   'https://i.postimg.cc/JnVNH8M5/882cf7a8-9aa6-4673-81c1-d3ed7a859e95.jpg',
   'https://i.postimg.cc/J4QCZCzG/Dream-Works-Logo.png',
   'https://i.postimg.cc/qqVzFhSX/Dream-Works-BG.jpg', true, true)
@@ -149,7 +178,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Pirates Of The Caribbean
 INSERT INTO folders (collection_id, name, sort_order, cover_image, title_logo, hero_backdrop, hide_title, focus_gif_enabled)
-VALUES (c2, 'Pirates Of The Caribbean', 5,
+VALUES (c8, 'Pirates Of The Caribbean', 5,
   'https://i.postimg.cc/4xbkvk41/Piratesof-The-Caribbean-Tile.jpg',
   'https://i.postimg.cc/2SFRdRjw/Piratesof-The-Caribbean-Logo.png',
   'https://i.postimg.cc/y8X4h46y/Piratesof-The-Caribbean-BG.jpg', true, false)
@@ -159,7 +188,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Back to the Future
 INSERT INTO folders (collection_id, name, sort_order, cover_image, title_logo, hero_backdrop, hide_title, focus_gif_enabled)
-VALUES (c2, 'Back to the Future', 6,
+VALUES (c8, 'Back to the Future', 6,
   'https://i.postimg.cc/63FmJY5K/Backto-The-Future-Tile.png',
   'https://i.postimg.cc/nzNPb0cb/Backto-The-Future-Logo.png',
   'https://i.postimg.cc/C19QTmMW/Backto-The-Future-BG.jpg', true, false)
@@ -169,7 +198,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Indiana Jones
 INSERT INTO folders (collection_id, name, sort_order, cover_image, title_logo, hero_backdrop, hide_title, focus_gif_enabled)
-VALUES (c2, 'Indiana Jones', 7,
+VALUES (c8, 'Indiana Jones', 7,
   'https://i.postimg.cc/k5zCjN89/Indiana-Jones-Tile.png',
   'https://i.postimg.cc/vmWxMmzF/Indiana-Jones-Logo.png',
   'https://i.postimg.cc/jjmT86NV/Indiana-Jones-BG.jpg', true, true)
@@ -179,7 +208,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- The Matrix
 INSERT INTO folders (collection_id, name, sort_order, cover_image, title_logo, hero_backdrop, hide_title, focus_gif_enabled)
-VALUES (c2, 'The Matrix', 8,
+VALUES (c8, 'The Matrix', 8,
   'https://i.postimg.cc/k43Gpd3c/The-Matrix-Tile.png',
   'https://i.postimg.cc/Kjwfgzgg/The-Matrix-Logo.webp',
   'https://i.postimg.cc/N0rLDjVL/The-Matrix-BG.jpg', true, false)
@@ -189,7 +218,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- The Hunger Games
 INSERT INTO folders (collection_id, name, sort_order, cover_image, title_logo, hero_backdrop, hide_title, focus_gif_enabled)
-VALUES (c2, 'The Hunger Games', 9,
+VALUES (c8, 'The Hunger Games', 9,
   'https://i.postimg.cc/T1DT4WLq/0d7e0b16-0ad8-454e-8de1-31e42781a305.jpg',
   'https://i.postimg.cc/tTPPRBCc/The-Hunger-Games-Logo.png',
   'https://i.postimg.cc/JhSZWfmN/The-Hunger-Games-BG.jpg', true, false)
@@ -199,7 +228,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- The Planet of the Apes
 INSERT INTO folders (collection_id, name, sort_order, cover_image, title_logo, hero_backdrop, hide_title, focus_gif_enabled)
-VALUES (c2, 'The Planet of the Apes', 10,
+VALUES (c8, 'The Planet of the Apes', 10,
   'https://i.postimg.cc/9FvGHPkB/a453ea55-5840-4dea-a6b8-bc2ba0a1e481.webp',
   'https://i.postimg.cc/9My83FdH/Planetof-The-Apes-Logo.png',
   'https://i.postimg.cc/1tKtYwYj/Planetof-The-Apes-BG.jpg', true, false)
@@ -209,7 +238,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Jurassic World
 INSERT INTO folders (collection_id, name, sort_order, cover_image, title_logo, hero_backdrop, hide_title, focus_gif_enabled)
-VALUES (c2, 'Jurassic World', 11,
+VALUES (c8, 'Jurassic World', 11,
   'https://i.postimg.cc/xCpJgLZJ/Jurassic-World-Tile.png',
   'https://i.postimg.cc/1zP9F4vn/vle-Ub-BFl-EGdxaazvz-BMo-Z5d-HDo-Y.webp',
   'https://i.postimg.cc/W31qM55p/Jurassic-World-BG.jpg', true, true)
@@ -219,7 +248,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Men In Black
 INSERT INTO folders (collection_id, name, sort_order, cover_image, title_logo, hero_backdrop, hide_title, focus_gif_enabled)
-VALUES (c2, 'Men In Black', 12,
+VALUES (c8, 'Men In Black', 12,
   'https://i.postimg.cc/X7HNTVNC/Men-In-Black-Tile.png',
   'https://i.postimg.cc/rFFFndT1/Men-In-Black-Logo.png',
   'https://i.postimg.cc/kXXX1VCK/Men-In-Black-BG.jpg', true, true)
@@ -229,7 +258,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Ghostbusters
 INSERT INTO folders (collection_id, name, sort_order, cover_image, title_logo, hero_backdrop, hide_title, focus_gif_enabled)
-VALUES (c2, 'Ghostbusters', 13,
+VALUES (c8, 'Ghostbusters', 13,
   'https://i.postimg.cc/j5vJGHJb/Ghostbusters-Tile.png',
   'https://i.postimg.cc/7htHck4W/e3ed004b-4969-4109-9c9d-aef29189c433-(1)-(1).png',
   'https://i.postimg.cc/x8CbYXK9/Ghostbusters-BG.png', true, false)
@@ -239,7 +268,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Battlestar Galactica
 INSERT INTO folders (collection_id, name, sort_order, cover_image, title_logo, hero_backdrop, hide_title, focus_gif_enabled)
-VALUES (c2, 'Battlestar Galactica', 14,
+VALUES (c8, 'Battlestar Galactica', 14,
   'https://i.postimg.cc/JzLh2h56/Battle-Star-Tile.png',
   'https://i.postimg.cc/pdjnnSkx/Battlestar-Logo.png',
   'https://i.postimg.cc/T27BpNsM/Battlestar-BG.png', true, false)
@@ -249,7 +278,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- DC Universe
 INSERT INTO folders (collection_id, name, sort_order, cover_image, title_logo, hero_backdrop, hide_title, focus_gif_enabled)
-VALUES (c2, 'DC Universe', 15,
+VALUES (c8, 'DC Universe', 15,
   'https://i.postimg.cc/9fxVdSC1/DC-Universe.jpg',
   'https://i.postimg.cc/3WQ8YQ4b/960px-DC-Comics-logo-svg-png-utm-source-commons-wikimedia.png',
   'https://i.postimg.cc/4N45MSg7/ef215e66-54da-4b03-a946-34727ba52766.jpg', true, true)
@@ -259,7 +288,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Marvel
 INSERT INTO folders (collection_id, name, sort_order, cover_image, title_logo, hero_backdrop, hide_title, focus_gif_enabled)
-VALUES (c2, 'Marvel', 16,
+VALUES (c8, 'Marvel', 16,
   'https://i.postimg.cc/TYKW4WdV/Marvel-Tile.png',
   'https://i.postimg.cc/XNHCLgb4/Marvel-Logo.png',
   'https://i.postimg.cc/v8qVhvsn/Marvel-BG.png', true, false)
@@ -270,7 +299,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Rocky
 INSERT INTO folders (collection_id, name, sort_order, cover_image, title_logo, hero_backdrop, hide_title, focus_gif_enabled)
-VALUES (c2, 'Rocky', 17,
+VALUES (c8, 'Rocky', 17,
   'https://i.postimg.cc/V6GryckF/Rocky-Tile.png',
   'https://i.postimg.cc/Tw7L8X3V/Rocky-Logo.png',
   'https://i.postimg.cc/cH9gqNLM/Rocky-BG.jpg', true, false)
@@ -280,7 +309,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- James Bond
 INSERT INTO folders (collection_id, name, sort_order, cover_image, title_logo, hero_backdrop, hide_title, focus_gif_enabled)
-VALUES (c2, 'James Bond', 18,
+VALUES (c8, 'James Bond', 18,
   'https://i.postimg.cc/PJRvqd4D/James-Bond-Tile.png',
   'https://i.postimg.cc/RFGnj7nx/007-Logo.png',
   'https://i.postimg.cc/SRszqnWz/James-Bond-BG.png', true, false)
@@ -294,7 +323,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Monty Python
 INSERT INTO folders (collection_id, name, sort_order, cover_image, title_logo, hero_backdrop, hide_title, focus_gif_enabled)
-VALUES (c2, 'Monty Python', 19,
+VALUES (c8, 'Monty Python', 19,
   'https://i.postimg.cc/4NRMpgW1/Monty-Python-Button.png',
   'https://i.postimg.cc/Kv0WqWNq/Python-Logo.png',
   'https://i.postimg.cc/fTQFYN8x/Monty-Python-BG.png', false, true)
@@ -304,7 +333,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- It's Aliens
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hide_title, focus_gif_enabled)
-VALUES (c2, 'It''s Aliens', 20,
+VALUES (c8, 'It''s Aliens', 20,
   'https://i.postimg.cc/d33f6Ng3/Aliens.png', true, false)
 RETURNING id INTO f;
 INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
@@ -312,14 +341,14 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 
 -- ============================================
--- COLLECTION 3: Streaming
+-- COLLECTION 9: Streaming
 -- ============================================
 INSERT INTO collections (name, sort_order, show_all_tab, focus_glow_enabled)
-VALUES ('Streaming', 2, false, true) RETURNING id INTO c3;
+VALUES ('Streaming', 8, false, true) RETURNING id INTO c9;
 
 -- Netflix
 INSERT INTO folders (collection_id, name, sort_order, cover_image, focus_gif, title_logo, hero_backdrop, hero_video_url, hide_title, focus_gif_enabled)
-VALUES (c3, 'Netflix', 0,
+VALUES (c9, 'Netflix', 0,
   'https://i.postimg.cc/FHrH9pYN/469fb054-cbec-46ca-bc91-6ed73a6d647b.png',
   'https://i.postimg.cc/mgm2h99c/bb74046420c4c992b8cabc6e667abe40.gif',
   'https://i.postimg.cc/903dVycz/Netflix-Logo.png',
@@ -335,7 +364,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Prime Video
 INSERT INTO folders (collection_id, name, sort_order, cover_image, focus_gif, title_logo, hero_backdrop, hero_video_url, hide_title, focus_gif_enabled)
-VALUES (c3, 'Prime Video', 1,
+VALUES (c9, 'Prime Video', 1,
   'https://i.postimg.cc/jSMdCffB/d0476b73-c21d-4c1d-946f-7ce3fef17ccd.png',
   'https://media1.tenor.com/m/T7L_NCdPIvAAAAAC/prime-video.gif',
   'https://i.postimg.cc/5ycB18f6/prime-video-landscape-logo.png',
@@ -351,7 +380,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Paramount+
 INSERT INTO folders (collection_id, name, sort_order, cover_image, focus_gif, title_logo, hero_backdrop, hero_video_url, hide_title, focus_gif_enabled)
-VALUES (c3, 'Paramount+', 2,
+VALUES (c9, 'Paramount+', 2,
   'https://i.postimg.cc/TPSdJXC1/12db31b7-ca2e-4980-9c92-c83e58a22949.png',
   'https://i.postimg.cc/zBgJdPcF/Paramount.gif',
   'https://i.postimg.cc/yYtfx3nP/Paramount-logo-svg.png',
@@ -367,7 +396,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Disney+
 INSERT INTO folders (collection_id, name, sort_order, cover_image, focus_gif, title_logo, hero_backdrop, hide_title, focus_gif_enabled)
-VALUES (c3, 'Disney+', 3,
+VALUES (c9, 'Disney+', 3,
   'https://i.postimg.cc/D037RPV2/e2155ff8-4939-40d1-8dc2-7d28df3ecaa0.png',
   'https://i.postimg.cc/Y0Nt7Lk0/1775910668473-8e07b96b-4739-43d4-9475-f2aaeac8e259.gif',
   'https://i.postimg.cc/yd3mwLC3/Disney-Plus-logo-svg.png',
@@ -382,7 +411,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Apple TV
 INSERT INTO folders (collection_id, name, sort_order, cover_image, focus_gif, title_logo, hero_backdrop, hero_video_url, hide_title, focus_gif_enabled)
-VALUES (c3, 'Apple TV', 4,
+VALUES (c9, 'Apple TV', 4,
   'https://i.postimg.cc/yWq3QZjQ/d2b77dfd-c14a-4258-ab0f-b610519c96ef.png',
   'https://64.media.tumblr.com/d717319220a7d26bdaa88e72f6f76889/d9a7a808f588d8f4-63/s500x750/959b0ca57f53153b2ca9adaf414859e45e3734e6.gifv',
   'https://i.postimg.cc/B6PTdmfK/apple-tv-logo.png',
@@ -398,7 +427,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- HBO MAX
 INSERT INTO folders (collection_id, name, sort_order, cover_image, focus_gif, title_logo, hero_backdrop, hero_video_url, hide_title, focus_gif_enabled)
-VALUES (c3, 'HBO MAX', 5,
+VALUES (c9, 'HBO MAX', 5,
   'https://i.postimg.cc/1RbWh7Yp/af3c0122-cbd1-49ae-94f1-6da0f9f665a8.png',
   'https://i.postimg.cc/Hs0t4sLJ/4cb9b614191d17d02c946b4ca59548cd333c06fd.gif',
   'https://i.postimg.cc/JnmrXqYH/HBO-Max-logo-(May-2025).png',
@@ -414,7 +443,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Starz
 INSERT INTO folders (collection_id, name, sort_order, cover_image, focus_gif, title_logo, hero_backdrop, hero_video_url, hide_title, focus_gif_enabled)
-VALUES (c3, 'Starz', 6,
+VALUES (c9, 'Starz', 6,
   'https://i.postimg.cc/W3Ff8LDH/c7688767-401f-45ad-998a-076ded525df7.png',
   'https://i.postimg.cc/sxJP9wJm/1000390458-(1).gif',
   'https://i.postimg.cc/m20PmKdG/Starz-logo.png',
@@ -430,14 +459,14 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 
 -- ============================================
--- COLLECTION 4: UK TV
+-- COLLECTION 10: UK TV
 -- ============================================
 INSERT INTO collections (name, sort_order, show_all_tab, focus_glow_enabled)
-VALUES ('UK TV', 3, false, true) RETURNING id INTO c4;
+VALUES ('UK TV', 9, false, true) RETURNING id INTO c10;
 
 -- iPlayer
 INSERT INTO folders (collection_id, name, sort_order, cover_image, title_logo, hero_backdrop, hero_video_url, hide_title, focus_gif_enabled)
-VALUES (c4, 'iPlayer', 0,
+VALUES (c10, 'iPlayer', 0,
   'https://i.postimg.cc/W3TbWH10/3c471a49-13c3-40e2-8583-b1e9549b1768.jpg',
   'https://i.postimg.cc/6QLvvTx7/BBC-i-Player-Logo.png',
   'https://i.postimg.cc/zXfz8vfr/BBC.jpg',
@@ -449,7 +478,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- itvX
 INSERT INTO folders (collection_id, name, sort_order, cover_image, title_logo, hero_backdrop, hero_video_url, hide_title, focus_gif_enabled)
-VALUES (c4, 'itvX', 1,
+VALUES (c10, 'itvX', 1,
   'https://i.postimg.cc/85NPK0zK/itv-xwefbrjsf.jpg',
   'https://i.postimg.cc/d0CHC242/ITVX-logo-svg.png',
   'https://i.postimg.cc/xTF0CQk2/ITVX.jpg',
@@ -461,7 +490,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Channel 4
 INSERT INTO folders (collection_id, name, sort_order, cover_image, title_logo, hero_backdrop, hero_video_url, hide_title, focus_gif_enabled)
-VALUES (c4, 'Channel 4', 2,
+VALUES (c10, 'Channel 4', 2,
   'https://i.postimg.cc/3R1rPFkS/63a2922f-2d1a-42ce-845e-de7e56aaf92f.jpg',
   'https://i.postimg.cc/fbd2dcBf/Channel-4.png',
   'https://i.postimg.cc/qM7J4q7H/Channel4.jpg',
@@ -473,7 +502,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Channel 5
 INSERT INTO folders (collection_id, name, sort_order, cover_image, title_logo, hero_backdrop, hero_video_url, hide_title, focus_gif_enabled)
-VALUES (c4, 'Channel 5', 3,
+VALUES (c10, 'Channel 5', 3,
   'https://i.postimg.cc/ZRHY1x9h/5logo.png',
   'https://i.postimg.cc/VNtGtqD4/Channel-5-2025-svg.png',
   'https://i.postimg.cc/xTdfn8dS/Channel5.jpg',
@@ -485,7 +514,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- U (UKTV Play)
 INSERT INTO folders (collection_id, name, sort_order, cover_image, title_logo, hero_backdrop, hero_video_url, hide_title, focus_gif_enabled)
-VALUES (c4, 'U', 4,
+VALUES (c10, 'U', 4,
   'https://i.postimg.cc/nr9yZw2w/UPlayer.png',
   'https://i.postimg.cc/g0hShVNK/UKTV-2024-svg.png',
   'https://i.postimg.cc/tCmXTb1s/UKTV.jpg',
@@ -498,14 +527,14 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 
 -- ============================================
--- COLLECTION 5: Genres
+-- COLLECTION 11: Genres
 -- ============================================
 INSERT INTO collections (name, sort_order, show_all_tab, focus_glow_enabled)
-VALUES ('Genres', 4, false, true) RETURNING id INTO c5;
+VALUES ('Genres', 10, false, true) RETURNING id INTO c11;
 
 -- Action
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hero_video_url, hide_title, focus_gif_enabled)
-VALUES (c5, 'Action', 0,
+VALUES (c11, 'Action', 0,
   'https://i.postimg.cc/85TB12zQ/Action.png',
   'https://drive.google.com/uc?export=download&id=1dxNvmeUI7SAm9n1CJu0D8uSo3p5nyXg8',
   true, false)
@@ -517,7 +546,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Animation
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hero_video_url, hide_title, focus_gif_enabled)
-VALUES (c5, 'Animation', 1,
+VALUES (c11, 'Animation', 1,
   'https://i.postimg.cc/QtjkX2d3/Animation.png',
   'https://drive.google.com/uc?export=download&id=1FTuhYIirwkpVYcTHfWcw73sUpIf2ihIP',
   true, false)
@@ -531,7 +560,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Anime
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hero_video_url, hide_title, focus_gif_enabled)
-VALUES (c5, 'Anime', 2,
+VALUES (c11, 'Anime', 2,
   'https://i.postimg.cc/bvdxc0Fk/Anime.png',
   'https://drive.google.com/uc?export=download&id=10NI2ty9yrC-e41SJ8ZGAiE2KqXSjsNb_',
   true, true)
@@ -544,7 +573,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Comedy
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hero_video_url, hide_title, focus_gif_enabled)
-VALUES (c5, 'Comedy', 3,
+VALUES (c11, 'Comedy', 3,
   'https://i.postimg.cc/tTDd7BYc/Comedy.png',
   'https://drive.google.com/uc?export=download&id=1QZ1IDK9asCqKpN5PS8m_WxR_BakHcIrI',
   true, false)
@@ -557,7 +586,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Documentaries
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hero_video_url, hide_title, focus_gif_enabled)
-VALUES (c5, 'Documentaries', 4,
+VALUES (c11, 'Documentaries', 4,
   'https://i.postimg.cc/8cfxbkvz/Documentaries.png',
   'https://drive.google.com/uc?export=download&id=1QJPm1w5qpYaqf1JEnYeJi7Zo_rNW888x',
   true, true)
@@ -570,7 +599,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Drama
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hero_video_url, hide_title, focus_gif_enabled)
-VALUES (c5, 'Drama', 5,
+VALUES (c11, 'Drama', 5,
   'https://i.postimg.cc/W3s62B1j/Drama.png',
   'https://drive.google.com/uc?export=download&id=1OeG4x4YZ9lYRmiZw4SzBjccOqScXS2zE',
   true, false)
@@ -585,7 +614,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Family
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hero_video_url, hide_title, focus_gif_enabled)
-VALUES (c5, 'Family', 6,
+VALUES (c11, 'Family', 6,
   'https://i.postimg.cc/rmgGzfDR/Family.png',
   'https://drive.google.com/uc?export=download&id=1mpq4T8jg1kQxMgiBy7XJrr4sWsJkV_qO',
   true, false)
@@ -598,7 +627,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Fantasy
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hero_video_url, hide_title, focus_gif_enabled)
-VALUES (c5, 'Fantasy', 7,
+VALUES (c11, 'Fantasy', 7,
   'https://i.postimg.cc/0jQYS7SQ/Fantasy.png',
   'https://drive.google.com/uc?export=download&id=1Ci69c42Ow16ezvoBnzySd5Wtt5u8ZPMq',
   true, false)
@@ -610,7 +639,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Food
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hero_video_url, hide_title, focus_gif_enabled)
-VALUES (c5, 'Food', 8,
+VALUES (c11, 'Food', 8,
   'https://i.postimg.cc/vTBrn5nf/Food.png',
   'https://drive.google.com/uc?export=download&id=186FvtD1DfGQ9BtIOuEZLQXnNFq6QEjQH',
   true, true)
@@ -620,7 +649,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Horror
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hero_video_url, hide_title, focus_gif_enabled)
-VALUES (c5, 'Horror', 9,
+VALUES (c11, 'Horror', 9,
   'https://i.postimg.cc/KjzPTtTf/Horror.png',
   'https://drive.google.com/uc?export=download&id=165bBSkdDWBjncGBHr3SE0zwX91hcfC51',
   true, false)
@@ -632,7 +661,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Martial Arts
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hero_video_url, hide_title, focus_gif_enabled)
-VALUES (c5, 'Martial Arts', 10,
+VALUES (c11, 'Martial Arts', 10,
   'https://i.postimg.cc/B695gqsn/Martial-Arts.png',
   'https://drive.google.com/uc?export=download&id=1SYuGXNXoTX-gdwDta9xHBKfEJprvXDv3',
   true, true)
@@ -645,7 +674,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Musicals
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hero_video_url, hide_title, focus_gif_enabled)
-VALUES (c5, 'Musicals', 11,
+VALUES (c11, 'Musicals', 11,
   'https://i.postimg.cc/KYhBHKgH/Musicals.png',
   'https://drive.google.com/uc?export=download&id=1BsYk7xKGLGjuVCNwOW_8FcQ9ChwREM_A',
   true, false)
@@ -656,7 +685,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Mystery
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hero_video_url, hide_title, focus_gif_enabled)
-VALUES (c5, 'Mystery', 12,
+VALUES (c11, 'Mystery', 12,
   'https://i.postimg.cc/wMGhQ35P/Mystery.png',
   'https://drive.google.com/uc?export=download&id=1ZtGIuVxSe3-iZhv1t_otJKCQuGSy1qVS',
   true, false)
@@ -669,7 +698,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Nature
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hero_video_url, hide_title, focus_gif_enabled)
-VALUES (c5, 'Nature', 13,
+VALUES (c11, 'Nature', 13,
   'https://i.postimg.cc/7Lm3z775/Nature.png',
   'https://drive.google.com/uc?export=download&id=1x-EZhP_IszLINr2tBEISVcVDMarIPy81',
   true, false)
@@ -682,7 +711,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Reality TV
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hero_video_url, hide_title, focus_gif_enabled)
-VALUES (c5, 'Reality TV', 14,
+VALUES (c11, 'Reality TV', 14,
   'https://i.postimg.cc/Kjx14KdH/Reality.png',
   'https://drive.google.com/uc?export=download&id=1H4IVJlICYCAO94FgnH-cluwJuTaWkr-4',
   true, false)
@@ -693,7 +722,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Romance
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hero_video_url, hide_title, focus_gif_enabled)
-VALUES (c5, 'Romance', 15,
+VALUES (c11, 'Romance', 15,
   'https://i.postimg.cc/KjHnD4rZ/Romance.png',
   'https://drive.google.com/uc?export=download&id=1dDVyiwZ_UhX2lyvoU8HT3zX-nEkRwxo7',
   true, false)
@@ -706,7 +735,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Sci-Fi
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hero_video_url, hide_title, focus_gif_enabled)
-VALUES (c5, 'Sci-Fi', 16,
+VALUES (c11, 'Sci-Fi', 16,
   'https://i.postimg.cc/NGJ7cPhX/Sci-Fi.png',
   'https://drive.google.com/uc?export=download&id=1gSl6JHJY--Z0HX-6-EWhMWwZWYCSnPO0',
   true, false)
@@ -718,7 +747,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Space
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hero_video_url, hide_title, focus_gif_enabled)
-VALUES (c5, 'Space', 17,
+VALUES (c11, 'Space', 17,
   'https://i.postimg.cc/Xv17qYKk/Space.png',
   'https://drive.google.com/uc?export=download&id=1-KiLdDJId4j29QgpSxvXn6RfCPToKrDs',
   true, false)
@@ -728,7 +757,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Thriller
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hero_video_url, hide_title, focus_gif_enabled)
-VALUES (c5, 'Thriller', 18,
+VALUES (c11, 'Thriller', 18,
   'https://i.postimg.cc/v8qLsSRj/Thriller.png',
   'https://drive.google.com/uc?export=download&id=1MPHKBR2QIwrCWU9Ir_sLRbz_T7ZrjCjO',
   true, false)
@@ -741,7 +770,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- War
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hero_video_url, hide_title, focus_gif_enabled)
-VALUES (c5, 'War', 19,
+VALUES (c11, 'War', 19,
   'https://i.postimg.cc/tRStjm08/War.png',
   'https://drive.google.com/uc?export=download&id=1khcIurI9a_gPoz4lmJXCziKuFLeyFOTM',
   true, false)
@@ -752,7 +781,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- Western
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hero_video_url, hide_title, focus_gif_enabled)
-VALUES (c5, 'Western', 20,
+VALUES (c11, 'Western', 20,
   'https://i.postimg.cc/y6QXHr44/Western.png',
   'https://drive.google.com/uc?export=download&id=1_Ey9wT7I98-sVF_e2rx2zKC4k2xM51TU',
   true, false)
@@ -765,14 +794,14 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 
 -- ============================================
--- COLLECTION 6: Decades
+-- COLLECTION 12: Decades
 -- ============================================
 INSERT INTO collections (name, sort_order, show_all_tab, focus_glow_enabled)
-VALUES ('Decades', 5, true, true) RETURNING id INTO c6;
+VALUES ('Decades', 11, true, true) RETURNING id INTO c12;
 
 -- 1980s
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hide_title, focus_gif_enabled)
-VALUES (c6, '1980s', 0, 'https://i.postimg.cc/CxP1mxKd/80s.png', true, true)
+VALUES (c12, '1980s', 0, 'https://i.postimg.cc/CxP1mxKd/80s.png', true, true)
 RETURNING id INTO f;
 INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
   (f, 'mdblist.91301',                       'movie', 'None'),
@@ -780,7 +809,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- 1990s
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hide_title, focus_gif_enabled)
-VALUES (c6, '1990s', 1, 'https://i.postimg.cc/x1xCt1dy/90s.png', true, true)
+VALUES (c12, '1990s', 1, 'https://i.postimg.cc/x1xCt1dy/90s.png', true, true)
 RETURNING id INTO f;
 INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
   (f, 'mdblist.91300',                       'movie', 'None'),
@@ -788,7 +817,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- 2000s
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hide_title, focus_gif_enabled)
-VALUES (c6, '2000s', 2, 'https://i.postimg.cc/y8YxmZ70/00s.png', true, true)
+VALUES (c12, '2000s', 2, 'https://i.postimg.cc/y8YxmZ70/00s.png', true, true)
 RETURNING id INTO f;
 INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
   (f, 'mdblist.91302',                       'movie', 'None'),
@@ -796,7 +825,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- 2010s
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hide_title, focus_gif_enabled)
-VALUES (c6, '2010s', 3, 'https://i.postimg.cc/mg2kYHTF/10s.png', true, true)
+VALUES (c12, '2010s', 3, 'https://i.postimg.cc/mg2kYHTF/10s.png', true, true)
 RETURNING id INTO f;
 INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
   (f, 'mdblist.91303',                       'movie', 'None'),
@@ -804,7 +833,7 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 -- 2020s
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hide_title, focus_gif_enabled)
-VALUES (c6, '2020s', 4, 'https://i.postimg.cc/0y2jYw9p/20s.png', true, true)
+VALUES (c12, '2020s', 4, 'https://i.postimg.cc/0y2jYw9p/20s.png', true, true)
 RETURNING id INTO f;
 INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
   (f, 'mdblist.91304',                       'movie', 'None'),
@@ -812,106 +841,106 @@ INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
 
 
 -- ============================================
--- COLLECTION 7: Directors
+-- COLLECTION 13: Directors
 -- ============================================
 INSERT INTO collections (name, sort_order, show_all_tab, focus_glow_enabled, backdrop_image)
-VALUES ('Directors', 6, false, true, 'https://i.postimg.cc/2S8X7RGv/Directors.png')
-RETURNING id INTO c7;
+VALUES ('Directors', 12, false, true, 'https://i.postimg.cc/2S8X7RGv/Directors.png')
+RETURNING id INTO c13;
 
 -- Wes Anderson
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hide_title, focus_gif_enabled)
-VALUES (c7, 'Wes Anderson', 0, 'https://i.postimg.cc/P55n5nHZ/Wes-Anderson.png', false, false)
+VALUES (c13, 'Wes Anderson', 0, 'https://i.postimg.cc/P55n5nHZ/Wes-Anderson.png', false, false)
 RETURNING id INTO f;
 INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
   (f, 'trakt.list.6252074', 'movie', 'None');
 
 -- Danny Boyle
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hide_title, focus_gif_enabled)
-VALUES (c7, 'Danny Boyle', 1, 'https://i.postimg.cc/MKD8wKhs/Danny-Boyle.png', false, false)
+VALUES (c13, 'Danny Boyle', 1, 'https://i.postimg.cc/MKD8wKhs/Danny-Boyle.png', false, false)
 RETURNING id INTO f;
 INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
   (f, 'trakt.list.6241345', 'movie', 'None');
 
 -- Tim Burton
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hide_title, focus_gif_enabled)
-VALUES (c7, 'Tim Burton', 2, 'https://i.postimg.cc/RZZxZxmW/Tim-Burton.png', false, false)
+VALUES (c13, 'Tim Burton', 2, 'https://i.postimg.cc/RZZxZxmW/Tim-Burton.png', false, false)
 RETURNING id INTO f;
 INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
   (f, 'trakt.list.6241270', 'movie', 'None');
 
 -- James Cameron
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hide_title, focus_gif_enabled)
-VALUES (c7, 'James Cameron', 3, 'https://i.postimg.cc/hPrqnPHN/James-Cameron.png', false, false)
+VALUES (c13, 'James Cameron', 3, 'https://i.postimg.cc/hPrqnPHN/James-Cameron.png', false, false)
 RETURNING id INTO f;
 INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
   (f, 'trakt.list.6252088', 'movie', 'None');
 
 -- Coen Brothers
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hide_title, focus_gif_enabled)
-VALUES (c7, 'Coen Brothers', 4, 'https://i.postimg.cc/02fqv2LZ/Coen-Brothers.png', false, false)
+VALUES (c13, 'Coen Brothers', 4, 'https://i.postimg.cc/02fqv2LZ/Coen-Brothers.png', false, false)
 RETURNING id INTO f;
 INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
   (f, 'trakt.list.6241522', 'movie', 'None');
 
 -- Ron Howard
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hide_title, focus_gif_enabled)
-VALUES (c7, 'Ron Howard', 5, 'https://i.postimg.cc/TY9XxYz1/Ron-Howard.png', false, false)
+VALUES (c13, 'Ron Howard', 5, 'https://i.postimg.cc/TY9XxYz1/Ron-Howard.png', false, false)
 RETURNING id INTO f;
 INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
   (f, 'trakt.list.6241276', 'movie', 'None');
 
 -- Stanley Kubrick
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hide_title, focus_gif_enabled)
-VALUES (c7, 'Stanley Kubrick', 6, 'https://i.postimg.cc/JzzCzC8z/Stanley-Kubrick.png', false, false)
+VALUES (c13, 'Stanley Kubrick', 6, 'https://i.postimg.cc/JzzCzC8z/Stanley-Kubrick.png', false, false)
 RETURNING id INTO f;
 INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
   (f, 'trakt.list.6241405', 'movie', 'None');
 
 -- Christopher Nolan
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hide_title, focus_gif_enabled)
-VALUES (c7, 'Christopher Nolan', 7, 'https://i.postimg.cc/m2RGKF6X/Christopher-Nolan.png', false, false)
+VALUES (c13, 'Christopher Nolan', 7, 'https://i.postimg.cc/m2RGKF6X/Christopher-Nolan.png', false, false)
 RETURNING id INTO f;
 INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
   (f, 'trakt.list.6242091', 'movie', 'None');
 
 -- Martin Scorsese
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hide_title, focus_gif_enabled)
-VALUES (c7, 'Martin Scorsese', 8, 'https://i.postimg.cc/RCDwJskZ/Martin-Scorsese.png', false, false)
+VALUES (c13, 'Martin Scorsese', 8, 'https://i.postimg.cc/RCDwJskZ/Martin-Scorsese.png', false, false)
 RETURNING id INTO f;
 INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
   (f, 'trakt.list.24183553', 'movie', 'None');
 
 -- Ridley Scott
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hide_title, focus_gif_enabled)
-VALUES (c7, 'Ridley Scott', 9, 'https://i.postimg.cc/X780W7RJ/Ridley-Scott.png', false, false)
+VALUES (c13, 'Ridley Scott', 9, 'https://i.postimg.cc/X780W7RJ/Ridley-Scott.png', false, false)
 RETURNING id INTO f;
 INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
   (f, 'trakt.list.6241250', 'movie', 'None');
 
 -- M. Night Shyamalan
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hide_title, focus_gif_enabled)
-VALUES (c7, 'M. Night Shyamalan', 10, 'https://i.postimg.cc/X780W7R3/M-Night-Shyamalan.png', false, false)
+VALUES (c13, 'M. Night Shyamalan', 10, 'https://i.postimg.cc/X780W7R3/M-Night-Shyamalan.png', false, false)
 RETURNING id INTO f;
 INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
   (f, 'trakt.list.6241387', 'movie', 'None');
 
 -- Steven Spielberg
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hide_title, focus_gif_enabled)
-VALUES (c7, 'Steven Spielberg', 11, 'https://i.postimg.cc/Z55z5zmq/Steven-Spielberg.png', false, false)
+VALUES (c13, 'Steven Spielberg', 11, 'https://i.postimg.cc/Z55z5zmq/Steven-Spielberg.png', false, false)
 RETURNING id INTO f;
 INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
   (f, 'trakt.list.6241187', 'movie', 'None');
 
 -- Oliver Stone
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hide_title, focus_gif_enabled)
-VALUES (c7, 'Oliver Stone', 12, 'https://i.postimg.cc/L6TMS6cH/Oliver-Stone.png', false, false)
+VALUES (c13, 'Oliver Stone', 12, 'https://i.postimg.cc/L6TMS6cH/Oliver-Stone.png', false, false)
 RETURNING id INTO f;
 INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
   (f, 'trakt.list.6241367', 'movie', 'None');
 
 -- Quentin Tarantino
 INSERT INTO folders (collection_id, name, sort_order, cover_image, hide_title, focus_gif_enabled)
-VALUES (c7, 'Quentin Tarantino', 13, 'https://i.postimg.cc/CLNV0L3L/Quentin-Tarantino.png', false, false)
+VALUES (c13, 'Quentin Tarantino', 13, 'https://i.postimg.cc/CLNV0L3L/Quentin-Tarantino.png', false, false)
 RETURNING id INTO f;
 INSERT INTO folder_catalogs (folder_id, catalog_id, media_type, genre) VALUES
   (f, 'trakt.list.6241445', 'movie', 'None');

@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "imdb-picker",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "-l", "4321", "."],
+      "port": 4321
+    },
+    {
+      "name": "LunaWebV2",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "/Users/zain/projects/Luna/LunaWebV2",
+      "port": 5173,
+      "autoPort": false
+    }
+  ]
+}

@@ -27,7 +27,7 @@ public class ProfileManager: ObservableObject {
                 let elapsed = Date().timeIntervalSince(startTime)
                 let remaining = 1.5 - elapsed
                 if remaining > 0 {
-                    try? await Task.sleep(nanoseconds: UInt64(remaining * 1_000_000_000))
+                    try? await Task.sleep(for: .seconds(remaining))
                 }
                 self.isLoading = false
                 self.hasRestoredSession = true

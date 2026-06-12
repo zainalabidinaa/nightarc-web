@@ -13,6 +13,7 @@
 		07CE1DE22DCA4B2E6B48ACBE /* SourcesPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C223F48F9A9C0673DC899CB7 /* SourcesPanel.swift */; };
 		14392764C3C3CA687F10AADB /* AdminDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68E00BE18255F4D9413A264A /* AdminDashboard.swift */; };
 		1475ED15C25CFA1E053C0E55 /* PlayerLockMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36FA246F28A95DFD2B8404AD /* PlayerLockMode.swift */; };
+		1AB46E61FDC37A31C46C049B /* SnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2918C3DC2EDCE7FBE3583F3B /* SnapshotTests.swift */; };
 		1C55A17124B959DFFB297669 /* ParallaxHero.swift in Sources */ = {isa = PBXBuildFile; fileRef = 190EBCA186BD638374504440 /* ParallaxHero.swift */; };
 		282C8288BB3ECEDE62B0AE5F /* JetBrainsSans-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 50B90299650F95A6E85658A8 /* JetBrainsSans-SemiBold.ttf */; };
 		2F5CC1B4A78C4A320B8650F0 /* PlayerGestureSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7F114EB0E88978772EB8E84 /* PlayerGestureSystem.swift */; };
@@ -20,9 +21,11 @@
 		32DFBB2CD3E516785C2E8D2F /* PlayerBottomBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39506C8070CEC61F66337ADE /* PlayerBottomBar.swift */; };
 		3B339EE5FDFBCDB880593E55 /* SubtitleModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17BDF7BDC8C78D8875849C0D /* SubtitleModal.swift */; };
 		464711895FE40F3059C744F8 /* LunaCore in Frameworks */ = {isa = PBXBuildFile; productRef = 4A5D463B7FB6D39EA41A7774 /* LunaCore */; };
+		4A55D4E7976CCCE782CD6B59 /* SnapshottingTests in Frameworks */ = {isa = PBXBuildFile; productRef = 077309C2A3BD9EB080C5EF0D /* SnapshottingTests */; };
+		4D21EF18ED88F1AF800B86B7 /* SubtitleAppearanceScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1679C1DF8698B8E8843F4150 /* SubtitleAppearanceScreen.swift */; };
 		4F839D638BC31FAC259A5C3C /* DetailScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5531073B5639881F588923FD /* DetailScreen.swift */; };
-		CC1234567890ABCDEF012345 /* ActorBioScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB9876543210ABCDEF012345 /* ActorBioScreen.swift */; };
 		51F954F851A3A4639C70B2DC /* HomeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1D306A69DBADAA0F197720 /* HomeScreen.swift */; };
+		5549A5C4B0B69ED6809F8A9D /* VideoPlayerSettingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5721DF40DBADE97088480D08 /* VideoPlayerSettingsScreen.swift */; };
 		55DF7B0D91D5656CF3758D88 /* JetBrainsSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EE6305607A21DB5FB94092ED /* JetBrainsSans-Bold.ttf */; };
 		5D46158A76F52BE1C09AF19E /* ContentCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00168395CD29DECF58929337 /* ContentCard.swift */; };
 		676A5B46DB76B09D17842A41 /* HeroManagementScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B293E446788F7299A213CB02 /* HeroManagementScreen.swift */; };
@@ -43,6 +46,7 @@
 		BDCDDABB1BC24F5935F28D3A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1090FE6DB83D71C735613B5A /* Assets.xcassets */; };
 		C32A8CA28A440C07FD3C8BDC /* KSPlayer in Frameworks */ = {isa = PBXBuildFile; productRef = 33971240BF9265D64B84F078 /* KSPlayer */; };
 		CC04D7816468C4295A23224C /* LibraryScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B09F922B13BDAE26C9D8D09 /* LibraryScreen.swift */; };
+		CF6D6D795FD0478761B029B1 /* ActorBioScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBBB4BBF57F11EC3AE8262FD /* ActorBioScreen.swift */; };
 		DC87974D2CDD0738F492C161 /* ProfileSelectionScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 602AEA64A4AEEB986BCCF030 /* ProfileSelectionScreen.swift */; };
 		DD8F4B722C61FB78C20EDCEC /* StreamPlaybackDiagnostics.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1D1F4DA63C7DEC7A19A7B29 /* StreamPlaybackDiagnostics.swift */; };
 		DF7E51B56A0B680B99CADF12 /* PlayerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A181B6B8151B673BA741C9D1 /* PlayerScreen.swift */; };
@@ -50,31 +54,40 @@
 		E416FBBA817F1C4807C7DA01 /* StreamSelectionScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C55E48E637AA4A974497787 /* StreamSelectionScreen.swift */; };
 		F66A4C64BB762AEE5764C7E5 /* FolderScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E34EEADD9A5EF5DDF1A16D /* FolderScreen.swift */; };
 		FFEE989D846E33C03915C982 /* LunaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8997E09659D665EA90785B88 /* LunaApp.swift */; };
-		AA1234567890ABCDEF012345 /* VideoPlayerSettingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB9876543210FEDCBA987654 /* VideoPlayerSettingsScreen.swift */; };
-		DD9988776655443322110000 /* SubtitleAppearanceScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0011223344556677889900 /* SubtitleAppearanceScreen.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		37810657EC63961390E81BC3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3A1DDF30443C4DCAD6FE918 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9C33C030FD8B384F6DD265B9;
+			remoteInfo = LunaApp;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		00168395CD29DECF58929337 /* ContentCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentCard.swift; sourceTree = "<group>"; };
 		1090FE6DB83D71C735613B5A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		154121DC1EBCCE63654E64A7 /* SearchScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchScreen.swift; sourceTree = "<group>"; };
+		1679C1DF8698B8E8843F4150 /* SubtitleAppearanceScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitleAppearanceScreen.swift; sourceTree = "<group>"; };
 		17BDF7BDC8C78D8875849C0D /* SubtitleModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitleModal.swift; sourceTree = "<group>"; };
 		190EBCA186BD638374504440 /* ParallaxHero.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParallaxHero.swift; sourceTree = "<group>"; };
 		1B09F922B13BDAE26C9D8D09 /* LibraryScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryScreen.swift; sourceTree = "<group>"; };
 		218BD3CEEF60EEDDCDF94BC4 /* JetBrainsSans-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "JetBrainsSans-Regular.ttf"; sourceTree = "<group>"; };
 		25A4BA9B8A2B6BBFC246B7E7 /* EpisodesPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodesPanel.swift; sourceTree = "<group>"; };
+		2918C3DC2EDCE7FBE3583F3B /* SnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotTests.swift; sourceTree = "<group>"; };
 		2F6FD24D68DBBAB57E9D8FC0 /* SettingsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsScreen.swift; sourceTree = "<group>"; };
 		36FA246F28A95DFD2B8404AD /* PlayerLockMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerLockMode.swift; sourceTree = "<group>"; };
 		38D997F95CAF97AFFC4D4489 /* LunaCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = LunaCore; path = ../../Packages/LunaCore; sourceTree = SOURCE_ROOT; };
 		39506C8070CEC61F66337ADE /* PlayerBottomBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerBottomBar.swift; sourceTree = "<group>"; };
 		45445AE0DA5D45DA2BCB8FF7 /* ksplayer-clone */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "ksplayer-clone"; path = "../../../../../../tmp/ksplayer-clone"; sourceTree = SOURCE_ROOT; };
-		BB9876543210FEDCBA987654 /* VideoPlayerSettingsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerSettingsScreen.swift; sourceTree = "<group>"; };
-		EE0011223344556677889900 /* SubtitleAppearanceScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitleAppearanceScreen.swift; sourceTree = "<group>"; };
 		4F3DCED0ECEB605FB9B1FFDA /* CachedAsyncImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedAsyncImage.swift; sourceTree = "<group>"; };
 		50B90299650F95A6E85658A8 /* JetBrainsSans-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "JetBrainsSans-SemiBold.ttf"; sourceTree = "<group>"; };
 		5531073B5639881F588923FD /* DetailScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailScreen.swift; sourceTree = "<group>"; };
-		BB9876543210ABCDEF012345 /* ActorBioScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActorBioScreen.swift; sourceTree = "<group>"; };
 		55968AE93644270FC62BDB1F /* LunaApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = LunaApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5721DF40DBADE97088480D08 /* VideoPlayerSettingsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerSettingsScreen.swift; sourceTree = "<group>"; };
+		5F9E52851ED7FB0C25266B36 /* LunaAppTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = LunaAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		602AEA64A4AEEB986BCCF030 /* ProfileSelectionScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSelectionScreen.swift; sourceTree = "<group>"; };
 		68E00BE18255F4D9413A264A /* AdminDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminDashboard.swift; sourceTree = "<group>"; };
 		7C55E48E637AA4A974497787 /* StreamSelectionScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamSelectionScreen.swift; sourceTree = "<group>"; };
@@ -91,6 +104,7 @@
 		BB1D306A69DBADAA0F197720 /* HomeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeScreen.swift; sourceTree = "<group>"; };
 		C223F48F9A9C0673DC899CB7 /* SourcesPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourcesPanel.swift; sourceTree = "<group>"; };
 		C2EF2802D349464BCAD6D9D1 /* AudioTrackModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioTrackModal.swift; sourceTree = "<group>"; };
+		CBBB4BBF57F11EC3AE8262FD /* ActorBioScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActorBioScreen.swift; sourceTree = "<group>"; };
 		D0504AB4ED55C9D8B0C44CB6 /* NetworkOfflineBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkOfflineBanner.swift; sourceTree = "<group>"; };
 		D1D1F4DA63C7DEC7A19A7B29 /* StreamPlaybackDiagnostics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamPlaybackDiagnostics.swift; sourceTree = "<group>"; };
 		D5021AFE28BA52BB392BF601 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -113,6 +127,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		763FC8A745DB4DB678829D33 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4A55D4E7976CCCE782CD6B59 /* SnapshottingTests in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -122,6 +144,7 @@
 				FB8CF744AB2BB6CEC4A7158E /* Packages */,
 				8175E0AAF4E752C116CBC790 /* Resources */,
 				FF894D15BAF1F72E2304102E /* Sources */,
+				7E9551FB713B4B3E6ABB6DFC /* Tests */,
 				FA83959789E2C0959454512A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -142,15 +165,6 @@
 				68E00BE18255F4D9413A264A /* AdminDashboard.swift */,
 			);
 			path = Admin;
-			sourceTree = "<group>";
-		};
-		CC1122334455667788990011 /* Settings */ = {
-			isa = PBXGroup;
-			children = (
-				BB9876543210FEDCBA987654 /* VideoPlayerSettingsScreen.swift */,
-				EE0011223344556677889900 /* SubtitleAppearanceScreen.swift */,
-			);
-			path = Settings;
 			sourceTree = "<group>";
 		};
 		6046D9FF7FEAA2033F43F916 /* Components */ = {
@@ -178,9 +192,9 @@
 		625B6A24F30F4BFE905AF00B /* Screens */ = {
 			isa = PBXGroup;
 			children = (
+				CBBB4BBF57F11EC3AE8262FD /* ActorBioScreen.swift */,
 				AC9E52B6F1F02AA0DEB87EFC /* AuthScreen.swift */,
 				5531073B5639881F588923FD /* DetailScreen.swift */,
-				BB9876543210ABCDEF012345 /* ActorBioScreen.swift */,
 				E4E34EEADD9A5EF5DDF1A16D /* FolderScreen.swift */,
 				B293E446788F7299A213CB02 /* HeroManagementScreen.swift */,
 				BB1D306A69DBADAA0F197720 /* HomeScreen.swift */,
@@ -192,9 +206,17 @@
 				2F6FD24D68DBBAB57E9D8FC0 /* SettingsScreen.swift */,
 				7C55E48E637AA4A974497787 /* StreamSelectionScreen.swift */,
 				4E8E524DFDD82B84D41B0D26 /* Admin */,
-				CC1122334455667788990011 /* Settings */,
+				8FC771F61F73FE5BCC6E108A /* Settings */,
 			);
 			path = Screens;
+			sourceTree = "<group>";
+		};
+		7E9551FB713B4B3E6ABB6DFC /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				2918C3DC2EDCE7FBE3583F3B /* SnapshotTests.swift */,
+			);
+			path = Tests;
 			sourceTree = "<group>";
 		};
 		8175E0AAF4E752C116CBC790 /* Resources */ = {
@@ -205,6 +227,15 @@
 				4A0807CE6EC117F786DB03D1 /* Fonts */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		8FC771F61F73FE5BCC6E108A /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				1679C1DF8698B8E8843F4150 /* SubtitleAppearanceScreen.swift */,
+				5721DF40DBADE97088480D08 /* VideoPlayerSettingsScreen.swift */,
+			);
+			path = Settings;
 			sourceTree = "<group>";
 		};
 		C9CB56AFD56894209BD48C2C /* PlayerModals */ = {
@@ -230,6 +261,7 @@
 			isa = PBXGroup;
 			children = (
 				55968AE93644270FC62BDB1F /* LunaApp.app */,
+				5F9E52851ED7FB0C25266B36 /* LunaAppTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -259,6 +291,26 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		3744A02BFF52190F6D75350E /* LunaAppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5F84B8EA02144AFD1321E1AD /* Build configuration list for PBXNativeTarget "LunaAppTests" */;
+			buildPhases = (
+				8392A4BB1EB3BCABCF92186C /* Sources */,
+				763FC8A745DB4DB678829D33 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B35F58DBD6A376F6DB1CBC44 /* PBXTargetDependency */,
+			);
+			name = LunaAppTests;
+			packageProductDependencies = (
+				077309C2A3BD9EB080C5EF0D /* SnapshottingTests */,
+			);
+			productName = LunaAppTests;
+			productReference = 5F9E52851ED7FB0C25266B36 /* LunaAppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		9C33C030FD8B384F6DD265B9 /* LunaApp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5A476A0186FE1BB0F9F4054E /* Build configuration list for PBXNativeTarget "LunaApp" */;
@@ -266,6 +318,7 @@
 				487558CD4A76833032A8F0FA /* Sources */,
 				098C81E73056C19AF4C4F0A3 /* Resources */,
 				4D08DEE719EFCAFEDA47C900 /* Frameworks */,
+				6E0439F9A4E3816BE37CEC0C /* Generate Missing Framework Info.plist */,
 			);
 			buildRules = (
 			);
@@ -289,6 +342,10 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
+					3744A02BFF52190F6D75350E = {
+						DevelopmentTeam = 5TWS8P597N;
+						ProvisioningStyle = Automatic;
+					};
 					9C33C030FD8B384F6DD265B9 = {
 						DevelopmentTeam = 5TWS8P597N;
 						ProvisioningStyle = Automatic;
@@ -305,6 +362,7 @@
 			mainGroup = 384A6FC407F9048C66A7E665;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				A11E8A477EB66E10AB5D5FD2 /* XCRemoteSwiftPackageReference "SnapshotPreviews" */,
 				5E1DA73EF253AB7C1BD3D937 /* XCLocalSwiftPackageReference "/tmp/ksplayer-clone" */,
 				33E8A54A211E0CE059F9CBDE /* XCLocalSwiftPackageReference "../../Packages/LunaCore" */,
 			);
@@ -314,6 +372,7 @@
 			projectRoot = "";
 			targets = (
 				9C33C030FD8B384F6DD265B9 /* LunaApp */,
+				3744A02BFF52190F6D75350E /* LunaAppTests */,
 			);
 		};
 /* End PBXProject section */
@@ -333,11 +392,34 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		6E0439F9A4E3816BE37CEC0C /* Generate Missing Framework Info.plist */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Generate Missing Framework Info.plist";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "FRAMEWORKS_DIR=\"${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\n[ -d \"${FRAMEWORKS_DIR}\" ] || exit 0\nfind \"${FRAMEWORKS_DIR}\" -name '*.framework' -maxdepth 1 -type d | while read -r FRAMEWORK; do\n  NAME=$(basename \"${FRAMEWORK}\" .framework)\n  BUNDLE_ID=$(echo \"${NAME}\" | sed 's/_/-/g')\n  PLIST=\"${FRAMEWORK}/Info.plist\"\n  if [ ! -f \"${PLIST}\" ]; then\n    /usr/libexec/PlistBuddy \\\n      -c \"Add :CFBundleExecutable string ${NAME}\" \\\n      -c \"Add :CFBundleIdentifier string org.ffmpegkit.${BUNDLE_ID}\" \\\n      -c \"Add :CFBundleInfoDictionaryVersion string 6.0\" \\\n      -c \"Add :CFBundleName string ${NAME}\" \\\n      -c \"Add :CFBundlePackageType string FMWK\" \\\n      -c \"Add :CFBundleShortVersionString string 1.0\" \\\n      -c \"Add :CFBundleVersion string 1\" \\\n      -c \"Add :MinimumOSVersion string ${IPHONEOS_DEPLOYMENT_TARGET}\" \\\n      \"${PLIST}\"\n    echo \"note: Generated Info.plist for ${NAME}\"\n  fi\n  # Generate dSYM during archive\n  if [ \"${ACTION}\" = \"install\" ]; then\n    BINARY=\"${FRAMEWORK}/${NAME}\"\n    DSYM=\"${DWARF_DSYM_FOLDER_PATH}/${NAME}.framework.dSYM\"\n    if [ -f \"${BINARY}\" ] && [ ! -d \"${DSYM}\" ]; then\n      dsymutil \"${BINARY}\" -o \"${DSYM}\" 2>/dev/null\n      echo \"note: Generated dSYM for ${NAME}\"\n    fi\n  fi\ndone\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		487558CD4A76833032A8F0FA /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF6D6D795FD0478761B029B1 /* ActorBioScreen.swift in Sources */,
 				14392764C3C3CA687F10AADB /* AdminDashboard.swift in Sources */,
 				A7368670B4BEF865ED7A0E0C /* AnimatedRemoteImage.swift in Sources */,
 				05EC772D7FE64E632B3E6874 /* AppDelegate.swift in Sources */,
@@ -347,7 +429,6 @@
 				5D46158A76F52BE1C09AF19E /* ContentCard.swift in Sources */,
 				A41D3574B0860B92B8B5AEDB /* ContentView.swift in Sources */,
 				4F839D638BC31FAC259A5C3C /* DetailScreen.swift in Sources */,
-				CC1234567890ABCDEF012345 /* ActorBioScreen.swift in Sources */,
 				BD0C2DADF8842E2302C0CBFC /* EpisodesPanel.swift in Sources */,
 				F66A4C64BB762AEE5764C7E5 /* FolderScreen.swift in Sources */,
 				676A5B46DB76B09D17842A41 /* HeroManagementScreen.swift in Sources */,
@@ -368,18 +449,34 @@
 				DC87974D2CDD0738F492C161 /* ProfileSelectionScreen.swift in Sources */,
 				31AD7D46ADA1FA2B777F4FB7 /* SearchScreen.swift in Sources */,
 				9D4E0D93663B1850ADCBF81B /* SettingsScreen.swift in Sources */,
-				AA1234567890ABCDEF012345 /* VideoPlayerSettingsScreen.swift in Sources */,
-				DD9988776655443322110000 /* SubtitleAppearanceScreen.swift in Sources */,
 				07CE1DE22DCA4B2E6B48ACBE /* SourcesPanel.swift in Sources */,
 				DD8F4B722C61FB78C20EDCEC /* StreamPlaybackDiagnostics.swift in Sources */,
 				E416FBBA817F1C4807C7DA01 /* StreamSelectionScreen.swift in Sources */,
+				4D21EF18ED88F1AF800B86B7 /* SubtitleAppearanceScreen.swift in Sources */,
 				3B339EE5FDFBCDB880593E55 /* SubtitleModal.swift in Sources */,
 				956E92882C3235F7AEAED699 /* ThemeChip.swift in Sources */,
 				0229DEBF5AFAB0844C38634B /* ToastOverlay.swift in Sources */,
+				5549A5C4B0B69ED6809F8A9D /* VideoPlayerSettingsScreen.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8392A4BB1EB3BCABCF92186C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1AB46E61FDC37A31C46C049B /* SnapshotTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B35F58DBD6A376F6DB1CBC44 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9C33C030FD8B384F6DD265B9 /* LunaApp */;
+			targetProxy = 37810657EC63961390E81BC3 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		45855E6ED4B5CC4ECB35BF8F /* Release */ = {
@@ -396,9 +493,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.luna.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nightarc.zain;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_WORKSPACE = NO;
 			};
 			name = Release;
 		};
@@ -456,7 +554,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = Luna;
+				INFOPLIST_KEY_CFBundleDisplayName = Nightarc;
 				INFOPLIST_KEY_CFBundleURLTypes = "[[\"CFBundleURLSchemes\": [\"luna\"]], [\"CFBundleURLSchemes\": [\"stremio\"]]]";
 				INFOPLIST_KEY_UIAppFonts = (
 					"JetBrainsSans-Regular.ttf",
@@ -483,6 +581,24 @@
 			};
 			name = Debug;
 		};
+		870A3E1AD333788FAB1BFF7F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 5TWS8P597N;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.luna.app.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LunaApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/LunaApp";
+			};
+			name = Release;
+		};
 		BBC304054D165F6027BD9566 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -497,9 +613,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.luna.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nightarc.zain;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_WORKSPACE = NO;
 			};
 			name = Debug;
 		};
@@ -551,7 +668,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = Luna;
+				INFOPLIST_KEY_CFBundleDisplayName = Nightarc;
 				INFOPLIST_KEY_CFBundleURLTypes = "[[\"CFBundleURLSchemes\": [\"luna\"]], [\"CFBundleURLSchemes\": [\"stremio\"]]]";
 				INFOPLIST_KEY_UIAppFonts = (
 					"JetBrainsSans-Regular.ttf",
@@ -577,6 +694,24 @@
 			};
 			name = Release;
 		};
+		E3D8C7CA99BECB995EC9D6B5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 5TWS8P597N;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.luna.app.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LunaApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/LunaApp";
+			};
+			name = Debug;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -598,6 +733,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
+		5F84B8EA02144AFD1321E1AD /* Build configuration list for PBXNativeTarget "LunaAppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E3D8C7CA99BECB995EC9D6B5 /* Debug */,
+				870A3E1AD333788FAB1BFF7F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
@@ -611,7 +755,23 @@
 		};
 /* End XCLocalSwiftPackageReference section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		A11E8A477EB66E10AB5D5FD2 /* XCRemoteSwiftPackageReference "SnapshotPreviews" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/getsentry/SnapshotPreviews";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.16.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
+		077309C2A3BD9EB080C5EF0D /* SnapshottingTests */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A11E8A477EB66E10AB5D5FD2 /* XCRemoteSwiftPackageReference "SnapshotPreviews" */;
+			productName = SnapshottingTests;
+		};
 		33971240BF9265D64B84F078 /* KSPlayer */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = KSPlayer;

@@ -5,8 +5,15 @@ public actor SupabaseAuth {
     private let client = SupabaseClient.shared
     private let baseURL = LunaConfig.supabaseURL
     private let anonKey = LunaConfig.supabaseAnonKey
+    private let session: URLSession
 
-    private init() {}
+    private init() {
+        let config = URLSessionConfiguration.default
+        config.timeoutIntervalForRequest = 10
+        config.timeoutIntervalForResource = 20
+        config.httpMaximumConnectionsPerHost = 2
+        self.session = URLSession(configuration: config)
+    }
 
     private struct AuthResponse: Codable {
         let access_token: String
@@ -24,13 +31,14 @@ public actor SupabaseAuth {
         let url = URL(string: "\(baseURL)/auth/v1/token?grant_type=password")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
+        request.assumesHTTP3Capable = false
         request.setValue(anonKey, forHTTPHeaderField: "apikey")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
         let body: [String: String] = ["email": email, "password": password]
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
 
-        let (data, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await session.data(for: request)
 
         let code = (response as? HTTPURLResponse)?.statusCode ?? 0
         guard (200...299).contains(code) else {
@@ -62,6 +70,7 @@ public actor SupabaseAuth {
         let url = URL(string: "\(baseURL)/auth/v1/signup")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
+        request.assumesHTTP3Capable = false
         request.setValue(anonKey, forHTTPHeaderField: "apikey")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
@@ -71,7 +80,7 @@ public actor SupabaseAuth {
         ]
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
 
-        let (data, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await session.data(for: request)
 
         let code = (response as? HTTPURLResponse)?.statusCode ?? 0
         guard (200...299).contains(code) else {
@@ -100,13 +109,14 @@ public actor SupabaseAuth {
         let url = URL(string: "\(baseURL)/auth/v1/token?grant_type=refresh_token")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
+        request.assumesHTTP3Capable = false
         request.setValue(anonKey, forHTTPHeaderField: "apikey")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
         let body: [String: String] = ["refresh_token": refreshToken]
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
 
-        let (data, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await session.data(for: request)
 
         guard let httpResponse = response as? HTTPURLResponse,
               (200...299).contains(httpResponse.statusCode) else {
@@ -132,13 +142,14 @@ public actor SupabaseAuth {
         let url = URL(string: "\(baseURL)/auth/v1/logout")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
+        request.assumesHTTP3Capable = false
         request.setValue(anonKey, forHTTPHeaderField: "apikey")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         if let token = await client.accessToken {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
 
-        let (_, _) = try await URLSession.shared.data(for: request)
+        let (_, _) = try await session.data(for: request)
         await client.setAccessToken(nil)
     }
 

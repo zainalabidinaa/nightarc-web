@@ -1,20 +1,239 @@
 import Foundation
 
+public enum HomeCatalogLoadStrategy: Equatable {
+    case addonCatalogsOnly
+    case collectionsThenAddonSupplement
+}
+
 @MainActor
 public class CatalogRepository: ObservableObject {
     public static let shared = CatalogRepository()
 
     @Published public var catalogRows: [CatalogRow] = []
     @Published public var collectionRows: [CatalogRow] = []
+    @Published public var allFolderRows: [String: CatalogRow] = [:]
     @Published public var isLoading = false
+
+    /// All MetaPreview items from both catalog and collection rows, for fallback lookups.
+    public var allCatalogItems: [MetaPreview] {
+        (catalogRows + collectionRows).flatMap(\.items)
+    }
 
     private let catalogService = CatalogService.shared
 
-    private init() {}
+    private nonisolated static let cacheURL: URL = {
+        let dir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("LunaCatalogRows", isDirectory: true)
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        return dir.appendingPathComponent("rows.json")
+    }()
+
+    private init() {
+        if let data = try? Data(contentsOf: Self.cacheURL),
+           let rows = try? JSONDecoder().decode([CatalogRow].self, from: data),
+           !rows.isEmpty {
+            catalogRows = rows
+        }
+    }
+
+    private func saveToDisk() {
+        let rows = catalogRows
+        Task.detached(priority: .utility) {
+            guard let data = try? JSONEncoder().encode(rows) else { return }
+            try? data.write(to: Self.cacheURL, options: .atomic)
+        }
+    }
+
+    nonisolated public static func homeLoadStrategy(collections: [DBCollection]) -> HomeCatalogLoadStrategy {
+        collections.isEmpty ? .addonCatalogsOnly : .collectionsThenAddonSupplement
+    }
+
+    nonisolated public static func resolvedRowsAfterReload(
+        existingRows: [CatalogRow],
+        newRows: [CatalogRow]
+    ) -> [CatalogRow] {
+        newRows.isEmpty ? existingRows : newRows
+    }
+
+    private nonisolated static let betterPostersPosterTemplate = "https://btttr.cc/poster-g/imdb/poster-default/{imdb_id}.jpg"
+
+    private nonisolated static func shouldUseBetterPostersFallback(addonName: String?, addonId: String?, baseURL: String?) -> Bool {
+        let marker = "\(addonName ?? "") \(addonId ?? "") \(baseURL ?? "")".lowercased()
+        return !marker.contains("aiometadata") && !marker.contains("aio") && !marker.contains("btttr.cc")
+    }
+
+    private nonisolated static func betterPostersPosterURL(for item: MetaPreview) -> String? {
+        let imdbId = item.id.split(separator: ":").first.map(String.init) ?? item.id
+        guard imdbId.hasPrefix("tt") else { return nil }
+        return betterPostersPosterTemplate.replacingOccurrences(of: "{imdb_id}", with: imdbId)
+    }
+
+    private nonisolated static func applyingBetterPostersFallback(to item: MetaPreview) -> MetaPreview {
+        guard let poster = betterPostersPosterURL(for: item) else { return item }
+        return MetaPreview(
+            id: item.id,
+            type: item.type,
+            name: item.name,
+            poster: poster,
+            banner: item.banner,
+            logo: item.logo,
+            posterShape: item.posterShape,
+            description: item.description,
+            releaseInfo: item.releaseInfo,
+            rawReleaseDate: item.rawReleaseDate,
+            released: item.released,
+            runtime: item.runtime,
+            popularity: item.popularity,
+            voteCount: item.voteCount,
+            imdbRating: item.imdbRating,
+            genres: item.genres,
+            status: item.status,
+            behaviorHints: item.behaviorHints,
+            rankHint: item.rankHint,
+            trailerStreams: item.trailerStreams
+        )
+    }
+
+    private nonisolated static func applyingBetterPostersFallback(
+        to items: [MetaPreview],
+        addonName: String? = nil,
+        addonId: String? = nil,
+        baseURL: String? = nil
+    ) -> [MetaPreview] {
+        guard shouldUseBetterPostersFallback(addonName: addonName, addonId: addonId, baseURL: baseURL) else { return items }
+        return items.map(applyingBetterPostersFallback(to:))
+    }
+
+    nonisolated public static func folderRow(
+        _ row: CatalogRow,
+        appending nextPageItems: [MetaPreview],
+        pageSize: Int = 50
+    ) -> CatalogRow {
+        var updated = row
+        updated.items.append(contentsOf: nextPageItems)
+        updated.page += 1
+        updated.hasMore = nextPageItems.count >= pageSize
+        return updated
+    }
+
+    nonisolated public static func displayRows(
+        for collection: DBCollection,
+        folders: [DBFolder],
+        folderRows: [CatalogRow],
+        preferences: CollectionDisplayPreferences
+    ) -> [CatalogRow] {
+        guard preferences.enabledCollectionIds.contains(collection.id) else { return [] }
+
+        let visibleFolders = folders.filter { !preferences.hiddenFolderIds.contains($0.id) }
+        let visibleRows = visibleFolders.compactMap { folder in
+            folderRows.first { $0.id == "folder_\(folder.id)" || $0.title == folder.name }
+        }
+        guard !visibleRows.isEmpty else { return [] }
+
+        if visibleRows.count == 1 || preferences.expandedCollectionIds.contains(collection.id) {
+            return visibleRows
+        }
+
+        let folderTiles = zip(visibleFolders, visibleRows).map { folder, row in
+            let first = row.items.first
+            // Group tiles should stay static and readable; animated focus GIFs are
+            // intentionally ignored for Home collection rows.
+            let poster = folder.coverImage
+                ?? folder.heroBackdrop
+                ?? folder.titleLogo
+                ?? first?.poster
+                ?? first?.banner
+            let banner = folder.coverImage
+                ?? folder.heroBackdrop
+                ?? first?.banner
+                ?? first?.poster
+            return MetaPreview(
+                id: "folder_\(folder.id)",
+                type: first?.type ?? .movie,
+                name: folder.name,
+                poster: poster,
+                banner: banner,
+                logo: folder.titleLogo,
+                posterShape: PosterShape(rawValue: folder.tileShape ?? "") ?? .landscape,
+                description: first?.description
+            )
+        }
+
+        return [CatalogRow(
+            id: "collection_\(collection.id)",
+            title: collection.name,
+            items: folderTiles,
+            addonName: "AIOMetadata",
+            page: 0,
+            hasMore: false,
+            focusGlowEnabled: false,
+            viewMode: collection.viewMode,
+            showAllTab: collection.showAllTab,
+            pinToTop: collection.pinToTop,
+            backdropImage: collection.backdropImage
+        )]
+    }
+
+    /// Fetches addon catalogs not already represented in catalogRows and appends them.
+    /// Called after loadFromCollections so the user's addon catalogs always appear
+    /// even if the Supabase collection IDs don't perfectly match the addon manifest.
+    public func supplementWithAddonCatalogs(addons: [AddonManifest]) async {
+        let existingAddonIds = Set(catalogRows.map { $0.addonName ?? "" })
+
+        await withTaskGroup(of: CatalogRow?.self) { group in
+            for addon in addons {
+                // Skip addons whose rows are already fully represented
+                guard !existingAddonIds.contains(addon.name) else { continue }
+                guard let catalogs = addon.catalogs, let baseURL = addon.transportUrl else { continue }
+
+                for catalog in catalogs {
+                    let needsSearch = (catalog.extra ?? []).contains { $0.name == "search" && ($0.isRequired ?? false) }
+                    if needsSearch { continue }
+
+                    let rowId = "\(addon.id)_\(catalog.type)_\(catalog.id)"
+                    guard !catalogRows.contains(where: { $0.id == rowId }) else { continue }
+
+                    var extras: [String: String] = [:]
+                    for e in catalog.extra ?? [] { if let first = e.options?.first { extras[e.name] = first } }
+
+                    group.addTask {
+                        do {
+                            let query = CatalogService.StremioCatalogQuery(
+                                type: catalog.type, id: catalog.id,
+                                baseURL: baseURL, extras: extras
+                            )
+                            let fetchedItems = try await self.catalogService.fetchCatalog(query: query)
+                            let items = Self.applyingBetterPostersFallback(
+                                to: fetchedItems,
+                                addonName: addon.name,
+                                addonId: addon.id,
+                                baseURL: baseURL
+                            )
+                            guard !items.isEmpty else { return nil }
+                            return CatalogRow(
+                                id: rowId,
+                                title: catalog.name ?? catalog.id.capitalized,
+                                items: items,
+                                addonName: addon.name,
+                                addonId: addon.id,
+                                page: 0,
+                                hasMore: items.count >= 50
+                            )
+                        } catch { return nil }
+                    }
+                }
+            }
+            for await row in group {
+                if let row, !catalogRows.contains(where: { $0.id == row.id }) {
+                    catalogRows.append(row)
+                }
+            }
+        }
+    }
 
     public func loadAllCatalogs(addons: [AddonManifest]) async {
         isLoading = true
-        catalogRows = []
+        let existingRows = catalogRows
 
         // Score catalogs so Popular/Trending load first — hero appears fast,
         // then remaining rows fill in progressively behind it.
@@ -49,6 +268,7 @@ public class CatalogRepository: ObservableObject {
         // then load everything else progressively.
         let priority = scored.filter { $0.score >= 4 }
         let rest     = scored.filter { $0.score < 4 }
+        var loadedRows: [CatalogRow] = []
 
         func fetch(_ items: [ScoredCatalog]) async {
             await withTaskGroup(of: CatalogRow?.self) { group in
@@ -61,13 +281,20 @@ public class CatalogRepository: ObservableObject {
                                 baseURL: sc.baseURL,
                                 extras: sc.extras
                             )
-                            let rows = try await self.catalogService.fetchCatalog(query: query)
+                            let fetchedRows = try await self.catalogService.fetchCatalog(query: query)
+                            let rows = Self.applyingBetterPostersFallback(
+                                to: fetchedRows,
+                                addonName: sc.addon.name,
+                                addonId: sc.addon.id,
+                                baseURL: sc.baseURL
+                            )
                             guard !rows.isEmpty else { return nil }
                             return CatalogRow(
                                 id: "\(sc.addon.id)_\(sc.catalog.type)_\(sc.catalog.id)",
                                 title: sc.catalog.name ?? sc.catalog.id.capitalized,
                                 items: rows,
                                 addonName: sc.addon.name,
+                                addonId: sc.addon.id,
                                 page: 0,
                                 hasMore: rows.count >= 50
                             )
@@ -75,8 +302,9 @@ public class CatalogRepository: ObservableObject {
                     }
                 }
                 for await row in group {
-                    if let row, !catalogRows.contains(where: { $0.id == row.id }) {
-                        catalogRows.append(row)
+                    if let row, !loadedRows.contains(where: { $0.id == row.id }) {
+                        loadedRows.append(row)
+                        catalogRows = Self.resolvedRowsAfterReload(existingRows: existingRows, newRows: loadedRows)
                         isLoading = false
                     }
                 }
@@ -85,6 +313,10 @@ public class CatalogRepository: ObservableObject {
 
         await fetch(priority)   // hero-worthy rows — appear first
         await fetch(rest)       // remaining rows fill in after
+        if !loadedRows.isEmpty {
+            allFolderRows = [:]
+            saveToDisk()
+        }
         isLoading = false
     }
 
@@ -93,100 +325,266 @@ public class CatalogRepository: ObservableObject {
         addons: [AddonManifest]
     ) async {
         isLoading = true
+        let existingRows = catalogRows
+        let existingCollectionRows = collectionRows
+        let existingFolderRows = allFolderRows
         defer { isLoading = false }
 
-        guard let baseURL = addons.first(where: {
+        guard let fallbackURL = addons.first(where: {
             $0.transportUrl?.contains("aiometadata") == true || $0.id.contains("aio")
         })?.transportUrl ?? addons.first?.transportUrl else { return }
 
-        var rows: [CatalogRow] = []
+        let preferences = CollectionDisplayPreferenceStore.shared.preferences(for: collectionRepo.collections)
 
-        for collection in collectionRepo.collections {
-            for folder in collectionRepo.folders(for: collection) {
-                let normalizedSources = collectionRepo.catalogs(for: folder)
-                let rawSources = collectionRepo.sources(for: folder)
-                guard !normalizedSources.isEmpty || !rawSources.isEmpty else { continue }
+        // Build work items for folders that need content fetched (single-folder collections
+        // or explicitly expanded multi-folder collections). Multi-folder group collections
+        // get skeleton rows built from their folder metadata — their cover images come from
+        // the JSON (coverImageUrl/titleLogo/heroBackdrop), so we don't need HTTP fetches
+        // on startup. Content loads on demand when the user taps into a group folder.
+        struct FolderWork {
+            let collectionIdx: Int
+            let folderIdx: Int
+            let collection: DBCollection
+            let folder: DBFolder
+            let normalizedSources: [DBFolderCatalog]
+            let rawSources: [DBFolderSource]
+        }
+        struct FolderResult {
+            let collectionIdx: Int
+            let folderIdx: Int
+            let row: CatalogRow
+        }
 
-                var items: [MetaPreview] = []
-                await withTaskGroup(of: [MetaPreview].self) { group in
-                    for source in normalizedSources {
-                        group.addTask {
-                            await self.fetchNormalizedSource(source, baseURL: baseURL)
-                        }
-                    }
-                    for source in rawSources {
-                        group.addTask {
-                            await self.fetchRawSource(source, baseURL: baseURL)
-                        }
-                    }
-                    for await result in group {
-                        items.append(contentsOf: result)
-                    }
+        var workItems: [FolderWork] = []
+        var skeletonResults: [FolderResult] = []
+
+        for (ci, collection) in collectionRepo.collections.enumerated() {
+            let folders = collectionRepo.folders(for: collection)
+            // A collection shows as GROUP TILES when it has >1 folder and isn't expanded.
+            // Group tiles only need folder metadata (cover art already in JSON), not content.
+            let willShowAsGroup = folders.count > 1
+                && !preferences.expandedCollectionIds.contains(collection.id)
+
+            for (fi, folder) in folders.enumerated() {
+                if willShowAsGroup {
+                    // Skeleton row — cover image from folder metadata, no HTTP fetch needed.
+                    // Content is loaded on-demand when the user opens this folder.
+                    skeletonResults.append(FolderResult(
+                        collectionIdx: ci,
+                        folderIdx: fi,
+                        row: CatalogRow(
+                            id: "folder_\(folder.id)",
+                            title: folder.name,
+                            items: [],
+                            addonName: "AIOMetadata",
+                            page: 0,
+                            hasMore: false,
+                            tileShape: folder.tileShape,
+                            coverImage: folder.coverImage,
+                            focusGif: folder.focusGif,
+                            focusGifEnabled: folder.focusGifEnabled,
+                            titleLogo: folder.titleLogo,
+                            heroBackdrop: folder.heroBackdrop,
+                            heroVideoURL: folder.heroVideoUrl,
+                            hideTitle: folder.hideTitle,
+                            focusGlowEnabled: collection.focusGlowEnabled,
+                            viewMode: collection.viewMode,
+                            showAllTab: collection.showAllTab,
+                            pinToTop: collection.pinToTop,
+                            backdropImage: collection.backdropImage
+                        )
+                    ))
+                } else {
+                    let norm = collectionRepo.catalogs(for: folder)
+                    let raw  = collectionRepo.sources(for: folder)
+                    guard !norm.isEmpty || !raw.isEmpty else { continue }
+                    workItems.append(FolderWork(
+                        collectionIdx: ci, folderIdx: fi,
+                        collection: collection, folder: folder,
+                        normalizedSources: norm, rawSources: raw
+                    ))
                 }
-
-                guard !items.isEmpty else { continue }
-
-                rows.append(CatalogRow(
-                    id: "folder_\(folder.id)",
-                    title: folder.name,
-                    items: items,
-                    addonName: "AIOMetadata",
-                    page: 0,
-                    hasMore: false,
-                    tileShape: folder.tileShape,
-                    coverImage: folder.coverImage,
-                    focusGif: folder.focusGif,
-                    focusGifEnabled: folder.focusGifEnabled,
-                    titleLogo: folder.titleLogo,
-                    heroBackdrop: folder.heroBackdrop,
-                    heroVideoURL: folder.heroVideoUrl,
-                    hideTitle: folder.hideTitle,
-                    focusGlowEnabled: collection.focusGlowEnabled,
-                    viewMode: collection.viewMode,
-                    showAllTab: collection.showAllTab,
-                    pinToTop: collection.pinToTop,
-                    backdropImage: collection.backdropImage
-                ))
             }
         }
 
-        self.collectionRows = rows
+        // Fetch only the single-folder (row-display) folders concurrently.
+        var fetchedRows: [FolderResult] = skeletonResults
+        await withTaskGroup(of: FolderResult?.self) { group in
+            for work in workItems {
+                group.addTask {
+                    var items: [MetaPreview] = []
+                    await withTaskGroup(of: [MetaPreview].self) { inner in
+                        for source in work.normalizedSources {
+                            let sourceURL = addons.first(where: {
+                                $0.catalogs?.contains(where: { $0.id == source.catalogId }) == true
+                            })?.transportUrl ?? fallbackURL
+                            inner.addTask { await self.fetchNormalizedSource(source, baseURL: sourceURL) }
+                        }
+                        for source in work.rawSources {
+                            inner.addTask { await self.fetchRawSource(source, baseURL: fallbackURL) }
+                        }
+                        for await result in inner { items.append(contentsOf: result) }
+                    }
+                    guard !items.isEmpty else { return nil }
+                    return FolderResult(
+                        collectionIdx: work.collectionIdx,
+                        folderIdx: work.folderIdx,
+                        row: CatalogRow(
+                            id: "folder_\(work.folder.id)",
+                            title: work.folder.name,
+                            items: items,
+                            addonName: "AIOMetadata",
+                            page: 0,
+                            hasMore: false,
+                            tileShape: work.folder.tileShape,
+                            coverImage: work.folder.coverImage,
+                            focusGif: work.folder.focusGif,
+                            focusGifEnabled: work.folder.focusGifEnabled,
+                            titleLogo: work.folder.titleLogo,
+                            heroBackdrop: work.folder.heroBackdrop,
+                            heroVideoURL: work.folder.heroVideoUrl,
+                            hideTitle: work.folder.hideTitle,
+                            focusGlowEnabled: work.collection.focusGlowEnabled,
+                            viewMode: work.collection.viewMode,
+                            showAllTab: work.collection.showAllTab,
+                            pinToTop: work.collection.pinToTop,
+                            backdropImage: work.collection.backdropImage
+                        )
+                    )
+                }
+            }
+            for await result in group {
+                if let r = result { fetchedRows.append(r) }
+            }
+        }
+
+        // Reassemble in original collection/folder order.
+        var newFolderRows: [String: CatalogRow] = [:]
+        var rows: [CatalogRow] = []
+        for (ci, collection) in collectionRepo.collections.enumerated() {
+            let folders = collectionRepo.folders(for: collection)
+            let collectionFolderRows: [CatalogRow] = folders.enumerated().compactMap { fi, _ in
+                fetchedRows.first { $0.collectionIdx == ci && $0.folderIdx == fi }?.row
+            }
+            for row in collectionFolderRows { newFolderRows[row.id] = row }
+            rows.append(contentsOf: Self.displayRows(
+                for: collection,
+                folders: folders,
+                folderRows: collectionFolderRows,
+                preferences: preferences
+            ))
+        }
+
+        self.allFolderRows = newFolderRows.isEmpty ? existingFolderRows : newFolderRows
+        self.collectionRows = Self.resolvedRowsAfterReload(
+            existingRows: existingCollectionRows,
+            newRows: rows
+        )
+        self.catalogRows = Self.resolvedRowsAfterReload(
+            existingRows: existingRows,
+            newRows: rows
+        )
+        if !rows.isEmpty { saveToDisk() }
     }
 
-    private func genreExtras(_ genre: String?) -> [String: String] {
-        guard let genre, genre != "None" else { return [:] }
-        return ["genre": genre]
+    /// Fetches content of the same type and genre from the best available addon,
+    /// excluding the item with `excludingId`. Used for "More Like This" rows.
+    /// Prioritises Cinemeta (most complete catalogue), then falls back to other
+    /// genre-capable addons until we have at least 10 results.
+    public func fetchRelated(
+        type: String,
+        genre: String,
+        excludingId: String,
+        addons: [AddonManifest]
+    ) async -> [MetaPreview] {
+        // Sort: Cinemeta first, then any other addon with genre support
+        let sorted = addons.sorted { a, _ in
+            a.transportUrl?.contains("cinemeta") == true
+        }
+
+        var collected: [MetaPreview] = []
+
+        for addon in sorted {
+            guard collected.count < 10,
+                  let catalogs = addon.catalogs,
+                  let baseURL = addon.transportUrl else { continue }
+            for catalog in catalogs {
+                guard catalog.type == type else { continue }
+                let supportsGenre = (catalog.extra ?? []).contains { $0.name == "genre" }
+                guard supportsGenre else { continue }
+                let query = CatalogService.StremioCatalogQuery(
+                    type: type,
+                    id: catalog.id,
+                    baseURL: baseURL,
+                    extras: ["genre": genre]
+                )
+                if let fetchedResults = try? await catalogService.fetchCatalog(query: query) {
+                    let results = Self.applyingBetterPostersFallback(
+                        to: fetchedResults,
+                        addonName: addon.name,
+                        addonId: addon.id,
+                        baseURL: baseURL
+                    )
+                    let fresh = results.filter { item in
+                        item.id != excludingId && !collected.contains(where: { $0.id == item.id })
+                    }
+                    collected.append(contentsOf: fresh)
+                }
+                break // one catalog per addon is enough
+            }
+        }
+        return collected
     }
 
     private func fetchNormalizedSource(
         _ source: DBFolderCatalog,
-        baseURL: String
+        baseURL: String,
+        skip: Int = 0
     ) async -> [MetaPreview] {
+        // TMDB collection (e.g. "Die Hard Collection") — fetch directly from TMDB API
+        // since AIO Metadata doesn't serve individual collection catalogs correctly.
+        if source.catalogId.hasPrefix("tmdb.collection."),
+           let collectionId = Int(source.catalogId.dropFirst("tmdb.collection.".count)) {
+            return await fetchTMDBCollectionItems(collectionId: collectionId)
+        }
         do {
-            let extras = genreExtras(source.genre)
+            // Start with any stored extras (e.g. DISCOVER year/language filters),
+            // then layer genre on top, then skip.
+            var extras = source.extras ?? [:]
+            if let genre = source.genre, genre.lowercased() != "none", !genre.isEmpty {
+                extras["genre"] = genre
+            }
             if source.mediaType == "all" {
                 var results: [MetaPreview] = []
+                var movieExtras = extras
+                var seriesExtras = extras
+                if skip > 0 {
+                    movieExtras["skip"] = String(skip)
+                    seriesExtras["skip"] = String(skip)
+                }
                 let movieQuery = CatalogService.StremioCatalogQuery(
-                    type: "movie", id: source.catalogId, baseURL: baseURL, extras: extras
+                    type: "movie", id: source.catalogId, baseURL: baseURL, extras: movieExtras
                 )
                 let seriesQuery = CatalogService.StremioCatalogQuery(
-                    type: "series", id: source.catalogId, baseURL: baseURL, extras: extras
+                    type: "series", id: source.catalogId, baseURL: baseURL, extras: seriesExtras
                 )
                 if let movieResult = try? await catalogService.fetchCatalog(query: movieQuery) {
-                    results.append(contentsOf: movieResult)
+                    results.append(contentsOf: Self.applyingBetterPostersFallback(to: movieResult, baseURL: baseURL))
                 }
                 if let seriesResult = try? await catalogService.fetchCatalog(query: seriesQuery) {
-                    results.append(contentsOf: seriesResult)
+                    results.append(contentsOf: Self.applyingBetterPostersFallback(to: seriesResult, baseURL: baseURL))
                 }
                 return results
             }
+            if skip > 0 { extras["skip"] = String(skip) }
             let query = CatalogService.StremioCatalogQuery(
                 type: source.mediaType,
                 id: source.catalogId,
                 baseURL: baseURL,
                 extras: extras
             )
-            return try await catalogService.fetchCatalog(query: query)
+            let items = try await catalogService.fetchCatalog(query: query)
+            return Self.applyingBetterPostersFallback(to: items, baseURL: baseURL)
         } catch {
             return []
         }
@@ -194,13 +592,25 @@ public class CatalogRepository: ObservableObject {
 
     private func fetchRawSource(
         _ source: DBFolderSource,
-        baseURL: String
+        baseURL: String,
+        skip: Int = 0
     ) async -> [MetaPreview] {
         do {
-            guard let query = resolveRawQuery(from: source, baseURL: baseURL) else {
+            guard var query = resolveRawQuery(from: source, baseURL: baseURL) else {
                 return []
             }
-            return try await catalogService.fetchCatalog(query: query)
+            if skip > 0 {
+                var extras = query.extras
+                extras["skip"] = String(skip)
+                query = CatalogService.StremioCatalogQuery(
+                    type: query.type,
+                    id: query.id,
+                    baseURL: query.baseURL,
+                    extras: extras
+                )
+            }
+            let items = try await catalogService.fetchCatalog(query: query)
+            return Self.applyingBetterPostersFallback(to: items, baseURL: baseURL)
         } catch {
             return []
         }
@@ -265,6 +675,131 @@ public class CatalogRepository: ObservableObject {
         }
     }
 
+    /// Loads items for a skeleton folder row on demand (called when the user opens a group folder).
+    /// Updates `allFolderRows` so FolderScreen can refresh once items are ready.
+    public func loadFolderItems(
+        folderId: String,
+        collectionRepo: CollectionRepository,
+        addons: [AddonManifest]
+    ) async {
+        // Already loaded — nothing to do.
+        if let existing = allFolderRows[folderId], !existing.items.isEmpty { return }
+
+        guard let fallbackURL = addons.first(where: {
+            $0.transportUrl?.contains("aiometadata") == true || $0.id.contains("aio")
+        })?.transportUrl ?? addons.first?.transportUrl else { return }
+
+        // Find the folder in any collection.
+        var targetFolder: DBFolder?
+        for collection in collectionRepo.collections {
+            if let f = collectionRepo.folders(for: collection).first(where: { "folder_\($0.id)" == folderId }) {
+                targetFolder = f
+                break
+            }
+        }
+        guard let folder = targetFolder else { return }
+
+        let normalizedSources = collectionRepo.catalogs(for: folder)
+        let rawSources = collectionRepo.sources(for: folder)
+        guard !normalizedSources.isEmpty || !rawSources.isEmpty else { return }
+
+        let items = await fetchFolderItems(
+            normalizedSources: normalizedSources,
+            rawSources: rawSources,
+            fallbackURL: fallbackURL,
+            addons: addons,
+            skip: 0
+        )
+
+        guard !items.isEmpty else { return }
+
+        // Patch the stored row with the fetched items.
+        if var row = allFolderRows[folderId] {
+            row.items = items
+            row.page = 0
+            row.hasMore = items.count >= 50
+            allFolderRows[folderId] = row
+        }
+
+        // Also update in catalogRows so the home-screen group tile cover reflects live data.
+        if let idx = catalogRows.firstIndex(where: { $0.id == folderId }) {
+            catalogRows[idx].items = items
+            catalogRows[idx].page = 0
+            catalogRows[idx].hasMore = items.count >= 50
+        }
+    }
+
+    public func loadMoreFolderItems(
+        folderId: String,
+        collectionRepo: CollectionRepository,
+        addons: [AddonManifest]
+    ) async {
+        guard let row = allFolderRows[folderId], row.hasMore else { return }
+
+        guard let fallbackURL = addons.first(where: {
+            $0.transportUrl?.contains("aiometadata") == true || $0.id.contains("aio")
+        })?.transportUrl ?? addons.first?.transportUrl else { return }
+
+        var targetFolder: DBFolder?
+        for collection in collectionRepo.collections {
+            if let folder = collectionRepo.folders(for: collection).first(where: { "folder_\($0.id)" == folderId }) {
+                targetFolder = folder
+                break
+            }
+        }
+        guard let folder = targetFolder else { return }
+
+        let normalizedSources = collectionRepo.catalogs(for: folder)
+        let rawSources = collectionRepo.sources(for: folder)
+        guard !normalizedSources.isEmpty || !rawSources.isEmpty else { return }
+
+        let skip = (row.page + 1) * 50
+        let items = await fetchFolderItems(
+            normalizedSources: normalizedSources,
+            rawSources: rawSources,
+            fallbackURL: fallbackURL,
+            addons: addons,
+            skip: skip
+        )
+
+        guard !items.isEmpty else {
+            allFolderRows[folderId]?.hasMore = false
+            if let idx = catalogRows.firstIndex(where: { $0.id == folderId }) {
+                catalogRows[idx].hasMore = false
+            }
+            return
+        }
+
+        let updated = Self.folderRow(row, appending: items)
+        allFolderRows[folderId] = updated
+        if let idx = catalogRows.firstIndex(where: { $0.id == folderId }) {
+            catalogRows[idx] = updated
+        }
+    }
+
+    private func fetchFolderItems(
+        normalizedSources: [DBFolderCatalog],
+        rawSources: [DBFolderSource],
+        fallbackURL: String,
+        addons: [AddonManifest],
+        skip: Int
+    ) async -> [MetaPreview] {
+        var items: [MetaPreview] = []
+        await withTaskGroup(of: [MetaPreview].self) { group in
+            for source in normalizedSources {
+                let sourceURL = addons.first(where: {
+                    $0.catalogs?.contains(where: { $0.id == source.catalogId }) == true
+                })?.transportUrl ?? fallbackURL
+                group.addTask { await self.fetchNormalizedSource(source, baseURL: sourceURL, skip: skip) }
+            }
+            for source in rawSources {
+                group.addTask { await self.fetchRawSource(source, baseURL: fallbackURL, skip: skip) }
+            }
+            for await result in group { items.append(contentsOf: result) }
+        }
+        return items
+    }
+
     public func loadMore(rowId: String, addons: [AddonManifest]) async {
         guard let index = catalogRows.firstIndex(where: { $0.id == rowId }),
               catalogRows[index].hasMore else { return }
@@ -272,14 +807,18 @@ public class CatalogRepository: ObservableObject {
         let row = catalogRows[index]
         let nextPage = row.page + 1
 
-        let components = rowId.split(separator: "_").map(String.init)
-        guard components.count >= 2 else { return }
-        let addonId = components[0]
-        let catalogId = components.dropFirst().joined(separator: "_")
+        guard let addonId = row.addonId,
+              let addon = addons.first(where: { $0.id == addonId }),
+              let baseURL = addon.transportUrl else { return }
 
-        guard let addon = addons.first(where: { $0.id == addonId }),
-              let baseURL = addon.transportUrl,
-              let catalog = addon.catalogs?.first(where: { $0.id == catalogId }) else { return }
+        let components = rowId.split(separator: "_").map(String.init)
+        guard components.count >= 3 else { return }
+        let catalogType = components[components.count - 2]
+        let catalogId = components[components.count - 1]
+
+        guard let catalog = addon.catalogs?.first(where: {
+            $0.type == catalogType && $0.id == catalogId
+        }) ?? addon.catalogs?.first(where: { $0.id == catalogId }) else { return }
 
         do {
             let query = CatalogService.StremioCatalogQuery(
@@ -288,7 +827,13 @@ public class CatalogRepository: ObservableObject {
                 baseURL: baseURL,
                 extras: ["skip": String(nextPage * 50)]
             )
-            let items = try await catalogService.fetchCatalog(query: query)
+            let fetchedItems = try await catalogService.fetchCatalog(query: query)
+            let items = Self.applyingBetterPostersFallback(
+                to: fetchedItems,
+                addonName: addon.name,
+                addonId: addon.id,
+                baseURL: baseURL
+            )
             if !items.isEmpty {
                 catalogRows[index].items.append(contentsOf: items)
                 catalogRows[index].page = nextPage
@@ -300,4 +845,63 @@ public class CatalogRepository: ObservableObject {
             catalogRows[index].hasMore = false
         }
     }
+
+    // MARK: - TMDB Collection Direct Fetch
+
+    private func fetchTMDBCollectionItems(collectionId: Int) async -> [MetaPreview] {
+        guard let apiKey = MetadataIntegrationStore.shared.effectiveTMDBAPIKey, !apiKey.isEmpty else { return [] }
+        let tmdbBase = "https://api.themoviedb.org/3"
+        guard let url = URL(string: "\(tmdbBase)/collection/\(collectionId)?api_key=\(apiKey)"),
+              let (data, _) = try? await URLSession.shared.data(from: url),
+              let response = try? JSONDecoder().decode(TMDBCollectionResponse.self, from: data) else { return [] }
+
+        return await withTaskGroup(of: MetaPreview?.self) { group in
+            for part in response.parts {
+                let partId = part.id
+                let partTitle = part.title ?? part.originalTitle ?? ""
+                let partRelease = part.releaseDate
+                group.addTask {
+                    guard let extUrl = URL(string: "\(tmdbBase)/movie/\(partId)/external_ids?api_key=\(apiKey)"),
+                          let (extData, _) = try? await URLSession.shared.data(from: extUrl),
+                          let extResult = try? JSONDecoder().decode(TMDBExternalIdsResponse.self, from: extData),
+                          let imdbId = extResult.imdbId, imdbId.hasPrefix("tt") else { return nil }
+                    let year = partRelease.flatMap { String($0.prefix(4)) }
+                    return MetaPreview(
+                        id: imdbId,
+                        type: .movie,
+                        name: partTitle,
+                        poster: PosterService.posterURL(forImdbId: imdbId),
+                        releaseInfo: year,
+                        rawReleaseDate: partRelease
+                    )
+                }
+            }
+            var results: [MetaPreview] = []
+            for await item in group {
+                if let item { results.append(item) }
+            }
+            return results.sorted { ($0.rawReleaseDate ?? "") < ($1.rawReleaseDate ?? "") }
+        }
+    }
+}
+
+private struct TMDBCollectionResponse: Decodable {
+    let parts: [TMDBCollectionPart]
+}
+
+private struct TMDBCollectionPart: Decodable {
+    let id: Int
+    let title: String?
+    let originalTitle: String?
+    let releaseDate: String?
+    enum CodingKeys: String, CodingKey {
+        case id, title
+        case originalTitle = "original_title"
+        case releaseDate = "release_date"
+    }
+}
+
+private struct TMDBExternalIdsResponse: Decodable {
+    let imdbId: String?
+    enum CodingKeys: String, CodingKey { case imdbId = "imdb_id" }
 }

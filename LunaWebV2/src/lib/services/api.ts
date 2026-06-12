@@ -172,7 +172,7 @@ export async function isInLibrary(profileId: string, mediaId: string): Promise<b
     .select('id')
     .eq('profile_id', profileId)
     .eq('media_id', mediaId)
-    .single();
+    .maybeSingle();
   return !!data;
 }
 

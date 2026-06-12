@@ -173,10 +173,8 @@ struct AdminInviteCodesView: View {
                             Text("Generate")
                                 .frame(maxWidth: .infinity)
                                 .padding()
-                                .background(LunaTheme.accent)
-                                .foregroundColor(.white)
-                                .cornerRadius(12)
                         }
+                        .glassProminentButtonStyle(cornerRadius: 12)
                         .padding(.horizontal)
 
                         Spacer()

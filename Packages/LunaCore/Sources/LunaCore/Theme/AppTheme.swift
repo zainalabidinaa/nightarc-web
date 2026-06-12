@@ -90,7 +90,7 @@ public extension AppTheme {
                 surfaceContainer: Color(hex: "241A1F"))
         case .white:
             return ThemeColorPalette(
-                primary: Color(hex: "F5F5F5"), primaryVariant: Color(hex: "E0E0E0"),
+                primary: Color(hex: "C8C8C8"), primaryVariant: Color(hex: "A0A0A0"),
                 focusRing: Color(hex: "FFFFFF"), focusBackground: Color(hex: "303030"),
                 onPrimary: Color(hex: "111111"), onPrimaryVariant: Color(hex: "111111"),
                 background: bg, surface: s, surfaceElevated: se,

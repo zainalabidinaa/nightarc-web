@@ -28,16 +28,16 @@ final class ResponsiveLayoutTests: XCTestCase {
     func testPhoneMetrics() {
         let m = ResponsiveMetrics(for: 375)
         XCTAssertEqual(m.horizontalPadding, 16)
-        XCTAssertEqual(m.posterWidth, 120)
-        XCTAssertEqual(m.posterHeight, 180)
+        XCTAssertEqual(m.posterWidth, 125)
+        XCTAssertEqual(m.posterHeight, 185)
         XCTAssertEqual(m.breakpoint, .phone)
     }
 
     func testXlargeMetrics() {
         let m = ResponsiveMetrics(for: 1440)
         XCTAssertEqual(m.horizontalPadding, 32)
-        XCTAssertEqual(m.posterWidth, 180)
-        XCTAssertEqual(m.posterHeight, 270)
+        XCTAssertEqual(m.posterWidth, 185)
+        XCTAssertEqual(m.posterHeight, 275)
         XCTAssertEqual(m.breakpoint, .xlarge)
     }
 

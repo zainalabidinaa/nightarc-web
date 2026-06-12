@@ -9,163 +9,145 @@ struct HomeHero: View {
     let activeIndex: Int
     let onDotTap: (Int) -> Void
 
+    private let heroHeight: CGFloat = 400
+
     var body: some View {
         ZStack(alignment: .bottomLeading) {
-            // ── Backdrop image ────────────────────────────────────────────────
+            // Backdrop
             Group {
-                if let banner = item.banner ?? item.poster,
-                   let url = URL(string: banner) {
-                    AsyncImage(url: url) { phase in
-                        if case .success(let img) = phase {
-                            img.resizable().aspectRatio(contentMode: .fill)
-                        } else {
-                            LunaTheme.surface
-                        }
+                if let banner = item.banner ?? item.poster, let url = URL(string: banner) {
+                    CachedAsyncImage(url: url) { img in
+                        img.resizable().aspectRatio(contentMode: .fill)
+                    } placeholder: {
+                        LunaTheme.surface
                     }
                 } else {
                     LunaTheme.surface
                 }
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 480)
+            .frame(height: heroHeight)
             .clipped()
+            .overlay {
+                // Single unified gradient for readability
+                LinearGradient(
+                    stops: [
+                        .init(color: LunaTheme.background, location: 0),
+                        .init(color: .clear, location: 0.15),
+                        .init(color: .clear, location: 0.55),
+                        .init(color: .black.opacity(0.7), location: 0.8),
+                        .init(color: .black.opacity(0.95), location: 1),
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            }
 
-            // ── Gradient layer 1: top fade (navbar blending) ─────────────────
-            LinearGradient(
-                colors: [LunaTheme.background, .clear],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .frame(maxWidth: .infinity)
-            .frame(height: 120)
-            .frame(maxHeight: .infinity, alignment: .top)
-
-            // ── Gradient layer 2: bottom fade ─────────────────────────────────
-            LinearGradient(
-                colors: [.clear, LunaTheme.background.opacity(0.7), LunaTheme.background],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .frame(height: 480)
-
-            // ── Gradient layer 3: left-to-right (content legibility) ──────────
-            LinearGradient(
-                colors: [.black.opacity(0.9), .black.opacity(0.5), .clear],
-                startPoint: .leading,
-                endPoint: .trailing
-            )
-            .frame(height: 480)
-
-            // ── Content ───────────────────────────────────────────────────────
+            // Content
             VStack(alignment: .leading, spacing: 0) {
                 Text(rowTitle.uppercased())
                     .font(.system(size: 11, weight: .bold))
                     .foregroundColor(LunaTheme.accent)
                     .tracking(2)
-                    .padding(.bottom, 8)
+                    .padding(.bottom, 10)
 
-                // Logo or title text — mirrors LunaWebV2 HomeHero
                 if let logoUrl = item.logo.flatMap({ URL(string: $0) }) {
-                    AsyncImage(url: logoUrl) { phase in
-                        if case .success(let img) = phase {
-                            img.resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(height: 64)
-                                .frame(maxWidth: 340, alignment: .leading)
-                        } else {
-                            titleText
-                        }
+                    CachedAsyncImage(url: logoUrl) { img in
+                        img.resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(height: 56)
+                            .frame(maxWidth: 300, alignment: .leading)
+                    } placeholder: {
+                        titleText.padding(.bottom, 4)
                     }
-                    .padding(.bottom, 8)
+                    .padding(.bottom, 10)
                 } else {
-                    titleText
-                        .padding(.bottom, 6)
+                    titleText.padding(.bottom, 10)
                 }
 
-                HStack(spacing: 8) {
+                HStack(spacing: 12) {
                     if let rating = item.imdbRating {
                         Label(rating, systemImage: "star.fill")
                             .font(.caption)
                             .foregroundColor(.yellow)
                     }
                     if let release = item.releaseInfo {
+                        Text("·").foregroundColor(.white.opacity(0.3))
                         Text(release)
                             .font(.caption)
-                            .foregroundColor(.white.opacity(0.6))
+                            .foregroundColor(.white.opacity(0.5))
                     }
                     if let genres = item.genres?.prefix(2) {
-                        Text(genres.joined(separator: ", "))
+                        Text("·").foregroundColor(.white.opacity(0.3))
+                        Text(genres.joined(separator: " · "))
                             .font(.caption)
-                            .foregroundColor(.white.opacity(0.6))
+                            .foregroundColor(.white.opacity(0.5))
                     }
                 }
-                .padding(.bottom, 8)
+                .padding(.bottom, 12)
 
                 if let desc = item.description {
                     Text(desc)
-                        .font(.subheadline)
-                        .foregroundColor(.white.opacity(0.7))
+                        .font(.body)
+                        .foregroundColor(.white.opacity(0.6))
                         .lineLimit(2)
-                        .frame(maxWidth: 500, alignment: .leading)
-                        .padding(.bottom, 16)
+                        .frame(maxWidth: 480, alignment: .leading)
+                        .padding(.bottom, 18)
                 } else {
-                    Spacer().frame(height: 16)
+                    Spacer().frame(height: 18)
                 }
 
-                HStack(spacing: 12) {
+                HStack(spacing: 10) {
                     Button(action: onTap) {
                         Label("Watch Now", systemImage: "play.fill")
-                            .font(.subheadline.bold())
+                            .font(.subheadline.weight(.semibold))
                             .foregroundColor(.black)
-                            .padding(.horizontal, 22)
-                            .padding(.vertical, 11)
-                            .background(Color.white)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 10)
+                            .background(.white)
                             .clipShape(Capsule())
                     }
                     .buttonStyle(.plain)
 
                     Button(action: onTap) {
-                        Label("My List", systemImage: "plus")
+                        Image(systemName: "info.circle")
                             .font(.subheadline.weight(.semibold))
                             .foregroundColor(.white)
-                            .padding(.horizontal, 18)
-                            .padding(.vertical, 11)
+                            .padding(10)
                             .background(.ultraThinMaterial)
-                            .clipShape(Capsule())
-                            .overlay(Capsule().stroke(Color.white.opacity(0.2), lineWidth: 1))
+                            .clipShape(Circle())
                     }
                     .buttonStyle(.plain)
                 }
             }
-            .padding(.horizontal, 24)
+            .padding(.horizontal, 28)
             .padding(.bottom, 28)
-            .frame(maxWidth: .infinity, alignment: .leading)
 
-            // ── Pagination dots ───────────────────────────────────────────────
+            // Dots
             if dotCount > 1 {
-                HStack(spacing: 5) {
+                HStack(spacing: 6) {
                     ForEach(0..<dotCount, id: \.self) { i in
                         Button { onDotTap(i) } label: {
-                            RoundedRectangle(cornerRadius: 2)
-                                .fill(i == activeIndex ? Color.white : Color.white.opacity(0.3))
-                                .frame(width: i == activeIndex ? 20 : 6, height: 3)
+                            RoundedRectangle(cornerRadius: 1.5)
+                                .fill(i == activeIndex ? .white : .white.opacity(0.3))
+                                .frame(width: i == activeIndex ? 18 : 6, height: 3)
                         }
                         .buttonStyle(.plain)
-                        .animation(.easeInOut(duration: 0.25), value: activeIndex)
+                        .animation(.easeInOut(duration: 0.3), value: activeIndex)
                     }
                 }
-                .padding(.trailing, 20)
-                .padding(.bottom, 18)
+                .padding(.trailing, 24)
+                .padding(.bottom, 14)
                 .frame(maxWidth: .infinity, alignment: .trailing)
             }
         }
-        .frame(height: 480)
+        .frame(height: heroHeight)
         .clipped()
     }
 
     private var titleText: some View {
         Text(item.name)
-            .font(.system(size: 44, weight: .black))
+            .font(.system(size: 40, weight: .black, design: .rounded))
             .foregroundColor(.white)
             .lineLimit(2)
             .minimumScaleFactor(0.7)

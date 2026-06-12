@@ -13,20 +13,38 @@ struct ProfileAvatarView: View {
     let profile: LunaProfile
     var size: CGFloat = 32
 
+    private var avatarURL: URL? {
+        guard let avatarId = profile.avatarId,
+              avatarId >= 0,
+              avatarId < defaultAvatarURLs.count else { return nil }
+        return URL(string: defaultAvatarURLs[avatarId])
+    }
+
+    private var isGif: Bool {
+        avatarURL?.pathExtension.lowercased() == "gif"
+    }
+
+    private var gifAnimationDisabled: Bool {
+        UserDefaults.standard.bool(forKey: "avatar_gif_still_\(profile.id)")
+    }
+
     var body: some View {
-        if let avatarId = profile.avatarId,
-           avatarId >= 0,
-           avatarId < defaultAvatarURLs.count,
-           let url = URL(string: defaultAvatarURLs[avatarId]) {
-            CachedAsyncImage(url: url) { phase in
-                if case .success(let image) = phase {
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: size, height: size)
-                        .clipShape(Circle())
-                } else {
-                    fallbackAvatar
+        if let url = avatarURL {
+            if isGif && !gifAnimationDisabled {
+                AnimatedRemoteImage(url: url, contentMode: .scaleAspectFill)
+                    .frame(width: size, height: size)
+                    .clipShape(Circle())
+            } else {
+                CachedAsyncImage(url: url) { phase in
+                    if case .success(let image) = phase {
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: size, height: size)
+                            .clipShape(Circle())
+                    } else {
+                        fallbackAvatar
+                    }
                 }
             }
         } else {
@@ -34,7 +52,7 @@ struct ProfileAvatarView: View {
         }
     }
 
-    private var fallbackAvatar: some View {
+    @ViewBuilder private var fallbackAvatar: some View {
         let color = profile.avatarColor.map { Color(hex: $0) } ?? LunaTheme.accent
         Circle()
             .fill(color)
@@ -46,3 +64,6 @@ struct ProfileAvatarView: View {
             )
     }
 }
+
+/// Returns the list of avatar URLs — used by EditProfileSheet
+func avatarURLs() -> [String] { defaultAvatarURLs }

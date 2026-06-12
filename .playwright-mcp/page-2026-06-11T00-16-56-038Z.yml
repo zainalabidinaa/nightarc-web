@@ -1,0 +1,240 @@
+- generic [ref=e5]:
+  - navigation [ref=e6]:
+    - link "house.fill Home" [ref=e7] [cursor=pointer]:
+      - /url: /home
+      - img "house.fill" [ref=e8]
+      - generic [ref=e9]: Home
+    - link "magnifyingglass Search" [ref=e10] [cursor=pointer]:
+      - /url: /search
+      - img "magnifyingglass" [ref=e11]
+      - generic [ref=e12]: Search
+    - link "book.fill Library" [ref=e13] [cursor=pointer]:
+      - /url: /library
+      - img "book.fill" [ref=e14]
+      - generic [ref=e15]: Library
+    - link "gear Settings" [ref=e16] [cursor=pointer]:
+      - /url: /settings
+      - img "gear" [ref=e17]
+      - generic [ref=e18]: Settings
+    - link "person.fill Admin" [ref=e19] [cursor=pointer]:
+      - /url: /admin
+      - img "person.fill" [ref=e20]
+      - generic [ref=e21]: Admin
+    - button "Switch profile" [ref=e23] [cursor=pointer]:
+      - generic [ref=e24]: Z
+      - generic [ref=e25]: Zain
+  - main [ref=e26]:
+    - generic [ref=e27]:
+      - img [ref=e29]
+      - generic [ref=e34]:
+        - img "FROM" [ref=e35]
+        - generic [ref=e36]:
+          - generic [ref=e37]: 51min
+          - generic [ref=e38]:
+            - img [ref=e39]
+            - text: "7.8"
+        - generic [ref=e41]:
+          - generic [ref=e42]: Science Fiction
+          - generic [ref=e43]: Horror
+          - generic [ref=e44]: Drama
+          - generic [ref=e45]: Thriller
+          - generic [ref=e46]: Mystery
+        - paragraph [ref=e47]: In a nightmarish town in middle America that traps everyone who enters, unwilling residents fight to stay alive and search for a way out. But they are plagued by the threats of the surrounding forest including terrifying nocturnal creatures.
+        - generic [ref=e48]:
+          - button "Saved" [ref=e49] [cursor=pointer]:
+            - img [ref=e50]
+            - text: Saved
+          - link "Trailer" [ref=e52] [cursor=pointer]:
+            - /url: https://www.youtube.com/watch?v=pDHqAj4eJcM
+            - img [ref=e53]
+            - text: Trailer
+    - generic [ref=e56]:
+      - heading "Cast & Creators" [level=3] [ref=e57]
+      - generic [ref=e58]:
+        - generic [ref=e59]:
+          - img "Harold Perrineau" [ref=e61]
+          - paragraph [ref=e62]: Harold Perrineau
+        - generic [ref=e63]:
+          - img "Catalina Sandino Moreno" [ref=e65]
+          - paragraph [ref=e66]: Catalina Sandino Moreno
+        - generic [ref=e67]:
+          - img "Ricky He" [ref=e69]
+          - paragraph [ref=e70]: Ricky He
+        - generic [ref=e71]:
+          - img "David Alpay" [ref=e73]
+          - paragraph [ref=e74]: David Alpay
+        - generic [ref=e75]:
+          - img "Chloe Van Landschoot" [ref=e77]
+          - paragraph [ref=e78]: Chloe Van Landschoot
+        - generic [ref=e79]:
+          - img "Hannah Cheramy" [ref=e81]
+          - paragraph [ref=e82]: Hannah Cheramy
+        - generic [ref=e83]:
+          - img "Pegah Ghafoori" [ref=e85]
+          - paragraph [ref=e86]: Pegah Ghafoori
+        - generic [ref=e87]:
+          - img "Simon Webster" [ref=e89]
+          - paragraph [ref=e90]: Simon Webster
+        - generic [ref=e91]:
+          - img "Elizabeth Saunders" [ref=e93]
+          - paragraph [ref=e94]: Elizabeth Saunders
+        - generic [ref=e95]:
+          - img "Avery Konrad" [ref=e97]
+          - paragraph [ref=e98]: Avery Konrad
+        - generic [ref=e99]:
+          - img "Julia Doyle" [ref=e101]
+          - paragraph [ref=e102]: Julia Doyle
+        - generic [ref=e103]:
+          - img "Samantha Brown" [ref=e105]
+          - paragraph [ref=e106]: Samantha Brown
+        - generic [ref=e107]:
+          - img "Scott McCord" [ref=e109]
+          - paragraph [ref=e110]: Scott McCord
+        - generic [ref=e111]:
+          - img "Corteon Moore" [ref=e113]
+          - paragraph [ref=e114]: Corteon Moore
+        - generic [ref=e115]:
+          - img "A.J. Simmons" [ref=e117]
+          - paragraph [ref=e118]: A.J. Simmons
+        - generic [ref=e119]:
+          - img "Kaelen Ohm" [ref=e121]
+          - paragraph [ref=e122]: Kaelen Ohm
+        - generic [ref=e123]:
+          - img "Robert Joy" [ref=e125]
+          - paragraph [ref=e126]: Robert Joy
+        - generic [ref=e127]:
+          - img "Nathan D. Simmons" [ref=e129]
+          - paragraph [ref=e130]: Nathan D. Simmons
+    - generic [ref=e131]:
+      - heading "Episodes" [level=3] [ref=e132]
+      - generic [ref=e133]:
+        - button "Season 1" [ref=e134] [cursor=pointer]
+        - button "Season 2" [ref=e135] [cursor=pointer]
+        - button "Season 3" [ref=e136] [cursor=pointer]
+        - button "Season 4" [ref=e137] [cursor=pointer]
+      - generic [ref=e138]:
+        - button "Long Day's Journey Into Night Episode 1 Feb 21, 2022 Long Day's Journey Into Night The Matthews’ family road trip takes a horrifying turn when they are detoured to a small pastoral town from which they cannot leave. When their family RV crashes, Sheriff Boyd Stevens and other residents rush to save them before the sun goes down." [ref=e139] [cursor=pointer]:
+          - generic [ref=e140]:
+            - img "Long Day's Journey Into Night" [ref=e141]
+            - img [ref=e144]
+          - paragraph [ref=e146]: Episode 1
+          - paragraph [ref=e147]: Feb 21, 2022
+          - paragraph [ref=e148]: Long Day's Journey Into Night
+          - paragraph [ref=e149]: The Matthews’ family road trip takes a horrifying turn when they are detoured to a small pastoral town from which they cannot leave. When their family RV crashes, Sheriff Boyd Stevens and other residents rush to save them before the sun goes down.
+        - button "The Way Things Are Now Episode 2 Feb 28, 2022 The Way Things Are Now At Colony House, Tabitha and Julie grapple with their new nightmarish reality. Out in the forest, Jim, Boyd and Kristi struggle to treat Ethan's injuries. Tragedy strikes from an unexpected source as a new threat arises in the town." [ref=e150] [cursor=pointer]:
+          - generic [ref=e151]:
+            - img "The Way Things Are Now" [ref=e152]
+            - img [ref=e155]
+          - paragraph [ref=e157]: Episode 2
+          - paragraph [ref=e158]: Feb 28, 2022
+          - paragraph [ref=e159]: The Way Things Are Now
+          - paragraph [ref=e160]: At Colony House, Tabitha and Julie grapple with their new nightmarish reality. Out in the forest, Jim, Boyd and Kristi struggle to treat Ethan's injuries. Tragedy strikes from an unexpected source as a new threat arises in the town.
+        - button "Choosing Day Episode 3 Mar 7, 2022 Choosing Day The Matthews family must choose which of the two settlements they will join. Meanwhile, Jade comes to terms with his situation and Boyd is faced with an impossible decision that strikes at the very heart of life in the town." [ref=e161] [cursor=pointer]:
+          - generic [ref=e162]:
+            - img "Choosing Day" [ref=e163]
+            - img [ref=e166]
+          - paragraph [ref=e168]: Episode 3
+          - paragraph [ref=e169]: Mar 7, 2022
+          - paragraph [ref=e170]: Choosing Day
+          - paragraph [ref=e171]: The Matthews family must choose which of the two settlements they will join. Meanwhile, Jade comes to terms with his situation and Boyd is faced with an impossible decision that strikes at the very heart of life in the town.
+        - button "A Rock and a Farway Episode 4 Mar 14, 2022 A Rock and a Farway Julie finds comfort in her new friends as Jim and Tabitha deal with their struggling marriage. Ethan ventures off into the forest with Victor while Father Khatri urges Boyd to embrace his role as leader. Sara receives another horrifying directive." [ref=e172] [cursor=pointer]:
+          - generic [ref=e173]:
+            - img "A Rock and a Farway" [ref=e174]
+            - img [ref=e177]
+          - paragraph [ref=e179]: Episode 4
+          - paragraph [ref=e180]: Mar 14, 2022
+          - paragraph [ref=e181]: A Rock and a Farway
+          - paragraph [ref=e182]: Julie finds comfort in her new friends as Jim and Tabitha deal with their struggling marriage. Ethan ventures off into the forest with Victor while Father Khatri urges Boyd to embrace his role as leader. Sara receives another horrifying directive.
+        - button "Silhouettes Episode 5 Mar 21, 2022 Silhouettes Jim, Tabitha, and Ethan begin asking questions about where they are in the hopes it may lead them home. Ellis and Fatima show Julie the lighter side of life in town. Jade struggles to make sense of their situation as Boyd seeks guidance." [ref=e183] [cursor=pointer]:
+          - generic [ref=e184]:
+            - img "Silhouettes" [ref=e185]
+            - img [ref=e188]
+          - paragraph [ref=e190]: Episode 5
+          - paragraph [ref=e191]: Mar 21, 2022
+          - paragraph [ref=e192]: Silhouettes
+          - paragraph [ref=e193]: Jim, Tabitha, and Ethan begin asking questions about where they are in the hopes it may lead them home. Ellis and Fatima show Julie the lighter side of life in town. Jade struggles to make sense of their situation as Boyd seeks guidance.
+        - button "Book 74 Episode 6 Mar 28, 2022 Book 74 Boyd's plan to head off into the forest provokes an unexpected response from Kenny; Jade enlists Jim's help with an experiment; Tabitha makes a chilling discovery that sends her down a unique path searching for answers." [ref=e194] [cursor=pointer]:
+          - generic [ref=e195]:
+            - img "Book 74" [ref=e196]
+            - img [ref=e199]
+          - paragraph [ref=e201]: Episode 6
+          - paragraph [ref=e202]: Mar 28, 2022
+          - paragraph [ref=e203]: Book 74
+          - paragraph [ref=e204]: Boyd's plan to head off into the forest provokes an unexpected response from Kenny; Jade enlists Jim's help with an experiment; Tabitha makes a chilling discovery that sends her down a unique path searching for answers.
+        - button "All Good Things Episode 7 Apr 4, 2022 All Good Things Father Khatri tells Boyd why he believes Sara may be useful; Jim and Tabitha find comfort in each other; Colony House celebrates the one-year anniversary of Fatima's arrival with a party that goes terribly wrong." [ref=e205] [cursor=pointer]:
+          - generic [ref=e206]:
+            - img "All Good Things" [ref=e207]
+            - img [ref=e210]
+          - paragraph [ref=e212]: Episode 7
+          - paragraph [ref=e213]: Apr 4, 2022
+          - paragraph [ref=e214]: All Good Things
+          - paragraph [ref=e215]: Father Khatri tells Boyd why he believes Sara may be useful; Jim and Tabitha find comfort in each other; Colony House celebrates the one-year anniversary of Fatima's arrival with a party that goes terribly wrong.
+        - button "Broken Windows, Open Doors Episode 8 Apr 11, 2022 Broken Windows, Open Doors In the wake of another death, Boyd questions his decision to leave. Kenny steps up and embraces his new role. Jim rallies the town around his idea to build a radio tower. Fatima urges Ellis to make amends with his father before it’s too late." [ref=e216] [cursor=pointer]:
+          - generic [ref=e217]:
+            - img "Broken Windows, Open Doors" [ref=e218]
+            - img [ref=e221]
+          - paragraph [ref=e223]: Episode 8
+          - paragraph [ref=e224]: Apr 11, 2022
+          - paragraph [ref=e225]: Broken Windows, Open Doors
+          - paragraph [ref=e226]: In the wake of another death, Boyd questions his decision to leave. Kenny steps up and embraces his new role. Jim rallies the town around his idea to build a radio tower. Fatima urges Ellis to make amends with his father before it’s too late.
+        - button "Into the Woods Episode 9 Apr 18, 2022 Into the Woods Boyd and Sara journey deeper into the forest than Boyd has ever gone, encountering new and terrifying mysteries. Jim’s confidence in the radio tower begins to wane. An unexpected tragedy causes Donna to unravel. Kenny and Kristi share a moment." [ref=e227] [cursor=pointer]:
+          - generic [ref=e228]:
+            - img "Into the Woods" [ref=e229]
+            - img [ref=e232]
+          - paragraph [ref=e234]: Episode 9
+          - paragraph [ref=e235]: Apr 18, 2022
+          - paragraph [ref=e236]: Into the Woods
+          - paragraph [ref=e237]: Boyd and Sara journey deeper into the forest than Boyd has ever gone, encountering new and terrifying mysteries. Jim’s confidence in the radio tower begins to wane. An unexpected tragedy causes Donna to unravel. Kenny and Kristi share a moment.
+        - button "Oh, the Places We'll Go Episode 10 Apr 25, 2022 Oh, the Places We'll Go Boyd draws strength from an unlikely source. Jim’s radio tower yields consequences which rock him to his very core. The hole that Tabitha has been digging leads her somewhere – and to someone - she could never have expected. Everything is about to change." [ref=e238] [cursor=pointer]:
+          - generic [ref=e239]:
+            - img "Oh, the Places We'll Go" [ref=e240]
+            - img [ref=e243]
+          - paragraph [ref=e245]: Episode 10
+          - paragraph [ref=e246]: Apr 25, 2022
+          - paragraph [ref=e247]: Oh, the Places We'll Go
+          - paragraph [ref=e248]: Boyd draws strength from an unlikely source. Jim’s radio tower yields consequences which rock him to his very core. The hole that Tabitha has been digging leads her somewhere – and to someone - she could never have expected. Everything is about to change.
+    - generic [ref=e250]:
+      - heading "Trailers & Clips" [level=3] [ref=e251]
+      - generic [ref=e252]:
+        - link "Trailer YouTube Trailer" [ref=e253] [cursor=pointer]:
+          - /url: https://www.youtube.com/watch?v=pDHqAj4eJcM
+          - generic [ref=e254]:
+            - img "Trailer" [ref=e255]
+            - img [ref=e258]
+            - generic [ref=e260]: YouTube
+          - paragraph [ref=e261]: Trailer
+        - link "Trailer YouTube Trailer" [ref=e262] [cursor=pointer]:
+          - /url: https://www.youtube.com/watch?v=00S-RH-6k9M
+          - generic [ref=e263]:
+            - img "Trailer" [ref=e264]
+            - img [ref=e267]
+            - generic [ref=e269]: YouTube
+          - paragraph [ref=e270]: Trailer
+        - link "Trailer YouTube Trailer" [ref=e271] [cursor=pointer]:
+          - /url: https://www.youtube.com/watch?v=4Qkf5xSpu88
+          - generic [ref=e272]:
+            - img "Trailer" [ref=e273]
+            - img [ref=e276]
+            - generic [ref=e278]: YouTube
+          - paragraph [ref=e279]: Trailer
+        - link "Trailer YouTube Trailer" [ref=e280] [cursor=pointer]:
+          - /url: https://www.youtube.com/watch?v=QYwb-Vk4FlA
+          - generic [ref=e281]:
+            - img "Trailer" [ref=e282]
+            - img [ref=e285]
+            - generic [ref=e287]: YouTube
+          - paragraph [ref=e288]: Trailer
+        - link "Trailer YouTube Trailer" [ref=e289] [cursor=pointer]:
+          - /url: https://www.youtube.com/watch?v=kyewNME3hm8
+          - generic [ref=e290]:
+            - img "Trailer" [ref=e291]
+            - img [ref=e294]
+            - generic [ref=e296]: YouTube
+          - paragraph [ref=e297]: Trailer
+        - link "Trailer YouTube Trailer" [ref=e298] [cursor=pointer]:
+          - /url: https://www.youtube.com/watch?v=GV-amY8PMu0
+          - generic [ref=e299]:
+            - img "Trailer" [ref=e300]
+            - img [ref=e303]
+            - generic [ref=e305]: YouTube
+          - paragraph [ref=e306]: Trailer

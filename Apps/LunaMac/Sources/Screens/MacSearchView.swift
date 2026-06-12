@@ -2,6 +2,7 @@ import SwiftUI
 import LunaCore
 
 struct MacSearchView: View {
+    let onSelectMedia: (MetaPreview) -> Void
     @StateObject private var searchRepo = SearchRepository.shared
     @StateObject private var addonRepo = AddonRepository.shared
     @State private var query = ""
@@ -65,7 +66,12 @@ struct MacSearchView: View {
                 ScrollView {
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 160), spacing: 16)], spacing: 16) {
                         ForEach(filteredResults) { item in
-                            MediaCard(item: item)
+                            Button {
+                                onSelectMedia(item)
+                            } label: {
+                                MediaCard(item: item)
+                            }
+                            .buttonStyle(.plain)
                         }
                     }
                     .padding()

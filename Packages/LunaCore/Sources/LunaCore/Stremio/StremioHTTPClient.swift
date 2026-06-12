@@ -32,7 +32,7 @@ public final class StremioHTTPClient: @unchecked Sendable {
 
         let (data, response) = try await session.data(for: request)
         guard let httpResponse = response as? HTTPURLResponse else {
-            throw StremioError.networkError(nil)
+            throw StremioError.networkError
         }
         guard (200...299).contains(httpResponse.statusCode) else {
             throw StremioError.httpError(httpResponse.statusCode)
@@ -58,7 +58,7 @@ public enum StremioError: Error {
     case invalidManifest
     case manifestNotFound
     case addonUnreachable(String)
-    case networkError(Error?)
+    case networkError
 
     public var localizedDescription: String {
         switch self {

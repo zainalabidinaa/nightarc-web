@@ -71,7 +71,7 @@ struct AuthScreen: View {
                     HStack {
                         if isLoading {
                             ProgressView()
-                                .tint(.white)
+                                .tint(.black)
                         }
                         Text(isSignUp ? "Create Account" : "Sign In")
                             .font(.headline)

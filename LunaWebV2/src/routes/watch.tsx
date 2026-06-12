@@ -2,19 +2,21 @@ import { useEffect, useState, useRef } from 'react';
 import { useParams, useSearch, useRouter } from '@tanstack/react-router';
 import { useAuth } from '@/app/AuthProvider';
 import Player from '@/components/Player';
-import WebCodecsPlayer from '@/components/WebCodecsPlayer';
 import { StreamItem } from '@/lib/types';
 import { SubtitleItem, fetchSubtitlesFromAll, fetchStreamsFromAll } from '@/lib/stremio';
 import { getCachedStreams, getCachedStream, cacheStreams } from '@/lib/stream-cache';
-import { getPlayableStreamUrl, sortStreamsForBrowserPlayback, getStreamCompatibility } from '@/lib/player-utils';
+import { getPlayableStreamUrl, sortStreamsForBrowserPlayback, getStreamCompatibility, getInitialSourceType } from '@/lib/player-utils';
+import { getLastStream, saveLastStream } from '@/lib/last-stream';
 import { getStreamingServerUrl } from '@/lib/config';
 import { buildRemuxUrl } from '@/lib/streaming-server';
 import { ChevronLeft } from 'lucide-react';
 
 export default function WatchPage() {
   const { type, id } = useParams({ strict: false }) as { type: string; id: string };
-  const { url: initialUrl = '', cid: cacheId = '', title: displayTitle, logo: mediaLogo, pos: resumePosition } =
-    useSearch({ strict: false }) as { url?: string; cid?: string; title?: string; logo?: string; pos?: number };
+  const { url: initialUrl = '', cid: cacheId = '', title: displayTitle, logo: mediaLogo, poster: mediaPoster, background: mediaBackground, pos: resumePosition } =
+    useSearch({ strict: false }) as { url?: string; cid?: string; title?: string; logo?: string; poster?: string; background?: string; pos?: number };
+  // Prefer the wide backdrop for the loading-screen bg; fall back to portrait poster
+  const loadingBg = mediaBackground || mediaPoster;
   const router = useRouter();
   const { addons, isLoading: authLoading } = useAuth();
 
@@ -64,10 +66,28 @@ export default function WatchPage() {
         cacheStreams(cacheKey, fetched);
         setAllStreams(fetched);
 
-        // Only auto-select the best stream if no URL was pre-selected (Play button flow).
-        // When initialUrl is set the player is already running — don't interrupt it.
+        // When a URL was pre-selected (clicked from browse), check if the now-resolved
+        // full stream metadata reveals bad audio (EAC3/DTS/TrueHD). If a streaming
+        // server is configured, silently re-route through it so audio works.
+        if (initialUrl) {
+          const fullStream = fetched.find(s => s.url === initialUrl || s.externalUrl === initialUrl);
+          if (fullStream) {
+            const serverUrl = getStreamingServerUrl();
+            const tier = getStreamCompatibility(fullStream);
+            if (serverUrl && tier !== 'direct' && !initialUrl.startsWith(serverUrl)) {
+              const effectiveTier = tier === 'remux' ? 'remux' : 'transcode';
+              setActiveStream({ ...fullStream, behaviorHints: { ...fullStream.behaviorHints, webPlayableType: 'application/x-mpegurl' } });
+              setActiveUrl(buildRemuxUrl(serverUrl, initialUrl, effectiveTier));
+            }
+          }
+        }
+
         if (!initialUrl) {
-          const best = sortStreamsForBrowserPlayback(fetched)[0];
+          // Prefer the stream the user last played for this title (mirrors iOS LastPlaybackSourceStore).
+          const lastStream = getLastStream(`${type}:${id}`);
+          const lastMatch = lastStream ? fetched.find(s => s.url === lastStream.url) : null;
+          const best = lastMatch ?? sortStreamsForBrowserPlayback(fetched)[0];
+          if (lastMatch) console.log(`[watch] resuming last stream: ${lastStream!.url}`);
           if (best) {
             const rawUrl = getPlayableStreamUrl(best) ?? '';
             const serverUrl = getStreamingServerUrl();
@@ -97,6 +117,7 @@ export default function WatchPage() {
               setActiveStream(best);
               setActiveUrl(rawUrl);
             }
+            saveLastStream(`${type}:${id}`, { url: rawUrl, addonName: best.addonName, streamTitle: best.title ?? best.name });
             setFetchError('');
           } else {
             setFetchError('No playable sources found for this title.');
@@ -134,26 +155,45 @@ export default function WatchPage() {
       setActiveStream(newStream);
       setActiveUrl(rawUrl);
     }
+    saveLastStream(`${type}:${id}`, { url: rawUrl, addonName: newStream.addonName, streamTitle: newStream.title ?? newStream.name });
   }
 
-  // Still fetching streams — show loading screen
+  // Still fetching streams — cinematic loading screen
   if (fetchError === null) {
     return (
-      <div className="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center gap-5 select-none">
+      <div className="fixed inset-0 bg-black z-50 overflow-hidden select-none">
+        {/* Wide backdrop (background image preferred, portrait poster fallback) */}
+        {loadingBg && (
+          <>
+            <img
+              src={loadingBg}
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover scale-110"
+              style={{ filter: 'blur(24px)', opacity: 0.4 }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-black/20" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/30 to-transparent" />
+          </>
+        )}
+
+        {/* Back button */}
         <button
           onClick={() => router.history.back()}
-          className="absolute top-5 left-6 flex items-center gap-2 text-white/60 hover:text-white transition-colors text-sm font-medium"
+          className="absolute top-5 left-6 z-10 flex items-center gap-2 text-white/70 hover:text-white transition-colors text-sm font-medium"
         >
           <ChevronLeft size={20} strokeWidth={2} />
           Back
         </button>
-        <div className="flex flex-col items-center gap-5">
-          {mediaLogo && <img src={mediaLogo} alt="" className="h-10 object-contain" />}
-          <h2 className="text-lg font-semibold text-white text-center max-w-sm px-4">{resolvedTitle}</h2>
-          <div className="w-56 h-1 rounded-full bg-white/10 overflow-hidden">
-            <div className="h-full w-1/2 rounded-full bg-luna-accent animate-pulse" />
+
+        {/* Centre: show logo + spinner */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-6 px-8">
+          {mediaLogo
+            ? <img src={mediaLogo} alt={resolvedTitle} className="max-h-24 max-w-xs object-contain drop-shadow-2xl animate-pulse" />
+            : <h2 className="text-3xl font-black text-white text-center drop-shadow-2xl animate-pulse leading-tight">{resolvedTitle}</h2>}
+          <div className="flex items-center gap-3 rounded-full border border-white/10 bg-black/40 px-4 py-2 backdrop-blur-xl">
+            <span className="h-2 w-2 rounded-full bg-luna-accent animate-pulse" />
+            <span className="text-sm font-semibold text-white/60">Finding best source</span>
           </div>
-          <p className="text-sm text-white/45">Finding best source…</p>
         </div>
       </div>
     );
@@ -175,27 +215,6 @@ export default function WatchPage() {
     );
   }
 
-  // Use WebCodecs player for streams that need remux/transcode (MKV, HEVC, etc.)
-  // Skip it when:
-  // - a remux server is configured (it already handled the conversion), or
-  // - the URL is already going through a proxy like MediaFlow Proxy (/proxy/ path)
-  const tier = getStreamCompatibility(activeStream);
-  const serverUrl = getStreamingServerUrl();
-  const isProxiedUrl = activeUrl.includes('/proxy/') || activeUrl.includes('/_token_');
-  if (tier !== 'direct' && !serverUrl && !isProxiedUrl) {
-    return (
-      <WebCodecsPlayer
-        streamUrl={activeUrl}
-        streams={allStreams}
-        currentStream={activeStream}
-        title={resolvedTitle}
-        mediaLogo={mediaLogo}
-        onSwitchStream={handleSwitchStream}
-        onBack={() => router.history.back()}
-      />
-    );
-  }
-
   return (
     <Player
       streamUrl={activeUrl}
@@ -203,6 +222,7 @@ export default function WatchPage() {
       currentStream={activeStream}
       title={resolvedTitle}
       mediaLogo={mediaLogo}
+      mediaPoster={mediaPoster}
       mediaId={id}
       mediaType={type}
       startPosition={savedPosition.current > 0 ? savedPosition.current : resumePosition}

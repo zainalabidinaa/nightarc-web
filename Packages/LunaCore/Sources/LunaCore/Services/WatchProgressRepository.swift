@@ -63,7 +63,22 @@ public class WatchProgressRepository: ObservableObject {
     }
 
     public func getProgress(mediaId: String) -> WatchProgressEntry? {
-        progressEntries.first(where: { $0.mediaId == mediaId })
+        progressEntries
+            .filter { $0.matchesMedia(id: mediaId) && !$0.completed }
+            .sorted { $0.updatedAt > $1.updatedAt }
+            .first
+    }
+
+    public func getEpisodeProgress(parentMediaId: String, season: Int?, episode: Int?) -> WatchProgressEntry? {
+        progressEntries
+            .filter {
+                $0.matchesMedia(id: parentMediaId)
+                && $0.inferredSeason == season
+                && $0.inferredEpisode == episode
+                && !$0.completed
+            }
+            .sorted { $0.updatedAt > $1.updatedAt }
+            .first
     }
 
     public func markWatched(
@@ -75,6 +90,11 @@ public class WatchProgressRepository: ObservableObject {
         season: Int? = nil,
         episode: Int? = nil
     ) async {
+        watchedItems.removeAll { existing in
+            existing.mediaId == mediaId
+            && existing.season == season
+            && existing.episode == episode
+        }
         let item = WatchedItem(
             id: UUID().uuidString,
             profileId: profileId,
@@ -100,7 +120,22 @@ public class WatchProgressRepository: ObservableObject {
     }
 
     public func isWatched(mediaId: String) -> Bool {
-        watchedItems.contains(where: { $0.mediaId == mediaId })
+        watchedItems.contains(where: {
+            let decodedId = mediaId.removingPercentEncoding ?? mediaId
+            let decodedWatchedId = $0.mediaId.removingPercentEncoding ?? $0.mediaId
+            return decodedWatchedId == decodedId
+        })
+    }
+
+    public func isEpisodeWatched(parentMediaId: String, season: Int?, episode: Int?) -> Bool {
+        watchedItems.contains {
+            let decodedWatchedId = $0.mediaId.removingPercentEncoding ?? $0.mediaId
+            let parent = decodedWatchedId.split(separator: ":").first.map(String.init) ?? decodedWatchedId
+            let idParts = decodedWatchedId.split(separator: ":")
+            let inferredSeason = $0.season ?? idParts.dropFirst().first.flatMap { Int($0) }
+            let inferredEpisode = $0.episode ?? idParts.dropFirst(2).first.flatMap { Int($0) }
+            return parent == parentMediaId && inferredSeason == season && inferredEpisode == episode
+        }
     }
 
     public var watchedMediaIds: Set<String> {

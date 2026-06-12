@@ -12,7 +12,7 @@ struct CachedAsyncImage<Content: View>: View {
             .task(id: url) { await load() }
     }
 
-    private func load() async {
+    @MainActor private func load() async {
         if let cachedData = LunaImageCache.cachedData(for: url),
            let image = UIImage(data: cachedData) {
             phase = .success(Image(uiImage: image))

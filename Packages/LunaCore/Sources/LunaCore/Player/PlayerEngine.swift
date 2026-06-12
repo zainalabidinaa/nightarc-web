@@ -31,7 +31,7 @@ public class PlayerEngine: ObservableObject {
     @Published public var engineMode: PlayerEngineMode = .avplayer
 
     #if canImport(UIKit)
-    public var customDisplayView: UIView?
+    @Published public var customDisplayView: UIView?
     #endif
     public var onCustomPlay: (() -> Void)?
     public var onCustomPause: (() -> Void)?
@@ -44,6 +44,7 @@ public class PlayerEngine: ObservableObject {
     public var onCustomToggleMute: (() -> Void)?
     public var onCustomCycleSubtitle: (() -> Void)?
     public var onCustomSetSubtitle: ((SubtitleItem?) -> Void)?
+    public var onCustomSetAudioTrack: ((String) -> Void)?
     public var onCustomStop: (() -> Void)?
 
     private var timeObserver: Any?
@@ -53,54 +54,10 @@ public class PlayerEngine: ObservableObject {
 
     public func launch(_ launch: PlayerLaunch) {
         cleanup()
-
-        let compat = classifyStream(url: launch.sourceUrl, sourceType: .url)
-
-        if compat == .enhanced || compat == .unsupported {
-            engineMode = .custom
-            currentLaunch = launch
-            isLoading = true
-            return
-        }
-
-        engineMode = .avplayer
-
-        guard let sourceURL = URL(string: launch.sourceUrl) else {
-            self.isLoading = false
-            return
-        }
-
-        self.currentLaunch = launch
-        self.isLoading = true
-        self.isPlaying = false
-        self.isEnded = false
-
-        let asset: AVURLAsset
-        if let headers = launch.sourceHeaders, !headers.isEmpty {
-            let options = ["AVURLAssetHTTPHeaderFieldsKey": headers]
-            asset = AVURLAsset(url: sourceURL, options: options)
-        } else {
-            asset = AVURLAsset(url: sourceURL)
-        }
-
-        let playerItem = AVPlayerItem(asset: asset)
-        let player = AVPlayer(playerItem: playerItem)
-
-        if let seekMs = launch.initialPositionMs, seekMs > 0 {
-            let seekTime = CMTime(seconds: seekMs / 1000, preferredTimescale: 600)
-            playerItem.seek(to: seekTime, completionHandler: nil)
-        }
-
-        self.player = player
-
-        if let subs = launch.subtitles, !subs.isEmpty {
-            self.availableSubtitles = subs
-            self.selectedSubtitle = subs.first
-        }
-
-        addTimeObserver()
-        startProgressTimer()
-        setupNotifications(playerItem: playerItem)
+        // Always delegate to the custom (KSPlayer) engine on iOS
+        engineMode = .custom
+        currentLaunch = launch
+        isLoading = true
     }
 
     public func play() {
@@ -188,6 +145,11 @@ public class PlayerEngine: ObservableObject {
         selectedSubtitle = subtitle
     }
 
+    public func setAudioTrack(_ track: String) {
+        if engineMode == .custom { onCustomSetAudioTrack?(track); return }
+        selectedAudioTrack = track
+    }
+
     public func stop() {
         if engineMode == .custom { onCustomStop?(); resetState(); return }
         cleanup()
@@ -218,6 +180,7 @@ public class PlayerEngine: ObservableObject {
         onCustomToggleMute = nil
         onCustomCycleSubtitle = nil
         onCustomSetSubtitle = nil
+        onCustomSetAudioTrack = nil
         onCustomStop = nil
     }
 

@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Luna — Splash Screen Concepts</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --phone-w: 300px;
+  --phone-h: 640px;
+}
+
+body {
+  background: #060606;
+  color: #fff;
+  font-family: -apple-system, 'SF Pro Rounded', 'SF Pro Display', system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+.page-header {
+  text-align: center;
+  padding: 56px 24px 44px;
+  animation: fadeUp 0.5s ease both;
+}
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 999px; padding: 5px 16px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.5); text-transform: uppercase; margin-bottom: 20px;
+}
+.page-header h1 { font-size: 38px; font-weight: 800; letter-spacing: -0.025em; margin-bottom: 10px; }
+.page-header p  { font-size: 15px; color: rgba(255,255,255,0.5); max-width: 440px; margin: 0 auto; line-height: 1.6; }
+
+.grid {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 52px;
+  padding: 0 32px 80px;
+  flex-wrap: wrap;
+}
+
+.concept {
+  display: flex; flex-direction: column; align-items: center; gap: 22px;
+  animation: fadeUp 0.6s ease both;
+}
+.concept:nth-child(1) { animation-delay: 0.1s; }
+.concept:nth-child(2) { animation-delay: 0.22s; }
+.concept:nth-child(3) { animation-delay: 0.34s; }
+
+.concept-label { text-align: center; }
+.concept-label .num { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 5px; }
+.concept-label h2 { font-size: 18px; font-weight: 700; letter-spacing: -0.01em; }
+.concept-label p  { font-size: 13px; color: rgba(255,255,255,0.45); margin-top: 4px; max-width: 240px; line-height: 1.5; }
+
+.phone {
+  width: var(--phone-w);
+  height: var(--phone-h);
+  border-radius: 44px;
+  background: #0a0a0a;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1.5px rgba(255,255,255,0.12),
+    0 0 0 3px #000,
+    0 0 0 4px rgba(255,255,255,0.05),
+    0 48px 96px rgba(0,0,0,0.75),
+    0 12px 32px rgba(0,0,0,0.5);
+  flex-shrink: 0;
+}
+.phone::before {
+  content: '';
+  position: absolute;
+  top: 10px; left: 50%; transform: translateX(-50%);
+  width: 108px; height: 28px;
+  background: #000; border-radius: 20px;
+  z-index: 200;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+}
+
+.status {
+  position: absolute; top: 0; left: 0; right: 0; height: 52px;
+  display: flex; align-items: flex-end; justify-content: space-between;
+  padding: 0 22px 8px;
+  font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.7);
+  z-index: 100; pointer-events: none;
+}
+
+.replay-btn {
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 999px; padding: 7px 20px;
+  font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.6);
+  cursor: pointer; letter-spacing: 0.02em;
+  transition: background 0.2s, color 0.2s;
+}
+.replay-btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
+
+/* ══ CONCEPT 1 — GLOW PULSE ══ */
+.c1-screen {
+  position: absolute; inset: 0;
+  background: #000;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+.c1-glow {
+  position: absolute;
+  width: 340px; height: 340px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.07) 0%, transparent 70%);
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  animation: c1GlowIn 0.9s cubic-bezier(0.34,1.56,0.64,1) 0.2s both,
+             c1GlowPulse 3s ease-in-out 1.4s infinite;
+}
+.c1-ring {
+  position: absolute;
+  width: 200px; height: 200px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.06);
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  animation: c1GlowIn 1.1s ease 0.5s both,
+             c1RingPulse 3s ease-in-out 1.6s infinite;
+}
+.c1-icon-wrap {
+  width: 86px; height: 86px; border-radius: 20px;
+  background: #141414; border: 1px solid rgba(255,255,255,0.1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 44px;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 8px 32px rgba(0,0,0,0.6), 0 0 48px rgba(255,255,255,0.04);
+  transform: scale(0.6) translateY(10px); opacity: 0;
+  animation: c1IconIn 0.7s cubic-bezier(0.34,1.56,0.64,1) 0.3s both;
+  position: relative; z-index: 2;
+}
+.c1-wordmark {
+  font-size: 38px; font-weight: 800; letter-spacing: -0.035em;
+  margin-top: 18px; transform: translateY(12px); opacity: 0;
+  animation: c1FadeUp 0.6s ease 0.7s both;
+  position: relative; z-index: 2;
+}
+.c1-tagline {
+  font-size: 13px; color: rgba(255,255,255,0.35); letter-spacing: 0.02em;
+  margin-top: 6px; transform: translateY(8px); opacity: 0;
+  animation: c1FadeUp 0.6s ease 0.95s both;
+  position: relative; z-index: 2;
+}
+.c1-loader {
+  position: absolute; bottom: 54px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 6px; align-items: center;
+  opacity: 0; animation: c1FadeUp 0.5s ease 1.3s both;
+  z-index: 2;
+}
+.c1-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  animation: c1DotPulse 1.4s ease-in-out infinite;
+}
+.c1-dot:nth-child(2) { animation-delay: 0.18s; }
+.c1-dot:nth-child(3) { animation-delay: 0.36s; }
+
+@keyframes c1GlowIn    { to { transform: translate(-50%,-50%) scale(1); } }
+@keyframes c1GlowPulse { 0%,100% { opacity:1; transform:translate(-50%,-50%) scale(1); } 50% { opacity:0.5; transform:translate(-50%,-50%) scale(1.08); } }
+@keyframes c1RingPulse { 0%,100% { opacity:1; transform:translate(-50%,-50%) scale(1); } 50% { opacity:0.3; transform:translate(-50%,-50%) scale(1.12); } }
+@keyframes c1IconIn    { to { transform: scale(1) translateY(0); opacity:1; } }
+@keyframes c1FadeUp    { to { transform: translateY(0); opacity:1; } }
+@keyframes c1DotPulse  { 0%,100% { opacity:0.25; transform:scale(1); } 50% { opacity:0.9; transform:scale(1.35); } }
+
+/* ══ CONCEPT 2 — STAR FIELD ══ */
+.c2-screen {
+  position: absolute; inset: 0;
+  background: #000;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+.c2-stars { position: absolute; inset: 0; overflow: hidden; }
+.star {
+  position: absolute; border-radius: 50%; background: #fff;
+  animation: starFloat linear infinite;
+}
+.c2-content {
+  position: relative; z-index: 5;
+  display: flex; flex-direction: column; align-items: center;
+}
+.c2-moon-wrap {
+  position: relative; width: 100px; height: 100px;
+  display: flex; align-items: center; justify-content: center;
+  transform: scale(0.5); opacity: 0;
+  animation: c2MoonIn 0.8s cubic-bezier(0.34,1.56,0.64,1) 0.2s both;
+}
+.c2-orbit {
+  position: absolute; inset: 0; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.08);
+  animation: c2Orbit 8s linear infinite;
+}
+.c2-orbit::after {
+  content: ''; position: absolute;
+  top: -3px; left: 50%; transform: translateX(-50%);
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(255,255,255,0.5);
+  box-shadow: 0 0 8px rgba(255,255,255,0.8);
+}
+.c2-icon { font-size: 44px; filter: drop-shadow(0 0 16px rgba(255,255,255,0.2)); }
+.c2-wordmark {
+  font-size: 40px; font-weight: 800; letter-spacing: -0.035em;
+  margin-top: 20px; opacity: 0; transform: translateY(10px);
+  animation: c1FadeUp 0.6s ease 0.8s both;
+}
+.c2-shoot {
+  position: absolute; width: 80px; height: 1px;
+  background: linear-gradient(to right, rgba(255,255,255,0.7), transparent);
+  border-radius: 999px; opacity: 0;
+  animation: c2Shoot 4s ease-in-out 1.8s infinite;
+  z-index: 3; top: 30%; left: 10%;
+  transform: rotate(-30deg);
+}
+.c2-bar-wrap {
+  position: absolute; bottom: 54px; left: 32px; right: 32px;
+  height: 2px; border-radius: 999px;
+  background: rgba(255,255,255,0.08); overflow: hidden;
+  opacity: 0; animation: c1FadeUp 0.4s ease 1.2s both; z-index: 5;
+}
+.c2-bar {
+  height: 100%; width: 0%; background: rgba(255,255,255,0.5);
+  border-radius: 999px; animation: c2Progress 2.5s cubic-bezier(0.4,0,0.2,1) 1.4s both;
+}
+@keyframes c2MoonIn  { to { transform: scale(1); opacity:1; } }
+@keyframes c2Orbit   { to { transform: rotate(360deg); } }
+@keyframes c2Shoot   { 0%,10% { opacity:0; transform:rotate(-30deg) translateX(-20px); } 20% { opacity:1; } 40% { opacity:0; transform:rotate(-30deg) translateX(200px); } 100% { opacity:0; transform:rotate(-30deg) translateX(200px); } }
+@keyframes c2Progress { to { width: 72%; } }
+@keyframes starFloat  { from { transform:translateY(0) translateX(0); opacity:0; } 10% { opacity:1; } 90% { opacity:0.6; } to { transform:translateY(-640px) translateX(var(--dx,20px)); opacity:0; } }
+
+/* ══ CONCEPT 3 — AURORA BLOOM ══ */
+.c3-screen {
+  position: absolute; inset: 0;
+  background: #050507;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+.c3-bloom-base {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 100% 55% at 50% 105%, rgba(139,92,246,0.55) 0%, transparent 65%);
+  opacity: 0; animation: c3FadeIn 1.4s ease 0.1s both;
+}
+.c3-bloom-mid {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 35% at 50% 100%, rgba(109,40,217,0.3) 0%, transparent 65%);
+  opacity: 0; animation: c3FadeIn 1.8s ease 0.3s both;
+}
+.c3-bloom-top {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 40%;
+  background: linear-gradient(to top, rgba(109,40,217,0.15), transparent);
+  opacity: 0; animation: c3FadeIn 2s ease 0.5s both;
+}
+.c3-top-glow {
+  position: absolute; top: -80px; left: 50%; transform: translateX(-50%);
+  width: 260px; height: 260px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(139,92,246,0.12) 0%, transparent 70%);
+  opacity: 0; animation: c3FadeIn 2s ease 0.8s both;
+}
+.c3-stars-layer { position: absolute; inset: 0; overflow: hidden; opacity: 0.5; }
+.c3-ring {
+  position: absolute; width: 150px; height: 150px; border-radius: 50%;
+  border: 1px solid rgba(139,92,246,0.18);
+  opacity: 0; animation: c3RingExpand 1.5s ease 0.8s both;
+  pointer-events: none;
+}
+.c3-ring-2 {
+  width: 210px; height: 210px;
+  border-color: rgba(139,92,246,0.08);
+  animation: c3RingExpand 1.8s ease 1s both;
+}
+.c3-content {
+  position: relative; z-index: 5;
+  display: flex; flex-direction: column; align-items: center;
+}
+.c3-icon-wrap {
+  width: 90px; height: 90px; border-radius: 22px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(139,92,246,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 46px;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 8px 40px rgba(0,0,0,0.5), 0 0 60px rgba(139,92,246,0.2);
+  opacity: 0; transform: scale(0.8) translateY(20px);
+  animation: c3IconIn 0.8s cubic-bezier(0.34,1.56,0.64,1) 0.6s both;
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+}
+.c3-wordmark {
+  font-size: 40px; font-weight: 800; letter-spacing: -0.035em;
+  margin-top: 18px; opacity: 0; transform: translateY(10px);
+  animation: c1FadeUp 0.6s ease 1.05s both;
+}
+.c3-sub {
+  font-size: 12px; color: rgba(167,139,250,0.7); letter-spacing: 0.05em; font-weight: 600;
+  margin-top: 6px; text-transform: uppercase;
+  opacity: 0; animation: c1FadeUp 0.5s ease 1.3s both;
+}
+.c3-dots {
+  position: absolute; bottom: 54px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 7px;
+  opacity: 0; animation: c1FadeUp 0.4s ease 1.6s both; z-index: 5;
+}
+.c3-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(167,139,250,0.3);
+  animation: c3DotPulse 1.5s ease-in-out infinite;
+}
+.c3-dot:nth-child(2) { animation-delay: 0.2s; }
+.c3-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes c3FadeIn    { to { opacity:1; } }
+@keyframes c3IconIn    { to { transform:scale(1) translateY(0); opacity:1; } }
+@keyframes c3RingExpand { 0% { opacity:0; transform:scale(0.5); } 60% { opacity:1; } 100% { opacity:0.6; transform:scale(1); } }
+@keyframes c3DotPulse  { 0%,100% { opacity:0.3; transform:scale(1); } 50% { opacity:1; transform:scale(1.4); background:rgba(167,139,250,0.8); } }
+
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+
+.replay-all {
+  display: flex; justify-content: center; padding: 0 0 80px;
+  animation: fadeUp 0.5s ease 0.6s both;
+}
+.replay-all-btn {
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 999px; padding: 10px 28px;
+  font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.5);
+  cursor: pointer; letter-spacing: 0.02em; transition: all 0.2s;
+}
+.replay-all-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+@media (max-width: 1100px) { .grid { gap: 40px; } }
+@media (max-width: 760px)  { :root { --phone-w: 260px; --phone-h: 560px; } }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="badge">✦ Luna — Splash Screen</div>
+  <h1>3 Splash Concepts</h1>
+  <p>Replacing the current plain-black + spinner. Each animation loops — hit Replay to restart.</p>
+</header>
+
+<div class="grid">
+
+  <!-- ════ CONCEPT 1 — GLOW PULSE ════ -->
+  <div class="concept">
+    <div class="concept-label">
+      <div class="num">Concept 01</div>
+      <h2>Glow Pulse</h2>
+      <p>App icon scales in with a radial glow behind it, three pulsing dots at bottom</p>
+    </div>
+    <div class="phone" id="p1">
+      <div class="status">
+        <span>9:41</span>
+        <span style="display:flex;gap:5px;align-items:center">
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor" opacity="0.6"><rect x="0" y="3" width="3" height="9" rx="1"/><rect x="4.5" y="2" width="3" height="10" rx="1"/><rect x="9" y="0" width="3" height="12" rx="1"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" opacity="0.3"/></svg>
+          <svg width="26" height="13" viewBox="0 0 26 13" fill="none" opacity="0.6"><rect x="0.5" y="0.5" width="22" height="12" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/><rect x="1.5" y="1.5" width="18" height="10" rx="2.5" fill="currentColor"/><path d="M23.5 4.5v4a2 2 0 0 0 0-4z" fill="currentColor" opacity="0.4"/></svg>
+        </span>
+      </div>
+      <div class="c1-screen" id="s1">
+        <div class="c1-glow"></div>
+        <div class="c1-ring"></div>
+        <div class="c1-icon-wrap">🌙</div>
+        <div class="c1-wordmark">Luna</div>
+        <div class="c1-tagline">Stream everything.</div>
+        <div class="c1-loader">
+          <div class="c1-dot"></div>
+          <div class="c1-dot"></div>
+          <div class="c1-dot"></div>
+        </div>
+      </div>
+    </div>
+    <button class="replay-btn" onclick="replayScene('s1', 'p1', false)">&#x21BA; &nbsp;Replay</button>
+  </div>
+
+  <!-- ════ CONCEPT 2 — STAR FIELD ════ -->
+  <div class="concept">
+    <div class="concept-label">
+      <div class="num">Concept 02</div>
+      <h2>Star Field</h2>
+      <p>Drifting star particles, rotating orbit ring around the moon, slim progress bar</p>
+    </div>
+    <div class="phone" id="p2">
+      <div class="status">
+        <span>9:41</span>
+        <span style="display:flex;gap:5px;align-items:center">
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor" opacity="0.6"><rect x="0" y="3" width="3" height="9" rx="1"/><rect x="4.5" y="2" width="3" height="10" rx="1"/><rect x="9" y="0" width="3" height="12" rx="1"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" opacity="0.3"/></svg>
+          <svg width="26" height="13" viewBox="0 0 26 13" fill="none" opacity="0.6"><rect x="0.5" y="0.5" width="22" height="12" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/><rect x="1.5" y="1.5" width="18" height="10" rx="2.5" fill="currentColor"/><path d="M23.5 4.5v4a2 2 0 0 0 0-4z" fill="currentColor" opacity="0.4"/></svg>
+        </span>
+      </div>
+      <div class="c2-screen" id="s2">
+        <div class="c2-stars" id="stars2"></div>
+        <div class="c2-shoot"></div>
+        <div class="c2-content">
+          <div class="c2-moon-wrap">
+            <div class="c2-orbit"></div>
+            <div class="c2-icon">🌙</div>
+          </div>
+          <div class="c2-wordmark">Luna</div>
+        </div>
+        <div class="c2-bar-wrap">
+          <div class="c2-bar"></div>
+        </div>
+      </div>
+    </div>
+    <button class="replay-btn" onclick="replayScene('s2', 'p2', true)">&#x21BA; &nbsp;Replay</button>
+  </div>
+
+  <!-- ════ CONCEPT 3 — AURORA BLOOM ════ -->
+  <div class="concept">
+    <div class="concept-label">
+      <div class="num">Concept 03</div>
+      <h2>Aurora Bloom</h2>
+      <p>Violet aurora rises from below, glass icon reveals centre — dynamic and alive</p>
+    </div>
+    <div class="phone" id="p3">
+      <div class="status">
+        <span>9:41</span>
+        <span style="display:flex;gap:5px;align-items:center">
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor" opacity="0.6"><rect x="0" y="3" width="3" height="9" rx="1"/><rect x="4.5" y="2" width="3" height="10" rx="1"/><rect x="9" y="0" width="3" height="12" rx="1"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" opacity="0.3"/></svg>
+          <svg width="26" height="13" viewBox="0 0 26 13" fill="none" opacity="0.6"><rect x="0.5" y="0.5" width="22" height="12" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/><rect x="1.5" y="1.5" width="18" height="10" rx="2.5" fill="currentColor"/><path d="M23.5 4.5v4a2 2 0 0 0 0-4z" fill="currentColor" opacity="0.4"/></svg>
+        </span>
+      </div>
+      <div class="c3-screen" id="s3">
+        <div class="c3-bloom-base"></div>
+        <div class="c3-bloom-mid"></div>
+        <div class="c3-bloom-top"></div>
+        <div class="c3-top-glow"></div>
+        <div class="c3-stars-layer" id="stars3"></div>
+        <div class="c3-ring"></div>
+        <div class="c3-ring c3-ring-2"></div>
+        <div class="c3-content">
+          <div class="c3-icon-wrap">🌙</div>
+          <div class="c3-wordmark">Luna</div>
+          <div class="c3-sub">Private Streaming</div>
+        </div>
+        <div class="c3-dots">
+          <div class="c3-dot"></div>
+          <div class="c3-dot"></div>
+          <div class="c3-dot"></div>
+        </div>
+      </div>
+    </div>
+    <button class="replay-btn" onclick="replayScene('s3', 'p3', false)">&#x21BA; &nbsp;Replay</button>
+  </div>
+
+</div>
+
+<div class="replay-all">
+  <button class="replay-all-btn" onclick="replayAll()">&#x21BA; &nbsp;Replay All</button>
+</div>
+
+<script>
+function buildStars(container, count) {
+  while (container.firstChild) { container.removeChild(container.firstChild); }
+  for (var i = 0; i < count; i++) {
+    var s = document.createElement('div');
+    s.className = 'star';
+    var size  = Math.random() * 2 + 0.5;
+    var delay = Math.random() * 6;
+    var dur   = Math.random() * 8 + 6;
+    var dx    = (Math.random() - 0.5) * 60;
+    s.style.width           = size + 'px';
+    s.style.height          = size + 'px';
+    s.style.left            = Math.random() * 100 + '%';
+    s.style.top             = Math.random() * 100 + '%';
+    s.style.opacity         = String(Math.random() * 0.6 + 0.1);
+    s.style.animationDuration = dur + 's';
+    s.style.animationDelay  = delay + 's';
+    s.style.setProperty('--dx', dx + 'px');
+    container.appendChild(s);
+  }
+}
+
+buildStars(document.getElementById('stars2'), 55);
+buildStars(document.getElementById('stars3'), 30);
+
+function replayScene(sceneId, phoneId, hasStars) {
+  var phone = document.getElementById(phoneId);
+  var scene = document.getElementById(sceneId);
+  if (!phone || !scene) { return; }
+  var clone = scene.cloneNode(true);
+  clone.id = sceneId;
+  scene.parentNode.replaceChild(clone, scene);
+  if (hasStars) {
+    var starsEl = clone.querySelector('.c2-stars');
+    if (starsEl) { buildStars(starsEl, 55); }
+  }
+}
+
+function replayAll() {
+  replayScene('s1', 'p1', false);
+  replayScene('s2', 'p2', true);
+  replayScene('s3', 'p3', false);
+}
+</script>
+</body>
+</html>

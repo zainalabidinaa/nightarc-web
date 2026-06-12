@@ -1,0 +1,12 @@
+- generic [ref=e5]:
+  - generic [ref=e6]:
+    - img [ref=e8]
+    - heading "Luna" [level=1] [ref=e10]
+    - paragraph [ref=e11]: Sign in to continue
+  - generic [ref=e12]:
+    - textbox "Email" [ref=e13]
+    - textbox "Password" [ref=e14]
+    - button "Sign In" [ref=e15] [cursor=pointer]
+  - paragraph [ref=e16]:
+    - text: Don't have an account?
+    - button "Sign Up" [ref=e17] [cursor=pointer]

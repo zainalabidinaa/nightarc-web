@@ -1,6 +1,15 @@
 import SwiftUI
 import LunaCore
 
+#Preview("Settings") {
+    NavigationStack {
+        SettingsScreen()
+            .environmentObject(ProfileManager.shared)
+            .environmentObject(RoleManager.shared)
+    }
+    .preferredColorScheme(.dark)
+}
+
 struct SettingsScreen: View {
     @EnvironmentObject var profileManager: ProfileManager
     @EnvironmentObject var roleManager: RoleManager
@@ -27,10 +36,10 @@ struct SettingsScreen: View {
                                     if roleManager.isAdmin {
                                         Text("ADMIN")
                                             .font(.system(size: 9, weight: .bold))
-                                            .foregroundColor(LunaTheme.accent)
+                                            .foregroundColor(Color(red: 0.35, green: 0.34, blue: 0.84))
                                             .padding(.horizontal, 5)
                                             .padding(.vertical, 2)
-                                            .background(LunaTheme.accent.opacity(0.15))
+                                            .background(Color(red: 0.35, green: 0.34, blue: 0.84).opacity(0.15))
                                             .cornerRadius(4)
                                     }
                                 }
@@ -46,10 +55,11 @@ struct SettingsScreen: View {
                             } label: {
                                 Text("Switch")
                                     .font(.caption.weight(.semibold))
-                                    .foregroundColor(LunaTheme.accent)
+                                    .foregroundColor(.white)
                                     .padding(.horizontal, 10)
                                     .padding(.vertical, 5)
-                                    .background(LunaTheme.accent.opacity(0.12))
+                                    .background(Color.white.opacity(0.08))
+                                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.white.opacity(0.2), lineWidth: 1))
                                     .cornerRadius(8)
                             }
                         }
@@ -82,7 +92,7 @@ struct SettingsScreen: View {
                             Button { showAddons = true } label: {
                                 settingsRowLabel(
                                     icon: "puzzlepiece.extension.fill",
-                                    iconColor: LunaTheme.accent,
+                                    iconColor: Color(red: 0.35, green: 0.34, blue: 0.84),
                                     title: "Addons",
                                     subtitle: "\(addonRepo.managedAddons.count) installed"
                                 )
@@ -846,6 +856,8 @@ struct AddonsScreen: View {
     @StateObject private var addonRepo = AddonRepository.shared
     @State private var newAddonURL = ""
     @State private var showAddSheet = false
+    @State private var installError: String?
+    @State private var isInstalling = false
 
     private var grouped: [(AddonCategory, [ManagedAddon])] {
         var dict: [AddonCategory: [ManagedAddon]] = [:]
@@ -969,19 +981,43 @@ struct AddonsScreen: View {
                             .autocapitalization(.none)
                             .keyboardType(.URL)
 
+                        if let error = installError {
+                            Text(error)
+                                .font(.caption)
+                                .foregroundColor(.red)
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal)
+                        }
+
                         Button {
+                            installError = nil
+                            isInstalling = true
                             Task {
+                                let prevCount = addonRepo.managedAddons.count
                                 await addonRepo.installAddon(url: newAddonURL)
-                                newAddonURL = ""
-                                showAddSheet = false
+                                isInstalling = false
+                                if addonRepo.managedAddons.count > prevCount {
+                                    newAddonURL = ""
+                                    showAddSheet = false
+                                } else if let err = addonRepo.errorMessage {
+                                    installError = err
+                                } else {
+                                    installError = "Addon is already installed."
+                                }
                             }
                         } label: {
-                            Text("Install")
-                                .frame(maxWidth: .infinity)
-                                .padding()
+                            if isInstalling {
+                                ProgressView().tint(.black)
+                                    .frame(maxWidth: .infinity)
+                                    .padding()
+                            } else {
+                                Text("Install")
+                                    .frame(maxWidth: .infinity)
+                                    .padding()
+                            }
                         }
                         .glassProminentButtonStyle(cornerRadius: 12)
-                        .disabled(newAddonURL.isEmpty)
+                        .disabled(newAddonURL.isEmpty || isInstalling)
                         .padding(.horizontal)
 
                         Spacer()
@@ -992,7 +1028,10 @@ struct AddonsScreen: View {
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
                         ToolbarItem(placement: .cancellationAction) {
-                            Button("Cancel") { showAddSheet = false }
+                            Button("Cancel") {
+                                installError = nil
+                                showAddSheet = false
+                            }
                         }
                     }
                 }

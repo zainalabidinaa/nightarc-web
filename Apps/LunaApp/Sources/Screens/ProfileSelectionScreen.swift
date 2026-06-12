@@ -134,16 +134,14 @@ struct CreateFirstProfileScreen: View {
                 }) {
                     HStack {
                         if isLoading {
-                            ProgressView().tint(.white)
+                            ProgressView().tint(.black)
                         }
                         Text("Create Profile")
                     }
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(LunaTheme.accent)
-                    .foregroundColor(.white)
-                    .cornerRadius(12)
                 }
+                .glassProminentButtonStyle(cornerRadius: 12)
                 .disabled(name.isEmpty || isLoading)
                 .padding(.horizontal, 32)
 
@@ -204,4 +202,3 @@ struct CreateProfileSheet: View {
         }
     }
 }
-

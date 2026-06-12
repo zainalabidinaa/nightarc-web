@@ -94,7 +94,7 @@ public extension StreamItem {
         }
 
         // Debrid source
-        let debrids = ["real-debrid", "alldebrid", "premiumize", "torbox", "debrid-link", "rd+", "ad+"]
+        let debrids = ["real-debrid", "alldebrid", "premiumize", "torbox", "debrid-link", "easydebrid", "rd+", "ad+", "ed+"]
         for d in debrids {
             if desc.contains(d) {
                 meta = StreamMetadata(resolution: meta.resolution, videoCodec: meta.videoCodec,

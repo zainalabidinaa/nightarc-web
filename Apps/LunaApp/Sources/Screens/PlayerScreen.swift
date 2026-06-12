@@ -483,30 +483,32 @@ struct PlayerScreen: View {
     }
 
     @ViewBuilder private var audioMenu: some View {
-        let isActive = !engine.availableAudioTracks.isEmpty && engine.selectedAudioTrack != nil
+        let tracks = engine.availableAudioTracks.isEmpty ? ksEngine.availableAudioTracks : engine.availableAudioTracks
+        let selected = engine.selectedAudioTrack ?? ksEngine.selectedAudioTrack
+        let isActive = !tracks.isEmpty && selected != nil
         Menu {
-            ForEach(audioMenuSnapshot, id: \.self) { track in
+            // Show live tracks — no snapshot needed; Menu re-renders on open.
+            ForEach(tracks, id: \.self) { track in
                 Button(action: { revealControls(scheduleAutoHide: true); engine.setAudioTrack(track) }) {
-                    if audioMenuSelectedSnapshot == track {
+                    if selected == track {
                         Label(track, systemImage: "checkmark")
                     } else {
                         Text(track)
                     }
                 }
             }
+            // Static fallback keeps the Menu openable even before tracks arrive.
+            if tracks.isEmpty {
+                Button("No audio tracks") { }
+                    .disabled(true)
+            }
+            Divider()
             Color.clear.frame(width: 0, height: 0)
                 .onAppear {
                     hideControlsTask?.cancel()
-                    // Tracks can appear after the first frame — re-query on open.
                     ksEngine.refreshAudioTracks()
-                    let tracks = ksEngine.availableAudioTracks
-                    audioMenuSnapshot = tracks.isEmpty ? engine.availableAudioTracks : tracks
-                    audioMenuSelectedSnapshot = ksEngine.selectedAudioTrack ?? engine.selectedAudioTrack
                 }
-                .onDisappear {
-                    audioMenuSnapshot = []
-                    scheduleControlsAutoHide()
-                }
+                .onDisappear { scheduleControlsAutoHide() }
         } label: {
             Image(systemName: "waveform")
                 .renderingMode(.template)
@@ -802,6 +804,8 @@ struct PlayerScreen: View {
         resolvedLogo = detail.logo
     }
 
+    /// Called when the player launches with a cached (last-used) source URL.
+
     private func fetchAndAutoLaunch() async {
         guard !isFetchingStream else { return }
         isFetchingStream = true
@@ -815,6 +819,11 @@ struct PlayerScreen: View {
         let type = activeLaunch.contentType.rawValue
         let id   = activeLaunch.videoId
 
+        let prefer4K: Bool = {
+            guard let profile = ProfileManager.shared.currentProfile else { return false }
+            return PlaybackQualityPreferenceStore.shared.prefers4K(profileId: profile.id)
+        }()
+
         // Use pre-fetched streams from DetailScreen warmup if fresh (< 5 min).
         // This makes playback start instantly — no extra network round-trip needed.
         if let cached = await StreamWarmupRepository.shared.getCached(type: type, id: id),
@@ -822,13 +831,35 @@ struct PlayerScreen: View {
             streamRepo.streams = cached
         } else {
             streamRepo.clearStreams()
-            await streamRepo.fetchStreams(type: type, id: id, addons: addonRepo.enabledAddons)
+            let bg = Task { await streamRepo.fetchStreams(type: type, id: id, addons: addonRepo.enabledAddons) }
+            // React instantly when the first viable stream lands — no fixed poll interval.
+            // Uses a Combine sink so we resume the moment @Published streams updates.
+            final class Holder { var cancellable: AnyCancellable? }
+            let holder = Holder()
+            await withCheckedContinuation { (cont: CheckedContinuation<Void, Never>) in
+                var done = false
+                let finish = {
+                    guard !done else { return }
+                    done = true
+                    holder.cancellable?.cancel()
+                    cont.resume()
+                }
+                // Fire on every streams or isLoading change
+                holder.cancellable = Publishers.Merge(
+                    streamRepo.$streams.map { _ in () },
+                    streamRepo.$isLoading.map { _ in () }
+                ).sink { _ in
+                    if StreamSourceSelector.initialStream(from: streamRepo.streams, prefer4K: prefer4K) != nil { finish() }
+                    if !streamRepo.isLoading { finish() }
+                }
+                // 15-second hard timeout
+                Task { try? await Task.sleep(for: .seconds(15)); finish() }
+            }
+            if Task.isCancelled { bg.cancel(); return }
+            if StreamSourceSelector.initialStream(from: streamRepo.streams, prefer4K: prefer4K) == nil {
+                await bg.value
+            }
         }
-
-        let prefer4K: Bool = {
-            guard let profile = ProfileManager.shared.currentProfile else { return false }
-            return PlaybackQualityPreferenceStore.shared.prefers4K(profileId: profile.id)
-        }()
 
         guard let stream = StreamSourceSelector.initialStream(from: streamRepo.streams, prefer4K: prefer4K),
               StreamSourceSelector.isPlaybackCandidate(stream),
@@ -974,6 +1005,13 @@ struct PlayerScreen: View {
             .removeDuplicates()
             .sink { engine.isMuted = $0 }
             .store(in: &engineBindings)
+        ksEngine.$didEncounterError
+            .filter { $0 }
+            .sink { _ in
+                guard self.hasMultiplePlayableSources else { return }
+                self.switchToNextSource()
+            }
+            .store(in: &engineBindings)
     }
 
     private func formatTime(_ time: TimeInterval) -> String {
@@ -1005,35 +1043,50 @@ private class IntroTimestampServiceViewModel: ObservableObject {
 private struct GlassVolumeSlider: View {
     @Binding var volume: Float
 
+    private let thumbWidth: CGFloat = 44
+    private let thumbHeight: CGFloat = 30
+    private let trackHeight: CGFloat = 5
+
     var body: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: 10) {
             Image(systemName: volume <= 0 ? "speaker.slash.fill" : "speaker.wave.2.fill")
-                .font(.system(size: 11, weight: .semibold))
+                .font(.system(size: 15, weight: .semibold))
                 .foregroundColor(.white)
-                .frame(width: 14)
+                .frame(width: 20)
+
             GeometryReader { geo in
+                let trackW = geo.size.width
+                let fillW  = trackW * CGFloat(volume)
+                let thumbX = max(0, min(fillW - thumbWidth / 2, trackW - thumbWidth))
+
                 ZStack(alignment: .leading) {
-                    Capsule().fill(Color.white.opacity(0.2)).frame(height: 4)
+                    // Track background
                     Capsule()
-                        .fill(Color.white.opacity(0.9))
-                        .frame(width: geo.size.width * CGFloat(volume), height: 4)
-                    Circle()
+                        .fill(Color.white.opacity(0.18))
+                        .frame(height: trackHeight)
+                    // Track fill
+                    Capsule()
+                        .fill(Color.white.opacity(0.85))
+                        .frame(width: max(0, fillW), height: trackHeight)
+                    // Large capsule thumb
+                    Capsule()
                         .fill(Color.white)
-                        .frame(width: 18, height: 18)
-                        .offset(x: max(0, geo.size.width * CGFloat(volume) - 9))
+                        .frame(width: thumbWidth, height: thumbHeight)
+                        .shadow(color: .black.opacity(0.25), radius: 3, x: 0, y: 1)
+                        .offset(x: thumbX)
                 }
                 .frame(maxHeight: .infinity, alignment: .center)
                 .gesture(
                     DragGesture(minimumDistance: 0)
                         .onChanged { val in
-                            volume = Float(max(0, min(1, val.location.x / geo.size.width)))
+                            volume = Float(max(0, min(1, val.location.x / trackW)))
                         }
                 )
             }
-            .frame(width: 180, height: 22)
+            .frame(width: 200, height: thumbHeight)
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 7)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 11)
         .background {
             if #available(iOS 26.0, *) {
                 Capsule().glassEffect()

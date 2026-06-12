@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Luna — Onboarding Concepts</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #080808;
+    --surface: #1A1A1A;
+    --surface-el: #242424;
+    --text: #ffffff;
+    --text-sec: rgba(255,255,255,0.65);
+    --text-ter: rgba(255,255,255,0.4);
+    --outline: rgba(255,255,255,0.09);
+    --accent-w: #F5F5F5;
+    --accent-r: #E53935;
+    --accent-v: #8E24AA;
+    --accent-o: #1E88E5;
+    --phone-w: 300px;
+    --phone-h: 640px;
+    --notch-w: 110px;
+    --notch-h: 28px;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, 'SF Pro Rounded', 'SF Pro Display', system-ui, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Page header ── */
+  .page-header {
+    text-align: center;
+    padding: 56px 24px 40px;
+  }
+  .page-header .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 999px;
+    padding: 5px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--text-sec);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .page-header h1 {
+    font-size: 38px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+  }
+  .page-header p {
+    font-size: 16px;
+    color: var(--text-sec);
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* ── Concept labels ── */
+  .concepts-row {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 48px;
+    padding: 0 32px 80px;
+    flex-wrap: wrap;
+  }
+
+  .concept {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .concept-label {
+    text-align: center;
+  }
+  .concept-label .num {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-ter);
+    margin-bottom: 4px;
+  }
+  .concept-label h2 {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .concept-label p {
+    font-size: 13px;
+    color: var(--text-sec);
+    margin-top: 3px;
+    max-width: 260px;
+    line-height: 1.5;
+  }
+
+  /* ── iPhone frame ── */
+  .phone-frame {
+    width: var(--phone-w);
+    height: var(--phone-h);
+    border-radius: 44px;
+    background: #111;
+    position: relative;
+    box-shadow:
+      0 0 0 1.5px rgba(255,255,255,0.13),
+      0 0 0 3px rgba(0,0,0,0.6),
+      0 0 0 4px rgba(255,255,255,0.06),
+      0 40px 80px rgba(0,0,0,0.7),
+      0 0 120px rgba(0,0,0,0.4);
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  /* Dynamic island */
+  .phone-frame::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: var(--notch-w);
+    height: var(--notch-h);
+    background: #000;
+    border-radius: 20px;
+    z-index: 100;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+  }
+
+  /* ── Screen inside phone ── */
+  .phone-screen {
+    position: absolute;
+    inset: 0;
+    border-radius: 44px;
+    overflow: hidden;
+  }
+
+  /* ── Slides container ── */
+  .slides {
+    display: flex;
+    width: 400%;  /* 4 slides */
+    height: 100%;
+    transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .slide {
+    width: 25%; /* 1/4 of .slides */
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 28px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ── Navigation dots ── */
+  .phone-nav {
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    z-index: 50;
+  }
+  .phone-nav button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s;
+  }
+  .phone-nav button:hover { opacity: 0.7; }
+  .phone-nav button svg { display: block; }
+
+  .dots {
+    display: flex;
+    gap: 6px;
+  }
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 99px;
+    background: rgba(255,255,255,0.3);
+    transition: all 0.3s ease;
+  }
+  .dot.active {
+    width: 18px;
+    background: #fff;
+  }
+
+  /* ── CTA button inside slide ── */
+  .slide-cta {
+    width: 100%;
+    padding: 14px;
+    border-radius: 14px;
+    border: none;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 24px;
+    letter-spacing: -0.01em;
+    transition: opacity 0.2s, transform 0.15s;
+  }
+  .slide-cta:hover { opacity: 0.88; transform: scale(0.985); }
+  .slide-cta:active { transform: scale(0.975); }
+
+  /* ── Status bar placeholder ── */
+  .status-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 54px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 0 24px 8px;
+    font-size: 12px;
+    font-weight: 600;
+    z-index: 90;
+    pointer-events: none;
+  }
+
+  /* ═══════════════════════════════════════
+     CONCEPT 1 — CINEMATIC
+     Full-bleed poster mosaic + reveal
+  ════════════════════════════════════════ */
+  .c1 { background: #000; }
+
+  .c1 .slide { padding-top: 54px; }
+
+  /* Poster mosaic grid behind everything */
+  .mosaic {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(7, 1fr);
+    gap: 3px;
+    opacity: 0.22;
+    transform: rotate(-4deg) scale(1.15);
+    transform-origin: center;
+    pointer-events: none;
+  }
+  .mosaic-cell {
+    border-radius: 5px;
+    background: var(--c);
+  }
+
+  /* Dark gradient overlay */
+  .c1-overlay {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 90% 60% at 50% 60%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.85) 100%),
+      linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 30%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0.95) 100%);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .c1 .slide-content { position: relative; z-index: 3; width: 100%; text-align: center; }
+
+  .c1-logo {
+    width: 76px; height: 76px;
+    border-radius: 18px;
+    background: #1a1a1a;
+    margin: 0 auto 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.12), 0 8px 32px rgba(0,0,0,0.5), 0 0 40px rgba(255,255,255,0.06);
+  }
+
+  .c1-icon-wrap {
+    width: 88px; height: 88px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 38px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 0 0 8px rgba(255,255,255,0.03);
+  }
+
+  .c1 h1 { font-size: 32px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; }
+  .c1 .subtitle { font-size: 15px; color: rgba(255,255,255,0.6); margin-top: 10px; line-height: 1.5; }
+  .c1 h2 { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; margin-top: 8px; }
+
+  .c1 .feature-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.8);
+    margin-top: 14px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .c1 .slide-cta {
+    background: #fff;
+    color: #000;
+    margin-top: 28px;
+  }
+
+  .c1 .slide-cta.outline {
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  /* ═══════════════════════════════════════
+     CONCEPT 2 — MINIMAL GLASS
+     Pure dark, glass cards, very Apple
+  ════════════════════════════════════════ */
+  .c2 { background: #0D0D0D; }
+
+  .c2 .slide { padding-top: 54px; text-align: center; }
+
+  /* Subtle radial glow top center */
+  .c2-glow {
+    position: absolute;
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .c2 .glass-icon {
+    width: 96px; height: 96px;
+    border-radius: 28px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.10);
+    margin: 0 auto 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 42px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.05),
+      0 8px 32px rgba(0,0,0,0.5),
+      inset 0 1px 0 rgba(255,255,255,0.1);
+    position: relative;
+    z-index: 2;
+  }
+
+  .c2 .glass-card {
+    background: rgba(255,255,255,0.045);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 18px;
+    padding: 18px;
+    width: 100%;
+    margin-top: 14px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.07);
+    text-align: left;
+  }
+  .c2 .glass-card .card-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .c2 .glass-card .card-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .c2 .glass-card .card-label {
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .c2 .glass-card .card-sub {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 2px;
+  }
+
+  .c2 h1 { font-size: 30px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; position: relative; z-index: 2; }
+  .c2 .subtitle { font-size: 14px; color: rgba(255,255,255,0.55); margin-top: 8px; line-height: 1.55; position: relative; z-index: 2; }
+  .c2 h2 { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; margin-top: 6px; position: relative; z-index: 2; }
+
+  .c2 .slide-cta {
+    background: #fff;
+    color: #000;
+  }
+
+  .c2 .input-mock {
+    width: 100%;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 13px 16px;
+    color: rgba(255,255,255,0.4);
+    font-size: 15px;
+    margin-top: 10px;
+    text-align: left;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  /* ═══════════════════════════════════════
+     CONCEPT 3 — AURORA
+     Color-shift per slide, soft gradients
+  ════════════════════════════════════════ */
+  .c3 { background: #0A0A0A; }
+  .c3 .slide { padding-top: 54px; text-align: center; }
+
+  .aurora-bg {
+    position: absolute;
+    inset: 0;
+    transition: opacity 0.6s ease;
+    pointer-events: none;
+  }
+  .aurora-1 { background: radial-gradient(ellipse 120% 70% at 50% -10%, rgba(139,92,246,0.28) 0%, transparent 60%); }
+  .aurora-2 { background: radial-gradient(ellipse 120% 70% at 50% -10%, rgba(30,136,229,0.30) 0%, transparent 60%); }
+  .aurora-3 { background: radial-gradient(ellipse 120% 70% at 50% -10%, rgba(229,57,53,0.25) 0%, transparent 60%); }
+  .aurora-4 { background: radial-gradient(ellipse 120% 70% at 50% -10%, rgba(67,160,71,0.25) 0%, transparent 60%); }
+
+  .aurora-bottom-1 { background: radial-gradient(ellipse 100% 40% at 50% 110%, rgba(139,92,246,0.20) 0%, transparent 60%); }
+  .aurora-bottom-2 { background: radial-gradient(ellipse 100% 40% at 50% 110%, rgba(30,136,229,0.20) 0%, transparent 60%); }
+  .aurora-bottom-3 { background: radial-gradient(ellipse 100% 40% at 50% 110%, rgba(229,57,53,0.18) 0%, transparent 60%); }
+  .aurora-bottom-4 { background: radial-gradient(ellipse 100% 40% at 50% 110%, rgba(67,160,71,0.18) 0%, transparent 60%); }
+
+  .c3 .orb {
+    width: 110px; height: 110px;
+    border-radius: 999px;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 46px;
+    position: relative;
+    z-index: 2;
+  }
+  .orb-v {
+    background: radial-gradient(circle at 35% 35%, rgba(167,139,250,0.4), rgba(109,40,217,0.15));
+    border: 1px solid rgba(167,139,250,0.3);
+    box-shadow: 0 0 40px rgba(139,92,246,0.25), inset 0 1px 0 rgba(255,255,255,0.15);
+  }
+  .orb-o {
+    background: radial-gradient(circle at 35% 35%, rgba(96,165,250,0.4), rgba(29,78,216,0.15));
+    border: 1px solid rgba(96,165,250,0.3);
+    box-shadow: 0 0 40px rgba(59,130,246,0.25), inset 0 1px 0 rgba(255,255,255,0.15);
+  }
+  .orb-r {
+    background: radial-gradient(circle at 35% 35%, rgba(252,165,165,0.4), rgba(185,28,28,0.15));
+    border: 1px solid rgba(252,165,165,0.3);
+    box-shadow: 0 0 40px rgba(239,68,68,0.25), inset 0 1px 0 rgba(255,255,255,0.15);
+  }
+  .orb-g {
+    background: radial-gradient(circle at 35% 35%, rgba(134,239,172,0.4), rgba(21,128,61,0.15));
+    border: 1px solid rgba(134,239,172,0.3);
+    box-shadow: 0 0 40px rgba(34,197,94,0.25), inset 0 1px 0 rgba(255,255,255,0.15);
+  }
+
+  .c3 h1 { font-size: 30px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; position: relative; z-index: 2; }
+  .c3 .subtitle { font-size: 14px; color: rgba(255,255,255,0.58); margin-top: 8px; line-height: 1.55; position: relative; z-index: 2; }
+  .c3 h2 { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; margin-top: 6px; position: relative; z-index: 2; }
+
+  .c3 .pill-row {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 16px;
+    position: relative;
+    z-index: 2;
+  }
+  .c3 .pill {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .pill-v  { border-color: rgba(167,139,250,0.35) !important; background: rgba(139,92,246,0.12) !important; color: rgb(196,181,253); }
+  .pill-o  { border-color: rgba(96,165,250,0.35) !important;  background: rgba(59,130,246,0.12) !important; color: rgb(147,197,253); }
+  .pill-r  { border-color: rgba(252,165,165,0.35) !important; background: rgba(239,68,68,0.12) !important;  color: rgb(252,165,165); }
+  .pill-g  { border-color: rgba(134,239,172,0.35) !important; background: rgba(34,197,94,0.12) !important;  color: rgb(134,239,172); }
+
+  .c3 .slide-cta-v { background: rgba(139,92,246,0.85); color: #fff; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(167,139,250,0.4); }
+  .c3 .slide-cta-o { background: rgba(59,130,246,0.85); color: #fff; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(96,165,250,0.4); }
+  .c3 .slide-cta-r { background: rgba(229,57,53,0.85); color: #fff; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(252,165,165,0.4); }
+  .c3 .slide-cta-g { background: rgba(34,197,94,0.85); color: #fff; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(134,239,172,0.4); }
+
+  /* ── Dot colour variants ── */
+  .dots-c1 .dot.active { background: #fff; }
+  .dots-c2 .dot.active { background: #fff; }
+  .dots-c3 .dot.active { background: #fff; }
+
+  /* ── Nav arrows ── */
+  .nav-arrow { color: rgba(255,255,255,0.55); }
+
+  /* ── Tag pill at top of page ── */
+  .tag { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09); }
+
+  /* ── Footer ── */
+  .page-footer {
+    text-align: center;
+    padding: 0 32px 64px;
+    color: var(--text-ter);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .page-footer strong { color: var(--text-sec); }
+
+  /* Divider */
+  .divider {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.1), transparent);
+    align-self: center;
+    display: none;
+  }
+
+  /* ── Responsive: stack on small screens ── */
+  @media (max-width: 1100px) {
+    .concepts-row { gap: 40px; }
+  }
+  @media (max-width: 760px) {
+    .concepts-row { gap: 32px; }
+    :root { --phone-w: 260px; --phone-h: 560px; }
+  }
+
+  /* ── Animated aurora float ── */
+  @keyframes auroraFloat {
+    0%,100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-10px) scale(1.04); }
+  }
+  .aurora-bg { animation: auroraFloat 7s ease-in-out infinite; }
+
+  /* ── Fade in entrance ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .concept { animation: fadeUp 0.6s ease both; }
+  .concept:nth-child(1) { animation-delay: 0.1s; }
+  .concept:nth-child(2) { animation-delay: 0.2s; }
+  .concept:nth-child(3) { animation-delay: 0.3s; }
+  .page-header { animation: fadeUp 0.5s ease both; }
+</style>
+</head>
+<body>
+
+<!-- ── Page header ── -->
+<header class="page-header">
+  <div class="badge">✦ &nbsp;Luna — iOS Onboarding</div>
+  <h1>3 Onboarding Concepts</h1>
+  <p>Three distinct directions for the first-run experience. Tap the arrows to walk through each flow.</p>
+</header>
+
+<!-- ── Concepts row ── -->
+<div class="concepts-row">
+
+  <!-- ════════════════════════════════
+       CONCEPT 1 — CINEMATIC
+  ════════════════════════════════ -->
+  <div class="concept" id="c1-wrap">
+    <div class="concept-label">
+      <div class="num">Concept 01</div>
+      <h2>Cinematic</h2>
+      <p>Full-bleed poster mosaic, dramatic dark overlay, white glass CTAs</p>
+    </div>
+
+    <div class="phone-frame c1">
+      <div class="phone-screen">
+        <!-- Status bar -->
+        <div class="status-bar" style="color:rgba(255,255,255,0.8)">
+          <span>9:41</span>
+          <span style="display:flex;gap:5px;align-items:center">
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor" opacity="0.8"><rect x="0" y="3" width="3" height="9" rx="1"/><rect x="4.5" y="2" width="3" height="10" rx="1"/><rect x="9" y="0" width="3" height="12" rx="1"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" opacity="0.3"/></svg>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor" opacity="0.8"><path d="M8 2.5C10.2 2.5 12.2 3.4 13.6 4.9L15 3.4C13.2 1.3 10.7 0 8 0S2.8 1.3 1 3.4l1.4 1.5C3.8 3.4 5.8 2.5 8 2.5zm0 3.5c1.3 0 2.5.5 3.4 1.4L13 5.8C11.7 4.4 10 3.5 8 3.5S4.3 4.4 3 5.8l1.6 1.6C5.5 6.5 6.7 6 8 6zm0 3c.7 0 1.3.3 1.8.7L8 12l-1.8-2.3c.5-.4 1.1-.7 1.8-.7z"/></svg>
+            <svg width="26" height="13" viewBox="0 0 26 13" fill="none" opacity="0.8"><rect x="0.5" y="0.5" width="22" height="12" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/><rect x="1.5" y="1.5" width="18" height="10" rx="2.5" fill="currentColor"/><path d="M23.5 4.5v4a2 2 0 0 0 0-4z" fill="currentColor" opacity="0.4"/></svg>
+          </span>
+        </div>
+
+        <!-- Slides container -->
+        <div class="slides" id="c1-slides">
+
+          <!-- Slide 0: Welcome -->
+          <div class="slide">
+            <div class="mosaic" id="c1-mosaic"></div>
+            <div class="c1-overlay"></div>
+            <div class="slide-content" style="margin-top:-20px">
+              <div class="c1-logo">🌙</div>
+              <h1>Luna</h1>
+              <p class="subtitle">Your personal streaming<br>universe, beautifully designed.</p>
+              <div class="feature-chip">✦ &nbsp;Invite only</div>
+              <button class="slide-cta" onclick="c1go(1)">Get Started</button>
+              <button class="slide-cta outline" style="margin-top:10px" onclick="c1go(1)">Sign In</button>
+            </div>
+          </div>
+
+          <!-- Slide 1: Streams -->
+          <div class="slide">
+            <div class="mosaic" id="c1-mosaic2"></div>
+            <div class="c1-overlay"></div>
+            <div class="slide-content">
+              <div class="c1-icon-wrap">🎬</div>
+              <h2>Everything,<br>in one place.</h2>
+              <p class="subtitle">Movies, shows, and live content from thousands of sources — no subscriptions needed.</p>
+              <div class="feature-chip">📡 &nbsp;Stremio-powered</div>
+            </div>
+          </div>
+
+          <!-- Slide 2: Profiles -->
+          <div class="slide">
+            <div class="mosaic" id="c1-mosaic3"></div>
+            <div class="c1-overlay"></div>
+            <div class="slide-content">
+              <div class="c1-icon-wrap">👥</div>
+              <h2>Made for<br>everyone.</h2>
+              <p class="subtitle">Create profiles for the whole family. Each gets their own watchlist, history, and experience.</p>
+              <div class="feature-chip">🌙 &nbsp;Who's watching?</div>
+            </div>
+          </div>
+
+          <!-- Slide 3: Sign in -->
+          <div class="slide">
+            <div class="mosaic" id="c1-mosaic4"></div>
+            <div class="c1-overlay"></div>
+            <div class="slide-content" style="width:100%">
+              <h2 style="margin-bottom:20px">Let's get<br>you in.</h2>
+              <div style="width:100%">
+                <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:13px 16px;color:rgba(255,255,255,0.4);font-size:14px;margin-bottom:10px;backdrop-filter:blur(8px)">✉️ &nbsp;Email address</div>
+                <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:13px 16px;color:rgba(255,255,255,0.4);font-size:14px;backdrop-filter:blur(8px)">🔒 &nbsp;Password</div>
+              </div>
+              <button class="slide-cta" style="margin-top:18px">Sign In</button>
+              <p style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:14px">Don't have an account? <span style="color:#fff;font-weight:600">Sign Up</span></p>
+            </div>
+          </div>
+
+        </div><!-- /slides -->
+
+        <!-- Nav -->
+        <div class="phone-nav">
+          <button onclick="c1go(c1idx-1)" class="nav-arrow">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M13 4l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="dots dots-c1" id="c1-dots">
+            <div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+          </div>
+          <button onclick="c1go(c1idx+1)" class="nav-arrow">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7 4l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+
+      </div><!-- /phone-screen -->
+    </div><!-- /phone-frame -->
+  </div><!-- /concept -->
+
+
+  <!-- ════════════════════════════════
+       CONCEPT 2 — MINIMAL GLASS
+  ════════════════════════════════ -->
+  <div class="concept" id="c2-wrap">
+    <div class="concept-label">
+      <div class="num">Concept 02</div>
+      <h2>Minimal Glass</h2>
+      <p>Pure dark canvas, glass cards, very Apple-native — lets the app speak</p>
+    </div>
+
+    <div class="phone-frame c2">
+      <div class="phone-screen">
+        <div class="status-bar" style="color:rgba(255,255,255,0.7)">
+          <span>9:41</span>
+          <span style="display:flex;gap:5px;align-items:center">
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor" opacity="0.7"><rect x="0" y="3" width="3" height="9" rx="1"/><rect x="4.5" y="2" width="3" height="10" rx="1"/><rect x="9" y="0" width="3" height="12" rx="1"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" opacity="0.3"/></svg>
+            <svg width="26" height="13" viewBox="0 0 26 13" fill="none" opacity="0.7"><rect x="0.5" y="0.5" width="22" height="12" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/><rect x="1.5" y="1.5" width="18" height="10" rx="2.5" fill="currentColor"/><path d="M23.5 4.5v4a2 2 0 0 0 0-4z" fill="currentColor" opacity="0.4"/></svg>
+          </span>
+        </div>
+
+        <div class="slides" id="c2-slides">
+
+          <!-- Slide 0: Welcome -->
+          <div class="slide">
+            <div class="c2-glow"></div>
+            <div class="glass-icon" style="border-radius:22px;font-size:36px;width:80px;height:80px">🌙</div>
+            <h1 style="font-size:34px">Luna</h1>
+            <p class="subtitle">Stream everything.<br>No subscriptions. Just Luna.</p>
+            <button class="slide-cta" onclick="c2go(1)" style="background:#fff;color:#000;margin-top:32px">Create Account</button>
+            <button class="slide-cta" onclick="c2go(3)" style="background:rgba(255,255,255,0.07);color:#fff;border:1px solid rgba(255,255,255,0.12);margin-top:10px;backdrop-filter:blur(8px)">Sign In</button>
+            <p style="font-size:12px;color:rgba(255,255,255,0.35);margin-top:16px;position:relative;z-index:2">Invite-only beta</p>
+          </div>
+
+          <!-- Slide 1: Streams -->
+          <div class="slide">
+            <div class="c2-glow"></div>
+            <div class="glass-icon">🎞️</div>
+            <h2>All Your Streams</h2>
+            <p class="subtitle">Movies, series, and live content from the world's best open sources.</p>
+            <div class="glass-card">
+              <div class="card-row">
+                <div class="card-icon">🎬</div>
+                <div>
+                  <div class="card-label">4K &amp; HDR</div>
+                  <div class="card-sub">Dolby Vision support</div>
+                </div>
+              </div>
+            </div>
+            <div class="glass-card">
+              <div class="card-row">
+                <div class="card-icon">📡</div>
+                <div>
+                  <div class="card-label">Thousands of sources</div>
+                  <div class="card-sub">Community-powered addons</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 2: Profiles -->
+          <div class="slide">
+            <div class="c2-glow"></div>
+            <div class="glass-icon">👤</div>
+            <h2>Your Profile</h2>
+            <p class="subtitle">Separate watchlists, history, and themes for everyone in your home.</p>
+            <div class="glass-card">
+              <div class="card-row">
+                <div class="card-icon">🎨</div>
+                <div>
+                  <div class="card-label">7 Colour Themes</div>
+                  <div class="card-sub">Crimson, Ocean, Violet…</div>
+                </div>
+              </div>
+            </div>
+            <div class="glass-card">
+              <div class="card-row">
+                <div class="card-icon">📚</div>
+                <div>
+                  <div class="card-label">Personal Library</div>
+                  <div class="card-sub">Save anything to watch later</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 3: Sign in -->
+          <div class="slide">
+            <div class="c2-glow"></div>
+            <div class="glass-icon" style="font-size:32px;width:72px;height:72px;border-radius:20px">✉️</div>
+            <h2>Sign in to Luna</h2>
+            <p class="subtitle" style="margin-bottom:4px">Enter your credentials<br>to continue.</p>
+            <div class="input-mock" style="margin-top:16px">Email address</div>
+            <div class="input-mock" style="margin-top:8px">Password</div>
+            <button class="slide-cta" style="background:#fff;color:#000;margin-top:16px">Sign In</button>
+            <p style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:12px;position:relative;z-index:2">No account? <span style="color:#fff;font-weight:600">Sign Up</span></p>
+          </div>
+
+        </div>
+
+        <div class="phone-nav">
+          <button onclick="c2go(c2idx-1)" class="nav-arrow">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M13 4l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="dots dots-c2" id="c2-dots">
+            <div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+          </div>
+          <button onclick="c2go(c2idx+1)" class="nav-arrow">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7 4l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div><!-- /concept 2 -->
+
+
+  <!-- ════════════════════════════════
+       CONCEPT 3 — AURORA
+  ════════════════════════════════ -->
+  <div class="concept" id="c3-wrap">
+    <div class="concept-label">
+      <div class="num">Concept 03</div>
+      <h2>Aurora</h2>
+      <p>Each slide shifts accent colour, themed orbs, Luna's palette on full display</p>
+    </div>
+
+    <div class="phone-frame c3">
+      <div class="phone-screen">
+        <div class="status-bar" style="color:rgba(255,255,255,0.75)">
+          <span>9:41</span>
+          <span style="display:flex;gap:5px;align-items:center">
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor" opacity="0.75"><rect x="0" y="3" width="3" height="9" rx="1"/><rect x="4.5" y="2" width="3" height="10" rx="1"/><rect x="9" y="0" width="3" height="12" rx="1"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" opacity="0.3"/></svg>
+            <svg width="26" height="13" viewBox="0 0 26 13" fill="none" opacity="0.75"><rect x="0.5" y="0.5" width="22" height="12" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/><rect x="1.5" y="1.5" width="18" height="10" rx="2.5" fill="currentColor"/><path d="M23.5 4.5v4a2 2 0 0 0 0-4z" fill="currentColor" opacity="0.4"/></svg>
+          </span>
+        </div>
+
+        <!-- Aurora background layers (swapped by JS) -->
+        <div id="c3-aurora-top" class="aurora-bg aurora-1" style="z-index:1"></div>
+        <div id="c3-aurora-bot" class="aurora-bg aurora-bottom-1" style="z-index:1"></div>
+
+        <div class="slides" id="c3-slides" style="position:relative;z-index:2">
+
+          <!-- Slide 0: Welcome — Violet -->
+          <div class="slide">
+            <div class="orb orb-v">🌙</div>
+            <h1 style="font-size:34px">Luna</h1>
+            <p class="subtitle">Your private streaming universe,<br>crafted for film lovers.</p>
+            <div class="pill-row">
+              <span class="pill pill-v">✦ Invite only</span>
+            </div>
+            <button class="slide-cta slide-cta-v" onclick="c3go(1)" style="margin-top:28px">Let me in</button>
+            <button class="slide-cta" onclick="c3go(1)" style="margin-top:10px;background:rgba(255,255,255,0.07);color:#fff;border:1px solid rgba(255,255,255,0.12)">Sign In</button>
+          </div>
+
+          <!-- Slide 1: Streams — Ocean -->
+          <div class="slide">
+            <div class="orb orb-o">🎬</div>
+            <h2>Unlimited Streams</h2>
+            <p class="subtitle">HD, 4K, HDR — from sources all over the web, unified in one beautiful app.</p>
+            <div class="pill-row">
+              <span class="pill pill-o">📡 Stremio</span>
+              <span class="pill pill-o">🎞️ 4K HDR</span>
+              <span class="pill pill-o">🔊 Dolby</span>
+            </div>
+          </div>
+
+          <!-- Slide 2: Themes — Crimson -->
+          <div class="slide">
+            <div class="orb orb-r">🎨</div>
+            <h2>Make it<br>yours.</h2>
+            <p class="subtitle">Choose from 7 colour themes. Crimson, Ocean, Violet, Emerald, Amber, Rose, or White.</p>
+            <div class="pill-row">
+              <span class="pill" style="border-color:rgba(239,68,68,0.35);background:rgba(229,57,53,0.1);color:rgb(252,165,165)">🔴 Crimson</span>
+              <span class="pill" style="border-color:rgba(96,165,250,0.35);background:rgba(59,130,246,0.1);color:rgb(147,197,253)">🔵 Ocean</span>
+              <span class="pill" style="border-color:rgba(167,139,250,0.35);background:rgba(139,92,246,0.1);color:rgb(196,181,253)">🟣 Violet</span>
+              <span class="pill" style="border-color:rgba(134,239,172,0.35);background:rgba(34,197,94,0.1);color:rgb(134,239,172)">🟢 Emerald</span>
+            </div>
+          </div>
+
+          <!-- Slide 3: Sign Up — Emerald -->
+          <div class="slide">
+            <div class="orb orb-g">✨</div>
+            <h2>Ready to<br>start?</h2>
+            <p class="subtitle">Create your account and pick a profile to begin.</p>
+            <div style="width:100%;margin-top:16px;position:relative;z-index:2">
+              <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(134,239,172,0.15);border-radius:12px;padding:13px 16px;color:rgba(255,255,255,0.4);font-size:14px;margin-bottom:8px;backdrop-filter:blur(8px)">✉️ &nbsp;Email</div>
+              <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(134,239,172,0.15);border-radius:12px;padding:13px 16px;color:rgba(255,255,255,0.4);font-size:14px;backdrop-filter:blur(8px)">🔒 &nbsp;Password</div>
+            </div>
+            <button class="slide-cta slide-cta-g" style="margin-top:14px">Create Account</button>
+          </div>
+
+        </div>
+
+        <div class="phone-nav" style="z-index:10">
+          <button onclick="c3go(c3idx-1)" class="nav-arrow">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M13 4l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="dots dots-c3" id="c3-dots">
+            <div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+          </div>
+          <button onclick="c3go(c3idx+1)" class="nav-arrow">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7 4l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div><!-- /concept 3 -->
+
+</div><!-- /concepts-row -->
+
+<!-- ── Footer ── -->
+<div class="page-footer">
+  <strong>Luna — Onboarding Concepts</strong><br>
+  Click the arrows to walk through each flow • Designed to match the existing LunaTheme system
+</div>
+
+
+<script>
+// ══ Mosaic poster grid fill ══
+const mosaicColors = [
+  '#1a1a2e','#16213e','#0f3460','#533483','#e94560',
+  '#2c2c54','#474787','#1b262c','#0a3d62','#e55039',
+  '#1e3799','#b71540','#4a235a','#117a65','#1a5276',
+  '#641e16','#784212','#0e6655','#1b4332','#212f3d',
+];
+
+function buildMosaic(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  for (let i = 0; i < 28; i++) {
+    const d = document.createElement('div');
+    d.className = 'mosaic-cell';
+    d.style.setProperty('--c', mosaicColors[Math.floor(Math.random() * mosaicColors.length)]);
+    el.appendChild(d);
+  }
+}
+buildMosaic('c1-mosaic');
+buildMosaic('c1-mosaic2');
+buildMosaic('c1-mosaic3');
+buildMosaic('c1-mosaic4');
+
+// ══ Slide controllers ══
+function makeController(slidesId, dotsId, total, onChangeCb) {
+  let idx = 0;
+  function go(n) {
+    if (n < 0 || n >= total) return;
+    idx = n;
+    const el = document.getElementById(slidesId);
+    // Slides container is 400% wide, each slide is 25%
+    // We translate by -(idx * 25%) of the total width
+    el.style.transform = `translateX(-${idx * 25}%)`;
+    const dots = document.querySelectorAll('#' + dotsId + ' .dot');
+    dots.forEach((d,i) => d.classList.toggle('active', i === idx));
+    if (onChangeCb) onChangeCb(idx);
+  }
+  return { go, getIdx: () => idx };
+}
+
+// Concept 1
+var c1idx = 0;
+const c1ctrl = makeController('c1-slides', 'c1-dots', 4);
+function c1go(n) { c1idx = Math.max(0, Math.min(3, n)); c1ctrl.go(c1idx); }
+
+// Concept 2
+var c2idx = 0;
+const c2ctrl = makeController('c2-slides', 'c2-dots', 4);
+function c2go(n) { c2idx = Math.max(0, Math.min(3, n)); c2ctrl.go(c2idx); }
+
+// Concept 3 — with aurora swap
+const auroraTop = ['aurora-1','aurora-2','aurora-3','aurora-4'];
+const auroraBot = ['aurora-bottom-1','aurora-bottom-2','aurora-bottom-3','aurora-bottom-4'];
+var c3idx = 0;
+const c3ctrl = makeController('c3-slides', 'c3-dots', 4, function(idx) {
+  const t = document.getElementById('c3-aurora-top');
+  const b = document.getElementById('c3-aurora-bot');
+  t.className = 'aurora-bg ' + auroraTop[idx];
+  b.className = 'aurora-bg ' + auroraBot[idx];
+});
+function c3go(n) { c3idx = Math.max(0, Math.min(3, n)); c3ctrl.go(c3idx); }
+
+// Also expose idx getters for the inline onclick uses
+// (c1idx / c2idx / c3idx are updated inside c1go/c2go/c3go)
+</script>
+</body>
+</html>

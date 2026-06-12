@@ -152,7 +152,7 @@ export default function SearchPage() {
         </div>
       </div>
 
-      <div className="px-6 pb-12 max-w-5xl">
+      <div className="px-6 pb-12 max-w-5xl mx-auto">
         {isEmpty && (
           <>
             {recent.length > 0 && (
@@ -174,7 +174,7 @@ export default function SearchPage() {
             {trending.length > 0 && (
               <section>
                 <p className="text-xs font-bold text-white/40 uppercase tracking-wider mb-4">Trending Now</p>
-                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
+                <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))' }}>
                   {trending.map(item => (
                     <Link key={item.id} to="/browse/$type/$id" params={{ type: item.type, id: item.id }} className="group cursor-pointer">
                       <div className="relative aspect-[2/3] rounded-xl overflow-hidden bg-luna-elevated mb-2">
@@ -214,7 +214,7 @@ export default function SearchPage() {
               <span className="text-xs text-white/30 ml-auto">{filtered.length} results</span>
             </div>
             {filtered.length > 0 ? (
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
+              <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))' }}>
                 {filtered.map(item => (
                   <Link key={item.id} to="/browse/$type/$id" params={{ type: item.type, id: item.id }} className="group cursor-pointer">
                     <div className="relative aspect-[2/3] rounded-xl overflow-hidden bg-luna-elevated mb-2">

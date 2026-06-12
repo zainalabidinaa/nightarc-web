@@ -12,26 +12,25 @@ struct ContinueWatchingCard: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            ZStack(alignment: .bottom) {
+        VStack(alignment: .leading, spacing: 6) {
+            ZStack {
+                // Poster
                 Group {
                     if let poster = item.poster, let url = URL(string: poster) {
-                        AsyncImage(url: url) { phase in
-                            if case .success(let image) = phase {
-                                image.resizable().aspectRatio(contentMode: .fill)
-                            } else {
-                                Rectangle().fill(LunaTheme.surfaceElevated)
-                            }
+                        CachedAsyncImage(url: url) { image in
+                            image.resizable().aspectRatio(contentMode: .fill)
+                        } placeholder: {
+                            fallbackView
                         }
                     } else {
-                        Rectangle().fill(LunaTheme.surfaceElevated)
+                        fallbackView
                     }
                 }
-                .frame(width: 200, height: 112)
-                .clipped()
-                .cornerRadius(8)
+                .frame(width: 220, height: 124)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
 
-                VStack(spacing: 0) {
+                // Progress bar at bottom
+                VStack {
                     Spacer()
                     GeometryReader { geo in
                         ZStack(alignment: .leading) {
@@ -40,48 +39,52 @@ struct ContinueWatchingCard: View {
                                 .frame(height: 3)
                             Rectangle()
                                 .fill(LunaTheme.accent)
-                                .frame(
-                                    width: geo.size.width * item.progressFraction,
-                                    height: 3
-                                )
+                                .frame(width: geo.size.width * item.progressFraction, height: 3)
                         }
                     }
                     .frame(height: 3)
                 }
-                .cornerRadius(8)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
 
+                // Loading / hover overlay
                 if isLoading {
-                    Color.black.opacity(0.4).cornerRadius(8)
+                    Color.black.opacity(0.5)
                     ProgressView().tint(.white)
                 } else if isHovering {
-                    Color.black.opacity(0.4).cornerRadius(8)
-                    Circle()
-                        .fill(Color.white.opacity(0.2))
-                        .frame(width: 40, height: 40)
-                        .overlay(
-                            Image(systemName: "play.fill")
-                                .font(.system(size: 16))
-                                .foregroundColor(.white)
-                                .offset(x: 1)
-                        )
+                    Color.black.opacity(0.3)
+                    Image(systemName: "play.circle.fill")
+                        .font(.system(size: 36))
+                        .foregroundColor(.white)
+                        .shadow(radius: 4)
                 }
             }
-            .frame(width: 200, height: 112)
+            .frame(width: 220, height: 124)
+            .scaleEffect(isHovering ? 1.03 : 1.0)
+            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isHovering)
             .onHover { isHovering = $0 }
 
             Text(item.name)
-                .font(.caption)
+                .font(.system(size: 12, weight: .medium))
                 .foregroundColor(.white)
                 .lineLimit(1)
-                .frame(width: 200, alignment: .leading)
+                .frame(width: 220, alignment: .leading)
 
-            if let subtitle = item.episodeTitle ?? episodeLabel {
+            if let subtitle = episodeLabel ?? item.episodeTitle {
                 Text(subtitle)
-                    .font(.caption2)
+                    .font(.system(size: 11))
                     .foregroundColor(LunaTheme.textTertiary)
                     .lineLimit(1)
-                    .frame(width: 200, alignment: .leading)
+                    .frame(width: 220, alignment: .leading)
             }
+        }
+    }
+
+    private var fallbackView: some View {
+        ZStack {
+            Rectangle().fill(LunaTheme.surfaceElevated)
+            Image(systemName: "play.rectangle")
+                .font(.title2)
+                .foregroundColor(.white.opacity(0.15))
         }
     }
 }

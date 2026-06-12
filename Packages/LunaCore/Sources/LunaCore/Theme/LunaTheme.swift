@@ -2,8 +2,8 @@ import SwiftUI
 
 @MainActor
 public struct LunaTheme {
-    public static var primary: Color { ThemeManager.shared.accent }
-    public static var secondary: Color { ThemeManager.shared.palette.primaryVariant }
+    public static var primary: Color { .white }
+    public static var secondary: Color { .white.opacity(0.82) }
     public static var accent: Color { ThemeManager.shared.accent }
 
     public static var background: Color { ThemeManager.shared.background }
@@ -15,8 +15,8 @@ public struct LunaTheme {
     public static var textSecondary: Color { .white.opacity(0.7) }
     public static var textTertiary: Color { .white.opacity(0.5) }
     public static var outline: Color { .white.opacity(0.08) }
-    public static var focusRing: Color { ThemeManager.shared.focusRing }
-    public static var focusBackground: Color { ThemeManager.shared.focusBackground }
+    public static var focusRing: Color { .white.opacity(0.9) }
+    public static var focusBackground: Color { .white.opacity(0.12) }
 
     /// Top clearance for content sitting beneath the floating pill navbar.
     public static let navBarTopInset: CGFloat = 64
@@ -216,19 +216,38 @@ extension View {
     }
 }
 
+public struct LunaPrimaryButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var isEnabled
+    let cornerRadius: CGFloat
+
+    public init(cornerRadius: CGFloat = 14) {
+        self.cornerRadius = cornerRadius
+    }
+
+    public func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .foregroundStyle(Color.black)
+            .background {
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .fill(Color.white.opacity(isEnabled ? 1 : 0.38))
+            }
+            .overlay {
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .stroke(Color.white.opacity(isEnabled ? 0.18 : 0.08), lineWidth: 0.8)
+            }
+            .scaleEffect(configuration.isPressed ? 0.985 : 1)
+            .opacity(isEnabled ? 1 : 0.58)
+            .animation(.snappy(duration: 0.16), value: configuration.isPressed)
+    }
+}
+
 extension View {
     @ViewBuilder
     public func glassProminentButtonStyle(
         tint: Color = LunaTheme.accent,
         cornerRadius: CGFloat = 14
     ) -> some View {
-        if #available(iOS 26, macOS 26, *) {
-            self.buttonStyle(.glassProminent)
-                .tint(tint)
-        } else {
-            self.buttonStyle(.borderedProminent)
-                .tint(tint)
-        }
+        self.buttonStyle(LunaPrimaryButtonStyle(cornerRadius: cornerRadius))
     }
 }
 
@@ -247,7 +266,7 @@ public struct ShimmerCard: View {
 
     public var body: some View {
         RoundedRectangle(cornerRadius: cornerRadius)
-            .fill(Color.white.opacity(0.05))
+            .fill(Color.white.opacity(0.10))
             .frame(width: width, height: height)
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius)
@@ -255,7 +274,7 @@ public struct ShimmerCard: View {
                         LinearGradient(
                             colors: [
                                 Color.white.opacity(0),
-                                Color.white.opacity(0.06),
+                                Color.white.opacity(0.18),
                                 Color.white.opacity(0),
                             ],
                             startPoint: .leading,
