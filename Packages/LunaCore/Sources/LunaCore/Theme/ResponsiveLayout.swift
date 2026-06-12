@@ -30,25 +30,25 @@ public struct ResponsiveMetrics {
             horizontalPadding = 16
             posterWidth = 125; posterHeight = 185
             landscapeWidth = 220; landscapeHeight = 124
-            continueWatchingWidth = 210; continueWatchingHeight = 118
+            continueWatchingWidth = 240; continueWatchingHeight = 145
             fontScaleMultiplier = 1.0
         case .tablet:
             horizontalPadding = 24
             posterWidth = 145; posterHeight = 215
             landscapeWidth = 280; landscapeHeight = 158
-            continueWatchingWidth = 240; continueWatchingHeight = 135
+            continueWatchingWidth = 260; continueWatchingHeight = 155
             fontScaleMultiplier = 1.05
         case .large:
             horizontalPadding = 28
             posterWidth = 165; posterHeight = 245
             landscapeWidth = 280; landscapeHeight = 158
-            continueWatchingWidth = 250; continueWatchingHeight = 141
+            continueWatchingWidth = 270; continueWatchingHeight = 160
             fontScaleMultiplier = 1.1
         case .xlarge:
             horizontalPadding = 32
             posterWidth = 185; posterHeight = 275
             landscapeWidth = 320; landscapeHeight = 180
-            continueWatchingWidth = 280; continueWatchingHeight = 158
+            continueWatchingWidth = 300; continueWatchingHeight = 170
             fontScaleMultiplier = 1.15
         }
     }

@@ -546,8 +546,8 @@ struct ContinueWatchingRow: View {
 
 struct ContinueWatchingCard: View {
     let item: ContinueWatchingItem
-    var width: CGFloat = 185
-    var height: CGFloat = 104
+    var width: CGFloat = 240
+    var height: CGFloat = 145
 
     private var imageURL: URL? {
         (item.thumbnail ?? item.poster).flatMap(URL.init)
@@ -556,6 +556,14 @@ struct ContinueWatchingCard: View {
     private var episodeBadge: String? {
         guard let s = item.seasonNumber, let e = item.episodeNumber else { return nil }
         return "S\(s) E\(e)"
+    }
+
+    /// Minutes remaining based on duration and current progress.
+    private var minutesRemaining: Int? {
+        guard item.durationMs > 0 else { return nil }
+        let remainingMs = item.durationMs * (1.0 - item.progressFraction)
+        let mins = Int((remainingMs / 60_000).rounded())
+        return mins > 0 ? mins : nil
     }
 
     var body: some View {
@@ -586,27 +594,7 @@ struct ContinueWatchingCard: View {
                     .frame(height: height * 0.55)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
 
-                // Minimal white progress bar, inset from the card edge.
-                VStack(spacing: 0) {
-                    Spacer()
-                    GeometryReader { geo in
-                        ZStack(alignment: .leading) {
-                            Capsule()
-                                .fill(Color.white.opacity(0.22))
-                                .frame(height: 2)
-                            Rectangle()
-                                .fill(Color.white.opacity(0.92))
-                                .frame(width: max(0, geo.size.width * item.progressFraction), height: 2)
-                                .clipShape(Capsule())
-                        }
-                    }
-                    .frame(height: 2)
-                    .padding(.horizontal, 8)
-                    .padding(.bottom, 6)
-                }
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-
-                // Play button + episode badge row at bottom-left
+                // Play button row (above the glass strip)
                 HStack(spacing: 6) {
                     Image(systemName: "play.fill")
                         .font(.system(size: 9, weight: .bold))
@@ -614,20 +602,58 @@ struct ContinueWatchingCard: View {
                         .padding(5)
                         .background(Color.black.opacity(0.55))
                         .clipShape(Circle())
-
-                    if let badge = episodeBadge {
-                        Text(badge)
-                            .font(.system(size: 10, weight: .semibold))
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 3)
-                            .background(Color.black.opacity(0.55))
-                            .clipShape(Capsule())
-                    }
                     Spacer()
                 }
                 .padding(.horizontal, 6)
-                .padding(.bottom, 12)
+                .padding(.bottom, 38)
+
+                // Frosted glass strip at bottom
+                VStack(spacing: 0) {
+                    Spacer()
+                    ZStack {
+                        // Glass background
+                        if #available(iOS 26, *) {
+                            Color.clear
+                                .glassEffect(
+                                    .regular,
+                                    in: UnevenRoundedRectangle(
+                                        topLeadingRadius: 0,
+                                        bottomLeadingRadius: 12,
+                                        bottomTrailingRadius: 12,
+                                        topTrailingRadius: 0
+                                    )
+                                )
+                        } else {
+                            Rectangle()
+                                .fill(.ultraThinMaterial)
+                                .clipShape(
+                                    UnevenRoundedRectangle(
+                                        topLeadingRadius: 0,
+                                        bottomLeadingRadius: 12,
+                                        bottomTrailingRadius: 12,
+                                        topTrailingRadius: 0
+                                    )
+                                )
+                        }
+
+                        // Content row
+                        HStack(spacing: 4) {
+                            if let s = item.seasonNumber, let e = item.episodeNumber {
+                                Text("S\(s) · E\(e)")
+                                    .font(.system(size: 8, weight: .medium))
+                                    .foregroundStyle(.white.opacity(0.55))
+                            }
+                            Spacer()
+                            if let mins = minutesRemaining {
+                                Text("\(mins) min left")
+                                    .font(.system(size: 8, weight: .bold))
+                                    .foregroundStyle(.white)
+                            }
+                        }
+                        .padding(.horizontal, 8)
+                    }
+                    .frame(height: 30)
+                }
             }
             .frame(width: width, height: height)
 
