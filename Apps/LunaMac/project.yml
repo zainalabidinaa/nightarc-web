@@ -10,14 +10,17 @@ settings:
     MARKETING_VERSION: "1.0.0"
     CURRENT_PROJECT_VERSION: "1"
     GENERATE_INFOPLIST_FILE: true
-    INFOPLIST_KEY_CFBundleDisplayName: "Luna"
-    INFOPLIST_KEY_NSHumanReadableCopyright: "Copyright \u00A9 2026 Luna"
+    INFOPLIST_KEY_CFBundleDisplayName: "Nightarc"
+    INFOPLIST_KEY_NSHumanReadableCopyright: "Copyright \u00A9 2026 Nightarc"
 
 packages:
   LunaCore:
     path: ../../Packages/LunaCore
   KSPlayer:
     path: /tmp/ksplayer-clone
+  Lottie:
+    url: https://github.com/airbnb/lottie-spm.git
+    from: "4.6.0"
 
 targets:
   LunaMac:
@@ -26,16 +29,26 @@ targets:
     sources:
       - path: Sources
       - path: Assets.xcassets
-    resources:
       - path: Resources
-        type: folder
     dependencies:
       - package: LunaCore
       - package: KSPlayer
+      - package: Lottie
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: "com.luna.mac"
+        PRODUCT_BUNDLE_IDENTIFIER: "com.nightarc.mac"
         INFOPLIST_KEY_LSMinimumSystemVersion: "14.0"
         INFOPLIST_KEY_NSAppTransportSecurity:
           NSAllowsArbitraryLoads: true
         INFOPLIST_KEY_CFBundleIconFile: "AppIcon"
+
+  LunaMacTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: Tests
+    dependencies:
+      - target: LunaMac
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: "com.nightarc.mac.tests"
