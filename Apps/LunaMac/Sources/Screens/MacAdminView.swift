@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct MacAdminView: View {
     @StateObject private var adminService = AdminService.shared
@@ -12,7 +12,7 @@ struct MacAdminView: View {
                 Text("Admin Panel")
                     .font(.system(size: 26, weight: .bold))
                     .foregroundColor(.white)
-                    .padding(.top, LunaTheme.navBarTopInset)
+                    .padding(.top, NightarcTheme.navBarTopInset)
 
                 // ── Generate invite ──────────────────────────────
                 VStack(alignment: .leading, spacing: 0) {
@@ -22,7 +22,7 @@ struct MacAdminView: View {
                         HStack {
                             Text("Max uses")
                                 .font(.subheadline)
-                                .foregroundColor(LunaTheme.textSecondary)
+                                .foregroundColor(NightarcTheme.textSecondary)
                             Spacer()
                             Stepper(value: $maxUses, in: 1...100) {
                                 Text("\(maxUses)")
@@ -52,7 +52,7 @@ struct MacAdminView: View {
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 10)
-                            .background(LunaTheme.accent)
+                            .background(NightarcTheme.accent)
                             .cornerRadius(8)
                         }
                         .buttonStyle(.plain)
@@ -60,7 +60,7 @@ struct MacAdminView: View {
                     }
                     .padding(16)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(LunaTheme.surface)
+                    .background(NightarcTheme.surface)
                     .cornerRadius(12)
                 }
 
@@ -71,10 +71,10 @@ struct MacAdminView: View {
                     if adminService.inviteCodes.isEmpty {
                         Text("No invite codes yet. Generate one above.")
                             .font(.caption)
-                            .foregroundColor(LunaTheme.textTertiary)
+                            .foregroundColor(NightarcTheme.textTertiary)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(16)
-                            .background(LunaTheme.surface)
+                            .background(NightarcTheme.surface)
                             .cornerRadius(12)
                     } else {
                         VStack(spacing: 0) {
@@ -84,14 +84,14 @@ struct MacAdminView: View {
                                     Text(code.code)
                                         .font(.system(.body, design: .monospaced))
                                         .fontWeight(.bold)
-                                        .foregroundColor(LunaTheme.accent)
+                                        .foregroundColor(NightarcTheme.accent)
                                     Spacer()
                                     Circle()
                                         .fill(active ? Color.green : Color.red)
                                         .frame(width: 7, height: 7)
                                     Text(active ? "Active" : (code.isUsed ? "Used" : "Revoked"))
                                         .font(.caption)
-                                        .foregroundColor(LunaTheme.textTertiary)
+                                        .foregroundColor(NightarcTheme.textTertiary)
                                     if active {
                                         Button("Revoke") {
                                             Task { try? await adminService.revokeInviteCode(code.code) }
@@ -103,7 +103,7 @@ struct MacAdminView: View {
                                 }
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 12)
-                                .background(LunaTheme.surface)
+                                .background(NightarcTheme.surface)
                                 if code.id != adminService.inviteCodes.last?.id {
                                     Divider().background(Color.white.opacity(0.06))
                                 }
@@ -120,14 +120,14 @@ struct MacAdminView: View {
             .padding(.horizontal, 24)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(LunaTheme.background)
+        .background(NightarcTheme.background)
         .task { await adminService.loadInviteCodes() }
     }
 
     private func sectionHeader(_ title: String) -> some View {
         Text(title)
             .font(.system(size: 11, weight: .bold))
-            .foregroundColor(LunaTheme.textTertiary)
+            .foregroundColor(NightarcTheme.textTertiary)
             .tracking(1)
             .textCase(.uppercase)
             .padding(.bottom, 8)

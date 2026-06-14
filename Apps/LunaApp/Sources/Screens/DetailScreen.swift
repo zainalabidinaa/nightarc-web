@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct DetailScreen: View {
     let mediaId: String
@@ -33,6 +33,19 @@ struct DetailScreen: View {
     private static let mltBaseURL = "https://bbab4a35b833-more-like-this.baby-beamup.club/%7B%22iv%22%3A%226eccbcc6a9db21bd4cb1fef5f30b4892%22%2C%22salt%22%3Anull%2C%22authTag%22%3A%22017bc87cc819a77554085544340d58ee%22%2C%22data%22%3A%22d270093abcf6a558d135729ff8b3b1f799809a1b7bcf8e42b77a79357857b567587078990ef4e3668c550ee8b53b3219b6b9d39a201b768bf39dd3516762994348df48afdf938ad363cdf3bf2c620fb2014ee02826dac096aaa4e23da726f2b5de5467874ff0a51a87567354a45e23daf41cddbac084ed0f72000bf89b4d66acbf6908349fa70d0106a0e803001766e4a8635343e348c523061beabaa612a054ca63730898aa357d37af353db6ebf07dc415bb4de0064ef88f13c308a8bf8a64c620b9433575b7dd6a3b135d2aa0db02a82e434a0a713dd00e2c23efe2938ffcb5bcefe24fb2b7b70e2d0749029c88e2f9c4eb72af2cdd7162a706fccd56cc4f81d470fd9d3518f8d6d0d79943de3bafb4bc83de616f236f4e111bfad494bdb50426351aaaeb7df0573f4dc195c87f18094466b490bb9c8d9547ed3a82f2a0930cd55d177b03df493591470b75f4c7fe179b4725e40aafc21cfe7593e0d72dc825598b2c083854a60c284c0582f75736904a8b35842cc44872c8c294b9bec96421288ab2d80f6cb5c824eec1aff65e485193083a66da91022dffa55f9059b986ad65e2f09902648fc197a076773f29136b2c1df1b2af9e7334b3c0285d397602abc0ffd6bcdecf5d5318093dce2b8b2922d8ac1215e8ec4385e3eef554f21f6e49fa1fd6d37544530f3dd41a3bcd2f3febe53dd3a3390a6ce5a4748fa600a9466b425901e5e05500c941882ecce958e40f30256c02eedfccc5f7b630b214c9e61795bdba0481abd9160b901a014ac4d4cddf57a83ca8529ce5c30bf368ff8740ce7b757313cce9f0b73567897250ab333bfa%22%7D"
     @Environment(\.openURL) private var openURL
 
+    private var isSyntheticFolderId: Bool {
+        mediaId.hasPrefix("folder_")
+    }
+
+    private var staleDetailLabel: String {
+        guard let updatedAt = metaRepo.cachedDetailUpdatedAt else {
+            return "Showing saved details"
+        }
+        let formatter = RelativeDateTimeFormatter()
+        formatter.unitsStyle = .abbreviated
+        return "Last updated \(formatter.localizedString(for: updatedAt, relativeTo: Date()))"
+    }
+
     var body: some View {
         ScrollView {
             if let detail = metaRepo.detail {
@@ -56,13 +69,13 @@ struct DetailScreen: View {
                                             .frame(width: geo.size.width, height: 380 + topInset)
                                             .clipped()
                                     } else {
-                                        Color(LunaTheme.surfaceElevated)
+                                        Color(NightarcTheme.surfaceElevated)
                                             .frame(maxWidth: .infinity)
                                             .frame(height: 380 + topInset)
                                     }
                                 }
                             } else {
-                                Color(LunaTheme.surfaceElevated)
+                                Color(NightarcTheme.surfaceElevated)
                                     .frame(maxWidth: .infinity)
                                     .frame(height: 380 + topInset)
                             }
@@ -71,8 +84,8 @@ struct DetailScreen: View {
                                 stops: [
                                     .init(color: .clear,                            location: 0.0),
                                     .init(color: .clear,                            location: 0.30),
-                                    .init(color: LunaTheme.background.opacity(0.6), location: 0.60),
-                                    .init(color: LunaTheme.background,              location: 1.0),
+                                    .init(color: NightarcTheme.background.opacity(0.6), location: 0.60),
+                                    .init(color: NightarcTheme.background,              location: 1.0),
                                 ],
                                 startPoint: .top, endPoint: .bottom
                             )
@@ -126,6 +139,21 @@ struct DetailScreen: View {
                     }
                     .frame(height: 380)
 
+                    if metaRepo.isShowingStaleDetail {
+                        HStack(spacing: 6) {
+                            Image(systemName: "clock.arrow.circlepath")
+                                .font(.system(size: 11, weight: .semibold))
+                            Text(staleDetailLabel)
+                                .font(.system(size: 11, weight: .semibold))
+                        }
+                        .foregroundColor(.white.opacity(0.72))
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(Color.white.opacity(0.08), in: Capsule())
+                        .padding(.horizontal, 16)
+                        .padding(.top, 8)
+                    }
+
                     // ── ACTION BUTTONS ────────────────────────────────────
                     HStack(spacing: 12) {
                         let activeProgress = watchedRepo.getProgress(mediaId: detail.id)
@@ -159,7 +187,7 @@ struct DetailScreen: View {
                         } label: {
                             Image(systemName: inLibrary ? "bookmark.fill" : "bookmark")
                                 .font(.title3)
-                                .foregroundColor(inLibrary ? LunaTheme.accent : .white)
+                                .foregroundColor(inLibrary ? NightarcTheme.accent : .white)
                                 .frame(width: 50, height: 50)
                         }
                         .glassCard(cornerRadius: 25)
@@ -212,7 +240,7 @@ struct DetailScreen: View {
                             VStack(alignment: .leading, spacing: 6) {
                                 Text(description)
                                     .font(.subheadline)
-                                    .foregroundColor(LunaTheme.textSecondary)
+                                    .foregroundColor(NightarcTheme.textSecondary)
                                     .lineLimit(3)
                                     .multilineTextAlignment(.leading)
                                 Text("More")
@@ -252,7 +280,7 @@ struct DetailScreen: View {
                                                 .background(
                                                     Capsule().fill(
                                                         season.id == activeId
-                                                            ? LunaTheme.accent
+                                                            ? NightarcTheme.accent
                                                             : Color.white.opacity(0.12)
                                                     )
                                                 )
@@ -404,7 +432,7 @@ struct DetailScreen: View {
                                                 if let role = person.character {
                                                     Text(role)
                                                         .font(.system(size: 10))
-                                                        .foregroundColor(LunaTheme.textTertiary)
+                                                        .foregroundColor(NightarcTheme.textTertiary)
                                                         .lineLimit(1)
                                                         .frame(width: 72)
                                                 }
@@ -442,25 +470,27 @@ struct DetailScreen: View {
                 }
             } else if metaRepo.isLoading {
                 VStack {
-                    Spacer().frame(height: 280)
-                    ProgressView().tint(LunaTheme.accent)
+                    Spacer()
+                    LottieLoadingView(size: 72)
                     Spacer()
                 }
+                .frame(maxWidth: .infinity)
+                .frame(minHeight: UIScreen.main.bounds.height * 0.8)
             } else if let error = metaRepo.errorMessage {
                 VStack {
                     Spacer().frame(height: 200)
-                    Text(error).foregroundColor(LunaTheme.textSecondary).padding().multilineTextAlignment(.center)
+                    Text(error).foregroundColor(NightarcTheme.textSecondary).padding().multilineTextAlignment(.center)
                     Spacer()
                 }
             }
         }
         .ignoresSafeArea(edges: .top)
-        .background(LunaTheme.background)
+        .background(NightarcTheme.background)
         .refreshable {
             await metaRepo.loadDetail(
                 type: type,
                 id: mediaId,
-                addons: addonRepo.findAddonWithMetaResource(type: type)
+                addons: addonRepo.findAddonWithMetaResource(type: type, id: mediaId)
             )
         }
         .navigationBarTitleDisplayMode(.inline)
@@ -492,6 +522,15 @@ struct DetailScreen: View {
             )
         }
         .task {
+            guard !isSyntheticFolderId else {
+                metaRepo.detail = nil
+                metaRepo.isLoading = false
+                metaRepo.isShowingStaleDetail = false
+                metaRepo.cachedDetailUpdatedAt = nil
+                metaRepo.errorMessage = "Open this collection folder from Home to see its titles."
+                return
+            }
+
             if addonRepo.enabledAddons.isEmpty, let profile = profileManager.currentProfile {
                 await addonRepo.loadAddons(profileId: profile.id)
             }
@@ -510,7 +549,7 @@ struct DetailScreen: View {
             await metaRepo.loadDetail(
                 type: type,
                 id: mediaId,
-                addons: addonRepo.findAddonWithMetaResource(type: type)
+                addons: addonRepo.findAddonWithMetaResource(type: type, id: mediaId)
             )
             await loadCompanionLinks()
             await fetchMoreLikeThis()
@@ -660,24 +699,24 @@ struct DetailScreen: View {
     @ViewBuilder
     private func personInitialsCircle(_ name: String) -> some View {
         Circle()
-            .fill(LunaTheme.surfaceElevated)
+            .fill(NightarcTheme.surfaceElevated)
             .frame(width: 64, height: 64)
             .overlay(
                 Text(String(name.prefix(1)).uppercased())
                     .font(.title3.weight(.semibold))
-                    .foregroundColor(LunaTheme.textSecondary)
+                    .foregroundColor(NightarcTheme.textSecondary)
             )
     }
 
     @ViewBuilder
     private func castPortraitPlaceholder(_ name: String) -> some View {
         RoundedRectangle(cornerRadius: 8)
-            .fill(LunaTheme.surfaceElevated)
+            .fill(NightarcTheme.surfaceElevated)
             .frame(width: 72, height: 90)
             .overlay(
                 Text(String(name.prefix(1)).uppercased())
                     .font(.title2.weight(.semibold))
-                    .foregroundColor(LunaTheme.textSecondary)
+                    .foregroundColor(NightarcTheme.textSecondary)
             )
     }
 
@@ -984,7 +1023,7 @@ struct DetailScreen: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("GENRES")
                             .font(.system(size: 10, weight: .bold))
-                            .foregroundColor(LunaTheme.textTertiary)
+                            .foregroundColor(NightarcTheme.textTertiary)
                             .tracking(1.5)
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 8) {
@@ -992,8 +1031,8 @@ struct DetailScreen: View {
                                     Text(genre)
                                         .font(.caption)
                                         .padding(.horizontal, 12).padding(.vertical, 6)
-                                        .background(LunaTheme.surfaceElevated)
-                                        .foregroundColor(LunaTheme.textSecondary)
+                                        .background(NightarcTheme.surfaceElevated)
+                                        .foregroundColor(NightarcTheme.textSecondary)
                                         .cornerRadius(16)
                                 }
                             }
@@ -1004,7 +1043,7 @@ struct DetailScreen: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("DIRECTOR")
                             .font(.system(size: 10, weight: .bold))
-                            .foregroundColor(LunaTheme.textTertiary)
+                            .foregroundColor(NightarcTheme.textTertiary)
                             .tracking(1.5)
                         Text(detail.director!.map(\.name).joined(separator: ", "))
                             .font(.subheadline)
@@ -1022,16 +1061,16 @@ struct DetailScreen: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(label)
                 .font(.system(size: 10, weight: .bold))
-                .foregroundColor(LunaTheme.textTertiary)
+                .foregroundColor(NightarcTheme.textTertiary)
                 .tracking(1.5)
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
                     ForEach(links) { link in
                         Text(link.name)
                             .font(.caption.weight(.semibold))
-                            .foregroundColor(LunaTheme.textSecondary)
+                            .foregroundColor(NightarcTheme.textSecondary)
                             .padding(.horizontal, 12).padding(.vertical, 7)
-                            .background(LunaTheme.surfaceElevated)
+                            .background(NightarcTheme.surfaceElevated)
                             .cornerRadius(16)
                     }
                 }
@@ -1062,7 +1101,7 @@ private struct TrailerCard: View {
             VStack(alignment: .leading, spacing: 6) {
                 ZStack(alignment: .bottomLeading) {
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(LunaTheme.surfaceElevated)
+                        .fill(NightarcTheme.surfaceElevated)
                         .frame(width: 220, height: 124)
 
                     if let url = thumbnailURL {
@@ -1108,12 +1147,12 @@ private struct TrailerCard: View {
 
     private var trailerPlaceholder: some View {
         RoundedRectangle(cornerRadius: 10)
-            .fill(LunaTheme.surfaceElevated)
+            .fill(NightarcTheme.surfaceElevated)
             .frame(width: 220, height: 124)
             .overlay(
                 Image(systemName: "play.rectangle.fill")
                     .font(.title2)
-                    .foregroundColor(LunaTheme.textTertiary)
+                    .foregroundColor(NightarcTheme.textTertiary)
             )
     }
 }
@@ -1181,7 +1220,7 @@ struct EpisodeCard: View {
         VStack(alignment: .leading, spacing: 6) {
             ZStack(alignment: .bottomLeading) {
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(LunaTheme.surfaceElevated)
+                    .fill(NightarcTheme.surfaceElevated)
                     .frame(width: 220, height: 124)
 
                 if let thumb = episode.thumbnail, let url = URL(string: thumb) {
@@ -1217,7 +1256,7 @@ struct EpisodeCard: View {
                                 .frame(height: 3)
                                 .overlay(alignment: .leading) {
                                     Rectangle()
-                                        .fill(LunaTheme.accent)
+                                        .fill(NightarcTheme.accent)
                                         .frame(width: geo.size.width * min(max(progressFraction, 0), 1), height: 3)
                                 }
                         }
@@ -1233,7 +1272,7 @@ struct EpisodeCard: View {
             if let epNum = episode.episode {
                 Text("Episode \(epNum)")
                     .font(.caption2)
-                    .foregroundColor(LunaTheme.textTertiary)
+                    .foregroundColor(NightarcTheme.textTertiary)
             }
             Text(episode.title)
                 .font(.caption.weight(.semibold))
@@ -1243,7 +1282,7 @@ struct EpisodeCard: View {
             if let overview = episode.overview {
                 Text(overview)
                     .font(.caption2)
-                    .foregroundColor(LunaTheme.textSecondary)
+                    .foregroundColor(NightarcTheme.textSecondary)
                     .lineLimit(2)
                     .frame(width: 220, alignment: .leading)
                     .contentShape(Rectangle())
@@ -1254,12 +1293,12 @@ struct EpisodeCard: View {
 
     private var episodePlaceholder: some View {
         RoundedRectangle(cornerRadius: 10)
-            .fill(LunaTheme.surfaceElevated)
+            .fill(NightarcTheme.surfaceElevated)
             .frame(width: 220, height: 124)
             .overlay(
                 Image(systemName: "play.rectangle.fill")
                     .font(.title2)
-                    .foregroundColor(LunaTheme.textTertiary)
+                    .foregroundColor(NightarcTheme.textTertiary)
             )
     }
 }
@@ -1279,7 +1318,7 @@ struct SeasonDetailScreen: View {
                             if let overview = episode.overview {
                                 Text(overview)
                                     .font(.caption)
-                                    .foregroundColor(LunaTheme.textSecondary)
+                                    .foregroundColor(NightarcTheme.textSecondary)
                                     .lineLimit(2)
                             }
                         }
@@ -1287,16 +1326,16 @@ struct SeasonDetailScreen: View {
                         if let runtime = episode.runtime {
                             Text(runtime)
                                 .font(.caption2)
-                                .foregroundColor(LunaTheme.textTertiary)
+                                .foregroundColor(NightarcTheme.textTertiary)
                         }
                     }
                     .padding(.vertical, 4)
-                    .listRowBackground(LunaTheme.surface)
+                    .listRowBackground(NightarcTheme.surface)
                 }
             }
         }
         .scrollContentBackground(.hidden)
-        .background(LunaTheme.background)
+        .background(NightarcTheme.background)
         .navigationTitle(season.name ?? "Season \(season.number)")
     }
 }

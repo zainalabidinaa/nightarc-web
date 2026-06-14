@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 import KSPlayer
 
 #if os(macOS)
@@ -12,11 +12,18 @@ struct MacPlayerView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var profileManager: ProfileManager
     @StateObject private var coordinator = KSVideoPlayer.Coordinator()
+    @StateObject private var addonRepo = AddonRepository.shared
     @State private var visibility = PlayerControlVisibilityState()
     @State private var hideTask: Task<Void, Never>?
     @State private var isSeeking = false
     @State private var pendingSeekTime: Double = 0
     @State private var saveTask: Task<Void, Never>?
+    @State private var subtitleChoices: [SubtitleItem] = []
+    @State private var selectedExternalSubtitle: SubtitleItem?
+    @State private var externalSubtitleCues: [MacSubtitleCue] = []
+    @State private var isLoadingSubtitles = false
+    @State private var subtitleError: String?
+    @State private var showStartupLoading = true
 
     var body: some View {
         if let url = URL(string: launch.sourceUrl) {
@@ -32,15 +39,32 @@ struct MacPlayerView: View {
                 }
                 .ignoresSafeArea()
 
-                PlayerSubtitleOverlay(model: coordinator.subtitleModel, time: TimeInterval(coordinator.timemodel.currentTime))
-                    .padding(.horizontal, 48)
-                    .padding(.bottom, 112)
+                if let selectedExternalSubtitle {
+                    ExternalSubtitleOverlay(
+                        cues: externalSubtitleCues,
+                        time: TimeInterval(coordinator.timemodel.currentTime),
+                        isLoading: isLoadingSubtitles,
+                        title: selectedExternalSubtitle.displayTitle
+                    )
+                    .padding(.horizontal, 56)
+                    .padding(.bottom, 150)
                     .allowsHitTesting(false)
+                } else {
+                    PlayerSubtitleOverlay(model: coordinator.subtitleModel, time: TimeInterval(coordinator.timemodel.currentTime))
+                        .padding(.horizontal, 56)
+                        .padding(.bottom, 150)
+                        .allowsHitTesting(false)
+                }
 
                 PlayerMouseTrackingView {
                     showControls()
                 }
                 .ignoresSafeArea()
+
+                if showStartupLoading {
+                    PlayerStartupLoadingOverlay(launch: launch)
+                        .transition(.opacity)
+                }
 
                 VStack {
                     topBar
@@ -51,10 +75,22 @@ struct MacPlayerView: View {
                         timeModel: coordinator.timemodel,
                         isSeeking: $isSeeking,
                         pendingSeekTime: $pendingSeekTime,
+                        subtitleChoices: subtitleChoices,
+                        selectedExternalSubtitle: $selectedExternalSubtitle,
+                        isLoadingSubtitles: isLoadingSubtitles,
+                        subtitleError: subtitleError,
                         onInteraction: showControls,
+                        onSelectExternalSubtitle: { subtitle in
+                            Task { await selectExternalSubtitle(subtitle) }
+                        },
+                        onDisableExternalSubtitles: {
+                            selectedExternalSubtitle = nil
+                            externalSubtitleCues = []
+                            subtitleError = nil
+                        },
                         onDismiss: { dismiss() }
                     )
-                    .padding(.horizontal, 28)
+                    .padding(.horizontal, 34)
                     .padding(.bottom, 24)
                 }
                 .opacity(visibility.controlsVisible ? 1 : 0)
@@ -66,6 +102,11 @@ struct MacPlayerView: View {
             .onAppear {
                 showControls()
                 startSavingProgress()
+                Task {
+                    await loadAvailableSubtitles()
+                    try? await Task.sleep(for: .seconds(1.25))
+                    showStartupLoading = false
+                }
             }
             .onDisappear {
                 hideTask?.cancel()
@@ -141,17 +182,18 @@ struct MacPlayerView: View {
             } label: {
                 Label("Close", systemImage: "xmark")
                     .labelStyle(.iconOnly)
-                    .font(.system(size: 14, weight: .semibold))
-                    .frame(width: 36, height: 36)
-                    .background(.ultraThinMaterial, in: Circle())
+                    .font(.system(size: 17, weight: .semibold))
+                    .frame(width: 44, height: 44)
+                    .macDarkGlassCapsule(interactive: true)
             }
             .buttonStyle(.plain)
+            .foregroundStyle(.white)
             .accessibilityLabel("Close player")
 
             Spacer()
         }
-        .padding(.horizontal, 24)
-        .padding(.top, 18)
+        .padding(.horizontal, 26)
+        .padding(.top, 20)
     }
 
     private func showControls() {
@@ -227,7 +269,7 @@ struct MacPlayerView: View {
                 durationSeconds: dur,
                 completed: final && pos > 0 && dur > 0 && pos / dur > 0.9,
                 name: launch.title,
-                poster: launch.poster,
+                poster: launch.episodeThumbnail ?? launch.poster,
                 parentMetaId: launch.parentMetaId,
                 season: launch.seasonNumber,
                 episode: launch.episodeNumber
@@ -244,6 +286,52 @@ struct MacPlayerView: View {
 
         return options
     }
+
+    private func loadAvailableSubtitles() async {
+        let embedded = launch.subtitles ?? []
+        let addonSubtitles: [SubtitleItem]
+        do {
+            addonSubtitles = try await SubtitleService.shared.fetchSubtitlesFromAddons(
+                type: launch.parentMetaType ?? launch.contentType.rawValue,
+                id: launch.videoId,
+                addons: addonRepo.managedAddons.map(\.manifest)
+            )
+        } catch {
+            addonSubtitles = []
+        }
+
+        var seen = Set<String>()
+        subtitleChoices = (embedded + addonSubtitles).filter { subtitle in
+            seen.insert(subtitle.url).inserted
+        }
+    }
+
+    private func selectExternalSubtitle(_ subtitle: SubtitleItem) async {
+        selectedExternalSubtitle = subtitle
+        coordinator.subtitleModel.selectedSubtitleInfo = nil
+        isLoadingSubtitles = true
+        subtitleError = nil
+        externalSubtitleCues = []
+
+        guard let url = URL(string: subtitle.url) else {
+            subtitleError = "Invalid subtitle URL"
+            isLoadingSubtitles = false
+            return
+        }
+
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            guard let content = String(data: data, encoding: .utf8) ?? String(data: data, encoding: .isoLatin1) else {
+                subtitleError = "Unable to decode subtitles"
+                isLoadingSubtitles = false
+                return
+            }
+            externalSubtitleCues = MacSubtitleCue.parse(content)
+        } catch {
+            subtitleError = "Unable to load subtitles"
+        }
+        isLoadingSubtitles = false
+    }
 }
 
 private struct NativeLikePlayerControls: View {
@@ -252,7 +340,13 @@ private struct NativeLikePlayerControls: View {
     @ObservedObject var timeModel: ControllerTimeModel
     @Binding var isSeeking: Bool
     @Binding var pendingSeekTime: Double
+    let subtitleChoices: [SubtitleItem]
+    @Binding var selectedExternalSubtitle: SubtitleItem?
+    let isLoadingSubtitles: Bool
+    let subtitleError: String?
     let onInteraction: () -> Void
+    let onSelectExternalSubtitle: (SubtitleItem) -> Void
+    let onDisableExternalSubtitles: () -> Void
     let onDismiss: () -> Void
 
     @State private var volumeHover = false
@@ -275,25 +369,25 @@ private struct NativeLikePlayerControls: View {
                 onInteraction: onInteraction,
                 onCommit: { coordinator.seek(time: pendingSeekTime) }
             )
-            .padding(.horizontal, 4)
+            .padding(.horizontal, 6)
 
             // Controls row
             HStack(spacing: 0) {
                 // Time
                 Text(formatTime(currentTime))
-                    .font(.system(size: 11, weight: .medium, design: .monospaced))
+                    .font(.system(size: 13, weight: .medium, design: .monospaced))
                     .foregroundStyle(.white.opacity(0.8))
-                    .frame(width: 44, alignment: .leading)
+                    .frame(width: 58, alignment: .leading)
 
-                Spacer().frame(width: 8)
+                Spacer().frame(width: 12)
 
                 // Skip back
-                PlayerControlButton(systemName: "gobackward.10", size: 20) {
+                PlayerControlButton(systemName: "gobackward.10", size: 21, frameSize: 46) {
                     onInteraction()
                     coordinator.skip(interval: -10)
                 }
 
-                Spacer().frame(width: 6)
+                Spacer().frame(width: 10)
 
                 // Play/Pause - larger
                 Button {
@@ -305,43 +399,45 @@ private struct NativeLikePlayerControls: View {
                     }
                 } label: {
                     Image(systemName: coordinator.state.isPlaying ? "pause.fill" : "play.fill")
-                        .font(.system(size: 22, weight: .medium))
-                        .frame(width: 36, height: 36)
-                        .contentShape(Rectangle())
+                        .font(.system(size: 25, weight: .semibold))
+                        .frame(width: 56, height: 56)
+                        .contentShape(Circle())
+                        .macDarkGlassCapsule(interactive: true)
                 }
                 .buttonStyle(.plain)
                 .foregroundStyle(.white)
 
-                Spacer().frame(width: 6)
+                Spacer().frame(width: 10)
 
                 // Skip forward
-                PlayerControlButton(systemName: "goforward.10", size: 20) {
+                PlayerControlButton(systemName: "goforward.10", size: 21, frameSize: 46) {
                     onInteraction()
                     coordinator.skip(interval: 10)
                 }
 
-                Spacer().frame(width: 8)
+                Spacer().frame(width: 12)
 
                 // Time remaining
                 Text("-\(formatTime(totalTime - currentTime))")
-                    .font(.system(size: 11, weight: .medium, design: .monospaced))
+                    .font(.system(size: 13, weight: .medium, design: .monospaced))
                     .foregroundStyle(.white.opacity(0.5))
-                    .frame(width: 44, alignment: .trailing)
+                    .frame(width: 58, alignment: .trailing)
 
                 Spacer(minLength: 20)
 
                 // Right-side controls
-                HStack(spacing: 10) {
+                HStack(spacing: 9) {
                     // Volume
-                    HStack(spacing: 4) {
+                    HStack(spacing: 7) {
                         Button {
                             onInteraction()
                             coordinator.isMuted.toggle()
                         } label: {
                             Image(systemName: coordinator.isMuted || coordinator.playbackVolume == 0
                                   ? "speaker.fill" : "speaker.wave.2.fill")
-                                .font(.system(size: 14, weight: .medium))
-                                .frame(width: 24, height: 24)
+                                .font(.system(size: 16, weight: .semibold))
+                                .frame(width: 40, height: 40)
+                                .macDarkGlassCapsule(interactive: true)
                         }
                         .buttonStyle(.plain)
                         .foregroundStyle(.white.opacity(0.85))
@@ -356,14 +452,23 @@ private struct NativeLikePlayerControls: View {
                                 }
                             ), in: 0 ... 1)
                             .tint(.white.opacity(0.85))
-                            .frame(width: 60)
+                            .frame(width: 78)
                             .transition(.scale.combined(with: .opacity))
                         }
                     }
                     .onHover { volumeHover = $0 }
 
                     // Subtitles
-                    SubtitleMenu(coordinator: coordinator, onInteraction: onInteraction)
+                    SubtitleMenu(
+                        coordinator: coordinator,
+                        externalSubtitles: subtitleChoices,
+                        selectedExternalSubtitle: $selectedExternalSubtitle,
+                        isLoadingExternal: isLoadingSubtitles,
+                        error: subtitleError,
+                        onInteraction: onInteraction,
+                        onSelectExternalSubtitle: onSelectExternalSubtitle,
+                        onDisableExternalSubtitles: onDisableExternalSubtitles
+                    )
 
                     // Audio
                     AudioMenu(coordinator: coordinator, onInteraction: onInteraction)
@@ -372,7 +477,7 @@ private struct NativeLikePlayerControls: View {
                     SpeedMenu(coordinator: coordinator, onInteraction: onInteraction)
 
                     // Fullscreen
-                    PlayerControlButton(systemName: "arrow.up.backward.and.arrow.down.forward", size: 15) {
+                    PlayerControlButton(systemName: "arrow.up.backward.and.arrow.down.forward", size: 16, frameSize: 40) {
                         onInteraction()
                         coordinator.playerLayer?.player.view?.window?.toggleFullScreen(nil)
                     }
@@ -381,8 +486,7 @@ private struct NativeLikePlayerControls: View {
         }
         .padding(.horizontal, 18)
         .padding(.vertical, 12)
-        .glassCard(cornerRadius: 16, interactive: true)
-        .shadow(color: .black.opacity(0.45), radius: 24, x: 0, y: 12)
+        .macDarkGlassCard(cornerRadius: 22, interactive: true)
         .onHover { hovering in
             if hovering { onInteraction() }
         }
@@ -415,13 +519,13 @@ private struct PlayerScrubber: View {
                 // Track
                 Capsule()
                     .fill(.white.opacity(0.2))
-                    .frame(height: 4)
+                    .frame(height: 6)
 
                 // Progress
                 if range.upperBound > 0 {
                     Capsule()
                         .fill(.white)
-                        .frame(width: max(0, min(width, width * CGFloat(value / range.upperBound))), height: 4)
+                        .frame(width: max(0, min(width, width * CGFloat(value / range.upperBound))), height: 6)
                 }
             }
             .gesture(
@@ -438,7 +542,7 @@ private struct PlayerScrubber: View {
                     }
             )
         }
-        .frame(height: 12)
+        .frame(height: 18)
         .contentShape(Rectangle())
     }
 }
@@ -446,14 +550,16 @@ private struct PlayerScrubber: View {
 private struct PlayerControlButton: View {
     let systemName: String
     let size: CGFloat
+    var frameSize: CGFloat = 46
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
             Image(systemName: systemName)
-                .font(.system(size: size, weight: .medium))
-                .frame(width: 28, height: 28)
-                .contentShape(Rectangle())
+                .font(.system(size: size, weight: .semibold))
+                .frame(width: frameSize, height: frameSize)
+                .contentShape(Circle())
+                .macDarkGlassCapsule(interactive: true)
         }
         .buttonStyle(.plain)
         .foregroundStyle(.white.opacity(0.85))
@@ -462,34 +568,96 @@ private struct PlayerControlButton: View {
 
 private struct SubtitleMenu: View {
     @ObservedObject var coordinator: KSVideoPlayer.Coordinator
+    let externalSubtitles: [SubtitleItem]
+    @Binding var selectedExternalSubtitle: SubtitleItem?
+    let isLoadingExternal: Bool
+    let error: String?
     let onInteraction: () -> Void
+    let onSelectExternalSubtitle: (SubtitleItem) -> Void
+    let onDisableExternalSubtitles: () -> Void
+
+    private var groupedExternalSubtitles: [(lang: String, items: [SubtitleItem])] {
+        let grouped = Dictionary(grouping: externalSubtitles, by: { $0.lang.isEmpty ? "unknown" : $0.lang })
+        return grouped.keys.sorted().map { lang in
+            (
+                lang: lang,
+                items: (grouped[lang] ?? []).sorted { $0.displayTitle < $1.displayTitle }
+            )
+        }
+    }
 
     var body: some View {
         Menu {
+            if !coordinator.subtitleModel.subtitleInfos.isEmpty {
+                Section("Embedded") {
+                    ForEach(coordinator.subtitleModel.subtitleInfos, id: \.subtitleID) { subtitle in
+                        Button {
+                            onInteraction()
+                            onDisableExternalSubtitles()
+                            subtitle.isEnabled = true
+                            coordinator.subtitleModel.selectedSubtitleInfo = subtitle
+                        } label: {
+                            Label(subtitle.name.isEmpty ? subtitle.subtitleID : subtitle.name, systemImage: coordinator.subtitleModel.selectedSubtitleInfo?.subtitleID == subtitle.subtitleID && selectedExternalSubtitle == nil ? "checkmark" : "")
+                        }
+                    }
+                }
+            }
+
+            if !groupedExternalSubtitles.isEmpty {
+                ForEach(groupedExternalSubtitles, id: \.lang) { group in
+                    if group.items.count == 1, let subtitle = group.items.first {
+                        Button {
+                            onInteraction()
+                            onSelectExternalSubtitle(subtitle)
+                        } label: {
+                            Label(subtitleDisplayName(for: group.lang), systemImage: selectedExternalSubtitle?.url == subtitle.url ? "checkmark" : "")
+                        }
+                    } else {
+                        Menu(subtitleDisplayName(for: group.lang)) {
+                            ForEach(group.items) { subtitle in
+                                Button {
+                                    onInteraction()
+                                    onSelectExternalSubtitle(subtitle)
+                                } label: {
+                                    Label(subtitle.displayTitle, systemImage: selectedExternalSubtitle?.url == subtitle.url ? "checkmark" : "")
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            Divider()
+
             Button {
                 onInteraction()
                 coordinator.subtitleModel.selectedSubtitleInfo = nil
+                onDisableExternalSubtitles()
             } label: {
-                Label("Off", systemImage: coordinator.subtitleModel.selectedSubtitleInfo == nil ? "checkmark" : "")
+                Label("Off", systemImage: coordinator.subtitleModel.selectedSubtitleInfo == nil && selectedExternalSubtitle == nil ? "checkmark" : "")
             }
 
-            ForEach(coordinator.subtitleModel.subtitleInfos, id: \.subtitleID) { subtitle in
-                Button {
-                    onInteraction()
-                    subtitle.isEnabled = true
-                    coordinator.subtitleModel.selectedSubtitleInfo = subtitle
-                } label: {
-                    Label(subtitle.name.isEmpty ? subtitle.subtitleID : subtitle.name, systemImage: coordinator.subtitleModel.selectedSubtitleInfo?.subtitleID == subtitle.subtitleID ? "checkmark" : "")
-                }
+            if isLoadingExternal {
+                Text("Loading subtitles...")
+            }
+            if let error {
+                Text(error)
             }
         } label: {
             Image(systemName: "captions.bubble.fill")
-                .font(.system(size: 14, weight: .semibold))
-                .frame(width: 30, height: 30)
+                .font(.system(size: 16, weight: .semibold))
+                .frame(width: 40, height: 40)
+                .macDarkGlassCapsule(interactive: true)
         }
         .menuStyle(.borderlessButton)
         .foregroundStyle(.white.opacity(0.92))
         .accessibilityLabel("Subtitles")
+    }
+
+    private func subtitleDisplayName(for lang: String) -> String {
+        let names = Locale.current.localizedString(forLanguageCode: lang)
+            ?? Locale(identifier: "en").localizedString(forLanguageCode: lang)
+        return names ?? lang.uppercased()
     }
 }
 
@@ -504,10 +672,11 @@ private struct AudioMenu: View {
     var body: some View {
         Group {
             if audioTracks.isEmpty {
-                Image(systemName: "waveform.circle")
-                    .font(.system(size: 14, weight: .semibold))
+                    Image(systemName: "waveform.circle")
+                    .font(.system(size: 16, weight: .semibold))
                     .foregroundStyle(.white.opacity(0.35))
-                    .frame(width: 30, height: 30)
+                    .frame(width: 40, height: 40)
+                    .macDarkGlassCapsule(interactive: true)
             } else {
                 Menu {
                     ForEach(audioTracks, id: \.trackID) { track in
@@ -520,8 +689,9 @@ private struct AudioMenu: View {
                     }
                 } label: {
                     Image(systemName: "waveform.circle.fill")
-                        .font(.system(size: 14, weight: .semibold))
-                        .frame(width: 30, height: 30)
+                        .font(.system(size: 16, weight: .semibold))
+                        .frame(width: 40, height: 40)
+                        .macDarkGlassCapsule(interactive: true)
                 }
                 .menuStyle(.borderlessButton)
                 .foregroundStyle(.white.opacity(0.92))
@@ -548,8 +718,9 @@ private struct SpeedMenu: View {
             }
         } label: {
             Text(String(format: "%.1f×", coordinator.playbackRate))
-                .font(.system(size: 11, weight: .semibold, design: .rounded))
-                .frame(width: 36, height: 24)
+                .font(.system(size: 13, weight: .bold, design: .rounded))
+                .frame(width: 50, height: 38)
+                .macDarkGlassCapsule(interactive: true)
         }
         .menuStyle(.borderlessButton)
         .foregroundStyle(.white.opacity(0.85))
@@ -576,6 +747,164 @@ private struct PlayerSubtitleOverlay: View {
                 }
             }
         }
+    }
+}
+
+private struct ExternalSubtitleOverlay: View {
+    let cues: [MacSubtitleCue]
+    let time: TimeInterval
+    let isLoading: Bool
+    let title: String
+
+    private var activeText: String? {
+        cues.first { time >= $0.start && time <= $0.end }?.text
+    }
+
+    var body: some View {
+        VStack {
+            Spacer()
+            if isLoading {
+                Text("Loading \(title)...")
+                    .subtitleBubble(fontSize: 18)
+            } else if let activeText {
+                Text(activeText)
+                    .subtitleBubble(fontSize: 28)
+            }
+        }
+    }
+}
+
+private struct PlayerStartupLoadingOverlay: View {
+    let launch: PlayerLaunch
+
+    private var backdropURL: URL? {
+        [launch.episodeThumbnail, launch.background, launch.poster].compactMap { $0 }.compactMap(URL.init(string:)).first
+    }
+
+    var body: some View {
+        ZStack {
+            Color.black
+
+            if let backdropURL {
+                CachedAsyncImage(url: backdropURL) { image in
+                    image
+                        .resizable()
+                        .scaledToFill()
+                        .blur(radius: 26)
+                        .opacity(0.42)
+                } placeholder: {
+                    Color.clear
+                }
+                .ignoresSafeArea()
+            }
+
+            LinearGradient(
+                colors: [.black.opacity(0.72), .black.opacity(0.36), .black.opacity(0.78)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+
+            VStack(spacing: 14) {
+                MacLottieLoadingView(size: 58)
+                Text(launch.title)
+                    .font(.headline.weight(.semibold))
+                    .foregroundStyle(.white)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: 520)
+                Text("Preparing playback")
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(NightarcTheme.textSecondary)
+            }
+            .padding(24)
+            .macDarkGlassCard(cornerRadius: 22)
+        }
+    }
+}
+
+private struct MacSubtitleCue: Identifiable, Sendable {
+    let id = UUID()
+    let start: TimeInterval
+    let end: TimeInterval
+    let text: String
+
+    static func parse(_ content: String) -> [MacSubtitleCue] {
+        var cues: [MacSubtitleCue] = []
+        let lines = content.components(separatedBy: "\n")
+        var index = 0
+
+        while index < lines.count {
+            let line = lines[index].trimmingCharacters(in: .whitespacesAndNewlines)
+            if line.contains("-->") {
+                let parts = line.components(separatedBy: "-->")
+                if parts.count >= 2,
+                   let start = parseTime(parts[0].trimmingCharacters(in: .whitespaces)),
+                   let end = parseTime(parts[1].trimmingCharacters(in: .whitespaces).components(separatedBy: " ").first ?? "") {
+                    index += 1
+                    var textLines: [String] = []
+                    while index < lines.count {
+                        let candidate = lines[index].trimmingCharacters(in: .whitespacesAndNewlines)
+                        if candidate.isEmpty || candidate.contains("-->") { break }
+                        if candidate.allSatisfy(\.isNumber) {
+                            index += 1
+                            continue
+                        }
+                        textLines.append(stripTags(candidate))
+                        index += 1
+                    }
+                    let text = textLines.filter { !$0.isEmpty }.joined(separator: "\n")
+                    if !text.isEmpty {
+                        cues.append(MacSubtitleCue(start: start, end: end, text: text))
+                    }
+                    continue
+                }
+            }
+            index += 1
+        }
+
+        return cues
+    }
+
+    private static func parseTime(_ value: String) -> TimeInterval? {
+        let normalized = value.replacingOccurrences(of: ",", with: ".")
+        let parts = normalized.components(separatedBy: ":")
+        switch parts.count {
+        case 3:
+            guard let hours = Double(parts[0]), let minutes = Double(parts[1]), let seconds = Double(parts[2]) else { return nil }
+            return hours * 3600 + minutes * 60 + seconds
+        case 2:
+            guard let minutes = Double(parts[0]), let seconds = Double(parts[1]) else { return nil }
+            return minutes * 60 + seconds
+        default:
+            return nil
+        }
+    }
+
+    private static func stripTags(_ text: String) -> String {
+        text.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
+    }
+}
+
+private extension Text {
+    func subtitleBubble(fontSize: CGFloat) -> some View {
+        self
+            .font(.system(size: fontSize, weight: .semibold))
+            .foregroundStyle(.white)
+            .multilineTextAlignment(.center)
+            .shadow(color: .black.opacity(0.95), radius: 4, x: 0, y: 2)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 6)
+            .background(.black.opacity(0.28), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+    }
+}
+
+private extension SubtitleItem {
+    var displayTitle: String {
+        if let name, !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return name
+        }
+        return lang.isEmpty ? id : lang.uppercased()
     }
 }
 

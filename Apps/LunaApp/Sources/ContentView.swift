@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct ContentView: View {
     @EnvironmentObject var profileManager: ProfileManager
@@ -70,7 +70,7 @@ private struct SessionRestoreView: View {
                 .scaleEffect(iconScale)
                 .opacity(iconOpacity)
 
-                Text("Luna")
+                Text("Nightarc")
                     .font(.system(size: 40, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
                     .opacity(wordmarkOpacity)

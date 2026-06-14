@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct SubtitleAppearanceScreen: View {
     @StateObject private var store = SubtitleAppearanceStore.shared
@@ -35,13 +35,13 @@ struct SubtitleAppearanceScreen: View {
                                             .foregroundColor(.white)
                                         Text(preset.description)
                                             .font(.caption)
-                                            .foregroundColor(LunaTheme.textSecondary)
+                                            .foregroundColor(NightarcTheme.textSecondary)
                                     }
                                     Spacer()
                                     if store.preset == preset {
                                         Image(systemName: "checkmark")
                                             .font(.caption.weight(.semibold))
-                                            .foregroundColor(LunaTheme.accent)
+                                            .foregroundColor(NightarcTheme.accent)
                                     }
                                 }
                                 .padding(.horizontal, 16)
@@ -145,7 +145,7 @@ struct SubtitleAppearanceScreen: View {
                 }
                 .padding(.top, 8)
             }
-            .background(LunaTheme.background)
+            .background(NightarcTheme.background)
             .navigationTitle("Subtitle Appearance")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -219,7 +219,7 @@ struct SubtitleAppearanceScreen: View {
     private func sectionLabel(_ text: String) -> some View {
         Text(text.uppercased())
             .font(.caption.weight(.semibold))
-            .foregroundColor(LunaTheme.textTertiary)
+            .foregroundColor(NightarcTheme.textTertiary)
             .padding(.horizontal, 20)
             .padding(.top, 12)
             .padding(.bottom, 2)
@@ -234,10 +234,10 @@ struct SubtitleAppearanceScreen: View {
                 Spacer()
                 Text(String(format: format, value.wrappedValue))
                     .font(.subheadline.weight(.semibold))
-                    .foregroundColor(LunaTheme.accent)
+                    .foregroundColor(NightarcTheme.accent)
             }
             Slider(value: value, in: range, step: step)
-                .tint(LunaTheme.accent)
+                .tint(NightarcTheme.accent)
                 .onChange(of: value.wrappedValue) { _, _ in onChange() }
         }
         .padding(.horizontal, 16)
@@ -267,10 +267,10 @@ struct SubtitleAppearanceScreen: View {
                 .overlay(Circle().stroke(Color.white.opacity(0.2), lineWidth: 1))
             Text(hex)
                 .font(.caption.monospaced())
-                .foregroundColor(LunaTheme.textSecondary)
+                .foregroundColor(NightarcTheme.textSecondary)
             Image(systemName: "chevron.right")
                 .font(.caption)
-                .foregroundColor(LunaTheme.textTertiary)
+                .foregroundColor(NightarcTheme.textTertiary)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)

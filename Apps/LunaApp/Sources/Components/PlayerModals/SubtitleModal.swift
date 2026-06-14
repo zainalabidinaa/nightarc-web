@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct SubtitlePickerPanel: View {
     @ObservedObject var engine: PlayerEngine
@@ -124,7 +124,7 @@ struct SubtitlePickerPanel: View {
                 if isSelected {
                     Image(systemName: "checkmark")
                         .font(.system(size: 11, weight: .semibold))
-                        .foregroundColor(LunaTheme.accent)
+                        .foregroundColor(NightarcTheme.accent)
                 } else if chevron {
                     Image(systemName: chevronDown ? "chevron.down" : "chevron.right")
                         .font(.system(size: 10, weight: .semibold))

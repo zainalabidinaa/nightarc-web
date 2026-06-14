@@ -30,9 +30,15 @@ public final class StremioHTTPClient: @unchecked Sendable {
         request.assumesHTTP3Capable = false
         headers?.forEach { request.setValue($1, forHTTPHeaderField: $0) }
 
-        let (data, response) = try await session.data(for: request)
+        let data: Data
+        let response: URLResponse
+        do {
+            (data, response) = try await session.data(for: request)
+        } catch {
+            throw StremioError.networkError(error)
+        }
         guard let httpResponse = response as? HTTPURLResponse else {
-            throw StremioError.networkError
+            throw StremioError.networkError(URLError(.badServerResponse))
         }
         guard (200...299).contains(httpResponse.statusCode) else {
             throw StremioError.httpError(httpResponse.statusCode)
@@ -52,15 +58,15 @@ public final class StremioHTTPClient: @unchecked Sendable {
     }
 }
 
-public enum StremioError: Error {
+public enum StremioError: Error, LocalizedError {
     case httpError(Int)
     case invalidResponse
     case invalidManifest
     case manifestNotFound
     case addonUnreachable(String)
-    case networkError
+    case networkError(Error)
 
-    public var localizedDescription: String {
+    public var errorDescription: String? {
         switch self {
         case .networkError:
             return "Check your internet connection and try again"

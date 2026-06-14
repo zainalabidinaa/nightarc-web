@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct MacSearchView: View {
     let onSelectMedia: (MetaPreview) -> Void
@@ -17,7 +17,7 @@ struct MacSearchView: View {
         VStack(spacing: 0) {
             HStack(spacing: 8) {
                 Image(systemName: "magnifyingglass")
-                    .foregroundColor(LunaTheme.textTertiary)
+                    .foregroundColor(NightarcTheme.textTertiary)
                 TextField("Search movies & shows...", text: $query)
                     .textFieldStyle(.plain)
                     .foregroundColor(.white)
@@ -30,17 +30,17 @@ struct MacSearchView: View {
                         selectedFilter = nil
                     } label: {
                         Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(LunaTheme.textTertiary)
+                            .foregroundColor(NightarcTheme.textTertiary)
                     }
                     .buttonStyle(.plain)
                 }
             }
             .padding(10)
-            .background(LunaTheme.surface)
+            .background(NightarcTheme.surface)
             .cornerRadius(10)
             .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.white.opacity(0.08), lineWidth: 1))
             .padding(.horizontal)
-            .padding(.top, LunaTheme.navBarTopInset)
+            .padding(.top, NightarcTheme.navBarTopInset)
 
             if !searchRepo.results.isEmpty {
                 HStack(spacing: 8) {
@@ -60,7 +60,7 @@ struct MacSearchView: View {
 
             if searchRepo.isLoading {
                 Spacer()
-                ProgressView().tint(LunaTheme.accent)
+                ProgressView().tint(NightarcTheme.accent)
                 Spacer()
             } else if !searchRepo.results.isEmpty {
                 ScrollView {
@@ -81,9 +81,9 @@ struct MacSearchView: View {
                 VStack(spacing: 8) {
                     Image(systemName: "magnifyingglass")
                         .font(.title)
-                        .foregroundColor(LunaTheme.textTertiary)
+                        .foregroundColor(NightarcTheme.textTertiary)
                     Text("No results for \"\(query)\"")
-                        .foregroundColor(LunaTheme.textSecondary)
+                        .foregroundColor(NightarcTheme.textSecondary)
                 }
                 Spacer()
             } else {
@@ -91,19 +91,19 @@ struct MacSearchView: View {
                 VStack(spacing: 12) {
                     Image(systemName: "sparkles")
                         .font(.system(size: 36))
-                        .foregroundColor(LunaTheme.textTertiary)
+                        .foregroundColor(NightarcTheme.textTertiary)
                     Text("Search movies & shows")
                         .font(.title3)
-                        .foregroundColor(LunaTheme.textSecondary)
+                        .foregroundColor(NightarcTheme.textSecondary)
                     Text("Find your next watch across all addons")
                         .font(.caption)
-                        .foregroundColor(LunaTheme.textTertiary)
+                        .foregroundColor(NightarcTheme.textTertiary)
                 }
                 Spacer()
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(LunaTheme.background)
+        .background(NightarcTheme.background)
     }
 }
 
@@ -119,8 +119,8 @@ struct FilterPill: View {
                 .fontWeight(.medium)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 6)
-                .background(isSelected ? LunaTheme.accent : LunaTheme.surface)
-                .foregroundColor(isSelected ? .white : LunaTheme.textSecondary)
+                .background(isSelected ? NightarcTheme.accent : NightarcTheme.surface)
+                .foregroundColor(isSelected ? .white : NightarcTheme.textSecondary)
                 .cornerRadius(16)
                 .overlay(
                     RoundedRectangle(cornerRadius: 16)

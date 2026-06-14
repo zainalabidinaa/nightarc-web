@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct SourcesPanel: View {
     @ObservedObject var engine: PlayerEngine
@@ -49,7 +49,7 @@ struct SourcesPanel: View {
                                     if stream.url == engine.currentLaunch?.sourceUrl {
                                         Image(systemName: "checkmark")
                                             .font(.system(size: 11, weight: .bold))
-                                            .foregroundColor(LunaTheme.accent)
+                                            .foregroundColor(NightarcTheme.accent)
                                     }
                                 }
                                 .padding(.horizontal, 12)

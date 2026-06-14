@@ -11,8 +11,8 @@ public actor SupabaseClient {
     private let encoder: JSONEncoder
 
     private init() {
-        self.baseURL = LunaConfig.supabaseURL
-        self.anonKey = LunaConfig.supabaseAnonKey
+        self.baseURL = NightarcConfig.supabaseURL
+        self.anonKey = NightarcConfig.supabaseAnonKey
         self.decoder = JSONDecoder()
         self.encoder = JSONEncoder()
 

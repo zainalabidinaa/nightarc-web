@@ -19,6 +19,14 @@ public class StreamRepository: ObservableObject {
     public func fetchStreams(type: String, id: String, addons: [AddonManifest]) async {
         streams = []
         isLoading = true
+        guard !id.hasPrefix("folder_") else {
+            isLoading = false
+            return
+        }
+        guard NetworkMonitor.shared.isConnected else {
+            isLoading = false
+            return
+        }
 
         let eligible = addons.filter {
             $0.hasResource("stream") &&
@@ -68,6 +76,7 @@ public class StreamRepository: ObservableObject {
     }
 
     public func fetchStreamsFromSingleAddon(type: String, id: String, addon: AddonManifest) async throws -> [StreamItem] {
+        guard !id.hasPrefix("folder_") else { return [] }
         guard let baseURL = addon.transportUrl else { return [] }
         let raw = try await streamService.fetchStreams(type: type, id: id, baseURL: baseURL)
         return raw.map { stream in

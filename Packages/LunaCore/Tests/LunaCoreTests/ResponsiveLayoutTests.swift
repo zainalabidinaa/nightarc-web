@@ -1,5 +1,5 @@
 import XCTest
-@testable import LunaCore
+@testable import NightarcCore
 
 final class ResponsiveLayoutTests: XCTestCase {
     func testPhoneBreakpoints() {

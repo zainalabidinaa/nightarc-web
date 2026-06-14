@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct ParallaxHero: View {
     let items: [MetaPreview]
@@ -11,7 +11,7 @@ struct ParallaxHero: View {
     @State private var autoTimer: Timer?
     @StateObject private var libraryRepo = LibraryRepository.shared
     @StateObject private var artwork = HeroArtworkProvider.shared
-    private let autoAdvanceSeconds: TimeInterval = 30
+    private let autoAdvanceSeconds: TimeInterval = 60
     private static let heroHeight: CGFloat = 620
 
     private var isCurrentInLibrary: Bool {
@@ -51,7 +51,7 @@ struct ParallaxHero: View {
                         Text(category.uppercased())
                             .font(.system(size: 11, weight: .bold))
                             .tracking(2)
-                            .foregroundColor(LunaTheme.accent)
+                            .foregroundColor(NightarcTheme.accent)
                     }
 
                     // Show title logo image when available, fall back to text title
@@ -140,11 +140,11 @@ struct ParallaxHero: View {
                     case .success(let image):
                         image.resizable().scaledToFill()
                     default:
-                        LunaTheme.surfaceContainer
+                        NightarcTheme.surfaceContainer
                     }
                 }
             } else {
-                LunaTheme.surfaceContainer
+                NightarcTheme.surfaceContainer
             }
         }
         .frame(width: width, height: Self.heroHeight)

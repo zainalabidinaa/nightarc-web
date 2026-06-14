@@ -4,7 +4,7 @@ public actor SyncService {
     public static let shared = SyncService()
     private let client = SupabaseClient.shared
 
-    public func pushProfiles(profiles: [LunaProfile]) async throws {
+    public func pushProfiles(profiles: [NightarcProfile]) async throws {
         for profile in profiles {
             try await client.upsert(
                 into: "profiles",
@@ -14,8 +14,8 @@ public actor SyncService {
         }
     }
 
-    public func pullProfiles(userId: String) async throws -> [LunaProfile] {
-        let profiles: [LunaProfile] = try await client.select(
+    public func pullProfiles(userId: String) async throws -> [NightarcProfile] {
+        let profiles: [NightarcProfile] = try await client.select(
             from: "profiles",
             where: ["user_id": userId],
             order: "profile_index.asc"

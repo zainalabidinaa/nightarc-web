@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct MacVideoPlayerSettingsView: View {
     @StateObject private var prefs = VideoPlayerPreferenceStore.shared
@@ -72,7 +72,7 @@ struct MacVideoPlayerSettingsView: View {
 
                 Text("Skip timestamps sourced from PublicMetaDB. IntroDB provides crowdsourced intro data for TV shows.")
                     .font(.caption)
-                    .foregroundColor(LunaTheme.textTertiary)
+                    .foregroundColor(NightarcTheme.textTertiary)
                     .padding(.horizontal, 20)
 
                 sectionLabel("Format Compatibility")
@@ -111,7 +111,7 @@ struct MacVideoPlayerSettingsView: View {
 
                 Text("Auto-Detect: .m3u8/HLS uses AVPlayer; .mkv/.avi and complex formats use KSPlayer.")
                     .font(.caption)
-                    .foregroundColor(LunaTheme.textTertiary)
+                    .foregroundColor(NightarcTheme.textTertiary)
                     .padding(.horizontal, 20)
 
                 sectionLabel("Cache Mode")
@@ -129,7 +129,7 @@ struct MacVideoPlayerSettingsView: View {
                 }
                 Text("Memory buffers in RAM for smooth playback. Disk caches segments for resume. Off streams live.")
                     .font(.caption)
-                    .foregroundColor(LunaTheme.textTertiary)
+                    .foregroundColor(NightarcTheme.textTertiary)
                     .padding(.horizontal, 20)
 
                 sectionLabel("Previews")
@@ -150,7 +150,7 @@ struct MacVideoPlayerSettingsView: View {
             .padding(.top, 16)
         }
         .frame(minWidth: 460, minHeight: 500)
-        .background(LunaTheme.background)
+        .background(NightarcTheme.background)
         .navigationTitle("Video Player")
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
@@ -162,7 +162,7 @@ struct MacVideoPlayerSettingsView: View {
     @ViewBuilder
     private func settingsCard<Content: View>(@ViewBuilder content: () -> Content) -> some View {
         VStack(spacing: 0) { content() }
-            .background(LunaTheme.surface)
+            .background(NightarcTheme.surface)
             .cornerRadius(10)
             .padding(.horizontal, 16)
     }
@@ -206,7 +206,7 @@ struct MacVideoPlayerSettingsView: View {
 private func sectionLabel(_ text: String) -> some View {
     Text(text.uppercased())
         .font(.caption.weight(.semibold))
-        .foregroundColor(LunaTheme.textTertiary)
+        .foregroundColor(NightarcTheme.textTertiary)
         .padding(.horizontal, 20)
         .padding(.top, 12)
         .padding(.bottom, 2)

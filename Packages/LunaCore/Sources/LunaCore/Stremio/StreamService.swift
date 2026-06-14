@@ -7,6 +7,7 @@ public final class StreamService: @unchecked Sendable {
     private init() {}
 
     public func fetchStreams(type: String, id: String, baseURL: String) async throws -> [StreamItem] {
+        guard !id.hasPrefix("folder_") else { return [] }
         let url = "\(baseURL)/stream/\(type)/\(id).json"
 
         struct RawStream: Codable {
@@ -47,7 +48,7 @@ public final class StreamService: @unchecked Sendable {
         }
 
         do {
-            let response: StreamResponse = try await client.getJSON(url: url, type: StreamResponse.self)
+            let response: StreamResponse = try await getJSONWithNetworkRetry(url: url, type: StreamResponse.self)
             return (response.streams ?? []).map { raw in
                 StreamItem(
                     name: raw.name,
@@ -91,6 +92,15 @@ public final class StreamService: @unchecked Sendable {
             }
         } catch {
             throw error
+        }
+    }
+
+    private func getJSONWithNetworkRetry<T: Decodable>(url: String, type: T.Type) async throws -> T {
+        do {
+            return try await client.getJSON(url: url, type: type)
+        } catch StremioError.networkError(_) {
+            try await Task.sleep(for: .seconds(1))
+            return try await client.getJSON(url: url, type: type)
         }
     }
 

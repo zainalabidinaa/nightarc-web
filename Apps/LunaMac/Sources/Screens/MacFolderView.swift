@@ -1,74 +1,280 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct MacFolderView: View {
     let row: CatalogRow
     let onBack: () -> Void
     let onSelectMedia: (MetaPreview) -> Void
+    var onSelectFolder: ((CatalogRow) -> Void)?
+
+    @StateObject private var catalogRepo = CatalogRepository.shared
+    @StateObject private var collectionRepo = CollectionRepository.shared
+    @StateObject private var addonRepo = AddonRepository.shared
+    @StateObject private var profileManager = ProfileManager.shared
+    @State private var isLoadingInitial = false
+    @State private var isLoadingMore = false
+    @State private var unavailableReason: FolderLoadUnavailableReason?
+
+    private var displayRow: CatalogRow {
+        catalogRepo.allFolderRows[CatalogRepository.normalizedFolderId(row.id)] ?? row
+    }
+
+    private var shouldUseLandscapeLayout: Bool {
+        let sample = displayRow.items.prefix(12)
+        let folders = sample.filter { $0.id.hasPrefix("folder_") }
+        let media = sample.filter { !$0.id.hasPrefix("folder_") }
+        guard !folders.isEmpty, media.isEmpty else { return false }
+        let landscapeCount = folders.filter { $0.posterShape == .landscape || $0.banner != nil }.count
+        return landscapeCount >= max(1, folders.count / 2)
+    }
+
+    private var shapeRow: CatalogRow {
+        CatalogRow(
+            id: displayRow.id,
+            title: displayRow.title,
+            items: displayRow.items,
+            addonName: displayRow.addonName,
+            addonId: displayRow.addonId,
+            page: displayRow.page,
+            hasMore: displayRow.hasMore,
+            tileShape: shouldUseLandscapeLayout ? "landscape" : (displayRow.tileShape ?? "poster"),
+            coverImage: displayRow.coverImage,
+            focusGif: displayRow.focusGif,
+            focusGifEnabled: displayRow.focusGifEnabled,
+            titleLogo: displayRow.titleLogo,
+            heroBackdrop: displayRow.heroBackdrop,
+            heroVideoURL: displayRow.heroVideoURL,
+            hideTitle: displayRow.hideTitle
+        )
+    }
+
+    private var columns: [GridItem] {
+        if shouldUseLandscapeLayout {
+            [GridItem(.adaptive(minimum: 230), spacing: 16)]
+        } else {
+            [GridItem(.adaptive(minimum: 155), spacing: 16)]
+        }
+    }
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                if let backdrop = row.heroBackdrop ?? row.backdropImage ?? row.coverImage,
-                   let url = URL(string: backdrop) {
-                    CachedAsyncImage(url: url) { img in
-                        img.resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 200)
-                            .clipped()
-                            .overlay(
-                                LinearGradient(
-                                    colors: [.clear, LunaTheme.background],
-                                    startPoint: .center,
-                                    endPoint: .bottom
-                                )
-                            )
-                    } placeholder: {
-                        EmptyView()
-                    }
-                }
+                hero
 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: 6) {
                     Button { onBack() } label: {
-                        HStack(spacing: 4) {
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 14, weight: .semibold))
-                            Text("Back")
-                                .font(.system(size: 14, weight: .medium))
-                        }
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 8)
-                        .background(.ultraThinMaterial)
-                        .clipShape(Capsule())
+                        Label("Back", systemImage: "chevron.left")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 9)
+                            .macGlassCapsule(interactive: true)
                     }
                     .buttonStyle(.plain)
-                    .padding(.top, 16)
+                    .padding(.top, 18)
 
-                    Text(row.title)
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
+                    Text(displayRow.title)
+                        .font(.system(size: 36, weight: .black, design: .rounded))
                         .foregroundColor(.white)
                         .padding(.top, 16)
                 }
-                .padding(.horizontal, 24)
+                .padding(.horizontal, 28)
 
-                LazyVGrid(
-                    columns: [GridItem(.adaptive(minimum: 140), spacing: 12)],
-                    spacing: 12
-                ) {
-                    ForEach(row.items) { item in
-                        MediaCard(item: item)
-                            .onTapGesture { onSelectMedia(item) }
+                if isLoadingInitial && displayRow.items.isEmpty {
+                    loadingState
+                        .padding(.top, 72)
+                } else if displayRow.items.isEmpty || unavailableReason != nil {
+                    emptyState
+                        .padding(.top, 72)
+                } else {
+                    LazyVGrid(columns: columns, spacing: 18) {
+                        ForEach(displayRow.items) { item in
+                            MediaCard(item: item, row: shapeRow)
+                                .onTapGesture { route(item) }
+                                .onAppear {
+                                    if item.id == displayRow.items.last?.id {
+                                        Task { await loadMoreIfNeeded() }
+                                    }
+                                }
+                        }
+                    }
+                    .padding(.horizontal, 28)
+                    .padding(.top, 24)
+
+                    if isLoadingMore {
+                        HStack {
+                            Spacer()
+                            MacLottieLoadingView(size: 42)
+                            Spacer()
+                        }
+                        .padding(.vertical, 28)
                     }
                 }
-                .padding(.horizontal, 24)
-                .padding(.top, 20)
 
-                Spacer().frame(height: 32)
+                Spacer().frame(height: 48)
             }
         }
-        .background(LunaTheme.background)
+        .background(NightarcTheme.background)
+        .task(id: row.id) {
+            await loadInitialIfNeeded()
+        }
+    }
+
+    @ViewBuilder
+    private var hero: some View {
+        if let backdrop = displayRow.heroBackdrop ?? displayRow.backdropImage ?? displayRow.coverImage,
+           let url = URL(string: backdrop) {
+            CachedAsyncImage(url: url) { image in
+                image.resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 260)
+                    .clipped()
+                    .overlay(
+                        LinearGradient(
+                            colors: [.clear, NightarcTheme.background],
+                            startPoint: .center,
+                            endPoint: .bottom
+                        )
+                    )
+            } placeholder: {
+                NightarcTheme.surfaceElevated.frame(height: 180)
+            }
+        }
+    }
+
+    private var loadingState: some View {
+        VStack(spacing: 14) {
+            MacLottieLoadingView(size: 58)
+            Text("Loading folder")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(.white.opacity(0.6))
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private var emptyState: some View {
+        VStack(spacing: 12) {
+            Image(systemName: unavailableReason == .missingFolder ? "folder.badge.questionmark" : "folder")
+                .font(.system(size: 38, weight: .semibold))
+                .foregroundStyle(.white.opacity(0.22))
+            Text(emptyStateTitle)
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(.white.opacity(0.62))
+            if let message = emptyStateMessage {
+                Text(message)
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundStyle(.white.opacity(0.42))
+            }
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private var emptyStateTitle: String {
+        switch unavailableReason {
+        case .missingFolder:
+            return "This folder is no longer available"
+        case .missingSources:
+            return "This folder has no sources"
+        case .missingAddonTransport:
+            return "No enabled addon can load this folder"
+        case .emptyResponse:
+            return "Nothing here yet"
+        case nil:
+            return "Nothing here yet"
+        }
+    }
+
+    private var emptyStateMessage: String? {
+        switch unavailableReason {
+        case .missingFolder:
+            return "The current collection refresh removed or renamed it."
+        case .missingSources:
+            return "The collection exists, but it has no catalog source configured."
+        case .missingAddonTransport:
+            return "Enable or refresh addons, then try again."
+        case .emptyResponse:
+            return "The provider returned no items for this folder."
+        case nil:
+            return nil
+        }
+    }
+
+    private func route(_ item: MetaPreview) {
+        if item.id.hasPrefix("folder_") {
+            let fallback = CatalogRow(
+                id: item.id,
+                title: item.name,
+                items: [],
+                tileShape: item.posterShape?.rawValue ?? "poster",
+                coverImage: item.poster ?? item.banner
+            )
+            onSelectFolder?(catalogRepo.allFolderRows[item.id] ?? fallback)
+        } else {
+            onSelectMedia(item)
+        }
+    }
+
+    private func loadInitialIfNeeded() async {
+        isLoadingInitial = displayRow.items.isEmpty
+        unavailableReason = nil
+        await ensureOrganizerAndAddonsLoaded()
+
+        if let reason = CatalogRepository.folderLoadUnavailableReason(
+            folderId: row.id,
+            collections: collectionRepo.collections,
+            folders: collectionRepo.folders,
+            folderCatalogs: collectionRepo.folderCatalogs,
+            folderSources: collectionRepo.folderSources,
+            addons: addonRepo.enabledAddons
+        ) {
+            unavailableReason = reason
+            isLoadingInitial = false
+            return
+        }
+
+        guard displayRow.items.isEmpty else {
+            isLoadingInitial = false
+            return
+        }
+
+        let result = await catalogRepo.loadFolderItems(
+            folderId: CatalogRepository.normalizedFolderId(row.id),
+            collectionRepo: collectionRepo,
+            addons: addonRepo.enabledAddons
+        )
+        if case .unavailable(let reason) = result {
+            unavailableReason = reason
+        }
+        isLoadingInitial = false
+    }
+
+    private func loadMoreIfNeeded() async {
+        guard !isLoadingMore, displayRow.hasMore else { return }
+        isLoadingMore = true
+        await ensureOrganizerAndAddonsLoaded()
+        await catalogRepo.loadMoreFolderItems(
+            folderId: CatalogRepository.normalizedFolderId(row.id),
+            collectionRepo: collectionRepo,
+            addons: addonRepo.enabledAddons
+        )
+        isLoadingMore = false
+    }
+
+    private func ensureOrganizerAndAddonsLoaded() async {
+        if let url = Bundle.main.url(forResource: "home-organizer", withExtension: "json"),
+           let data = try? Data(contentsOf: url) {
+            await collectionRepo.loadOrganizer(
+                bundledData: data,
+                remoteURL: NightarcConfig.homeOrganizerRemoteURL.flatMap(URL.init(string:))
+            )
+        } else if collectionRepo.collections.isEmpty {
+            await collectionRepo.load()
+        }
+
+        if addonRepo.managedAddons.isEmpty, let profile = profileManager.currentProfile {
+            let info = try? await SyncService.shared.pullSystemAddonInfo()
+            await addonRepo.loadAddons(profileId: profile.id, systemAddonUrl: info?.url)
+        }
     }
 }

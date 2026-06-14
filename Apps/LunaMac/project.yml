@@ -1,6 +1,6 @@
-name: LunaMac
+name: NightarcMac
 options:
-  bundleIdPrefix: com.luna
+  bundleIdPrefix: com.nightarc
   deploymentTarget:
     macOS: "14.0"
   minimumXcodeGenVersion: "2.0"
@@ -14,7 +14,7 @@ settings:
     INFOPLIST_KEY_NSHumanReadableCopyright: "Copyright \u00A9 2026 Nightarc"
 
 packages:
-  LunaCore:
+  NightarcCore:
     path: ../../Packages/LunaCore
   KSPlayer:
     path: /tmp/ksplayer-clone
@@ -23,7 +23,7 @@ packages:
     from: "4.6.0"
 
 targets:
-  LunaMac:
+  NightarcMac:
     type: application
     platform: macOS
     sources:
@@ -31,7 +31,7 @@ targets:
       - path: Assets.xcassets
       - path: Resources
     dependencies:
-      - package: LunaCore
+      - package: NightarcCore
       - package: KSPlayer
       - package: Lottie
     settings:
@@ -42,13 +42,13 @@ targets:
           NSAllowsArbitraryLoads: true
         INFOPLIST_KEY_CFBundleIconFile: "AppIcon"
 
-  LunaMacTests:
+  NightarcMacTests:
     type: bundle.unit-test
     platform: macOS
     sources:
       - path: Tests
     dependencies:
-      - target: LunaMac
+      - target: NightarcMac
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: "com.nightarc.mac.tests"

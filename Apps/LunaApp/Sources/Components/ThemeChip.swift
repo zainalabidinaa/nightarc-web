@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct ThemeChip: View {
     let theme: AppTheme
@@ -21,10 +21,10 @@ struct ThemeChip: View {
                 }
                 Text(theme.displayName)
                     .font(.caption2)
-                    .foregroundColor(isSelected ? LunaTheme.accent : LunaTheme.textSecondary)
+                    .foregroundColor(isSelected ? NightarcTheme.accent : NightarcTheme.textSecondary)
                 if isSelected {
                     RoundedRectangle(cornerRadius: 2)
-                        .fill(LunaTheme.accent)
+                        .fill(NightarcTheme.accent)
                         .frame(width: 20, height: 3)
                 } else {
                     Spacer().frame(height: 3)

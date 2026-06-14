@@ -3,8 +3,8 @@ import Foundation
 public actor SupabaseAuth {
     public static let shared = SupabaseAuth()
     private let client = SupabaseClient.shared
-    private let baseURL = LunaConfig.supabaseURL
-    private let anonKey = LunaConfig.supabaseAnonKey
+    private let baseURL = NightarcConfig.supabaseURL
+    private let anonKey = NightarcConfig.supabaseAnonKey
     private let session: URLSession
 
     private init() {

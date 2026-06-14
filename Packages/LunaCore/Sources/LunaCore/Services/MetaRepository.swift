@@ -17,17 +17,20 @@ public class MetaRepository: ObservableObject {
     @Published public var detail: MetaDetail?
     @Published public var isLoading = false
     @Published public var errorMessage: String?
+    @Published public var isShowingStaleDetail = false
+    @Published public var cachedDetailUpdatedAt: Date?
 
     private let metaService = MetaService.shared
     private let integrationStore = MetadataIntegrationStore.shared
     private var cachedTVDBToken: String?
     private var cachedTVDBKey: String?
+    private let cacheDefaults = UserDefaults.standard
 
     private init() {}
 
     public func fetchDetail(type: String, id: String, addons: [AddonManifest]) async -> MetaDetail? {
         for addon in addons {
-            guard addon.hasResource("meta"),
+            guard addon.canHandleMeta(type: type, id: id),
                   let baseURL = addon.transportUrl,
                   let detail = try? await metaService.fetchMeta(type: type, id: id, baseURL: baseURL) else {
                 continue
@@ -39,29 +42,46 @@ public class MetaRepository: ObservableObject {
 
     public func loadDetail(type: String, id: String, addons: [AddonManifest]) async {
         isLoading = true
-        detail = nil
         errorMessage = nil
         defer { isLoading = false }
+
+        guard NetworkMonitor.shared.isConnected else {
+            if restoreCachedDetail(type: type, id: id) {
+                errorMessage = nil
+            } else {
+                errorMessage = "No internet connection"
+            }
+            return
+        }
+
+        detail = nil
+        isShowingStaleDetail = false
+        cachedDetailUpdatedAt = nil
         var lastError: Error?
 
         for addon in addons {
-            guard addon.hasResource("meta"),
+            guard addon.canHandleMeta(type: type, id: id),
                   let baseURL = addon.transportUrl else { continue }
 
             do {
                 let detail = try await metaService.fetchMeta(type: type, id: id, baseURL: baseURL)
                 let enriched = await enrichWithMetadataProviders(detail: detail)
                 self.detail = enriched
+                self.isShowingStaleDetail = false
+                self.cachedDetailUpdatedAt = nil
+                cacheDetail(enriched, type: type, id: id)
                 return
             } catch {
                 lastError = error
-                print("[Luna] Meta fetch failed: addon=\(addon.name) type=\(type) id=\(id) baseURL=\(baseURL) error=\(error)")
+                print("[Nightarc] Meta fetch failed: addon=\(addon.name) type=\(type) id=\(id) baseURL=\(baseURL) error=\(error)")
                 continue
             }
         }
 
         if addons.isEmpty {
             errorMessage = "No metadata addons are enabled"
+        } else if restoreCachedDetail(type: type, id: id) {
+            errorMessage = nil
         } else if let lastError {
             let friendlyMessage: String
             if let stremioError = lastError as? StremioError {
@@ -75,6 +95,34 @@ public class MetaRepository: ObservableObject {
         } else {
             errorMessage = "Could not load details from any addon"
         }
+    }
+
+    private struct CachedMetaDetail: Codable {
+        let detail: MetaDetail
+        let updatedAt: Date
+    }
+
+    private func cacheKey(type: String, id: String) -> String {
+        "luna.cachedMetaDetail.\(type).\(id)"
+    }
+
+    private func cacheDetail(_ detail: MetaDetail, type: String, id: String) {
+        let cached = CachedMetaDetail(detail: detail, updatedAt: Date())
+        if let data = try? JSONEncoder().encode(cached) {
+            cacheDefaults.set(data, forKey: cacheKey(type: type, id: id))
+        }
+    }
+
+    @discardableResult
+    private func restoreCachedDetail(type: String, id: String) -> Bool {
+        guard let data = cacheDefaults.data(forKey: cacheKey(type: type, id: id)),
+              let cached = try? JSONDecoder().decode(CachedMetaDetail.self, from: data) else {
+            return false
+        }
+        detail = cached.detail
+        isShowingStaleDetail = true
+        cachedDetailUpdatedAt = cached.updatedAt
+        return true
     }
 
     private func enrichWithMetadataProviders(detail: MetaDetail) async -> MetaDetail {

@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 enum MacMainTab: String, CaseIterable {
     case home, search, library, settings, admin
@@ -76,7 +76,7 @@ struct PillNavBar: View {
                     Circle()
                         .fill(
                             profileManager.currentProfile?.avatarColor
-                                .map { Color(hex: $0) } ?? LunaTheme.accent
+                                .map { Color(hex: $0) } ?? NightarcTheme.accent
                         )
                         .frame(width: 24, height: 24)
                         .overlay(

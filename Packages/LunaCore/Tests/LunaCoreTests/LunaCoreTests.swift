@@ -1,9 +1,61 @@
 import XCTest
-@testable import LunaCore
+@testable import NightarcCore
 
 final class LunaCoreTests: XCTestCase {}
 
 extension LunaCoreTests {
+    func testStremioErrorsExposeHumanReadableDescriptions() {
+        let offline = StremioError.networkError(URLError(.notConnectedToInternet))
+        XCTAssertEqual(
+            offline.localizedDescription,
+            "Check your internet connection and try again"
+        )
+        if case .networkError(let underlying) = offline {
+            XCTAssertEqual((underlying as? URLError)?.code, .notConnectedToInternet)
+        } else {
+            XCTFail("Expected networkError to preserve its underlying error")
+        }
+        XCTAssertEqual(
+            StremioError.httpError(404).localizedDescription,
+            "Content not found on this addon"
+        )
+        XCTAssertEqual(
+            StremioError.httpError(429).localizedDescription,
+            "Too many requests — try again in a moment"
+        )
+        XCTAssertEqual(
+            StremioError.httpError(503).localizedDescription,
+            "Addon server error — try another addon"
+        )
+    }
+
+    @MainActor
+    func testCollectionRowDisplayStyleStorePersistsPerRow() {
+        let defaults = UserDefaults(suiteName: "CollectionRowDisplayStyleStoreTests")!
+        defaults.removePersistentDomain(forName: "CollectionRowDisplayStyleStoreTests")
+        let store = CollectionRowDisplayStyleStore(defaults: defaults)
+
+        XCTAssertEqual(store.style(forRowTitle: "Latest Movies"), .standard)
+
+        store.setStyle(.heroBanner, forRowTitle: "Latest Movies")
+        XCTAssertEqual(store.style(forRowTitle: "Latest Movies"), .heroBanner)
+
+        let reloaded = CollectionRowDisplayStyleStore(defaults: defaults)
+        XCTAssertEqual(reloaded.style(forRowTitle: "Latest Movies"), .heroBanner)
+        XCTAssertEqual(reloaded.style(forRowTitle: "Latest TV Series"), .standard)
+    }
+
+    @MainActor
+    func testCollectionRowDisplayStyleStoreFallsBackForInvalidStoredValues() {
+        let defaults = UserDefaults(suiteName: "CollectionRowDisplayStyleStoreInvalidTests")!
+        defaults.removePersistentDomain(forName: "CollectionRowDisplayStyleStoreInvalidTests")
+        defaults.set(["Latest Movies": "made-up"], forKey: "luna.collectionRowDisplayStyles")
+
+        let store = CollectionRowDisplayStyleStore(defaults: defaults)
+
+        XCTAssertEqual(store.style(forRowTitle: "Latest Movies"), .standard)
+    }
+
     func testEpisodeProgressResolvesParentMediaId() {
         let entry = WatchProgressEntry(
             id: "progress-1",
@@ -96,19 +148,19 @@ extension LunaCoreTests {
     }
 
     func testDefaultAddonsIncludeTrailerAndDeepDiveCompanions() {
-        XCTAssertTrue(LunaConfig.defaultAddons.contains {
+        XCTAssertTrue(NightarcConfig.defaultAddons.contains {
             $0.contains("streailer.elfhosted.com")
         })
-        XCTAssertTrue(LunaConfig.defaultAddons.contains {
+        XCTAssertTrue(NightarcConfig.defaultAddons.contains {
             $0.contains("stremio-content-deepdive-addon-dc8f7b513289.herokuapp.com")
         })
     }
 
     func testDefaultStreamingAddonUsesVirenAIOStreams() {
-        XCTAssertTrue(LunaConfig.defaultAddons.contains {
+        XCTAssertTrue(NightarcConfig.defaultAddons.contains {
             $0 == "https://aiostreams.viren070.me/stremio/a8ddeaca-2ef3-424d-bbe6-dfa4768a138c/eyJpIjoicjRZaHVrZ0cxdEQ3eFNvN0JGU1NWQT09IiwiZSI6ImdUR2RxUHFwSURxamZNYnFNejFEY3JhZGtHb0lwMW9IOXNONFkreVp6azQ9IiwidCI6ImEifQ/manifest.json"
         })
-        XCTAssertFalse(LunaConfig.defaultAddons.contains {
+        XCTAssertFalse(NightarcConfig.defaultAddons.contains {
             $0.contains("aiostreams.12312023.xyz")
         })
     }
@@ -278,6 +330,103 @@ extension LunaCoreTests {
         XCTAssertEqual(resolved.map(\.id), ["folder_existing"])
     }
 
+    @MainActor
+    func testAuthoritativeCollectionRefreshReplacesStaleCachedRows() {
+        let existingRows = [
+            CatalogRow(
+                id: "collection_removed",
+                title: "Removed",
+                items: [MetaPreview(id: "tt1", type: .movie, name: "Removed Movie")]
+            )
+        ]
+        let refreshedRows = [
+            CatalogRow(
+                id: "collection_current",
+                title: "Current",
+                items: [MetaPreview(id: "tt2", type: .movie, name: "Current Movie")]
+            )
+        ]
+
+        let resolved = CatalogRepository.resolvedRowsAfterReload(
+            existingRows: existingRows,
+            newRows: refreshedRows,
+            mode: .replaceCache
+        )
+
+        XCTAssertEqual(resolved.map(\.id), ["collection_current"])
+    }
+
+    @MainActor
+    func testAuthoritativeCollectionRefreshCanRemoveAllCachedRows() {
+        let existingRows = [
+            CatalogRow(
+                id: "collection_removed",
+                title: "Removed",
+                items: [MetaPreview(id: "tt1", type: .movie, name: "Removed Movie")]
+            )
+        ]
+
+        let resolved = CatalogRepository.resolvedRowsAfterReload(
+            existingRows: existingRows,
+            newRows: [],
+            mode: .replaceCache
+        )
+
+        XCTAssertTrue(resolved.isEmpty)
+    }
+
+    func testFolderLoadReadinessNormalizesIdsAndReportsMissingFolder() {
+        let reason = CatalogRepository.folderLoadUnavailableReason(
+            folderId: "missing",
+            collections: [DBCollection(id: "featured", name: "Featured")],
+            folders: [DBFolder(id: "present", collectionId: "featured", name: "Present")],
+            folderCatalogs: [],
+            folderSources: [],
+            addons: [AddonManifest(id: "aio", name: "AIO", version: "1.0.0", transportUrl: "https://example.com")]
+        )
+
+        XCTAssertEqual(reason, .missingFolder)
+    }
+
+    func testFolderLoadReadinessReportsMissingSourcesForExistingFolder() {
+        let reason = CatalogRepository.folderLoadUnavailableReason(
+            folderId: "folder_present",
+            collections: [DBCollection(id: "featured", name: "Featured")],
+            folders: [DBFolder(id: "present", collectionId: "featured", name: "Present")],
+            folderCatalogs: [],
+            folderSources: [],
+            addons: [AddonManifest(id: "aio", name: "AIO", version: "1.0.0", transportUrl: "https://example.com")]
+        )
+
+        XCTAssertEqual(reason, .missingSources)
+    }
+
+    func testFolderLoadReadinessReportsMissingAddonTransport() {
+        let reason = CatalogRepository.folderLoadUnavailableReason(
+            folderId: "present",
+            collections: [DBCollection(id: "featured", name: "Featured")],
+            folders: [DBFolder(id: "present", collectionId: "featured", name: "Present")],
+            folderCatalogs: [DBFolderCatalog(id: "catalog-1", folderId: "present", catalogId: "popular", mediaType: "movie")],
+            folderSources: [],
+            addons: []
+        )
+
+        XCTAssertEqual(reason, .missingAddonTransport)
+    }
+
+    func testFolderLoadReadinessAcceptsFolderIdsWithOrWithoutPrefix() {
+        let reason = CatalogRepository.folderLoadUnavailableReason(
+            folderId: "folder_present",
+            collections: [DBCollection(id: "featured", name: "Featured")],
+            folders: [DBFolder(id: "present", collectionId: "featured", name: "Present")],
+            folderCatalogs: [DBFolderCatalog(id: "catalog-1", folderId: "present", catalogId: "popular", mediaType: "movie")],
+            folderSources: [],
+            addons: [AddonManifest(id: "aio", name: "AIO", version: "1.0.0", transportUrl: "https://example.com")]
+        )
+
+        XCTAssertNil(reason)
+    }
+
     func testCollectionDisplayPreferencesExpandFoldersIntoRows() {
         let collection = DBCollection(id: "decades", name: "Decades", sortOrder: 0)
         let folder1980s = DBFolder(id: "1980s", collectionId: "decades", name: "1980s", sortOrder: 0)
@@ -417,6 +566,7 @@ extension LunaCoreTests {
         XCTAssertEqual(layout.collections.first?.focusGlowEnabled, false)
         XCTAssertEqual(layout.collections.first?.pinToTop, true)
         XCTAssertEqual(layout.folders.first?.tileShape, "poster")
+        XCTAssertEqual(layout.folders.first?.coverImage, "https://images.example.com/poster.png")
         XCTAssertEqual(layout.folders.first?.focusGif, "https://images.example.com/preview.gif")
         XCTAssertEqual(layout.folderCatalogs.map(\.catalogId), ["tmdb.top_movie"])
         XCTAssertEqual(layout.folderSources.map(\.provider), ["tmdb"])
@@ -424,22 +574,28 @@ extension LunaCoreTests {
         XCTAssertEqual(layout.folderSources.first?.tmdbSourceType, "discover")
     }
 
-    func testNuvioOrganizerSkipsFoldersWithoutFetchableSources() throws {
+    func testNuvioOrganizerSynthesizesDiscoverFoldersFromFilters() throws {
         let json = """
         [
           {
-            "id": "collection-empty",
+            "id": "collection-discover",
             "title": "By Decade",
             "folders": [
               {
-                "id": "folder-empty",
+                "id": "folder-discover",
                 "title": "2020s Movies",
                 "sources": [
                   {
+                    "title": "New Movies",
                     "provider": "tmdb",
                     "mediaType": "MOVIE",
                     "tmdbSourceType": "DISCOVER",
-                    "filters": { "releaseDateGte": "2020-01-01" }
+                    "filters": {
+                      "withGenres": "28",
+                      "voteCountGte": 10,
+                      "withOriginalLanguage": "en",
+                      "year": 2026
+                    }
                   }
                 ]
               }
@@ -463,9 +619,14 @@ extension LunaCoreTests {
 
         let layout = try CollectionOrganizerParser.parse(jsonData: Data(json.utf8))
 
-        XCTAssertEqual(layout.collections.map(\.id), ["collection-fetchable"])
-        XCTAssertEqual(layout.folders.map(\.id), ["folder-fetchable"])
-        XCTAssertEqual(layout.folderCatalogs.map(\.catalogId), ["mdblist.91304"])
+        XCTAssertEqual(layout.collections.map(\.id), ["collection-discover", "collection-fetchable"])
+        XCTAssertEqual(layout.folders.map(\.id), ["folder-discover", "folder-fetchable"])
+        XCTAssertEqual(layout.folderCatalogs.map(\.catalogId), ["tmdb.discover.movie.new-movies.069d5312", "mdblist.91304"])
+        XCTAssertEqual(layout.folderCatalogs.first?.genre, "Action")
+        XCTAssertEqual(layout.folderCatalogs.first?.extras?["vote_count.gte"], "10")
+        XCTAssertEqual(layout.folderCatalogs.first?.extras?["with_original_language"], "en")
+        XCTAssertEqual(layout.folderCatalogs.first?.extras?["year"], "2026")
+        XCTAssertTrue(layout.folderSources.isEmpty)
     }
 
     func testCatalogQueryBuildURLUsesPathExtras() {
@@ -931,5 +1092,16 @@ extension LunaCoreTests {
 
         XCTAssertEqual(rows.first?.items.first?.poster, "https://example.com/director.jpg")
         XCTAssertEqual(rows.first?.items.first?.banner, "https://example.com/director.jpg")
+        XCTAssertEqual(rows.first?.tileShape, "landscape")
+    }
+
+    func testStreamServiceDoesNotFetchSyntheticFolderIds() async throws {
+        let streams = try await StreamService.shared.fetchStreams(
+            type: "movie",
+            id: "folder_folder-JRWZVYWG",
+            baseURL: "https://example.invalid/stremio"
+        )
+
+        XCTAssertTrue(streams.isEmpty)
     }
 }

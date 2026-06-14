@@ -4,8 +4,8 @@ import Foundation
 public class ProfileManager: ObservableObject {
     public static let shared = ProfileManager()
 
-    @Published public var profiles: [LunaProfile] = []
-    @Published public var currentProfile: LunaProfile?
+    @Published public var profiles: [NightarcProfile] = []
+    @Published public var currentProfile: NightarcProfile?
     @Published public var currentSession: UserSession?
     @Published public var isLoading = false
     @Published public var isAuthenticated = false
@@ -66,7 +66,7 @@ public class ProfileManager: ObservableObject {
     private func restoreProfilesFromCache(userId: String) {
         guard profiles.isEmpty,
               let data = UserDefaults.standard.data(forKey: profilesCacheKey(userId: userId)),
-              let cached = try? JSONDecoder().decode([LunaProfile].self, from: data),
+              let cached = try? JSONDecoder().decode([NightarcProfile].self, from: data),
               !cached.isEmpty else { return }
         self.profiles = cached
         let savedId = UserDefaults.standard.string(forKey: "luna.currentProfileId")
@@ -90,14 +90,14 @@ public class ProfileManager: ObservableObject {
         self.currentSession = session
         SessionStore.save(session)
 
-        let profile = LunaProfile(
+        let profile = NightarcProfile(
             id: UUID().uuidString,
             userId: session.userId,
             name: "Default",
             profileIndex: 0,
             role: "user"
         )
-        _ = try await client.insert(into: "profiles", value: profile) as [LunaProfile]
+        _ = try await client.insert(into: "profiles", value: profile) as [NightarcProfile]
         self.profiles = [profile]
         self.currentProfile = profile
         self.isAuthenticated = true
@@ -116,7 +116,7 @@ public class ProfileManager: ObservableObject {
         isLoading = true
         defer { isLoading = false }
 
-        let fetched: [LunaProfile] = try await syncService.pullProfiles(userId: userId)
+        let fetched: [NightarcProfile] = try await syncService.pullProfiles(userId: userId)
         self.profiles = fetched
 
         // Persist fresh profiles so cache is always warm for next launch.
@@ -132,7 +132,7 @@ public class ProfileManager: ObservableObject {
         }
     }
 
-    public func selectProfile(_ profile: LunaProfile) {
+    public func selectProfile(_ profile: NightarcProfile) {
         currentProfile = profile
         UserDefaults.standard.set(profile.id, forKey: "luna.currentProfileId")
     }
@@ -141,7 +141,7 @@ public class ProfileManager: ObservableObject {
         guard let session = currentSession else { throw SupabaseError.notAuthenticated }
 
         let nextIndex = (profiles.map { $0.profileIndex }.max() ?? -1) + 1
-        let newProfile = LunaProfile(
+        let newProfile = NightarcProfile(
             id: UUID().uuidString,
             userId: session.userId,
             name: name,
@@ -150,11 +150,11 @@ public class ProfileManager: ObservableObject {
             profileIndex: nextIndex,
             role: "user"
         )
-        _ = try await client.insert(into: "profiles", value: newProfile) as [LunaProfile]
+        _ = try await client.insert(into: "profiles", value: newProfile) as [NightarcProfile]
         profiles.append(newProfile)
     }
 
-    public func deleteProfile(_ profile: LunaProfile) async throws {
+    public func deleteProfile(_ profile: NightarcProfile) async throws {
         try await client.delete(from: "profiles", where: ["id": profile.id])
         profiles.removeAll { $0.id == profile.id }
         if currentProfile?.id == profile.id {
@@ -162,7 +162,7 @@ public class ProfileManager: ObservableObject {
         }
     }
 
-    public func updateProfile(_ profile: LunaProfile) async throws {
+    public func updateProfile(_ profile: NightarcProfile) async throws {
         try await client.update(table: "profiles", where: ["id": profile.id], value: profile)
         if let idx = profiles.firstIndex(where: { $0.id == profile.id }) {
             profiles[idx] = profile
@@ -184,7 +184,7 @@ public class ProfileManager: ObservableObject {
 
     public func refreshCurrentProfile() async throws {
         guard let session = currentSession, let profile = currentProfile else { return }
-        let fetched: [LunaProfile] = try await syncService.pullProfiles(userId: session.userId)
+        let fetched: [NightarcProfile] = try await syncService.pullProfiles(userId: session.userId)
         if let updated = fetched.first(where: { $0.id == profile.id }) {
             currentProfile = updated
             if let idx = profiles.firstIndex(where: { $0.id == profile.id }) {

@@ -18,7 +18,7 @@ public actor StreamWarmupRepository {
 
     private static let cacheURL: URL = {
         let dir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("LunaStreamWarmup", isDirectory: true)
+            .appendingPathComponent("NightarcStreamWarmup", isDirectory: true)
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         return dir.appendingPathComponent("streams.json")
     }()
@@ -39,6 +39,7 @@ public actor StreamWarmupRepository {
     /// Fire-and-forget: fetch streams for `id` in the background.
     /// Safe to call from any context; duplicate calls within TTL are no-ops.
     public func warmup(type: String, id: String, addons: [AddonManifest]) async {
+        guard !id.hasPrefix("folder_") else { return }
         let key = cacheKey(type: type, id: id)
         if let ts = timestamps[key], Date().timeIntervalSince(ts) < cacheTTL { return }
         guard !inFlight.contains(key) else { return }

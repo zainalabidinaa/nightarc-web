@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct StreamSelectionScreen: View {
     let mediaType: MediaType
@@ -180,8 +180,7 @@ struct StreamSelectionScreen: View {
 
             if filteredStreams.isEmpty {
                 VStack(spacing: 12) {
-                    ProgressView()
-                        .tint(LunaTheme.accent)
+                    LottieLoadingView(size: 44)
                         .opacity(streamRepo.isLoading ? 1 : 0)
                     Text(streamRepo.isLoading ? "Finding sources..." : "No playable sources found")
                         .font(.subheadline.weight(.medium))
@@ -214,7 +213,7 @@ struct StreamSelectionScreen: View {
                 HStack(spacing: 8) {
                     Text(stream.addonName ?? stream.sourceName ?? "Source")
                         .font(.caption.weight(.semibold))
-                        .foregroundColor(LunaTheme.accent)
+                        .foregroundColor(NightarcTheme.accent)
                     Text(sourceQualityLabel(for: stream))
                         .font(.caption2.weight(.bold))
                         .foregroundColor(.white.opacity(0.72))

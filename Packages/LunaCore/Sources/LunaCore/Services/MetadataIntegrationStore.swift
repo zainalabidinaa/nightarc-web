@@ -43,7 +43,7 @@ public final class MetadataIntegrationStore: ObservableObject {
     init(defaults: UserDefaults) {
         self.defaults = defaults
         tvdbAPIKey = defaults.string(forKey: tvdbKey)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-        tmdbAPIKey = defaults.string(forKey: tmdbKey)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? LunaConfig.tmdbApiKey
+        tmdbAPIKey = defaults.string(forKey: tmdbKey)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? NightarcConfig.tmdbApiKey
     }
 
     public var effectiveTVDBAPIKey: String? {

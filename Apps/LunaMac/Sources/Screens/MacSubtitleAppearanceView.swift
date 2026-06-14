@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct MacSubtitleAppearanceView: View {
     @StateObject private var store = SubtitleAppearanceStore.shared
@@ -38,7 +38,7 @@ struct MacSubtitleAppearanceView: View {
             .padding(.top, 16)
         }
         .frame(minWidth: 480, minHeight: 600)
-        .background(LunaTheme.background)
+        .background(NightarcTheme.background)
         .navigationTitle("Subtitle Appearance")
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
@@ -97,13 +97,13 @@ struct MacSubtitleAppearanceView: View {
                                     .foregroundColor(.white)
                                 Text(preset.description)
                                     .font(.caption)
-                                    .foregroundColor(LunaTheme.textSecondary)
+                                    .foregroundColor(NightarcTheme.textSecondary)
                             }
                             Spacer()
                             if store.preset == preset {
                                 Image(systemName: "checkmark")
                                     .font(.caption.weight(.semibold))
-                                    .foregroundColor(LunaTheme.accent)
+                                    .foregroundColor(NightarcTheme.accent)
                             }
                         }
                         .padding(.horizontal, 16)
@@ -116,7 +116,7 @@ struct MacSubtitleAppearanceView: View {
                     }
                 }
             }
-            .background(LunaTheme.surface)
+            .background(NightarcTheme.surface)
             .cornerRadius(10)
         }
     }
@@ -149,7 +149,7 @@ struct MacSubtitleAppearanceView: View {
                 .padding(.horizontal, 16).padding(.vertical, 12)
                 .onChange(of: isItalic) { _, v in store.isItalic = v }
             }
-            .background(LunaTheme.surface)
+            .background(NightarcTheme.surface)
             .cornerRadius(10)
         }
     }
@@ -177,7 +177,7 @@ struct MacSubtitleAppearanceView: View {
                     store.backgroundOpacity = backgroundOpacity
                 }
             }
-            .background(LunaTheme.surface)
+            .background(NightarcTheme.surface)
             .cornerRadius(10)
         }
     }
@@ -209,7 +209,7 @@ struct MacSubtitleAppearanceView: View {
                     store.horizontalMargin = horizontalMargin
                 }
             }
-            .background(LunaTheme.surface)
+            .background(NightarcTheme.surface)
             .cornerRadius(10)
         }
     }
@@ -231,7 +231,7 @@ struct MacSubtitleAppearanceView: View {
                 .padding(.horizontal, 16).padding(.vertical, 12)
                 .onChange(of: scaleWithWindowSize) { _, v in store.scaleWithWindowSize = v }
             }
-            .background(LunaTheme.surface)
+            .background(NightarcTheme.surface)
             .cornerRadius(10)
         }
     }
@@ -247,7 +247,7 @@ struct MacSubtitleAppearanceView: View {
         .foregroundColor(.red)
         .frame(maxWidth: .infinity)
         .padding(.vertical, 12)
-        .background(LunaTheme.surface)
+        .background(NightarcTheme.surface)
         .cornerRadius(10)
         .buttonStyle(.plain)
     }
@@ -316,10 +316,10 @@ struct MacSubtitleAppearanceView: View {
                 Spacer()
                 Text(String(format: format, value.wrappedValue * displayScale))
                     .font(.caption.monospacedDigit())
-                    .foregroundColor(LunaTheme.textSecondary)
+                    .foregroundColor(NightarcTheme.textSecondary)
             }
             Slider(value: value, in: range, step: step)
-                .tint(LunaTheme.accent)
+                .tint(NightarcTheme.accent)
                 .onChange(of: value.wrappedValue) { _, _ in onChange() }
         }
         .padding(.horizontal, 16)
@@ -337,7 +337,7 @@ struct MacSubtitleAppearanceView: View {
             TextField("#RRGGBB", text: hex)
                 .textFieldStyle(.plain)
                 .font(.caption.monospaced())
-                .foregroundColor(LunaTheme.textSecondary)
+                .foregroundColor(NightarcTheme.textSecondary)
                 .frame(width: 72)
                 .multilineTextAlignment(.trailing)
                 .onChange(of: hex.wrappedValue) { _, _ in onChange() }
@@ -351,7 +351,7 @@ struct MacSubtitleAppearanceView: View {
 private func subtitleSectionLabel(_ text: String) -> some View {
     Text(text.uppercased())
         .font(.caption.weight(.semibold))
-        .foregroundColor(LunaTheme.textTertiary)
+        .foregroundColor(NightarcTheme.textTertiary)
         .padding(.top, 4)
         .padding(.bottom, 2)
 }

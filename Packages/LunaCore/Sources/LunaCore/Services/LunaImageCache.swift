@@ -2,17 +2,17 @@ import Foundation
 
 #if os(macOS)
 import AppKit
-public typealias LunaImage = NSImage
+public typealias NightarcImage = NSImage
 #elseif os(iOS)
 import UIKit
-public typealias LunaImage = UIImage
+public typealias NightarcImage = UIImage
 #endif
 
-public enum LunaImageCache {
+public enum NightarcImageCache {
     private static let queue = DispatchQueue(label: "luna.imgcache", qos: .utility)
     private static let root: URL = {
         let d = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("LunaImages")
+            .appendingPathComponent("NightarcImages")
         try? FileManager.default.createDirectory(at: d, withIntermediateDirectories: true)
         return d
     }()

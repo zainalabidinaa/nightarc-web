@@ -1,6 +1,6 @@
 import Foundation
 
-public struct LunaProfile: Codable, Sendable, Identifiable, Equatable {
+public struct NightarcProfile: Codable, Sendable, Identifiable, Equatable {
     public let id: String
     public let userId: String
     public let name: String

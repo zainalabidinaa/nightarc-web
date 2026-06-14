@@ -5,6 +5,24 @@ public enum HomeCatalogLoadStrategy: Equatable {
     case collectionsThenAddonSupplement
 }
 
+public enum CatalogReloadMode: Equatable {
+    case preserveCacheOnEmpty
+    case replaceCache
+}
+
+public enum FolderLoadUnavailableReason: String, Equatable, Sendable {
+    case missingFolder
+    case missingSources
+    case missingAddonTransport
+    case emptyResponse
+}
+
+public enum FolderLoadResult: Equatable, Sendable {
+    case alreadyLoaded
+    case loaded
+    case unavailable(FolderLoadUnavailableReason)
+}
+
 @MainActor
 public class CatalogRepository: ObservableObject {
     public static let shared = CatalogRepository()
@@ -23,7 +41,7 @@ public class CatalogRepository: ObservableObject {
 
     private nonisolated static let cacheURL: URL = {
         let dir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("LunaCatalogRows", isDirectory: true)
+            .appendingPathComponent("NightarcCatalogRows", isDirectory: true)
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         return dir.appendingPathComponent("rows.json")
     }()
@@ -50,9 +68,45 @@ public class CatalogRepository: ObservableObject {
 
     nonisolated public static func resolvedRowsAfterReload(
         existingRows: [CatalogRow],
-        newRows: [CatalogRow]
+        newRows: [CatalogRow],
+        mode: CatalogReloadMode = .preserveCacheOnEmpty
     ) -> [CatalogRow] {
-        newRows.isEmpty ? existingRows : newRows
+        switch mode {
+        case .preserveCacheOnEmpty:
+            return newRows.isEmpty ? existingRows : newRows
+        case .replaceCache:
+            return newRows
+        }
+    }
+
+    nonisolated public static func normalizedFolderId(_ folderId: String) -> String {
+        folderId.hasPrefix("folder_") ? folderId : "folder_\(folderId)"
+    }
+
+    nonisolated public static func folderLoadUnavailableReason(
+        folderId: String,
+        collections: [DBCollection],
+        folders: [DBFolder],
+        folderCatalogs: [DBFolderCatalog],
+        folderSources: [DBFolderSource],
+        addons: [AddonManifest]
+    ) -> FolderLoadUnavailableReason? {
+        let normalizedId = normalizedFolderId(folderId)
+        let visibleCollectionIds = Set(collections.map(\.id))
+        guard let folder = folders.first(where: {
+            normalizedFolderId($0.id) == normalizedId && visibleCollectionIds.contains($0.collectionId)
+        }) else {
+            return .missingFolder
+        }
+
+        let hasSources = folderCatalogs.contains { $0.folderId == folder.id }
+            || folderSources.contains { $0.folderId == folder.id }
+        guard hasSources else { return .missingSources }
+
+        let hasTransport = addons.contains {
+            ($0.transportUrl?.isEmpty == false)
+        }
+        return hasTransport ? nil : .missingAddonTransport
     }
 
     private nonisolated static let betterPostersPosterTemplate = "https://btttr.cc/poster-g/imdb/poster-default/{imdb_id}.jpg"
@@ -162,6 +216,8 @@ public class CatalogRepository: ObservableObject {
             )
         }
 
+        let groupTileShape = visibleFolders.first?.tileShape ?? visibleRows.first?.tileShape ?? "poster"
+
         return [CatalogRow(
             id: "collection_\(collection.id)",
             title: collection.name,
@@ -169,6 +225,7 @@ public class CatalogRepository: ObservableObject {
             addonName: "AIOMetadata",
             page: 0,
             hasMore: false,
+            tileShape: groupTileShape,
             focusGlowEnabled: false,
             viewMode: collection.viewMode,
             showAllTab: collection.showAllTab,
@@ -325,7 +382,8 @@ public class CatalogRepository: ObservableObject {
 
     public func loadFromCollections(
         collectionRepo: CollectionRepository,
-        addons: [AddonManifest]
+        addons: [AddonManifest],
+        mode: CatalogReloadMode = .preserveCacheOnEmpty
     ) async {
         isLoading = true
         let existingRows = catalogRows
@@ -478,16 +536,18 @@ public class CatalogRepository: ObservableObject {
             ))
         }
 
-        self.allFolderRows = newFolderRows.isEmpty ? existingFolderRows : newFolderRows
+        self.allFolderRows = newFolderRows.isEmpty && mode == .preserveCacheOnEmpty ? existingFolderRows : newFolderRows
         self.collectionRows = Self.resolvedRowsAfterReload(
             existingRows: existingCollectionRows,
-            newRows: rows
+            newRows: rows,
+            mode: mode
         )
         self.catalogRows = Self.resolvedRowsAfterReload(
             existingRows: existingRows,
-            newRows: rows
+            newRows: rows,
+            mode: mode
         )
-        if !rows.isEmpty { saveToDisk() }
+        if !rows.isEmpty || mode == .replaceCache { saveToDisk() }
     }
 
     /// Fetches content of the same type and genre from the best available addon,
@@ -680,31 +740,49 @@ public class CatalogRepository: ObservableObject {
 
     /// Loads items for a skeleton folder row on demand (called when the user opens a group folder).
     /// Updates `allFolderRows` so FolderScreen can refresh once items are ready.
+    @discardableResult
     public func loadFolderItems(
         folderId: String,
         collectionRepo: CollectionRepository,
         addons: [AddonManifest]
-    ) async {
+    ) async -> FolderLoadResult {
+        let normalizedFolderId = Self.normalizedFolderId(folderId)
+
         // Already loaded — nothing to do.
-        if let existing = allFolderRows[folderId], !existing.items.isEmpty { return }
+        if let existing = allFolderRows[normalizedFolderId], !existing.items.isEmpty {
+            return .alreadyLoaded
+        }
+
+        if let reason = Self.folderLoadUnavailableReason(
+            folderId: normalizedFolderId,
+            collections: collectionRepo.collections,
+            folders: collectionRepo.folders,
+            folderCatalogs: collectionRepo.folderCatalogs,
+            folderSources: collectionRepo.folderSources,
+            addons: addons
+        ) {
+            return .unavailable(reason)
+        }
 
         guard let fallbackURL = addons.first(where: {
             $0.transportUrl?.contains("aiometadata") == true || $0.id.contains("aio")
-        })?.transportUrl ?? addons.first?.transportUrl else { return }
+        })?.transportUrl ?? addons.first?.transportUrl else {
+            return .unavailable(.missingAddonTransport)
+        }
 
         // Find the folder in any collection.
         var targetFolder: DBFolder?
         for collection in collectionRepo.collections {
-            if let f = collectionRepo.folders(for: collection).first(where: { "folder_\($0.id)" == folderId }) {
+            if let f = collectionRepo.folders(for: collection).first(where: { Self.normalizedFolderId($0.id) == normalizedFolderId }) {
                 targetFolder = f
                 break
             }
         }
-        guard let folder = targetFolder else { return }
+        guard let folder = targetFolder else { return .unavailable(.missingFolder) }
 
         let normalizedSources = collectionRepo.catalogs(for: folder)
         let rawSources = collectionRepo.sources(for: folder)
-        guard !normalizedSources.isEmpty || !rawSources.isEmpty else { return }
+        guard !normalizedSources.isEmpty || !rawSources.isEmpty else { return .unavailable(.missingSources) }
 
         let items = await fetchFolderItems(
             normalizedSources: normalizedSources,
@@ -714,22 +792,40 @@ public class CatalogRepository: ObservableObject {
             skip: 0
         )
 
-        guard !items.isEmpty else { return }
+        guard !items.isEmpty else { return .unavailable(.emptyResponse) }
 
         // Patch the stored row with the fetched items.
-        if var row = allFolderRows[folderId] {
+        if var row = allFolderRows[normalizedFolderId] {
             row.items = items
             row.page = 0
             row.hasMore = items.count >= 50
-            allFolderRows[folderId] = row
+            allFolderRows[normalizedFolderId] = row
+        } else {
+            allFolderRows[normalizedFolderId] = CatalogRow(
+                id: normalizedFolderId,
+                title: folder.name,
+                items: items,
+                addonName: "AIOMetadata",
+                page: 0,
+                hasMore: items.count >= 50,
+                tileShape: folder.tileShape,
+                coverImage: folder.coverImage,
+                focusGif: folder.focusGif,
+                focusGifEnabled: folder.focusGifEnabled,
+                titleLogo: folder.titleLogo,
+                heroBackdrop: folder.heroBackdrop,
+                heroVideoURL: folder.heroVideoUrl,
+                hideTitle: folder.hideTitle
+            )
         }
 
         // Also update in catalogRows so the home-screen group tile cover reflects live data.
-        if let idx = catalogRows.firstIndex(where: { $0.id == folderId }) {
+        if let idx = catalogRows.firstIndex(where: { $0.id == normalizedFolderId }) {
             catalogRows[idx].items = items
             catalogRows[idx].page = 0
             catalogRows[idx].hasMore = items.count >= 50
         }
+        return .loaded
     }
 
     public func loadMoreFolderItems(
@@ -737,7 +833,8 @@ public class CatalogRepository: ObservableObject {
         collectionRepo: CollectionRepository,
         addons: [AddonManifest]
     ) async {
-        guard let row = allFolderRows[folderId], row.hasMore else { return }
+        let normalizedFolderId = Self.normalizedFolderId(folderId)
+        guard let row = allFolderRows[normalizedFolderId], row.hasMore else { return }
 
         guard let fallbackURL = addons.first(where: {
             $0.transportUrl?.contains("aiometadata") == true || $0.id.contains("aio")
@@ -745,7 +842,7 @@ public class CatalogRepository: ObservableObject {
 
         var targetFolder: DBFolder?
         for collection in collectionRepo.collections {
-            if let folder = collectionRepo.folders(for: collection).first(where: { "folder_\($0.id)" == folderId }) {
+            if let folder = collectionRepo.folders(for: collection).first(where: { Self.normalizedFolderId($0.id) == normalizedFolderId }) {
                 targetFolder = folder
                 break
             }
@@ -766,16 +863,16 @@ public class CatalogRepository: ObservableObject {
         )
 
         guard !items.isEmpty else {
-            allFolderRows[folderId]?.hasMore = false
-            if let idx = catalogRows.firstIndex(where: { $0.id == folderId }) {
+            allFolderRows[normalizedFolderId]?.hasMore = false
+            if let idx = catalogRows.firstIndex(where: { $0.id == normalizedFolderId }) {
                 catalogRows[idx].hasMore = false
             }
             return
         }
 
         let updated = Self.folderRow(row, appending: items)
-        allFolderRows[folderId] = updated
-        if let idx = catalogRows.firstIndex(where: { $0.id == folderId }) {
+        allFolderRows[normalizedFolderId] = updated
+        if let idx = catalogRows.firstIndex(where: { $0.id == normalizedFolderId }) {
             catalogRows[idx] = updated
         }
     }

@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct AudioPickerPanel: View {
     @ObservedObject var engine: PlayerEngine
@@ -34,7 +34,7 @@ struct AudioPickerPanel: View {
                                     if isSelected {
                                         Image(systemName: "checkmark")
                                             .font(.system(size: 11, weight: .semibold))
-                                            .foregroundColor(LunaTheme.accent)
+                                            .foregroundColor(NightarcTheme.accent)
                                     }
                                 }
                                 .padding(.horizontal, 12)

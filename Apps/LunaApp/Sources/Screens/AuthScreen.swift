@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct AuthScreen: View {
     @EnvironmentObject var profileManager: ProfileManager
@@ -13,7 +13,7 @@ struct AuthScreen: View {
 
     var body: some View {
         ZStack {
-            LunaTheme.background.ignoresSafeArea()
+            NightarcTheme.background.ignoresSafeArea()
 
             VStack(spacing: 24) {
                 Spacer()
@@ -23,15 +23,15 @@ struct AuthScreen: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 88, height: 88)
                     .cornerRadius(20)
-                    .shadow(color: LunaTheme.accent.opacity(0.5), radius: 24)
+                    .shadow(color: NightarcTheme.accent.opacity(0.5), radius: 24)
 
-                Text("Luna")
+                Text("Nightarc")
                     .font(.system(size: 42, weight: .bold, design: .rounded))
                     .foregroundColor(.white)
 
                 Text(isSignUp ? "Create your account" : "Sign in to continue")
                     .font(.subheadline)
-                    .foregroundColor(LunaTheme.textSecondary)
+                    .foregroundColor(NightarcTheme.textSecondary)
 
                 Spacer().frame(height: 16)
 
@@ -70,8 +70,7 @@ struct AuthScreen: View {
                 Button(action: performAuth) {
                     HStack {
                         if isLoading {
-                            ProgressView()
-                                .tint(.black)
+                            LottieLoadingView(size: 22)
                         }
                         Text(isSignUp ? "Create Account" : "Sign In")
                             .font(.headline)
@@ -79,7 +78,7 @@ struct AuthScreen: View {
                     .frame(maxWidth: .infinity)
                     .padding()
                 }
-                .glassProminentButtonStyle(tint: LunaTheme.accent, cornerRadius: 12)
+                .glassProminentButtonStyle(tint: NightarcTheme.accent, cornerRadius: 12)
                 .disabled(isLoading || email.isEmpty || password.isEmpty)
                 .padding(.horizontal, 32)
 
@@ -88,7 +87,7 @@ struct AuthScreen: View {
                     errorMessage = nil
                 }
                 .font(.subheadline)
-                .foregroundColor(LunaTheme.accent)
+                .foregroundColor(NightarcTheme.accent)
 
                 Spacer()
             }

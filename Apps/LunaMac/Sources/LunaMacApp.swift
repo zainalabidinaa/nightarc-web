@@ -1,8 +1,8 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 @main
-struct LunaMacApp: App {
+struct NightarcMacApp: App {
     @StateObject private var profileManager = ProfileManager.shared
     @StateObject private var roleManager = RoleManager.shared
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
@@ -13,7 +13,7 @@ struct LunaMacApp: App {
                 .environmentObject(profileManager)
                 .environmentObject(roleManager)
                 .frame(minWidth: 900, minHeight: 600)
-                .background(LunaTheme.background)
+                .background(NightarcTheme.background)
         }
         .windowStyle(.hiddenTitleBar)
         .windowToolbarStyle(.unified)

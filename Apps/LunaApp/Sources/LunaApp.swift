@@ -1,15 +1,15 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 @main
-struct LunaApp: App {
+struct NightarcApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var profileManager = ProfileManager.shared
     @StateObject private var roleManager = RoleManager.shared
     @StateObject private var themeManager = ThemeManager.shared
 
     init() {
-        LunaTypography.registerFonts()
+        NightarcTypography.registerFonts()
         let appearance = UITabBarAppearance()
         appearance.configureWithDefaultBackground()
         UITabBar.appearance().tintColor = .systemBlue

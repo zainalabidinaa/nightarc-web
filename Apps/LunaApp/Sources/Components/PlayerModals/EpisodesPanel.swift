@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct EpisodesPanel: View {
     @ObservedObject var engine: PlayerEngine
@@ -8,7 +8,7 @@ struct EpisodesPanel: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                LunaTheme.background.ignoresSafeArea()
+                NightarcTheme.background.ignoresSafeArea()
 
                 VStack(spacing: 16) {
                     if let launch = engine.currentLaunch {
@@ -19,7 +19,7 @@ struct EpisodesPanel: View {
                         if let season = launch.seasonNumber, let episode = launch.episodeNumber {
                             Text("Season \(season) • Episode \(episode)")
                                 .font(.subheadline)
-                                .foregroundColor(LunaTheme.textSecondary)
+                                .foregroundColor(NightarcTheme.textSecondary)
                         }
                     }
                     Spacer()

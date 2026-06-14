@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct VideoPlayerSettingsScreen: View {
     @StateObject private var prefs = VideoPlayerPreferenceStore.shared
@@ -75,7 +75,7 @@ struct VideoPlayerSettingsScreen: View {
 
                 Text("Skip timestamps sourced from PublicMetaDB. IntroDB provides additional crowdsourced intro data for TV shows.")
                     .font(.caption)
-                    .foregroundColor(LunaTheme.textTertiary)
+                    .foregroundColor(NightarcTheme.textTertiary)
                     .padding(.horizontal, 20)
 
                 settingsSectionLabel("Format Compatibility")
@@ -118,7 +118,7 @@ struct VideoPlayerSettingsScreen: View {
 
                 Text("Auto-Detect: .m3u8/HLS uses AVPlayer; .mkv/.avi and complex formats use KSPlayer.")
                     .font(.caption)
-                    .foregroundColor(LunaTheme.textTertiary)
+                    .foregroundColor(NightarcTheme.textTertiary)
                     .padding(.horizontal, 20)
 
                 settingsSectionLabel("Cache Mode")
@@ -139,7 +139,7 @@ struct VideoPlayerSettingsScreen: View {
 
                 Text("Memory buffers in RAM for smooth playback. Disk caches segments for resume. Off streams live.")
                     .font(.caption)
-                    .foregroundColor(LunaTheme.textTertiary)
+                    .foregroundColor(NightarcTheme.textTertiary)
                     .padding(.horizontal, 20)
 
                 settingsSectionLabel("Previews")
@@ -161,7 +161,7 @@ struct VideoPlayerSettingsScreen: View {
             }
             .padding(.top, 16)
         }
-        .background(LunaTheme.background)
+        .background(NightarcTheme.background)
         .navigationTitle("Video Player")
         .navigationBarTitleDisplayMode(.large)
     }
@@ -212,7 +212,7 @@ struct VideoPlayerSettingsScreen: View {
 private func settingsSectionLabel(_ text: String) -> some View {
     Text(text.uppercased())
         .font(.caption.weight(.semibold))
-        .foregroundColor(LunaTheme.textTertiary)
+        .foregroundColor(NightarcTheme.textTertiary)
         .padding(.horizontal, 20)
         .padding(.top, 12)
         .padding(.bottom, 2)

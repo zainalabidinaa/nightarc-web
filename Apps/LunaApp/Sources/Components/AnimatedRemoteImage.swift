@@ -1,5 +1,5 @@
 import ImageIO
-import LunaCore
+import NightarcCore
 import SwiftUI
 import UIKit
 
@@ -31,11 +31,11 @@ struct AnimatedRemoteImage: UIViewRepresentable {
     }
 
     private static func loadImage(from url: URL) async -> UIImage? {
-        if let data = LunaImageCache.cachedData(for: url) {
+        if let data = NightarcImageCache.cachedData(for: url) {
             return animatedImage(data: data) ?? UIImage(data: data)
         }
         guard let (data, _) = try? await URLSession.shared.data(from: url) else { return nil }
-        LunaImageCache.store(data: data, for: url)
+        NightarcImageCache.store(data: data, for: url)
         return animatedImage(data: data) ?? UIImage(data: data)
     }
 

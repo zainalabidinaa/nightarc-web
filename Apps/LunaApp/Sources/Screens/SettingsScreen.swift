@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 #Preview("Settings") {
     NavigationStack {
@@ -18,6 +18,7 @@ struct SettingsScreen: View {
     @State private var showAddons = false
     @State private var showCatalogManagement = false
     @State private var showSubtitleAppearance = false
+    @AppStorage("luna.cinematicModeEnabled") private var cinematicModeEnabled = false
 
     var body: some View {
         NavigationStack {
@@ -46,7 +47,7 @@ struct SettingsScreen: View {
                                 if let email = profileManager.currentSession?.email {
                                     Text(email)
                                         .font(.caption)
-                                        .foregroundColor(LunaTheme.textTertiary)
+                                        .foregroundColor(NightarcTheme.textTertiary)
                                 }
                             }
                             Spacer()
@@ -143,10 +144,34 @@ struct SettingsScreen: View {
                     .glassCard(cornerRadius: 14)
                     .padding(.horizontal, 16)
 
+                    // ── APPEARANCE ───────────────────────────────────
+                    settingsSectionLabel("Appearance")
+                    VStack(spacing: 0) {
+                        Button {
+                            withAnimation(.spring(response: 0.35, dampingFraction: 0.82)) {
+                                cinematicModeEnabled.toggle()
+                            }
+                        } label: {
+                            cinematicModeRow
+                        }
+                        .buttonStyle(.plain)
+                        settingsDivider()
+                        NavigationLink { CollectionDesignScreen() } label: {
+                            settingsRowLabel(
+                                icon: "rectangle.3.group.fill",
+                                iconColor: Color(red: 0.48, green: 0.28, blue: 0.72),
+                                title: "Collection Design",
+                                subtitle: "Choose row layouts for Home"
+                            )
+                        }
+                    }
+                    .glassCard(cornerRadius: 14)
+                    .padding(.horizontal, 16)
+
                     // ── APP ───────────────────────────────────────────
                     settingsSectionLabel("App")
                     VStack(spacing: 0) {
-                        settingsRowLabel(icon: "info.circle.fill", iconColor: Color(white: 0.25), title: "Luna v1.0.0")
+                        settingsRowLabel(icon: "info.circle.fill", iconColor: Color(white: 0.25), title: "Nightarc v1.0.0")
                     }
                     .glassCard(cornerRadius: 14)
                     .padding(.horizontal, 16)
@@ -167,7 +192,7 @@ struct SettingsScreen: View {
                 }
                 .padding(.top, 16)
             }
-            .background(LunaTheme.background)
+            .background(NightarcTheme.background)
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.large)
             .sheet(isPresented: $showAddons) { AddonsScreen() }
@@ -184,6 +209,45 @@ struct SettingsScreen: View {
         case .manual: return "Manual"
         case .automatic: return "Automatic"
         }
+    }
+
+    private var cinematicModeRow: some View {
+        HStack(spacing: 12) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 7)
+                    .fill(Color(red: 0.22, green: 0.42, blue: 0.72))
+                    .frame(width: 28, height: 28)
+                Image(systemName: "sparkles.tv.fill")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(.white)
+            }
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Cinematic Mode")
+                    .font(.subheadline)
+                    .foregroundColor(.white)
+                Text("Fusion-style media center Home")
+                    .font(.caption)
+                    .foregroundColor(NightarcTheme.textTertiary)
+            }
+
+            Spacer()
+
+            ZStack(alignment: cinematicModeEnabled ? .trailing : .leading) {
+                Capsule()
+                    .fill(cinematicModeEnabled ? NightarcTheme.accent.opacity(0.95) : Color.white.opacity(0.16))
+                    .frame(width: 52, height: 30)
+                Circle()
+                    .fill(.white)
+                    .frame(width: 26, height: 26)
+                    .padding(2)
+                    .shadow(color: .black.opacity(0.22), radius: 3, x: 0, y: 1)
+            }
+            .animation(.spring(response: 0.35, dampingFraction: 0.82), value: cinematicModeEnabled)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 11)
+        .contentShape(Rectangle())
     }
 
     private func settingsRowLabel(icon: String, iconColor: Color, title: String, subtitle: String? = nil, value: String? = nil) -> some View {
@@ -203,18 +267,18 @@ struct SettingsScreen: View {
                 if let subtitle {
                     Text(subtitle)
                         .font(.caption)
-                        .foregroundColor(LunaTheme.textTertiary)
+                        .foregroundColor(NightarcTheme.textTertiary)
                 }
             }
             Spacer()
             if let value {
                 Text(value)
                     .font(.caption)
-                    .foregroundColor(LunaTheme.textSecondary)
+                    .foregroundColor(NightarcTheme.textSecondary)
             }
             Image(systemName: "chevron.right")
                 .font(.caption)
-                .foregroundColor(LunaTheme.textTertiary)
+                .foregroundColor(NightarcTheme.textTertiary)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 11)
@@ -229,7 +293,7 @@ struct SettingsScreen: View {
 private func settingsSectionLabel(_ text: String) -> some View {
     Text(text.uppercased())
         .font(.caption.weight(.semibold))
-        .foregroundColor(LunaTheme.textTertiary)
+        .foregroundColor(NightarcTheme.textTertiary)
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 20)
         .padding(.top, 8)
@@ -250,7 +314,7 @@ struct StreamAutoplaySettingsScreen: View {
             VStack(alignment: .leading, spacing: 16) {
                 Text("STREAM AUTO-PLAY")
                     .font(.caption.weight(.bold))
-                    .foregroundColor(LunaTheme.textTertiary)
+                    .foregroundColor(NightarcTheme.textTertiary)
                     .padding(.horizontal, 20)
 
                 VStack(spacing: 0) {
@@ -273,12 +337,12 @@ struct StreamAutoplaySettingsScreen: View {
 
                 Text("Manual opens the source picker. Automatic launches a ranked source from the allowed addons after the selected wait time.")
                     .font(.caption)
-                    .foregroundColor(LunaTheme.textTertiary)
+                    .foregroundColor(NightarcTheme.textTertiary)
                     .padding(.horizontal, 20)
             }
             .padding(.top, 16)
         }
-        .background(LunaTheme.background)
+        .background(NightarcTheme.background)
         .navigationTitle("Stream Auto-Play")
         .navigationBarTitleDisplayMode(.inline)
         .task {
@@ -310,7 +374,7 @@ struct StreamAutoplaySettingsScreen: View {
 
             Text(mode == .manual ? "Manual (choose stream)" : "Automatic (pick for me)")
                 .font(.subheadline)
-                .foregroundColor(LunaTheme.textSecondary)
+                .foregroundColor(NightarcTheme.textSecondary)
         }
         .padding(16)
     }
@@ -324,12 +388,12 @@ struct StreamAutoplaySettingsScreen: View {
                         .foregroundColor(.white)
                     Text("Wait time for addons before selecting.")
                         .font(.subheadline)
-                        .foregroundColor(LunaTheme.textSecondary)
+                        .foregroundColor(NightarcTheme.textSecondary)
                 }
                 Spacer()
                 Text(timeoutLabel(timeoutSeconds))
                     .font(.subheadline.weight(.semibold))
-                    .foregroundColor(LunaTheme.accent)
+                    .foregroundColor(NightarcTheme.accent)
             }
 
             Picker("Timeout", selection: Binding(
@@ -357,7 +421,7 @@ struct StreamAutoplaySettingsScreen: View {
                 .foregroundColor(.white)
             Text("Installed addons only")
                 .font(.subheadline)
-                .foregroundColor(LunaTheme.textSecondary)
+                .foregroundColor(NightarcTheme.textSecondary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(16)
@@ -373,7 +437,7 @@ struct StreamAutoplaySettingsScreen: View {
                         .foregroundColor(.white)
                     Text(allowedAddonSummary)
                         .font(.subheadline)
-                        .foregroundColor(LunaTheme.textSecondary)
+                        .foregroundColor(NightarcTheme.textSecondary)
                 }
                 Spacer()
                 if !selectedAddonUrls.isEmpty {
@@ -382,14 +446,14 @@ struct StreamAutoplaySettingsScreen: View {
                         persistSelectedAddonUrls()
                     }
                     .font(.subheadline.weight(.semibold))
-                    .foregroundColor(LunaTheme.accent)
+                    .foregroundColor(NightarcTheme.accent)
                 }
             }
 
             if streamAddons.isEmpty {
                 Text(addonRepo.isLoading ? "Loading addons..." : "No stream addons installed")
                     .font(.caption)
-                    .foregroundColor(LunaTheme.textTertiary)
+                    .foregroundColor(NightarcTheme.textTertiary)
             } else {
                 VStack(spacing: 0) {
                     ForEach(streamAddons) { addon in
@@ -403,7 +467,7 @@ struct StreamAutoplaySettingsScreen: View {
                                     .foregroundColor(.white)
                                 Text(addon.manifestUrl)
                                     .font(.caption2)
-                                    .foregroundColor(LunaTheme.textTertiary)
+                                    .foregroundColor(NightarcTheme.textTertiary)
                                     .lineLimit(1)
                             }
                         }
@@ -548,13 +612,13 @@ struct MetadataIntegrationsScreen: View {
 
                 Text("Episode images resolve from TVDB first, then TMDB, then any usable addon image.")
                     .font(.caption)
-                    .foregroundColor(LunaTheme.textTertiary)
+                    .foregroundColor(NightarcTheme.textTertiary)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 32)
             }
             .padding(.top, 16)
         }
-        .background(LunaTheme.background)
+        .background(NightarcTheme.background)
         .navigationTitle("Integrations")
         .navigationBarTitleDisplayMode(.inline)
         .task {
@@ -579,7 +643,7 @@ struct MetadataIntegrationsScreen: View {
                     .foregroundColor(stateColor(for: state))
             }
 
-            SecureField("", text: value, prompt: Text("Paste API key").foregroundColor(LunaTheme.textTertiary))
+            SecureField("", text: value, prompt: Text("Paste API key").foregroundColor(NightarcTheme.textTertiary))
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
                 .foregroundColor(.white)
@@ -593,7 +657,7 @@ struct MetadataIntegrationsScreen: View {
 
             Text(subtitle)
                 .font(.caption)
-                .foregroundColor(LunaTheme.textTertiary)
+                .foregroundColor(NightarcTheme.textTertiary)
         }
         .padding(16)
     }
@@ -670,9 +734,9 @@ struct MetadataIntegrationsScreen: View {
         case .connected:
             .green
         case .checking:
-            LunaTheme.textSecondary
+            NightarcTheme.textSecondary
         case .missing:
-            LunaTheme.textTertiary
+            NightarcTheme.textTertiary
         case .failed:
             .orange
         }
@@ -702,26 +766,26 @@ struct CatalogManagementScreen: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                LunaTheme.background.ignoresSafeArea()
+                NightarcTheme.background.ignoresSafeArea()
 
                 if collectionRepo.isLoading && collectionRepo.collections.isEmpty {
                     VStack(spacing: 16) {
-                        ProgressView().tint(LunaTheme.accent)
+                        LottieLoadingView(size: 36)
                         Text("Loading catalogs...")
                             .font(.subheadline)
-                            .foregroundColor(LunaTheme.textSecondary)
+                            .foregroundColor(NightarcTheme.textSecondary)
                     }
                 } else if collectionRepo.collections.isEmpty {
                     VStack(spacing: 12) {
                         Image(systemName: "rectangle.stack.badge.questionmark")
                             .font(.system(size: 42))
-                            .foregroundColor(LunaTheme.textTertiary)
+                            .foregroundColor(NightarcTheme.textTertiary)
                         Text("No folder catalogs found")
                             .font(.headline)
                             .foregroundColor(.white)
                         Text("Collections from your configured folders will appear here.")
                             .font(.subheadline)
-                            .foregroundColor(LunaTheme.textSecondary)
+                            .foregroundColor(NightarcTheme.textSecondary)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 32)
                     }
@@ -730,7 +794,7 @@ struct CatalogManagementScreen: View {
                         Section {
                             Text("Choose which folder catalogs appear on Home. Turning folders into rows changes a collection like Decades into separate 1980s, 1990s, and other rows.")
                                 .font(.caption)
-                                .foregroundColor(LunaTheme.textSecondary)
+                                .foregroundColor(NightarcTheme.textSecondary)
                         }
 
                         ForEach(collectionRepo.collections) { collection in
@@ -748,7 +812,7 @@ struct CatalogManagementScreen: View {
                                 if folders.isEmpty {
                                     Text("No folders in this catalog.")
                                         .font(.caption)
-                                        .foregroundColor(LunaTheme.textTertiary)
+                                        .foregroundColor(NightarcTheme.textTertiary)
                                 } else {
                                     ForEach(folders.filter { !preferenceStore.isFolderHidden($0) }) { folder in
                                         HStack(spacing: 12) {
@@ -757,7 +821,7 @@ struct CatalogManagementScreen: View {
                                                     .foregroundColor(.white)
                                                 Text("Folder")
                                                     .font(.caption2)
-                                                    .foregroundColor(LunaTheme.textTertiary)
+                                                    .foregroundColor(NightarcTheme.textTertiary)
                                             }
                                             Spacer()
                                             Button("Remove") {
@@ -773,13 +837,13 @@ struct CatalogManagementScreen: View {
                                     ForEach(folders.filter { preferenceStore.isFolderHidden($0) }) { folder in
                                         HStack(spacing: 12) {
                                             Text(folder.name)
-                                                .foregroundColor(LunaTheme.textTertiary)
+                                                .foregroundColor(NightarcTheme.textTertiary)
                                             Spacer()
                                             Button("Restore") {
                                                 preferenceStore.setFolder(folder, hidden: false)
                                             }
                                             .font(.caption.weight(.semibold))
-                                            .foregroundColor(LunaTheme.accent)
+                                            .foregroundColor(NightarcTheme.accent)
                                         }
                                         .padding(.vertical, 4)
                                     }
@@ -874,14 +938,14 @@ struct AddonsScreen: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                LunaTheme.background.ignoresSafeArea()
+                NightarcTheme.background.ignoresSafeArea()
 
                 if addonRepo.isLoading {
                     VStack(spacing: 16) {
-                        ProgressView().tint(LunaTheme.accent)
+                        LottieLoadingView(size: 36)
                         Text("Loading addons...")
                             .font(.subheadline)
-                            .foregroundColor(LunaTheme.textSecondary)
+                            .foregroundColor(NightarcTheme.textSecondary)
                     }
                 } else if let error = addonRepo.errorMessage, addonRepo.managedAddons.isEmpty {
                     VStack(spacing: 16) {
@@ -893,7 +957,7 @@ struct AddonsScreen: View {
                             .foregroundColor(.white)
                         Text(error)
                             .font(.subheadline)
-                            .foregroundColor(LunaTheme.textSecondary)
+                            .foregroundColor(NightarcTheme.textSecondary)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 32)
                         Button {
@@ -932,7 +996,7 @@ struct AddonsScreen: View {
                                     Image(systemName: category.icon)
                                         .foregroundColor(category.color)
                                     Text(category.rawValue)
-                                        .foregroundColor(LunaTheme.textSecondary)
+                                        .foregroundColor(NightarcTheme.textSecondary)
                                 }
                                 .font(.subheadline.weight(.semibold))
                                 .textCase(nil)
@@ -974,7 +1038,7 @@ struct AddonsScreen: View {
 
                         TextField("https://.../manifest.json", text: $newAddonURL)
                             .padding()
-                            .background(LunaTheme.surface)
+                            .background(NightarcTheme.surface)
                             .cornerRadius(12)
                             .foregroundColor(.white)
                             .padding(.horizontal)
@@ -1007,7 +1071,7 @@ struct AddonsScreen: View {
                             }
                         } label: {
                             if isInstalling {
-                                ProgressView().tint(.black)
+                                LottieLoadingView(size: 18)
                                     .frame(maxWidth: .infinity)
                                     .padding()
                             } else {
@@ -1023,7 +1087,7 @@ struct AddonsScreen: View {
                         Spacer()
                     }
                     .padding(.top)
-                    .background(LunaTheme.background)
+                    .background(NightarcTheme.background)
                     .navigationTitle("Add Addon")
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
@@ -1058,7 +1122,7 @@ private struct AddonRow: View {
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 6) {
                     Text(addon.displayName)
-                        .foregroundColor(addon.enabled ? .white : LunaTheme.textSecondary)
+                        .foregroundColor(addon.enabled ? .white : NightarcTheme.textSecondary)
                         .font(.body)
                     if addonRepo.isManaged(addon) {
                         Text("DEFAULT")
@@ -1078,7 +1142,7 @@ private struct AddonRow: View {
                         ForEach(badges, id: \.self) { badge in
                             Text(badge)
                                 .font(.system(size: 10, weight: .medium))
-                                .foregroundColor(LunaTheme.textTertiary)
+                                .foregroundColor(NightarcTheme.textTertiary)
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 2)
                                 .background(Color.white.opacity(0.07))

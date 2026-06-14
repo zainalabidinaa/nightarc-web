@@ -3,7 +3,7 @@ import UIKit
 import Combine
 import AVFoundation
 import MediaPlayer
-import LunaCore
+import NightarcCore
 
 struct PlayerScreen: View {
     let onDismiss: () -> Void
@@ -322,6 +322,16 @@ struct PlayerScreen: View {
     }
 
     @ViewBuilder private var playerTopBar: some View {
+        if #available(iOS 26.0, *) {
+            GlassEffectContainer(spacing: 12) {
+                playerTopBarContent
+            }
+        } else {
+            playerTopBarContent
+        }
+    }
+
+    private var playerTopBarContent: some View {
         HStack(spacing: 8) {
             Button {
                 engine.stop()
@@ -723,6 +733,7 @@ struct PlayerScreen: View {
         engine.pause()
         ksEngine.stop()
         engine.resetState()
+        showControls = true
         activeLaunch = nextLaunch
         resolvedLogo = nextLaunch.logo ?? resolvedLogo
         ksEngine.launch(nextLaunch)
@@ -1043,35 +1054,61 @@ private class IntroTimestampServiceViewModel: ObservableObject {
 private struct GlassVolumeSlider: View {
     @Binding var volume: Float
 
-    private let thumbWidth: CGFloat = 44
-    private let thumbHeight: CGFloat = 30
+    private let fallbackThumbSize: CGFloat = 16
     private let trackHeight: CGFloat = 5
 
     var body: some View {
+        if #available(iOS 26.0, *) {
+            nativeGlassSlider
+        } else {
+            fallbackSlider
+        }
+    }
+
+    @available(iOS 26.0, *)
+    private var nativeGlassSlider: some View {
         HStack(spacing: 10) {
-            Image(systemName: volume <= 0 ? "speaker.slash.fill" : "speaker.wave.2.fill")
-                .font(.system(size: 15, weight: .semibold))
-                .foregroundColor(.white)
-                .frame(width: 20)
+            speakerIcon
+
+            Slider(
+                value: Binding(
+                    get: { Double(volume) },
+                    set: { volume = Float(max(0, min(1, $0))) }
+                ),
+                in: 0...1
+            )
+            .labelsHidden()
+            .tint(.white)
+            .controlSize(.regular)
+            .frame(width: 198, height: 28)
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
+        .glassEffect(.clear.interactive(), in: .capsule)
+    }
+
+    private var fallbackSlider: some View {
+        HStack(spacing: 10) {
+            speakerIcon
 
             GeometryReader { geo in
                 let trackW = geo.size.width
-                let fillW  = trackW * CGFloat(volume)
-                let thumbX = max(0, min(fillW - thumbWidth / 2, trackW - thumbWidth))
+                let clampedVolume = max(0, min(1, CGFloat(volume)))
+                let fillW = trackW * clampedVolume
+                let thumbX = max(0, min(fillW - fallbackThumbSize / 2, trackW - fallbackThumbSize))
 
                 ZStack(alignment: .leading) {
-                    // Track background
                     Capsule()
                         .fill(Color.white.opacity(0.18))
                         .frame(height: trackHeight)
-                    // Track fill
+
                     Capsule()
-                        .fill(Color.white.opacity(0.85))
+                        .fill(Color.white.opacity(0.78))
                         .frame(width: max(0, fillW), height: trackHeight)
-                    // Large capsule thumb
-                    Capsule()
+
+                    Circle()
                         .fill(Color.white)
-                        .frame(width: thumbWidth, height: thumbHeight)
+                        .frame(width: fallbackThumbSize, height: fallbackThumbSize)
                         .shadow(color: .black.opacity(0.25), radius: 3, x: 0, y: 1)
                         .offset(x: thumbX)
                 }
@@ -1079,21 +1116,28 @@ private struct GlassVolumeSlider: View {
                 .gesture(
                     DragGesture(minimumDistance: 0)
                         .onChanged { val in
+                            guard trackW > 0 else { return }
                             volume = Float(max(0, min(1, val.location.x / trackW)))
                         }
                 )
             }
-            .frame(width: 200, height: thumbHeight)
+            .frame(width: 198, height: 28)
         }
         .padding(.horizontal, 14)
-        .padding(.vertical, 11)
+        .padding(.vertical, 10)
         .background {
-            if #available(iOS 26.0, *) {
-                Capsule().glassEffect()
-            } else {
-                Capsule().fill(.ultraThinMaterial).environment(\.colorScheme, .dark)
-            }
+            Capsule()
+                .fill(.ultraThinMaterial)
+                .overlay(Capsule().fill(Color.white.opacity(0.03)))
+                .environment(\.colorScheme, .dark)
         }
+    }
+
+    private var speakerIcon: some View {
+        Image(systemName: volume <= 0 ? "speaker.slash.fill" : "speaker.wave.2.fill")
+            .font(.system(size: 15, weight: .semibold))
+            .foregroundColor(.white)
+            .frame(width: 20)
     }
 }
 

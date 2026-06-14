@@ -121,6 +121,21 @@ public struct AddonManifest: Codable, Sendable, Identifiable {
     public func hasResource(_ name: String) -> Bool {
         resources?.contains(where: { $0.name == name }) ?? false
     }
+
+    /// Returns true if this addon can serve a meta response for the given type+id.
+    /// Respects resource-level `types` and `idPrefixes` when present.
+    public func canHandleMeta(type: String, id: String) -> Bool {
+        guard let metaResource = resources?.first(where: { $0.name == "meta" }) else { return false }
+        let effectiveTypes = metaResource.types ?? types
+        if let effectiveTypes, !effectiveTypes.contains(where: { $0.lowercased() == type.lowercased() }) {
+            return false
+        }
+        let effectivePrefixes = metaResource.idPrefixes ?? idPrefixes
+        if let effectivePrefixes, !effectivePrefixes.isEmpty {
+            if !effectivePrefixes.contains(where: { id.hasPrefix($0) }) { return false }
+        }
+        return true
+    }
 }
 
 public struct ManagedAddon: Codable, Sendable, Identifiable {

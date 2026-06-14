@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct ActorBioScreen: View {
     let name: String
@@ -21,9 +21,8 @@ struct ActorBioScreen: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 if viewModel.isLoading {
-                    ProgressView()
+                    LottieLoadingView(size: 44)
                         .frame(maxWidth: .infinity, minHeight: 200)
-                        .tint(.white)
                 } else if let person = viewModel.person {
                     photoStrip(person)
 
@@ -53,7 +52,7 @@ struct ActorBioScreen: View {
                 Spacer().frame(height: 40)
             }
         }
-        .background(LunaTheme.background)
+        .background(NightarcTheme.background)
         .navigationTitle(name)
         .navigationBarTitleDisplayMode(.inline)
         .task {
@@ -104,12 +103,12 @@ struct ActorBioScreen: View {
             if let character = characterName {
                 Text("as \(character)")
                     .font(.subheadline)
-                    .foregroundColor(LunaTheme.textSecondary)
+                    .foregroundColor(NightarcTheme.textSecondary)
             }
             if !person.biography.isEmpty {
                 Text(person.biography)
                     .font(.caption)
-                    .foregroundColor(LunaTheme.textSecondary)
+                    .foregroundColor(NightarcTheme.textSecondary)
                     .lineLimit(bioExpanded ? nil : 4)
                     .animation(.easeInOut(duration: 0.2), value: bioExpanded)
                     .padding(.top, 4)
@@ -149,7 +148,7 @@ struct ActorBioScreen: View {
         HStack(alignment: .top, spacing: 12) {
             Text(label)
                 .font(.caption.weight(.semibold))
-                .foregroundColor(LunaTheme.textTertiary)
+                .foregroundColor(NightarcTheme.textTertiary)
                 .frame(width: 90, alignment: .leading)
             Text(value)
                 .font(.caption)
@@ -215,7 +214,7 @@ struct ActorBioScreen: View {
                     Button { creditsFilter = filter } label: {
                         Text(filter.rawValue)
                             .font(.caption.weight(.semibold))
-                            .foregroundColor(creditsFilter == filter ? .white : LunaTheme.textSecondary)
+                            .foregroundColor(creditsFilter == filter ? .white : NightarcTheme.textSecondary)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 6)
                             .background(creditsFilter == filter ? Color.white.opacity(0.22) : Color.white.opacity(0.08))
@@ -257,11 +256,11 @@ struct ActorBioScreen: View {
                 } header: {
                     Text(year)
                         .font(.caption.weight(.bold))
-                        .foregroundColor(LunaTheme.textTertiary)
+                        .foregroundColor(NightarcTheme.textTertiary)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 6)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(LunaTheme.background)
+                        .background(NightarcTheme.background)
                 }
             }
         }
@@ -302,17 +301,17 @@ struct ActorBioScreen: View {
                         .background(Capsule().fill(Color.white.opacity(0.12)))
                     Text(credit.creditType)
                         .font(.caption)
-                        .foregroundColor(LunaTheme.textTertiary)
+                        .foregroundColor(NightarcTheme.textTertiary)
                     if let eps = credit.episodeCount, credit.mediaType == "tv" {
                         Text("· \(eps) ep")
                             .font(.caption)
-                            .foregroundColor(LunaTheme.textTertiary)
+                            .foregroundColor(NightarcTheme.textTertiary)
                     }
                 }
                 if let character = credit.character, !character.isEmpty {
                     Text("as \(character)")
                         .font(.system(size: 11))
-                        .foregroundColor(LunaTheme.textTertiary)
+                        .foregroundColor(NightarcTheme.textTertiary)
                         .lineLimit(1)
                 }
             }
@@ -351,7 +350,7 @@ struct ActorBioScreen: View {
                 .foregroundColor(.orange)
             Text(error)
                 .font(.subheadline)
-                .foregroundColor(LunaTheme.textSecondary)
+                .foregroundColor(NightarcTheme.textSecondary)
         }
         .frame(maxWidth: .infinity, minHeight: 200)
     }

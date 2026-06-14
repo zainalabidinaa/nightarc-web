@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct CachedAsyncImage<Content: View>: View {
     let url: URL
@@ -13,7 +13,7 @@ struct CachedAsyncImage<Content: View>: View {
     }
 
     @MainActor private func load() async {
-        if let cachedData = LunaImageCache.cachedData(for: url),
+        if let cachedData = NightarcImageCache.cachedData(for: url),
            let image = UIImage(data: cachedData) {
             phase = .success(Image(uiImage: image))
             return
@@ -21,7 +21,7 @@ struct CachedAsyncImage<Content: View>: View {
 
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
-            LunaImageCache.store(data: data, for: url)
+            NightarcImageCache.store(data: data, for: url)
             if let image = UIImage(data: data) {
                 phase = .success(Image(uiImage: image))
             } else {

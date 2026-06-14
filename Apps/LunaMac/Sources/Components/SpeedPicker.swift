@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct SpeedPicker: View {
     @ObservedObject var engine: PlayerEngine
@@ -10,7 +10,7 @@ struct SpeedPicker: View {
         VStack(spacing: 0) {
             Text("Playback Speed")
                 .font(.caption)
-                .foregroundColor(LunaTheme.textTertiary)
+                .foregroundColor(NightarcTheme.textTertiary)
                 .padding(.vertical, 8)
 
             ForEach(speeds, id: \.self) { speed in
@@ -20,12 +20,12 @@ struct SpeedPicker: View {
                     HStack {
                         Text("\(speed, specifier: "%.2f")x")
                             .font(.subheadline)
-                            .foregroundColor(engine.playbackSpeed == speed ? .white : LunaTheme.textSecondary)
+                            .foregroundColor(engine.playbackSpeed == speed ? .white : NightarcTheme.textSecondary)
                         Spacer()
                         if engine.playbackSpeed == speed {
                             Image(systemName: "checkmark")
                                 .font(.caption)
-                                .foregroundColor(LunaTheme.accent)
+                                .foregroundColor(NightarcTheme.accent)
                         }
                     }
                     .padding(.horizontal, 16)
@@ -35,7 +35,7 @@ struct SpeedPicker: View {
             }
         }
         .frame(width: 140)
-        .background(LunaTheme.surfaceElevated)
+        .background(NightarcTheme.surfaceElevated)
         .cornerRadius(8)
     }
 }

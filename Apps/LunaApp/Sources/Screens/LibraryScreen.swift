@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 #Preview("Library") {
     LibraryScreen()
@@ -35,7 +35,7 @@ struct LibraryScreen: View {
                     Spacer().frame(height: 40)
                 }
             }
-            .background(LunaTheme.background)
+            .background(NightarcTheme.background)
             .navigationTitle("Library")
             .navigationBarTitleDisplayMode(.large)
         }
@@ -54,7 +54,7 @@ struct LibraryScreen: View {
 
     // MARK: - Computed
 
-    private var filteredWatchlist: [LunaCore.LibraryItem] {
+    private var filteredWatchlist: [NightarcCore.LibraryItem] {
         switch watchlistFilter {
         case .all:    return libraryRepo.libraryItems
         case .movies: return libraryRepo.libraryItems.filter { $0.mediaType == "movie" }
@@ -63,11 +63,10 @@ struct LibraryScreen: View {
     }
 
     private var availableLikedItems: [LikedItem] {
-        let notUpcoming = likedRepo.likedItems.filter { !upcomingService.isUpcoming($0.mediaId) }
         switch likedFilter {
-        case .all:    return notUpcoming
-        case .movies: return notUpcoming.filter { $0.mediaType == "movie" }
-        case .series: return notUpcoming.filter { $0.mediaType != "movie" }
+        case .all:    return likedRepo.likedItems
+        case .movies: return likedRepo.likedItems.filter { $0.mediaType == "movie" }
+        case .series: return likedRepo.likedItems.filter { $0.mediaType != "movie" }
         }
     }
 
@@ -96,7 +95,7 @@ struct LibraryScreen: View {
         }
     }
 
-    private func watchlistPosterCard(_ item: LunaCore.LibraryItem) -> some View {
+    private func watchlistPosterCard(_ item: NightarcCore.LibraryItem) -> some View {
         NavigationLink(destination: DetailScreen(
             mediaId: item.mediaId,
             type: item.mediaType,
@@ -126,7 +125,7 @@ struct LibraryScreen: View {
                         Spacer()
                         GeometryReader { geo in
                             Capsule()
-                                .fill(LunaTheme.accent.opacity(0.9))
+                                .fill(NightarcTheme.accent.opacity(0.9))
                                 .frame(width: geo.size.width * entry.progressFraction, height: 3)
                         }
                         .frame(height: 3)
@@ -150,11 +149,11 @@ struct LibraryScreen: View {
     }
 
     @ViewBuilder
-    private func watchlistPlaceholder(_ item: LunaCore.LibraryItem) -> some View {
+    private func watchlistPlaceholder(_ item: NightarcCore.LibraryItem) -> some View {
         Color.white.opacity(0.05)
             .overlay(
                 Image(systemName: item.mediaType == "movie" ? "film" : "tv")
-                    .foregroundColor(LunaTheme.textTertiary)
+                    .foregroundColor(NightarcTheme.textTertiary)
             )
     }
 
@@ -166,7 +165,7 @@ struct LibraryScreen: View {
             filterChips(selection: $likedFilter)
 
             if availableLikedItems.isEmpty {
-                emptyState(icon: "heart", message: "Nothing liked yet.\nTap ❤️ on any title to add it.")
+                emptyState(icon: "heart", message: "Nothing liked yet.\nTap the heart button on any title to add it.")
             } else {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 100, maximum: 130), spacing: 10)], spacing: 10) {
                     ForEach(availableLikedItems, id: \.id) { item in
@@ -216,7 +215,7 @@ struct LibraryScreen: View {
 
     private var upcomingSection: some View {
         VStack(alignment: .leading, spacing: 0) {
-            librarySectionHeader(systemImage: "calendar", imageTint: LunaTheme.accent, title: "Upcoming", count: upcomingItems.count)
+            librarySectionHeader(systemImage: "calendar", imageTint: NightarcTheme.accent, title: "Upcoming", count: upcomingItems.count)
 
             if upcomingItems.isEmpty {
                 emptyState(icon: "calendar", message: "No upcoming releases.\nLike a movie or series to track it.")
@@ -265,7 +264,7 @@ struct LibraryScreen: View {
                     .lineLimit(1)
                 Text(item.mediaType == "movie" ? "Movie" : "Series")
                     .font(.caption)
-                    .foregroundColor(LunaTheme.textTertiary)
+                    .foregroundColor(NightarcTheme.textTertiary)
             }
 
             Spacer()
@@ -273,16 +272,16 @@ struct LibraryScreen: View {
             if let badge = upcomingService.badge(for: item.mediaId) {
                 Text(badge)
                     .font(.caption.weight(.semibold))
-                    .foregroundColor(LunaTheme.accent)
+                    .foregroundColor(NightarcTheme.accent)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
-                    .background(LunaTheme.accent.opacity(0.12))
+                    .background(NightarcTheme.accent.opacity(0.12))
                     .cornerRadius(6)
             }
 
             Image(systemName: "chevron.right")
                 .font(.caption)
-                .foregroundColor(LunaTheme.textTertiary)
+                .foregroundColor(NightarcTheme.textTertiary)
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 10)
@@ -307,7 +306,7 @@ struct LibraryScreen: View {
                 .foregroundColor(.white)
             Text("(\(count))")
                 .font(.subheadline)
-                .foregroundColor(LunaTheme.textTertiary)
+                .foregroundColor(NightarcTheme.textTertiary)
             Spacer()
         }
         .padding(.horizontal, 16)
@@ -322,7 +321,7 @@ struct LibraryScreen: View {
                     Button { selection.wrappedValue = filter } label: {
                         Text(filter.rawValue)
                             .font(.caption.weight(.semibold))
-                            .foregroundColor(selection.wrappedValue == filter ? .white : LunaTheme.textSecondary)
+                            .foregroundColor(selection.wrappedValue == filter ? .white : NightarcTheme.textSecondary)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 5)
                             .background(selection.wrappedValue == filter ? Color.white.opacity(0.22) : Color.white.opacity(0.08))
@@ -342,7 +341,7 @@ struct LibraryScreen: View {
                 .foregroundColor(Color.white.opacity(0.2))
             Text(message)
                 .font(.subheadline)
-                .foregroundColor(LunaTheme.textTertiary)
+                .foregroundColor(NightarcTheme.textTertiary)
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity, minHeight: 120)
@@ -351,7 +350,7 @@ struct LibraryScreen: View {
 
     // MARK: - Artwork resolution (preserved from original)
 
-    private func artworkURL(for item: LunaCore.LibraryItem) -> URL? {
+    private func artworkURL(for item: NightarcCore.LibraryItem) -> URL? {
         // Prefer btttr poster for any IMDb-id item — always up to date.
         if let bttr = PosterService.posterURL(forImdbId: item.mediaId) { return URL(string: bttr) }
         if let resolved = resolvedArtwork[item.mediaId] { return URL(string: resolved) }

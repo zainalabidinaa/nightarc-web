@@ -1,5 +1,5 @@
 import Foundation
-import LunaCore
+import NightarcCore
 
 /// Resolves textless (language-neutral) TMDB portrait posters for hero items,
 /// so the overlaid title logo isn't duplicated by text baked into the art.

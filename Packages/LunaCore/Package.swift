@@ -2,25 +2,25 @@
 import PackageDescription
 
 let package = Package(
-    name: "LunaCore",
+    name: "NightarcCore",
     platforms: [
         .iOS(.v17),
         .macOS("14.0")
     ],
     products: [
         .library(
-            name: "LunaCore",
-            targets: ["LunaCore"]
+            name: "NightarcCore",
+            targets: ["NightarcCore"]
         )
     ],
     targets: [
         .target(
-            name: "LunaCore",
+            name: "NightarcCore",
             path: "Sources/LunaCore"
         ),
         .testTarget(
-            name: "LunaCoreTests",
-            dependencies: ["LunaCore"],
+            name: "NightarcCoreTests",
+            dependencies: ["NightarcCore"],
             path: "Tests/LunaCoreTests"
         )
     ]

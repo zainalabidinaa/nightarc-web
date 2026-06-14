@@ -1,6 +1,6 @@
 import SwiftUI
 import XCTest
-@testable import LunaCore
+@testable import NightarcCore
 
 @MainActor
 final class ThemeTests: XCTestCase {
@@ -57,8 +57,8 @@ final class ThemeTests: XCTestCase {
         XCTAssertFalse(storage.loadAmoled())
     }
 
-    func testDefaultThemeIsViolet() {
+    func testDefaultThemeIsWhite() {
         UserDefaults.standard.removeObject(forKey: "luna_selected_theme")
-        XCTAssertEqual(ThemeSettingsStorage.shared.loadTheme(), .violet)
+        XCTAssertEqual(ThemeSettingsStorage.shared.loadTheme(), .white)
     }
 }

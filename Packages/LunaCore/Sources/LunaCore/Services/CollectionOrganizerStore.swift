@@ -9,7 +9,7 @@ public final class CollectionOrganizerStore: @unchecked Sendable {
     public convenience init() {
         let cacheDir = FileManager.default
             .urls(for: .cachesDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("LunaHomeLayout", isDirectory: true)
+            .appendingPathComponent("NightarcHomeLayout", isDirectory: true)
         try? FileManager.default.createDirectory(at: cacheDir, withIntermediateDirectories: true)
         self.init(
             cacheURL: cacheDir.appendingPathComponent("home-organizer.json"),

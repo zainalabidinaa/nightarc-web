@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct MacProfilePicker: View {
     @EnvironmentObject var profileManager: ProfileManager
@@ -11,7 +11,7 @@ struct MacProfilePicker: View {
 
             AppIconView()
                 .frame(width: 64, height: 64)
-                .shadow(color: LunaTheme.accent.opacity(0.3), radius: 16)
+                .shadow(color: NightarcTheme.accent.opacity(0.3), radius: 16)
 
             Text("Who's watching?")
                 .font(.system(size: 20, weight: .semibold))
@@ -29,7 +29,7 @@ struct MacProfilePicker: View {
                             Circle()
                                 .fill(
                                     profile.avatarColor
-                                        .map { Color(hex: $0) } ?? LunaTheme.accent
+                                        .map { Color(hex: $0) } ?? NightarcTheme.accent
                                 )
                                 .frame(width: 80, height: 80)
                                 .overlay(
@@ -44,7 +44,7 @@ struct MacProfilePicker: View {
                             if profile.isAdmin {
                                 Text("Admin")
                                     .font(.caption2)
-                                    .foregroundColor(LunaTheme.accent)
+                                    .foregroundColor(NightarcTheme.accent)
                             }
                         }
                     }
@@ -59,11 +59,11 @@ struct MacProfilePicker: View {
                             .overlay(
                                 Image(systemName: "plus")
                                     .font(.title2)
-                                    .foregroundColor(LunaTheme.textTertiary)
+                                    .foregroundColor(NightarcTheme.textTertiary)
                             )
                         Text("Add Profile")
                             .font(.subheadline)
-                            .foregroundColor(LunaTheme.textTertiary)
+                            .foregroundColor(NightarcTheme.textTertiary)
                     }
                 }
                 .buttonStyle(.plain)
@@ -74,12 +74,12 @@ struct MacProfilePicker: View {
             Button("Sign Out") {
                 Task { await profileManager.signOut() }
             }
-            .foregroundColor(LunaTheme.textTertiary)
+            .foregroundColor(NightarcTheme.textTertiary)
 
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(LunaTheme.background)
+        .background(NightarcTheme.background)
         .sheet(isPresented: $showCreate) {
             MacCreateProfile()
         }
@@ -99,7 +99,7 @@ struct MacCreateProfile: View {
 
             AppIconView()
                 .frame(width: 72, height: 72)
-                .shadow(color: LunaTheme.accent.opacity(0.3), radius: 20)
+                .shadow(color: NightarcTheme.accent.opacity(0.3), radius: 20)
 
             Text("Create Profile")
                 .font(.system(size: 20, weight: .semibold))
@@ -108,7 +108,7 @@ struct MacCreateProfile: View {
             TextField("Profile Name", text: $name)
                 .textFieldStyle(.plain)
                 .padding(10)
-                .background(LunaTheme.surface)
+                .background(NightarcTheme.surface)
                 .cornerRadius(8)
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
@@ -136,7 +136,7 @@ struct MacCreateProfile: View {
                         .fontWeight(.semibold)
                 }
                 .frame(width: 300, height: 40)
-                .background((name.isEmpty || isLoading) ? LunaTheme.surface : LunaTheme.accent)
+                .background((name.isEmpty || isLoading) ? NightarcTheme.surface : NightarcTheme.accent)
                 .foregroundColor(.white)
                 .cornerRadius(20)
             }
@@ -146,7 +146,7 @@ struct MacCreateProfile: View {
             Spacer()
         }
         .frame(width: 400, height: 350)
-        .background(LunaTheme.background)
+        .background(NightarcTheme.background)
     }
 
     private func createProfile() {

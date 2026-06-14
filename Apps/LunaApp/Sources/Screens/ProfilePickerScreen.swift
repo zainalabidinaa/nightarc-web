@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 private let defaultAvatarURLs: [String] = [
     "https://media1.tenor.com/m/BbkxgHGg-EEAAAAC/butcher-billy-butcher.gif",
@@ -21,7 +21,7 @@ struct ProfilePickerScreen: View {
 
     var body: some View {
         ZStack {
-            LunaTheme.background.ignoresSafeArea()
+            NightarcTheme.background.ignoresSafeArea()
 
             VStack(spacing: 0) {
                 Spacer()
@@ -31,7 +31,7 @@ struct ProfilePickerScreen: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 80, height: 80)
                     .cornerRadius(18)
-                    .shadow(color: LunaTheme.accent.opacity(0.4), radius: 20)
+                    .shadow(color: NightarcTheme.accent.opacity(0.4), radius: 20)
 
                 Text("Who's watching?")
                     .font(.title.weight(.bold))
@@ -40,7 +40,7 @@ struct ProfilePickerScreen: View {
 
                 Text("Choose a profile")
                     .font(.subheadline)
-                    .foregroundColor(LunaTheme.textSecondary)
+                    .foregroundColor(NightarcTheme.textSecondary)
                     .padding(.top, 4)
 
                 LazyVGrid(columns: columns, spacing: 20) {
@@ -54,7 +54,7 @@ struct ProfilePickerScreen: View {
                                 Text(profile.name)
                                     .font(.subheadline.weight(.medium))
                                     .foregroundColor(profile.id == profileManager.currentProfile?.id
-                                        ? .white : LunaTheme.textSecondary)
+                                        ? .white : NightarcTheme.textSecondary)
                             }
                         }
                         .buttonStyle(.plain)
@@ -70,12 +70,12 @@ struct ProfilePickerScreen: View {
                                 .overlay(
                                     Image(systemName: "plus")
                                         .font(.title2)
-                                        .foregroundColor(LunaTheme.textTertiary)
+                                        .foregroundColor(NightarcTheme.textTertiary)
                                 )
 
                             Text("Add Profile")
                                 .font(.subheadline)
-                                .foregroundColor(LunaTheme.textTertiary)
+                                .foregroundColor(NightarcTheme.textTertiary)
                         }
                     }
                     .buttonStyle(.plain)
@@ -94,7 +94,7 @@ struct ProfilePickerScreen: View {
                             .foregroundColor(.white)
                         Image(systemName: "gearshape")
                             .font(.subheadline)
-                            .foregroundColor(LunaTheme.accent)
+                            .foregroundColor(NightarcTheme.accent)
                     }
                     .padding(.horizontal, 24)
                     .padding(.vertical, 12)
@@ -112,7 +112,7 @@ struct ProfilePickerScreen: View {
     }
 
     @ViewBuilder
-    private func profileAvatarView(profile: LunaProfile, size: CGFloat) -> some View {
+    private func profileAvatarView(profile: NightarcProfile, size: CGFloat) -> some View {
         if let avatarId = profile.avatarId,
            avatarId >= 0,
            avatarId < defaultAvatarURLs.count,
@@ -138,8 +138,8 @@ struct ProfilePickerScreen: View {
     }
 
     @ViewBuilder
-    private func fallbackAvatar(profile: LunaProfile, size: CGFloat) -> some View {
-        let color = profile.avatarColor.map { Color(hex: $0) } ?? LunaTheme.accent
+    private func fallbackAvatar(profile: NightarcProfile, size: CGFloat) -> some View {
+        let color = profile.avatarColor.map { Color(hex: $0) } ?? NightarcTheme.accent
         Circle()
             .fill(color)
             .frame(width: size, height: size)
@@ -183,7 +183,7 @@ struct ProfileCreateSheet: View {
                 } label: {
                     HStack {
                         if isLoading {
-                            ProgressView().tint(.black)
+                            LottieLoadingView(size: 22)
                         }
                         Text("Create")
                             .font(.headline)
@@ -191,13 +191,13 @@ struct ProfileCreateSheet: View {
                     .frame(maxWidth: .infinity)
                     .padding()
                 }
-                .glassProminentButtonStyle(tint: LunaTheme.accent, cornerRadius: 12)
+                .glassProminentButtonStyle(tint: NightarcTheme.accent, cornerRadius: 12)
                 .disabled(name.isEmpty || isLoading)
                 .padding(.horizontal)
 
                 Spacer()
             }
-            .background(LunaTheme.background)
+            .background(NightarcTheme.background)
             .navigationTitle("New Profile")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -213,16 +213,16 @@ struct ProfileCreateSheet: View {
 struct ManageProfilesSheet: View {
     @EnvironmentObject var profileManager: ProfileManager
     @Environment(\.dismiss) private var dismiss
-    @State private var editingProfile: LunaProfile?
+    @State private var editingProfile: NightarcProfile?
 
     var body: some View {
         NavigationStack {
             ZStack {
-                LunaTheme.background.ignoresSafeArea()
+                NightarcTheme.background.ignoresSafeArea()
 
                 if profileManager.profiles.isEmpty {
                     Text("No profiles yet")
-                        .foregroundColor(LunaTheme.textSecondary)
+                        .foregroundColor(NightarcTheme.textSecondary)
                 } else {
                     List {
                         ForEach(profileManager.profiles) { profile in
@@ -240,7 +240,7 @@ struct ManageProfilesSheet: View {
                                         if profile.id == profileManager.currentProfile?.id {
                                             Text("Current")
                                                 .font(.caption)
-                                                .foregroundColor(LunaTheme.accent)
+                                                .foregroundColor(NightarcTheme.accent)
                                         }
                                     }
 
@@ -248,7 +248,7 @@ struct ManageProfilesSheet: View {
 
                                     Image(systemName: "chevron.right")
                                         .font(.caption.weight(.semibold))
-                                        .foregroundColor(LunaTheme.textTertiary)
+                                        .foregroundColor(NightarcTheme.textTertiary)
                                 }
                                 .padding(.vertical, 4)
                             }
@@ -281,7 +281,7 @@ struct ManageProfilesSheet: View {
     }
 
     @ViewBuilder
-    private func profileRowAvatar(profile: LunaProfile) -> some View {
+    private func profileRowAvatar(profile: NightarcProfile) -> some View {
         if let avatarId = profile.avatarId,
            avatarId >= 0,
            avatarId < defaultAvatarURLs.count,
@@ -305,8 +305,8 @@ struct ManageProfilesSheet: View {
         }
     }
 
-    private func fallbackRowAvatar(profile: LunaProfile) -> some View {
-        let color = profile.avatarColor.map { Color(hex: $0) } ?? LunaTheme.accent
+    private func fallbackRowAvatar(profile: NightarcProfile) -> some View {
+        let color = profile.avatarColor.map { Color(hex: $0) } ?? NightarcTheme.accent
         return Circle()
             .fill(color)
             .frame(width: 44, height: 44)
@@ -322,14 +322,14 @@ struct EditProfileSheet: View {
     @EnvironmentObject var profileManager: ProfileManager
     @Environment(\.dismiss) private var dismiss
 
-    let profile: LunaProfile
+    let profile: NightarcProfile
 
     @State private var name: String
     @State private var selectedAvatarId: Int?
     @State private var isLoading = false
     @State private var gifStill: Bool
 
-    init(profile: LunaProfile) {
+    init(profile: NightarcProfile) {
         self.profile = profile
         _name = State(initialValue: profile.name)
         _selectedAvatarId = State(initialValue: profile.avatarId)
@@ -345,7 +345,7 @@ struct EditProfileSheet: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                LunaTheme.background.ignoresSafeArea()
+                NightarcTheme.background.ignoresSafeArea()
 
                 ScrollView {
                     VStack(spacing: 24) {
@@ -355,7 +355,7 @@ struct EditProfileSheet: View {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Name")
                                 .font(.caption.weight(.semibold))
-                                .foregroundColor(LunaTheme.textSecondary)
+                                .foregroundColor(NightarcTheme.textSecondary)
                                 .padding(.leading, 4)
 
                             TextField("Profile name", text: $name)
@@ -368,7 +368,7 @@ struct EditProfileSheet: View {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Choose a Picture")
                                 .font(.caption.weight(.semibold))
-                                .foregroundColor(LunaTheme.textSecondary)
+                                .foregroundColor(NightarcTheme.textSecondary)
                                 .padding(.leading, 4)
 
                             LazyVGrid(columns: columns, spacing: 12) {
@@ -394,7 +394,7 @@ struct EditProfileSheet: View {
                                             RoundedRectangle(cornerRadius: 12)
                                                 .stroke(
                                                     selectedAvatarId == index
-                                                        ? LunaTheme.accent
+                                                        ? NightarcTheme.accent
                                                         : Color.clear,
                                                     lineWidth: 3
                                                 )
@@ -406,7 +406,7 @@ struct EditProfileSheet: View {
                                                         HStack {
                                                             Spacer()
                                                             Image(systemName: "checkmark.circle.fill")
-                                                                .foregroundColor(LunaTheme.accent)
+                                                                .foregroundColor(NightarcTheme.accent)
                                                                 .font(.title3)
                                                                 .padding(4)
                                                         }
@@ -430,7 +430,7 @@ struct EditProfileSheet: View {
                                             .cornerRadius(8)
                                         Text("App Icon")
                                             .font(.caption2)
-                                            .foregroundColor(LunaTheme.textSecondary)
+                                            .foregroundColor(NightarcTheme.textSecondary)
                                     }
                                     .frame(width: 88, height: 88)
                                     .background(Color.white.opacity(0.05))
@@ -439,7 +439,7 @@ struct EditProfileSheet: View {
                                         RoundedRectangle(cornerRadius: 12)
                                             .stroke(
                                                 selectedAvatarId == nil
-                                                    ? LunaTheme.accent
+                                                    ? NightarcTheme.accent
                                                     : Color.clear,
                                                 lineWidth: 3
                                             )
@@ -451,7 +451,7 @@ struct EditProfileSheet: View {
                                                     HStack {
                                                         Spacer()
                                                         Image(systemName: "checkmark.circle.fill")
-                                                            .foregroundColor(LunaTheme.accent)
+                                                            .foregroundColor(NightarcTheme.accent)
                                                             .font(.title3)
                                                             .padding(4)
                                                     }
@@ -476,12 +476,12 @@ struct EditProfileSheet: View {
                                         .foregroundColor(.white)
                                     Text("Show a static image instead of animating")
                                         .font(.caption)
-                                        .foregroundColor(LunaTheme.textSecondary)
+                                        .foregroundColor(NightarcTheme.textSecondary)
                                 }
                                 Spacer()
                                 Toggle("", isOn: $gifStill)
                                     .labelsHidden()
-                                    .tint(LunaTheme.accent)
+                                    .tint(NightarcTheme.accent)
                             }
                             .padding()
                             .glassCard(cornerRadius: 12)
@@ -493,7 +493,7 @@ struct EditProfileSheet: View {
                         } label: {
                             HStack {
                                 if isLoading {
-                                    ProgressView().tint(.black)
+                                    LottieLoadingView(size: 22)
                                 }
                                 Text("Save")
                                     .font(.headline)
@@ -501,7 +501,7 @@ struct EditProfileSheet: View {
                             .frame(maxWidth: .infinity)
                             .padding()
                         }
-                        .glassProminentButtonStyle(tint: LunaTheme.accent, cornerRadius: 12)
+                        .glassProminentButtonStyle(tint: NightarcTheme.accent, cornerRadius: 12)
                         .disabled(name.isEmpty || isLoading)
                         .padding(.horizontal)
                         .padding(.top, 8)
@@ -546,7 +546,7 @@ struct EditProfileSheet: View {
     }
 
     private var avatarInitialCircle: some View {
-        let color = profile.avatarColor.map { Color(hex: $0) } ?? LunaTheme.accent
+        let color = profile.avatarColor.map { Color(hex: $0) } ?? NightarcTheme.accent
         return Circle()
             .fill(color)
             .frame(width: 80, height: 80)
@@ -565,7 +565,7 @@ struct EditProfileSheet: View {
             .overlay(
                 Text(label)
                     .font(.caption)
-                    .foregroundColor(LunaTheme.textTertiary)
+                    .foregroundColor(NightarcTheme.textTertiary)
             )
     }
 
@@ -573,7 +573,7 @@ struct EditProfileSheet: View {
         Task {
             isLoading = true
             var updated = profile
-            updated = LunaProfile(
+            updated = NightarcProfile(
                 id: updated.id,
                 userId: updated.userId,
                 name: name,

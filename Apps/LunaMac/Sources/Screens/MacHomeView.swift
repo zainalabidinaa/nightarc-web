@@ -1,170 +1,224 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct MacHomeView: View {
     let onSelectMedia: (MetaPreview) -> Void
+    var onSelectFolder: ((CatalogRow) -> Void)?
+
     @EnvironmentObject var profileManager: ProfileManager
+    @Environment(\.openWindow) private var openWindow
     @StateObject private var catalogRepo = CatalogRepository.shared
     @StateObject private var collectionRepo = CollectionRepository.shared
     @StateObject private var homeRepo = HomeRepository.shared
     @StateObject private var addonRepo = AddonRepository.shared
+    @StateObject private var preferenceStore = CollectionDisplayPreferenceStore.shared
+    @StateObject private var rowStyleStore = CollectionRowDisplayStyleStore.shared
+    @StateObject private var heroStore = HeroPreferenceStore.shared
+    @StateObject private var libraryRepo = LibraryRepository.shared
+
     @State private var heroIndex = 0
-    @State private var heroTimer: Timer?
     @State private var isResumingItemId: String?
-    @Environment(\.openWindow) private var openWindow
+    @AppStorage("luna.cinematicModeEnabled") private var cinematicModeEnabled = true
 
-    private var allRows: [CatalogRow] {
-        catalogRepo.catalogRows + catalogRepo.collectionRows
-    }
+    private let mainRowNames: Set<String> = [
+        "Popular Movies", "Popular TV Shows",
+        "Trending Movies", "Trending TV Shows"
+    ]
 
-    /// Rows good enough to feature in the hero — Popular Movies / Popular TV Shows
-    private func isFeaturedRow(_ row: CatalogRow) -> Bool {
-        let t = row.title.lowercased()
-        let id = row.id.lowercased()
-        let isPopularMovie = (t.contains("popular") || id.contains("popular")) && (t.contains("movie") || id.contains("movie"))
-        let isPopularTv = (t.contains("popular") || id.contains("popular")) && (t.contains("tv") || t.contains("series") || id.contains("series"))
-        let isTrending = t.contains("trending")
-        return isPopularMovie || isPopularTv || isTrending
-    }
-
-    /// Featured items: interleave Popular Movies (up to 3) + Popular TV Shows (up to 3), max 5
     private var featuredItems: [MetaPreview] {
-        let featured = allRows.filter { isFeaturedRow($0) }
-        let source = featured.isEmpty ? Array(allRows.prefix(2)) : featured
-
-        func topItems(type: MediaType, limit: Int) -> [MetaPreview] {
-            var seen = Set<String>()
-            var result: [MetaPreview] = []
-            for row in source where row.items.first?.type == type {
-                for item in row.items where (item.banner != nil || item.poster != nil) && !seen.contains(item.id) {
-                    seen.insert(item.id)
-                    result.append(item)
-                }
+        let allRows = catalogRepo.catalogRows
+        let heroRows: [CatalogRow]
+        if heroStore.rowOrder.isEmpty {
+            let defaults = allRows.filter { mainRowNames.contains($0.title) }
+            heroRows = defaults.isEmpty ? allRows : defaults
+        } else {
+            let enabledOrdered = heroStore.rowOrder
+                .filter { heroStore.isEnabled(rowTitle: $0) }
+                .compactMap { title in allRows.first { $0.title == title } }
+            let missing = allRows.filter {
+                mainRowNames.contains($0.title) &&
+                !heroStore.rowOrder.contains($0.title) &&
+                heroStore.isEnabled(rowTitle: $0.title)
             }
-            return result.sorted { ($0.popularity ?? 0) > ($1.popularity ?? 0) }.prefix(limit).map { $0 }
+            let computed = enabledOrdered + missing
+            let defaults = allRows.filter { mainRowNames.contains($0.title) }
+            heroRows = computed.isEmpty ? (defaults.isEmpty ? allRows : defaults) : computed
         }
 
-        let movies = topItems(type: .movie, limit: 3)
-        let series = topItems(type: .series, limit: 3)
-        var result: [MetaPreview] = []
-        let maxLen = max(movies.count, series.count)
-        for i in 0..<maxLen {
-            if result.count >= 5 { break }
-            if i < movies.count { result.append(movies[i]) }
-            if result.count < 5, i < series.count { result.append(series[i]) }
+        var seen = Set<String>()
+        var candidates: [MetaPreview] = []
+        for row in heroRows {
+            var taken = 0
+            for item in row.items.sorted(by: { ($0.popularity ?? 0) > ($1.popularity ?? 0) }) where !seen.contains(item.id) {
+                guard taken < 8, candidates.count < 20 else { break }
+                seen.insert(item.id)
+                candidates.append(item)
+                taken += 1
+            }
         }
-        return result.isEmpty ? Array(source.flatMap { $0.items }.filter { $0.poster != nil }.prefix(5)) : result
+        return candidates
     }
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 0) {
-                if !featuredItems.isEmpty {
-                    let safeIndex = heroIndex % featuredItems.count
-                    let rowTitle = allRows
-                        .first(where: { $0.items.contains(where: { $0.id == featuredItems[safeIndex].id }) })?
-                        .title ?? "Featured"
+        ZStack(alignment: .top) {
+            ambientBackground
 
-                    HomeHero(
-                        item: featuredItems[safeIndex],
-                        rowTitle: rowTitle,
-                        onTap: {
-                            onSelectMedia(featuredItems[safeIndex])
-                        },
-                        dotCount: featuredItems.count,
-                        activeIndex: safeIndex,
-                        onDotTap: { i in
-                            withAnimation(.easeInOut(duration: 0.4)) {
-                                heroIndex = i
-                            }
-                            startHeroTimer()
-                        }
-                    )
-
-                    Spacer().frame(height: 24)
-                }
-
-                if !homeRepo.continueWatchingItems.isEmpty {
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Continue Watching")
-                            .font(.title3)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-                            .padding(.horizontal)
-
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            LazyHStack(spacing: 12) {
-                                ForEach(homeRepo.continueWatchingItems) { item in
-                                    ContinueWatchingCard(
-                                        item: item,
-                                        isLoading: isResumingItemId == item.mediaId
+            ScrollView {
+                VStack(spacing: 0) {
+                    if !featuredItems.isEmpty {
+                        HomeHero(
+                            items: featuredItems,
+                            currentIndex: $heroIndex,
+                            onWatchNow: { item in
+                                route(item: item)
+                            },
+                            onToggleLibrary: { item in
+                                Task {
+                                    guard let profile = profileManager.currentProfile else { return }
+                                    await libraryRepo.toggleLibrary(
+                                        profileId: profile.id,
+                                        mediaId: item.id,
+                                        mediaType: item.type.rawValue,
+                                        name: item.name,
+                                        poster: item.poster
                                     )
-                                    .onTapGesture { resumeItem(item) }
                                 }
                             }
-                            .padding(.horizontal)
-                        }
+                        )
                     }
-                    .padding(.bottom, 24)
-                }
 
-                if !allRows.isEmpty {
-                    VStack(spacing: 28) {
-                        ForEach(allRows) { row in
-                            MediaRow(title: row.title, items: row.items) { item in
-                                onSelectMedia(item)
+                    if !homeRepo.continueWatchingItems.isEmpty {
+                        continueWatchingRow
+                            .padding(.top, featuredItems.isEmpty ? 96 : 18)
+                            .padding(.bottom, 28)
+                    }
+
+                    if !catalogRepo.catalogRows.isEmpty {
+                        LazyVStack(spacing: 30) {
+                            ForEach(catalogRepo.catalogRows) { row in
+                                MacCollectionRowContainer(
+                                    row: row,
+                                    style: rowStyleStore.style(forRowTitle: row.title),
+                                    onTap: route(item:),
+                                    onHeaderTap: { onSelectFolder?(row) }
+                                )
+                                .onAppear {
+                                    if row.id == catalogRepo.catalogRows.last?.id {
+                                        Task {
+                                            await catalogRepo.loadMore(rowId: row.id, addons: addonRepo.enabledAddons)
+                                        }
+                                    }
+                                }
                             }
                         }
+                        .padding(.top, featuredItems.isEmpty ? 96 : 24)
+                    } else if catalogRepo.isLoading || addonRepo.isLoading {
+                        loadingState
+                            .padding(.top, 180)
                     }
-                } else if catalogRepo.isLoading || addonRepo.isLoading {
-                    ProgressView()
-                        .tint(LunaTheme.accent)
-                        .padding(.top, 100)
-                }
 
-                Spacer().frame(height: 32)
+                    Spacer().frame(height: 48)
+                }
             }
         }
-        .background(LunaTheme.background)
+        .background(NightarcTheme.background)
         .task {
             guard let profile = profileManager.currentProfile else { return }
-
-            // Fire collections + CW immediately — they don't need the system addon URL.
-            // They run in parallel with the Supabase addon fetch + manifest downloads.
-            async let collectionsLoad: () = collectionRepo.load()
-            async let cwLoad: () = homeRepo.loadContinueWatching(profileId: profile.id)
-
-            let systemAddonUrl = try? await SyncService.shared.pullSystemAddon()
-            await addonRepo.loadAddons(profileId: profile.id, systemAddonUrl: systemAddonUrl)
-            await collectionsLoad
-            await cwLoad
-
-            // Only fetch catalogs on first load — tab switches recreate the view
-            // so we guard against redundant network calls.
-            if catalogRepo.catalogRows.isEmpty {
-                let enabled = addonRepo.enabledAddons
-                // Mirror LunaWebV2: home catalog rows come from the SYSTEM ADDON only.
-                if collectionRepo.collections.isEmpty {
-                    if let sysUrl = systemAddonUrl,
-                       let catalogAddon = addonRepo.managedAddons.first(where: { $0.manifestUrl == sysUrl })?.manifest {
-                        await catalogRepo.loadAllCatalogs(addons: [catalogAddon])
-                    } else if let fallback = enabled.first(where: { !($0.catalogs?.isEmpty ?? true) }) {
-                        await catalogRepo.loadAllCatalogs(addons: [fallback])
-                    }
-                } else {
-                    await catalogRepo.loadFromCollections(collectionRepo: collectionRepo, addons: enabled)
-                    await catalogRepo.supplementWithAddonCatalogs(addons: enabled)
-                }
-            }
-            startHeroTimer()
+            catalogRepo.isLoading = true
+            await addonRepo.loadAddons(profileId: profile.id)
+            async let continueWatching: Void = homeRepo.loadContinueWatching(profileId: profile.id)
+            await libraryRepo.loadLibrary(profileId: profile.id)
+            await reloadCatalogRows(mode: .replaceCache)
+            await continueWatching
+            warmupContinueWatching()
         }
-        .onDisappear {
-            heroTimer?.invalidate()
-            heroTimer = nil
+        .onChange(of: preferenceStore.revision) { _, _ in
+            Task { await reloadCatalogRows(mode: .replaceCache) }
         }
-        .onChange(of: featuredItems.count) {
+        .onChange(of: rowStyleStore.revision) { _, _ in
+            Task { await reloadCatalogRows(mode: .replaceCache) }
+        }
+        .onChange(of: heroStore.revision) { _, _ in
             heroIndex = 0
-            startHeroTimer()
+        }
+    }
+
+    private var ambientBackground: some View {
+        ZStack(alignment: .top) {
+            NightarcTheme.background
+            if cinematicModeEnabled,
+               featuredItems.indices.contains(heroIndex),
+               let url = MacHeroArtworkProvider.shared.heroArtURL(for: featuredItems[heroIndex]) {
+                CachedAsyncImage(url: url) { image in
+                    image.resizable().scaledToFill()
+                } placeholder: {
+                    Color.clear
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: 520)
+                .scaleEffect(1.08)
+                .blur(radius: 32)
+                .saturation(0.18)
+                .brightness(0.10)
+                .opacity(0.70)
+                .mask(
+                    LinearGradient(
+                        colors: [.black, .black.opacity(0.62), .clear],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+                .ignoresSafeArea()
+            }
+        }
+    }
+
+    private var continueWatchingRow: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Continue Watching")
+                .font(.system(size: 21, weight: .bold, design: .rounded))
+                .foregroundColor(.white)
+                .padding(.horizontal, 28)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(spacing: 14) {
+                    ForEach(homeRepo.continueWatchingItems) { item in
+                        ContinueWatchingCard(
+                            item: item,
+                            isLoading: isResumingItemId == item.mediaId,
+                            width: 250,
+                            height: 142
+                        )
+                        .onTapGesture { resumeItem(item) }
+                    }
+                }
+                .padding(.horizontal, 28)
+            }
+        }
+    }
+
+    private var loadingState: some View {
+        VStack(spacing: 18) {
+            MacLottieLoadingView(size: 70)
+            Text("Loading your collections")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundColor(.white.opacity(0.62))
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private func route(item: MetaPreview) {
+        if item.id.hasPrefix("folder_") {
+            let fallback = CatalogRow(
+                id: item.id,
+                title: item.name,
+                items: [],
+                tileShape: item.posterShape?.rawValue ?? "poster",
+                coverImage: item.poster ?? item.banner
+            )
+            onSelectFolder?(catalogRepo.allFolderRows[item.id] ?? fallback)
+        } else {
+            onSelectMedia(item)
         }
     }
 
@@ -173,40 +227,95 @@ struct MacHomeView: View {
         isResumingItemId = item.mediaId
         Task {
             defer { isResumingItemId = nil }
-            let addons = addonRepo.enabledAddons
+            guard let profile = profileManager.currentProfile else { return }
+            let decodedId = item.mediaId.removingPercentEncoding ?? item.mediaId
+            let cachedSource = [decodedId, item.parentMediaId]
+                .compactMap { $0 }
+                .lazy
+                .compactMap { LastPlaybackSourceStore.shared.source(profileId: profile.id, mediaId: $0) }
+                .first
+
+            if let cachedSource {
+                openWindow(id: "player", value: PlayerLaunch(
+                    title: item.name,
+                    sourceUrl: cachedSource.sourceUrl,
+                    sourceHeaders: cachedSource.sourceHeaders,
+                    logo: item.logo,
+                    poster: item.poster,
+                    episodeThumbnail: item.thumbnail,
+                    seasonNumber: item.seasonNumber,
+                    episodeNumber: item.episodeNumber,
+                    streamTitle: cachedSource.streamTitle ?? item.episodeTitle,
+                    providerName: cachedSource.providerName,
+                    contentType: item.mediaType == "movie" ? .movie : .series,
+                    videoId: decodedId,
+                    parentMetaId: item.parentMediaId,
+                    parentMetaType: item.parentMediaId == nil ? nil : item.mediaType,
+                    initialPositionMs: item.resumePositionMs,
+                    subtitles: nil
+                ))
+                return
+            }
+
             guard let stream = await StreamRepository.shared.bestStream(
                 for: item.mediaType,
                 id: item.mediaId,
-                from: addons
+                from: addonRepo.enabledAddons
             ), let url = stream.url else { return }
 
             openWindow(id: "player", value: PlayerLaunch(
                 title: item.name,
                 sourceUrl: url,
                 sourceHeaders: stream.behaviorHints?.proxyHeaders?.request,
+                logo: item.logo,
                 poster: item.poster,
+                episodeThumbnail: item.thumbnail,
                 seasonNumber: item.seasonNumber,
                 episodeNumber: item.episodeNumber,
                 streamTitle: stream.displayName,
                 providerName: stream.addonName,
                 contentType: item.mediaType == "movie" ? .movie : .series,
-                videoId: item.mediaId,
-                initialPositionMs: item.resumePositionMs
+                videoId: decodedId,
+                parentMetaId: item.parentMediaId,
+                parentMetaType: item.parentMediaId == nil ? nil : item.mediaType,
+                initialPositionMs: item.resumePositionMs,
+                subtitles: stream.subtitles
             ))
         }
     }
 
-    private func startHeroTimer() {
-        heroTimer?.invalidate()
-        guard featuredItems.count > 1 else { return }
-        heroTimer = Timer.scheduledTimer(withTimeInterval: 6, repeats: true) { _ in
-            Task { @MainActor in
-                let count = featuredItems.count
-                guard count > 1 else { return }
-                withAnimation(.easeInOut(duration: 0.4)) {
-                    heroIndex = (heroIndex + 1) % count
-                }
+    private func warmupContinueWatching() {
+        let addons = addonRepo.enabledAddons
+        guard !homeRepo.continueWatchingItems.isEmpty, !addons.isEmpty else { return }
+        for item in homeRepo.continueWatchingItems.prefix(5) {
+            Task {
+                await StreamWarmupRepository.shared.warmup(type: item.mediaType, id: item.mediaId, addons: addons)
             }
         }
+    }
+
+    private func reloadCatalogRows(mode: CatalogReloadMode = .preserveCacheOnEmpty) async {
+        await loadGlobalOrganizer()
+        if collectionRepo.collections.isEmpty {
+            await catalogRepo.loadAllCatalogs(addons: addonRepo.enabledAddons)
+        } else {
+            await catalogRepo.loadFromCollections(
+                collectionRepo: collectionRepo,
+                addons: addonRepo.enabledAddons,
+                mode: mode
+            )
+        }
+    }
+
+    private func loadGlobalOrganizer() async {
+        guard let url = Bundle.main.url(forResource: "home-organizer", withExtension: "json"),
+              let data = try? Data(contentsOf: url) else {
+            await collectionRepo.load()
+            return
+        }
+        await collectionRepo.loadOrganizer(
+            bundledData: data,
+            remoteURL: NightarcConfig.homeOrganizerRemoteURL.flatMap(URL.init(string:))
+        )
     }
 }

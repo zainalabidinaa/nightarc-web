@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct PlayerBottomBar: View {
     @ObservedObject var engine: PlayerEngine

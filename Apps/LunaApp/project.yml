@@ -1,6 +1,6 @@
-name: LunaApp
+name: NightarcApp
 options:
-  bundleIdPrefix: com.luna
+  bundleIdPrefix: com.nightarc
   deploymentTarget:
     iOS: "18.0"
   minimumXcodeGenVersion: "2.0"
@@ -21,7 +21,7 @@ settings:
     INFOPLIST_KEY_UIStatusBarStyle: "UIStatusBarStyleDarkContent"
     INFOPLIST_KEY_CFBundleURLTypes:
       - CFBundleURLSchemes:
-        - luna
+        - nightarc
       - CFBundleURLSchemes:
         - stremio
     INFOPLIST_KEY_UIAppFonts:
@@ -30,24 +30,29 @@ settings:
       - JetBrainsSans-Bold.ttf
 
 packages:
-  LunaCore:
+  NightarcCore:
     path: ../../Packages/LunaCore
   KSPlayer:
     path: /tmp/ksplayer-clone
+  Lottie:
+    url: https://github.com/airbnb/lottie-spm.git
+    from: "4.6.0"
   SnapshotPreviews:
     url: https://github.com/getsentry/SnapshotPreviews
     from: "0.16.0"
 
 targets:
-  LunaApp:
+  NightarcApp:
     type: application
     platform: iOS
     sources:
       - path: Sources
       - path: Resources
     dependencies:
-      - package: LunaCore
+      - package: NightarcCore
       - package: KSPlayer
+      - package: Lottie
+      - sdk: AppIntents.framework
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: "com.nightarc.zain"
@@ -61,10 +66,14 @@ targets:
         VALIDATE_WORKSPACE: NO
     postBuildScripts:
       - name: Generate Missing Framework Info.plist
-        basedOnDependencyAnalysis: false
+        outputFiles:
+          - "$(DERIVED_FILE_DIR)/GenerateMissingFrameworkInfoPlist.stamp"
         script: |
           FRAMEWORKS_DIR="${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}"
-          [ -d "${FRAMEWORKS_DIR}" ] || exit 0
+          if [ ! -d "${FRAMEWORKS_DIR}" ]; then
+            touch "${SCRIPT_OUTPUT_FILE_0}"
+            exit 0
+          fi
           find "${FRAMEWORKS_DIR}" -name '*.framework' -maxdepth 1 -type d | while read -r FRAMEWORK; do
             PLIST="${FRAMEWORK}/Info.plist"
             if [ ! -f "${PLIST}" ]; then
@@ -82,20 +91,21 @@ targets:
               echo "note: Generated Info.plist for ${NAME}"
             fi
           done
+          touch "${SCRIPT_OUTPUT_FILE_0}"
 
-  LunaAppTests:
+  NightarcAppTests:
     type: bundle.unit-test
     platform: iOS
     sources:
       - path: Tests
     dependencies:
-      - target: LunaApp
+      - target: NightarcApp
       - package: SnapshotPreviews
         product: SnapshottingTests
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: "com.luna.app.tests"
+        PRODUCT_BUNDLE_IDENTIFIER: "com.nightarc.app.tests"
         DEVELOPMENT_TEAM: 5TWS8P597N
         CODE_SIGN_STYLE: Automatic
-        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/LunaApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/LunaApp"
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/NightarcApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NightarcApp"
         BUNDLE_LOADER: "$(TEST_HOST)"

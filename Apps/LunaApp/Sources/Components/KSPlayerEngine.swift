@@ -1,6 +1,6 @@
 import SwiftUI
 import UIKit
-import LunaCore
+import NightarcCore
 import KSPlayer
 import AVFoundation
 
@@ -124,7 +124,7 @@ public class KSPlayerEngine: ObservableObject {
             self.isLoading = false
             Task { await self.persistProgress(completed: error == nil) }
             if let error {
-                print("[Luna] KSPlayer finished with error: \(error)")
+                print("[Nightarc] KSPlayer finished with error: \(error)")
             }
         }
         coordinator.onBufferChanged = { [weak self] _, _ in

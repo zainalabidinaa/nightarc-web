@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct ProfileSelectionScreen: View {
     @EnvironmentObject var profileManager: ProfileManager
@@ -9,14 +9,14 @@ struct ProfileSelectionScreen: View {
 
     var body: some View {
         ZStack {
-            LunaTheme.background.ignoresSafeArea()
+            NightarcTheme.background.ignoresSafeArea()
 
             VStack(spacing: 24) {
                 Spacer()
 
                 Image(systemName: "moon.stars.fill")
                     .font(.system(size: 48))
-                    .foregroundColor(LunaTheme.accent)
+                    .foregroundColor(NightarcTheme.accent)
 
                 Text("Who's watching?")
                     .font(.title2)
@@ -31,7 +31,7 @@ struct ProfileSelectionScreen: View {
                             } label: {
                                 VStack(spacing: 8) {
                                     Circle()
-                                        .fill(profile.avatarColor.map { Color(hex: $0) } ?? LunaTheme.accent)
+                                        .fill(profile.avatarColor.map { Color(hex: $0) } ?? NightarcTheme.accent)
                                         .frame(width: 80, height: 80)
                                         .overlay(
                                             Text(String(profile.name.prefix(1).uppercased()))
@@ -48,7 +48,7 @@ struct ProfileSelectionScreen: View {
                                     if profile.isAdmin {
                                         Text("Admin")
                                             .font(.caption2)
-                                            .foregroundColor(LunaTheme.accent)
+                                            .foregroundColor(NightarcTheme.accent)
                                     }
                                 }
                             }
@@ -57,16 +57,16 @@ struct ProfileSelectionScreen: View {
                         Button { showCreateProfile = true } label: {
                             VStack(spacing: 8) {
                                 Circle()
-                                    .stroke(LunaTheme.textSecondary, lineWidth: 2)
+                                    .stroke(NightarcTheme.textSecondary, lineWidth: 2)
                                     .frame(width: 80, height: 80)
                                     .overlay(
                                         Image(systemName: "plus")
                                             .font(.title2)
-                                            .foregroundColor(LunaTheme.textSecondary)
+                                            .foregroundColor(NightarcTheme.textSecondary)
                                     )
                                 Text("Add Profile")
                                     .font(.subheadline)
-                                    .foregroundColor(LunaTheme.textSecondary)
+                                    .foregroundColor(NightarcTheme.textSecondary)
                             }
                         }
                     }
@@ -76,7 +76,7 @@ struct ProfileSelectionScreen: View {
                 Button(action: { Task { await profileManager.signOut() } }) {
                     Text("Sign Out")
                         .font(.subheadline)
-                        .foregroundColor(LunaTheme.textSecondary)
+                        .foregroundColor(NightarcTheme.textSecondary)
                 }
 
                 Spacer()
@@ -104,14 +104,14 @@ struct CreateFirstProfileScreen: View {
 
     var body: some View {
         ZStack {
-            LunaTheme.background.ignoresSafeArea()
+            NightarcTheme.background.ignoresSafeArea()
 
             VStack(spacing: 24) {
                 Spacer()
 
                 Image(systemName: "moon.stars.fill")
                     .font(.system(size: 64))
-                    .foregroundColor(LunaTheme.accent)
+                    .foregroundColor(NightarcTheme.accent)
 
                 Text("Create Your First Profile")
                     .font(.title2)
@@ -120,7 +120,7 @@ struct CreateFirstProfileScreen: View {
 
                 TextField("Profile Name", text: $name)
                     .padding()
-                    .background(LunaTheme.surface)
+                    .background(NightarcTheme.surface)
                     .cornerRadius(12)
                     .foregroundColor(.white)
                     .padding(.horizontal, 32)
@@ -134,7 +134,7 @@ struct CreateFirstProfileScreen: View {
                 }) {
                     HStack {
                         if isLoading {
-                            ProgressView().tint(.black)
+                            LottieLoadingView(size: 22)
                         }
                         Text("Create Profile")
                     }
@@ -160,12 +160,12 @@ struct CreateProfileSheet: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                LunaTheme.background.ignoresSafeArea()
+                NightarcTheme.background.ignoresSafeArea()
 
                 VStack(spacing: 20) {
                     TextField("Profile name", text: $profileName)
                         .padding()
-                        .background(LunaTheme.surface)
+                        .background(NightarcTheme.surface)
                         .cornerRadius(12)
                         .foregroundColor(.white)
                         .padding(.horizontal, 24)
@@ -182,7 +182,7 @@ struct CreateProfileSheet: View {
                         Text("Create")
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(LunaTheme.accent)
+                            .background(NightarcTheme.accent)
                             .foregroundColor(.white)
                             .cornerRadius(12)
                     }

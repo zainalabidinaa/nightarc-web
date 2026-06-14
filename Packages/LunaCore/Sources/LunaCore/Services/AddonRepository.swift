@@ -37,7 +37,7 @@ public class AddonRepository: ObservableObject {
     /// NOT be written back into the per-user `installed_addons` table. Mirrors the web
     /// app, which merges these in-memory and persists only user-added extras.
     private var managedURLs: Set<String> {
-        var set = Set(LunaConfig.defaultAddons)
+        var set = Set(NightarcConfig.defaultAddons)
         if let systemAddonUrl { set.insert(systemAddonUrl) }
         return set
     }
@@ -61,10 +61,10 @@ public class AddonRepository: ObservableObject {
 
         let remoteUrls = (try? await syncService.pullAddons(profileId: profileId)) ?? []
         if remoteUrls.isEmpty {
-            print("[Luna] No remote addons found for profile \(profileId), using defaults only.")
+            print("[Nightarc] No remote addons found for profile \(profileId), using defaults only.")
         }
         // Always include defaults; append any user extras that aren't in defaults
-        var merged = LunaConfig.defaultAddons
+        var merged = NightarcConfig.defaultAddons
         for url in remoteUrls where !merged.contains(url) {
             merged.append(url)
         }
@@ -91,7 +91,7 @@ public class AddonRepository: ObservableObject {
                             sortOrder: index
                         )
                     } catch {
-                        print("[Luna] Addon fetch failed: \(url) — \(error.localizedDescription)")
+                        print("[Nightarc] Addon fetch failed: \(url) — \(error.localizedDescription)")
                         if let found = existing.first(where: { $0.manifestUrl == url }) {
                             var copy = found
                             copy.errorMessage = error.localizedDescription
@@ -111,7 +111,7 @@ public class AddonRepository: ObservableObject {
 
         if addons.isEmpty, !urls.isEmpty {
             errorMessage = "Failed to load any addons. Check your connection."
-            print("[Luna] All addon fetches failed. \(urls.count) URLs attempted.")
+            print("[Nightarc] All addon fetches failed. \(urls.count) URLs attempted.")
         } else if !addons.isEmpty {
             errorMessage = nil
         }
@@ -213,7 +213,10 @@ public class AddonRepository: ObservableObject {
         return nil
     }
 
-    public func findAddonWithMetaResource(type: String?) -> [AddonManifest] {
-        enabledAddons.filter { $0.hasResource("meta") }
+    public func findAddonWithMetaResource(type: String, id: String? = nil) -> [AddonManifest] {
+        guard let id else {
+            return enabledAddons.filter { $0.hasResource("meta") }
+        }
+        return enabledAddons.filter { $0.canHandleMeta(type: type, id: id) }
     }
 }

@@ -171,20 +171,26 @@ public enum CollectionOrganizerParser {
         // tmdb DISCOVER + releaseDateGte → "tmdb.discover.<type>.decades.<decade>s"
         //   e.g. releaseDateGte "2020-01-01" → tmdb.discover.movie.decades.2020s
         let effectiveCatalogId: String
+        let normalizedMediaType = normalizeMediaType(source.type ?? source.mediaType)
+        let isDiscoverSource = source.tmdbSourceType?.uppercased() == "DISCOVER"
+        let hasConcreteTMDBId = (source.tmdbId ?? 0) > 0
+
         if let cid = source.catalogId {
             effectiveCatalogId = cid
         } else if let tid = source.traktListId {
             effectiveCatalogId = "trakt.list.\(tid)"
         } else if let mid = source.tmdbId, source.tmdbSourceType?.uppercased() == "COLLECTION" {
             effectiveCatalogId = "tmdb.collection.\(mid)"
-        } else if source.tmdbSourceType?.uppercased() == "DISCOVER",
+        } else if isDiscoverSource, !hasConcreteTMDBId,
+                  let discoverId = discoverCatalogId(for: source, mediaType: normalizedMediaType) {
+            effectiveCatalogId = discoverId
+        } else if isDiscoverSource,
                   let dateGte = source.filters?.releaseDateGte,
                   let year = Int(dateGte.prefix(4)) {
             // Multiple DISCOVER sources within one folder often share the same decade.
             // Synthesise one catalog entry per (folder, decade, mediaType) — duplicates skipped below.
             let decade = (year / 10) * 10
-            let mt = normalizeMediaType(source.type ?? source.mediaType)
-            effectiveCatalogId = "tmdb.discover.\(mt).decades.\(decade)s"
+            effectiveCatalogId = "tmdb.discover.\(normalizedMediaType).decades.\(decade)s"
         } else {
             return
         }
@@ -194,10 +200,10 @@ public enum CollectionOrganizerParser {
         let dedupeKey = "\(folderId):\(effectiveCatalogId)"
         guard seenCatalogIds.insert(dedupeKey).inserted else { return }
 
-        let mediaType = normalizeMediaType(source.type ?? source.mediaType)
+        let mediaType = normalizedMediaType
         let provider = source.provider?.lowercased()
         // Non-standard sources synthesize an addon-compatible catalogId, so treat as addon.
-        let isAddon = provider == nil || provider == "addon" || source.traktListId != nil || source.tmdbId != nil
+        let isAddon = provider == nil || provider == "addon" || source.traktListId != nil || source.tmdbId != nil || (isDiscoverSource && !hasConcreteTMDBId)
 
         if isAddon {
             // Build extras from DISCOVER filters so year-range queries work correctly.
@@ -206,17 +212,20 @@ public enum CollectionOrganizerParser {
                 var ex: [String: String] = [:]
                 if let v = f.releaseDateGte { ex["primary_release_date.gte"] = v }
                 if let v = f.releaseDateLte { ex["primary_release_date.lte"] = v }
-                if let v = f.voteCountGte   { ex["vote_count.gte"] = String(v) }
+                if let v = f.voteCountGte, v > 0 { ex["vote_count.gte"] = String(v) }
+                if let v = f.voteAverageGte, v > 0 { ex["vote_average.gte"] = trimNumber(v) }
                 if let v = f.withOriginalLanguage { ex["with_original_language"] = v }
-                if let v = f.year           { ex["year"] = String(v) }
+                if let v = f.year, v > 0 { ex["year"] = String(v) }
+                if let v = source.sortBy { ex["sort_by"] = v }
                 if !ex.isEmpty { catalogExtras = ex }
             }
+            let genre = normalizeGenre(source.genre) ?? genreName(for: source.filters?.withGenres, mediaType: mediaType)
             folderCatalogs.append(DBFolderCatalog(
                 id: "\(folderId)-\(effectiveCatalogId)-\(mediaType)-\(index)",
                 folderId: folderId,
                 catalogId: effectiveCatalogId,
                 mediaType: mediaType,
-                genre: normalizeGenre(source.genre),
+                genre: genre,
                 extras: catalogExtras
             ))
             return
@@ -229,10 +238,87 @@ public enum CollectionOrganizerParser {
             provider: resolved.provider,
             title: nil,
             tmdbId: resolved.tmdbId,
-            mediaType: source.type,
+            mediaType: mediaType,
             tmdbSourceType: resolved.tmdbSourceType,
+            sortBy: source.sortBy,
             sortOrder: index
         ))
+    }
+
+    private static func discoverCatalogId(for source: NuvioSource, mediaType: String) -> String? {
+        let title = (source.title ?? "").lowercased()
+        switch (mediaType, title) {
+        case ("movie", "new movies"): return "tmdb.discover.movie.new-movies.069d5312"
+        case ("movie", "popular movies"): return "tmdb.discover.movie.popular-movies.29727d26"
+        case ("movie", "top all time movies"): return "tmdb.discover.movie.top-all-time-movies.39f5a0c4"
+        case ("movie", "top of the year movies"): return "tmdb.discover.movie.top-of-the-year-movies.870b3ada"
+        case ("movie", "anime movies"): return "tmdb.discover.movie.anime-movies.8caaddea"
+        case ("movie", "top anime movies"): return "tmdb.discover.movie.top-anime-movies.ef410dcc"
+        case ("movie", "upcoming anime movies"): return "tmdb.discover.movie.upcoming-anime-movies.e57db259"
+        case ("series", "new series"): return "tmdb.discover.series.new-series.76fc7ade"
+        case ("series", "popular series"): return "tmdb.discover.series.popular-series.20af3ad9"
+        case ("series", "top all time series"): return "tmdb.discover.series.top-all-time-series.53046f30"
+        case ("series", "top of the year series"): return "tmdb.discover.series.top-of-the-year-series.f0fd20b7"
+        case ("series", "anime series"): return "tmdb.discover.series.anime-series.193e8308"
+        case ("series", "top anime series"): return "tmdb.discover.series.top-anime-series.63ff4f07"
+        case ("series", "upcoming anime series"): return "tmdb.discover.series.upcoming-anime-series.e71e22cf"
+        default:
+            return mediaType == "series" ? "tmdb.discover.series.series.mo7biroh" : "tmdb.discover.movie.movies.mo7bd2ar"
+        }
+    }
+
+    private static func genreName(for tmdbGenreId: String?, mediaType: String) -> String? {
+        guard let tmdbGenreId else { return nil }
+        let firstGenreId = tmdbGenreId
+            .split(separator: ",")
+            .first
+            .map { String($0).trimmingCharacters(in: .whitespacesAndNewlines) }
+            ?? tmdbGenreId
+        if mediaType == "series" {
+            return [
+                "10759": "Action & Adventure",
+                "16": "Animation",
+                "35": "Comedy",
+                "80": "Crime",
+                "99": "Documentary",
+                "18": "Drama",
+                "10751": "Family",
+                "10762": "Kids",
+                "9648": "Mystery",
+                "10763": "News",
+                "10764": "Reality",
+                "10765": "Sci-Fi & Fantasy",
+                "10766": "Soap",
+                "10767": "Talk",
+                "10768": "War & Politics",
+                "37": "Western"
+            ][firstGenreId]
+        }
+        return [
+            "28": "Action",
+            "12": "Adventure",
+            "16": "Animation",
+            "35": "Comedy",
+            "80": "Crime",
+            "99": "Documentary",
+            "18": "Drama",
+            "10751": "Family",
+            "14": "Fantasy",
+            "36": "History",
+            "27": "Horror",
+            "10402": "Music",
+            "9648": "Mystery",
+            "10749": "Romance",
+            "878": "Science Fiction",
+            "10770": "TV Movie",
+            "53": "Thriller",
+            "10752": "War",
+            "37": "Western"
+        ][firstGenreId]
+    }
+
+    private static func trimNumber(_ value: Double) -> String {
+        value.rounded() == value ? String(Int(value)) : String(value)
     }
 
     private static func normalizeMediaType(_ value: String?) -> String {
@@ -304,6 +390,7 @@ private struct NuvioFolder: Decodable {
 }
 
 private struct NuvioSource: Decodable {
+    let title: String?
     let type: String?
     let genre: String?
     let provider: String?
@@ -312,6 +399,7 @@ private struct NuvioSource: Decodable {
     let traktListId: Int?       // non-standard trakt format
     let tmdbId: Int?            // non-standard tmdb format
     let tmdbSourceType: String? // non-standard tmdb: COLLECTION | DISCOVER
+    let sortBy: String?
     let filters: NuvioDiscoverFilters?
 }
 
@@ -319,6 +407,9 @@ private struct NuvioDiscoverFilters: Decodable {
     let releaseDateGte: String?
     let releaseDateLte: String?
     let voteCountGte: Int?
+    let voteAverageGte: Double?
+    let withGenres: String?
+    let withKeywords: String?
     let withOriginalLanguage: String?
     let year: Int?
 }

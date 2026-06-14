@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct SearchScreen: View {
     @StateObject private var searchRepo = SearchRepository.shared
@@ -15,7 +15,7 @@ struct SearchScreen: View {
             VStack(spacing: 0) {
                 HStack {
                     Image(systemName: "magnifyingglass")
-                        .foregroundColor(LunaTheme.textTertiary)
+                        .foregroundColor(NightarcTheme.textTertiary)
                     TextField("Search movies & shows...", text: $query)
                         .foregroundColor(.white)
                 }
@@ -47,7 +47,7 @@ struct SearchScreen: View {
                                     .padding(.vertical, 7)
                             }
                             .glassCapsule(interactive: true)
-                            .foregroundColor(LunaTheme.textSecondary)
+                            .foregroundColor(NightarcTheme.textSecondary)
                         }
                     }
                     .padding(.horizontal)
@@ -102,7 +102,7 @@ struct SearchScreen: View {
                     Spacer()
                 }
             }
-            .background(LunaTheme.background)
+            .background(NightarcTheme.background)
             .navigationTitle("Search")
             .navigationBarTitleDisplayMode(.large)
             .navigationDestination(item: $selectedMedia) { media in

@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct FolderTile: View {
     let row: CatalogRow
@@ -17,7 +17,7 @@ struct FolderTile: View {
         Button(action: onTap) {
             ZStack(alignment: .bottomLeading) {
                 Rectangle()
-                    .fill(LunaTheme.surfaceElevated)
+                    .fill(NightarcTheme.surfaceElevated)
                     .frame(width: cardWidth, height: cardHeight)
 
                 if let coverURL = row.coverImage ?? row.items.first?.poster,
@@ -50,14 +50,14 @@ struct FolderTile: View {
                 RoundedRectangle(cornerRadius: 10)
                     .stroke(
                         isHovering && (row.focusGlowEnabled ?? false)
-                            ? LunaTheme.accent.opacity(0.6)
+                            ? NightarcTheme.accent.opacity(0.6)
                             : Color.clear,
                         lineWidth: 2
                     )
             )
             .shadow(
                 color: (isHovering && (row.focusGlowEnabled ?? false))
-                    ? LunaTheme.accent.opacity(0.35)
+                    ? NightarcTheme.accent.opacity(0.35)
                     : Color.clear,
                 radius: 16, y: 0
             )

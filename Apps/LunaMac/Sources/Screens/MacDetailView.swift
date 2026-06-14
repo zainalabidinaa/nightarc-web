@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct MacDetailView: View {
     let mediaId: String
@@ -56,14 +56,14 @@ struct MacDetailView: View {
             } else if metaRepo.isLoading {
                 VStack {
                     Spacer().frame(height: 200)
-                    ProgressView().tint(LunaTheme.accent)
+                    ProgressView().tint(NightarcTheme.accent)
                     Spacer()
                 }
             } else if let error = metaRepo.errorMessage {
                 Text(error).foregroundColor(.red).padding()
             }
         }
-        .background(LunaTheme.background)
+        .background(NightarcTheme.background)
         .sheet(isPresented: $showSourcePicker) {
             MacSourcePickerView(
                 mediaType: MediaType(rawValue: type) ?? .movie,
@@ -135,7 +135,7 @@ struct MacDetailView: View {
                         if let info = detail.releaseInfo {
                             Text(info)
                                 .font(.subheadline)
-                                .foregroundColor(LunaTheme.textSecondary)
+                                .foregroundColor(NightarcTheme.textSecondary)
                         }
                     }
                     .padding(.bottom, 8)
@@ -155,16 +155,16 @@ struct MacDetailView: View {
                     .clipped()
                     .overlay(
                         LinearGradient(
-                            colors: [.clear, LunaTheme.background],
+                            colors: [.clear, NightarcTheme.background],
                             startPoint: .center,
                             endPoint: .bottom
                         )
                     )
             } placeholder: {
-                LunaTheme.surfaceElevated.frame(height: 320)
+                NightarcTheme.surfaceElevated.frame(height: 320)
             }
         } else {
-            LunaTheme.surfaceElevated.frame(height: 200)
+            NightarcTheme.surfaceElevated.frame(height: 200)
         }
     }
 
@@ -205,8 +205,8 @@ struct MacDetailView: View {
                     Image(systemName: libraryRepo.isInLibrary(mediaId: detail.id) ? "bookmark.fill" : "bookmark")
                         .font(.title3)
                         .padding(12)
-                        .background(LunaTheme.surface)
-                        .foregroundColor(libraryRepo.isInLibrary(mediaId: detail.id) ? .white : LunaTheme.textSecondary)
+                        .background(NightarcTheme.surface)
+                        .foregroundColor(libraryRepo.isInLibrary(mediaId: detail.id) ? .white : NightarcTheme.textSecondary)
                         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                 }
                 .buttonStyle(.plain)
@@ -230,8 +230,8 @@ struct MacDetailView: View {
                     Image(systemName: watchedRepo.isWatched(mediaId: detail.id) ? "checkmark.circle.fill" : "checkmark.circle")
                         .font(.title3)
                         .padding(12)
-                        .background(LunaTheme.surface)
-                        .foregroundColor(watchedRepo.isWatched(mediaId: detail.id) ? .green : LunaTheme.textSecondary)
+                        .background(NightarcTheme.surface)
+                        .foregroundColor(watchedRepo.isWatched(mediaId: detail.id) ? .green : NightarcTheme.textSecondary)
                         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                 }
                 .buttonStyle(.plain)
@@ -249,7 +249,7 @@ struct MacDetailView: View {
                     .foregroundColor(.white)
                 Text(description)
                     .font(.body)
-                    .foregroundColor(LunaTheme.textSecondary)
+                    .foregroundColor(NightarcTheme.textSecondary)
                     .lineLimit(6)
             }
         }
@@ -264,8 +264,8 @@ struct MacDetailView: View {
                             .font(.caption)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 6)
-                            .background(LunaTheme.surface)
-                            .foregroundColor(LunaTheme.textSecondary)
+                            .background(NightarcTheme.surface)
+                            .foregroundColor(NightarcTheme.textSecondary)
                             .cornerRadius(16)
                     }
                 }
@@ -291,34 +291,34 @@ struct MacDetailView: View {
                                             CachedAsyncImage(url: url) { img in
                                                 img.resizable().scaledToFill()
                                             } placeholder: {
-                                                Circle().fill(LunaTheme.surfaceElevated)
+                                                Circle().fill(NightarcTheme.surfaceElevated)
                                                     .overlay(
                                                         Text(String(person.name.prefix(1)))
                                                             .font(.headline)
-                                                            .foregroundColor(LunaTheme.textSecondary)
+                                                            .foregroundColor(NightarcTheme.textSecondary)
                                                     )
                                             }
                                             .clipShape(Circle())
                                         } else {
                                             Circle()
-                                                .fill(LunaTheme.surfaceElevated)
+                                                .fill(NightarcTheme.surfaceElevated)
                                                 .overlay(
                                                     Text(String(person.name.prefix(1)))
                                                         .font(.headline)
-                                                        .foregroundColor(LunaTheme.textSecondary)
+                                                        .foregroundColor(NightarcTheme.textSecondary)
                                                 )
                                         }
                                     }
                                     .frame(width: 56, height: 56)
                                     Text(person.name)
                                         .font(.caption2)
-                                        .foregroundColor(LunaTheme.textSecondary)
+                                        .foregroundColor(NightarcTheme.textSecondary)
                                         .lineLimit(1)
                                         .frame(width: 64)
                                     if let character = person.character {
                                         Text(character)
                                             .font(.caption2)
-                                            .foregroundColor(LunaTheme.textTertiary)
+                                            .foregroundColor(NightarcTheme.textTertiary)
                                             .lineLimit(1)
                                             .frame(width: 64)
                                     }
@@ -350,8 +350,8 @@ struct MacDetailView: View {
                                     .fontWeight(.medium)
                                     .padding(.horizontal, 16)
                                     .padding(.vertical, 8)
-                                    .background(isSelectedSeason(season, in: seasons) ? Color.white : LunaTheme.surface)
-                                    .foregroundColor(isSelectedSeason(season, in: seasons) ? .black : LunaTheme.textSecondary)
+                                    .background(isSelectedSeason(season, in: seasons) ? Color.white : NightarcTheme.surface)
+                                    .foregroundColor(isSelectedSeason(season, in: seasons) ? .black : NightarcTheme.textSecondary)
                                     .clipShape(Capsule())
                             }
                             .buttonStyle(.plain)
@@ -400,7 +400,7 @@ struct MacDetailView: View {
                 image.resizable()
                     .aspectRatio(contentMode: .fill)
             } placeholder: {
-                LunaTheme.surfaceElevated
+                NightarcTheme.surfaceElevated
             }
             .frame(width: 118, height: 177)
             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
@@ -416,7 +416,7 @@ struct EpisodeCard: View {
         VStack(alignment: .leading, spacing: 6) {
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(LunaTheme.surfaceElevated)
+                    .fill(NightarcTheme.surfaceElevated)
                     .frame(width: 220, height: 124)
 
                 if let thumb = episode.thumbnail, let url = URL(string: thumb) {
@@ -454,7 +454,7 @@ struct EpisodeCard: View {
             if let overview = episode.overview {
                 Text(overview)
                     .font(.caption2)
-                    .foregroundColor(LunaTheme.textSecondary)
+                    .foregroundColor(NightarcTheme.textSecondary)
                     .lineLimit(2)
                     .frame(width: 220, alignment: .leading)
             }

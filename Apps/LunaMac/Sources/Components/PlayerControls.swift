@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct PlayerControls: View {
     @ObservedObject var engine: PlayerEngine
@@ -34,7 +34,7 @@ struct PlayerControls: View {
                 if let streamTitle = launch.streamTitle {
                     Text(streamTitle)
                         .font(.caption)
-                        .foregroundColor(LunaTheme.textSecondary)
+                        .foregroundColor(NightarcTheme.textSecondary)
                         .lineLimit(1)
                 }
             }
@@ -82,13 +82,13 @@ struct PlayerControls: View {
                     ),
                     in: 0...max(engine.duration, 1)
                 )
-                .tint(LunaTheme.accent)
+                .tint(NightarcTheme.accent)
                 .frame(height: 20)
 
                 HStack {
                     Text(formatTime(engine.currentPosition))
                         .font(.system(.caption, design: .monospaced))
-                        .foregroundColor(LunaTheme.textTertiary)
+                        .foregroundColor(NightarcTheme.textTertiary)
 
                     Spacer()
 
@@ -102,7 +102,7 @@ struct PlayerControls: View {
                     Button { engine.cycleSubtitle() } label: {
                         Image(systemName: engine.selectedSubtitle != nil ? "captions.bubble.fill" : "captions.bubble")
                             .font(.system(size: 16))
-                            .foregroundColor(engine.selectedSubtitle != nil ? LunaTheme.accent : .white)
+                            .foregroundColor(engine.selectedSubtitle != nil ? NightarcTheme.accent : .white)
                     }
                     .buttonStyle(.plain)
 
@@ -122,7 +122,7 @@ struct PlayerControls: View {
 
                     Text(formatTime(engine.duration))
                         .font(.system(.caption, design: .monospaced))
-                        .foregroundColor(LunaTheme.textTertiary)
+                        .foregroundColor(NightarcTheme.textTertiary)
                 }
             }
             .padding(.horizontal, 20)

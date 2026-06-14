@@ -1,6 +1,6 @@
 import SwiftUI
 
-public struct LunaTypography {
+public struct NightarcTypography {
     public static func registerFonts() {
         let names = ["JetBrainsSans-Regular", "JetBrainsSans-SemiBold", "JetBrainsSans-Bold"]
         for name in names {

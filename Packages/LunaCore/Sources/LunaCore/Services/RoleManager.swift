@@ -9,14 +9,14 @@ public class RoleManager: ObservableObject {
 
     private init() {}
 
-    public func evaluateRole(profile: LunaProfile?) {
+    public func evaluateRole(profile: NightarcProfile?) {
         let role = profile?.profileRole ?? .user
         profileRole = role
         isAdmin = role == .admin
     }
 
-    public func setUserAsAdmin(profile: LunaProfile) async throws {
-        let updated = LunaProfile(
+    public func setUserAsAdmin(profile: NightarcProfile) async throws {
+        let updated = NightarcProfile(
             id: profile.id,
             userId: profile.userId,
             name: profile.name,

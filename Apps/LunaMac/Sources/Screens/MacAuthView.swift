@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 import AppKit
 
 struct MacAuthView: View {
@@ -20,15 +20,15 @@ struct MacAuthView: View {
 
                 AppIconView()
                     .frame(width: 80, height: 80)
-                    .shadow(color: LunaTheme.accent.opacity(0.3), radius: 20)
+                    .shadow(color: NightarcTheme.accent.opacity(0.3), radius: 20)
 
-                Text("Luna")
+                Text("Nightarc")
                     .font(.system(size: 32, weight: .bold))
                     .foregroundColor(.white)
 
                 Text("Sign in to your media hub")
                     .font(.system(size: 13))
-                    .foregroundColor(LunaTheme.textTertiary)
+                    .foregroundColor(NightarcTheme.textTertiary)
 
                 VStack(spacing: 10) {
                     TextField("Email", text: $email)
@@ -36,7 +36,7 @@ struct MacAuthView: View {
                         .font(.system(size: 14))
                         .padding(.horizontal, 14)
                         .padding(.vertical, 10)
-                        .background(LunaTheme.surface)
+                        .background(NightarcTheme.surface)
                         .cornerRadius(8)
                         .overlay(
                             RoundedRectangle(cornerRadius: 8)
@@ -50,7 +50,7 @@ struct MacAuthView: View {
                         .font(.system(size: 14))
                         .padding(.horizontal, 14)
                         .padding(.vertical, 10)
-                        .background(LunaTheme.surface)
+                        .background(NightarcTheme.surface)
                         .cornerRadius(8)
                         .overlay(
                             RoundedRectangle(cornerRadius: 8)
@@ -65,7 +65,7 @@ struct MacAuthView: View {
                             .font(.system(size: 14))
                             .padding(.horizontal, 14)
                             .padding(.vertical, 10)
-                            .background(LunaTheme.surface)
+                            .background(NightarcTheme.surface)
                             .cornerRadius(8)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 8)
@@ -97,8 +97,8 @@ struct MacAuthView: View {
                     .frame(width: 320, height: 42)
                     .background(
                         (isLoading || email.isEmpty || password.isEmpty)
-                            ? LunaTheme.surface
-                            : LunaTheme.accent
+                            ? NightarcTheme.surface
+                            : NightarcTheme.accent
                     )
                     .foregroundColor(.white)
                     .cornerRadius(10)
@@ -106,12 +106,12 @@ struct MacAuthView: View {
                 .buttonStyle(.plain)
                 .disabled(isLoading || email.isEmpty || password.isEmpty)
 
-                Button(isSignUp ? "Have an account? Sign In" : "New to Luna? Create Account") {
+                Button(isSignUp ? "Have an account? Sign In" : "New to Nightarc? Create Account") {
                     isSignUp.toggle()
                     errorMessage = nil
                 }
                 .buttonStyle(.plain)
-                .foregroundColor(LunaTheme.textTertiary)
+                .foregroundColor(NightarcTheme.textTertiary)
                 .font(.system(size: 13))
 
                 Spacer()
@@ -120,7 +120,7 @@ struct MacAuthView: View {
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(LunaTheme.background)
+        .background(NightarcTheme.background)
     }
 
     private func performAuth() {

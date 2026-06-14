@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct MacActorBioView: View {
     let name: String
@@ -16,7 +16,7 @@ struct MacActorBioView: View {
                 if isLoading {
                     HStack {
                         Spacer()
-                        ProgressView().tint(LunaTheme.accent)
+                        ProgressView().tint(NightarcTheme.accent)
                         Spacer()
                     }
                     .padding(.top, 80)
@@ -26,7 +26,7 @@ struct MacActorBioView: View {
                     HStack {
                         Spacer()
                         Text(error ?? "No information available")
-                            .foregroundColor(LunaTheme.textTertiary)
+                            .foregroundColor(NightarcTheme.textTertiary)
                             .multilineTextAlignment(.center)
                         Spacer()
                     }
@@ -36,7 +36,7 @@ struct MacActorBioView: View {
             }
         }
         .frame(minWidth: 500, minHeight: 500)
-        .background(LunaTheme.background)
+        .background(NightarcTheme.background)
         .navigationTitle(name)
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
@@ -82,7 +82,7 @@ struct MacActorBioView: View {
                         CachedAsyncImage(url: TMDBPersonService.shared.imageURL(path: path, size: "w300")) { img in
                             img.resizable().aspectRatio(2/3, contentMode: .fill)
                         } placeholder: {
-                            Rectangle().fill(LunaTheme.surfaceElevated)
+                            Rectangle().fill(NightarcTheme.surfaceElevated)
                         }
                         .frame(width: 90, height: 135)
                         .clipped()
@@ -120,7 +120,7 @@ struct MacActorBioView: View {
                     .padding(.horizontal, 16)
                 Text(p.biography)
                     .font(.subheadline)
-                    .foregroundColor(LunaTheme.textSecondary)
+                    .foregroundColor(NightarcTheme.textSecondary)
                     .padding(.horizontal, 16)
                     .padding(.bottom, 24)
             }
@@ -143,14 +143,14 @@ struct MacActorBioView: View {
                             ) { img in
                                 img.resizable().aspectRatio(2/3, contentMode: .fill)
                             } placeholder: {
-                                Rectangle().fill(LunaTheme.surfaceElevated)
+                                Rectangle().fill(NightarcTheme.surfaceElevated)
                             }
                             .frame(width: 90, height: 135)
                             .clipped()
                             .cornerRadius(8)
                             Text(credit.title)
                                 .font(.caption2)
-                                .foregroundColor(LunaTheme.textSecondary)
+                                .foregroundColor(NightarcTheme.textSecondary)
                                 .lineLimit(2)
                                 .frame(width: 90)
                         }
@@ -166,7 +166,7 @@ struct MacActorBioView: View {
         HStack(alignment: .top, spacing: 8) {
             Text(label)
                 .font(.caption)
-                .foregroundColor(LunaTheme.textTertiary)
+                .foregroundColor(NightarcTheme.textTertiary)
                 .frame(width: 70, alignment: .leading)
             Text(value)
                 .font(.caption)

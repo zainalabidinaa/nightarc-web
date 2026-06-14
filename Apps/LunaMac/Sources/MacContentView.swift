@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct MacContentView: View {
     @EnvironmentObject var profileManager: ProfileManager

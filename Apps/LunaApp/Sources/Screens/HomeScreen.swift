@@ -1,7 +1,7 @@
 import SwiftUI
 import UIKit
 import CoreImage
-import LunaCore
+import NightarcCore
 
 struct HomeScreen: View {
     @EnvironmentObject var profileManager: ProfileManager
@@ -21,7 +21,7 @@ struct HomeScreen: View {
     @State private var playerLaunch: PlayerLaunch?
     @State private var streamSelectionLaunch: PlayerLaunch?
     @State private var ambientColor: Color = .clear
-    @AppStorage("luna.cinematicModeEnabled") private var cinematicModeEnabled = false
+    @AppStorage("luna.cinematicModeEnabled") private var cinematicModeEnabled = true
 
     private let mainRowNames: Set<String> = [
         "Popular Movies", "Popular TV Shows",
@@ -51,8 +51,8 @@ struct HomeScreen: View {
         }
         // Respect hero management row priority: earlier rows contribute first.
         // Cap per row so a single row can't fill the whole carousel.
-        let perRowCap = 3
-        let totalCap = 10
+        let perRowCap = 8
+        let totalCap = 20
         var seen = Set<String>()
         var candidates: [MetaPreview] = []
         for row in heroRows {
@@ -74,7 +74,8 @@ struct HomeScreen: View {
     private var currentHeroBackdropURL: URL? {
         guard featuredItems.indices.contains(heroIndex) else { return nil }
         let item = featuredItems[heroIndex]
-        return (item.banner ?? item.poster).flatMap(URL.init)
+        return HeroArtworkProvider.shared.heroArtURL(for: item)
+            ?? (item.banner ?? item.poster).flatMap(URL.init)
     }
 
     var body: some View {
@@ -368,16 +369,22 @@ struct HomeScreen: View {
         }
         await collectionRepo.loadOrganizer(
             bundledData: data,
-            remoteURL: LunaConfig.homeOrganizerRemoteURL.flatMap(URL.init(string:))
+            remoteURL: NightarcConfig.homeOrganizerRemoteURL.flatMap(URL.init(string:))
         )
     }
 
     @MainActor
     private func updateAmbientColorIfNeeded() async {
         guard cinematicModeEnabled,
-              featuredItems.indices.contains(heroIndex),
-              let item = Optional(featuredItems[heroIndex]),
-              let url = (item.banner ?? item.poster).flatMap(URL.init) else {
+              featuredItems.indices.contains(heroIndex) else {
+            ambientColor = .clear
+            return
+        }
+        let item = featuredItems[heroIndex]
+        // Use the same URL the hero actually displays — textless TMDB art when available,
+        // falling back to the addon-provided banner/poster.
+        guard let url = HeroArtworkProvider.shared.heroArtURL(for: item)
+                ?? (item.banner ?? item.poster).flatMap(URL.init) else {
             ambientColor = .clear
             return
         }
@@ -405,61 +412,73 @@ private struct FusionAmbientBackground: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-            LunaTheme.background
+            NightarcTheme.background
 
             if isEnabled, let url = heroBackdropURL {
-                // Width must be pinned: an unbounded scaledToFill image reports its
-                // natural width and inflates the whole screen's layout proposal.
+                // Gray-tinted blurred backdrop — Fusion's "atmospheric base".
+                // Keep some color (saturation 0.32) so the image isn't pure gray.
                 CachedAsyncImage(url: url) { phase in
                     if case .success(let image) = phase {
-                        image
-                            .resizable()
-                            .scaledToFill()
+                        image.resizable().scaledToFill()
                     } else {
                         Color.clear
                     }
                 }
-                .frame(width: screenWidth, height: screenHeight * 0.58)
+                .frame(width: screenWidth, height: screenHeight * 0.72)
                 .clipped()
-                .scaleEffect(1.08)
-                .blur(radius: 32)
-                .saturation(0.85)
-                .brightness(-0.12)
-                .opacity(0.72)
-                .frame(width: screenWidth, height: screenHeight * 0.58, alignment: .top)
+                .scaleEffect(1.1)
+                .blur(radius: 30)
+                .saturation(0.08)
+                .brightness(0.14)
+                .opacity(0.90)
+                .frame(width: screenWidth, height: screenHeight * 0.72, alignment: .top)
                 .clipped()
+                .mask(
+                    LinearGradient(
+                        stops: [
+                            .init(color: .black, location: 0.0),
+                            .init(color: .black, location: 0.50),
+                            .init(color: .black.opacity(0.5), location: 0.72),
+                            .init(color: .clear, location: 1.0),
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
                 .id(url)
                 .transition(.opacity)
             }
 
             if isEnabled {
+                // Strong color bleed from the hero's dominant color — Fusion-style.
                 RadialGradient(
-                    colors: [
-                        ambientColor.opacity(0.38),
-                        ambientColor.opacity(0.18),
-                        .clear
+                    stops: [
+                        .init(color: ambientColor.opacity(0.72), location: 0.0),
+                        .init(color: ambientColor.opacity(0.45), location: 0.30),
+                        .init(color: ambientColor.opacity(0.18), location: 0.60),
+                        .init(color: .clear, location: 1.0),
                     ],
                     center: .top,
                     startRadius: 0,
-                    endRadius: screenHeight * 0.72
+                    endRadius: screenHeight * 0.78
                 )
+                .blur(radius: 28)
 
+                // Subtle off-center accent to avoid perfect symmetry.
                 RadialGradient(
-                    colors: [
-                        ambientColor.opacity(0.16),
-                        .clear
-                    ],
-                    center: UnitPoint(x: 0.82, y: 0.04),
+                    colors: [ambientColor.opacity(0.22), .clear],
+                    center: UnitPoint(x: 0.78, y: 0.05),
                     startRadius: 0,
-                    endRadius: screenHeight * 0.48
+                    endRadius: screenHeight * 0.42
                 )
 
+                // Dark overlay: very transparent at top, fully opaque at bottom.
                 LinearGradient(
                     stops: [
-                        .init(color: .black.opacity(0.04), location: 0.00),
-                        .init(color: .black.opacity(0.18), location: 0.34),
-                        .init(color: LunaTheme.background.opacity(0.68), location: 0.68),
-                        .init(color: LunaTheme.background, location: 1.00)
+                        .init(color: .black.opacity(0.0),  location: 0.00),
+                        .init(color: .black.opacity(0.10), location: 0.30),
+                        .init(color: NightarcTheme.background.opacity(0.60), location: 0.65),
+                        .init(color: NightarcTheme.background, location: 1.00)
                     ],
                     startPoint: .top,
                     endPoint: .bottom
@@ -536,8 +555,8 @@ private extension Color {
         }
         return Color(
             hue: Double(hue),
-            saturation: Double(min(max(saturation * 0.48, 0.10), 0.28)),
-            brightness: Double(min(max(brightness * 0.42, 0.12), 0.24))
+            saturation: Double(min(max(saturation * 0.70, 0.20), 0.65)),
+            brightness: Double(min(max(brightness * 0.65, 0.25), 0.55))
         )
         #else
         return self
@@ -587,18 +606,18 @@ struct FolderCell: View {
         } label: {
             ZStack(alignment: .bottom) {
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(LunaTheme.surfaceElevated)
-                    .aspectRatio(isLandscape ? 16/9 : 2/3, contentMode: .fit)
+                    .fill(NightarcTheme.surfaceElevated)
+                    .aspectRatio(2/3, contentMode: .fit)
 
                 if let url = coverURL {
                     AsyncImage(url: url) { phase in
                         if case .success(let img) = phase {
-                            img.resizable()
-                                .aspectRatio(contentMode: isLandscape ? .fit : .fill)
+                            img.resizable().scaledToFill()
                         }
                     }
+                    .aspectRatio(2/3, contentMode: .fit)
+                    .clipped()
                     .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .aspectRatio(isLandscape ? 16/9 : 2/3, contentMode: .fit)
                 }
 
                 LinearGradient(
@@ -607,10 +626,10 @@ struct FolderCell: View {
                     endPoint: .top
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 8))
-                .aspectRatio(isLandscape ? 16/9 : 2/3, contentMode: .fit)
+                .aspectRatio(2/3, contentMode: .fit)
 
                 Text(row.title)
-                    .font(.system(size: isLandscape ? 11 : 9, weight: .bold))
+                    .font(.system(size: 9, weight: .bold))
                     .foregroundColor(.white)
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
@@ -651,7 +670,7 @@ struct CatalogRowView: View {
                     Spacer()
                     Image(systemName: "chevron.right")
                         .font(.system(size: 13, weight: .semibold))
-                        .foregroundColor(LunaTheme.textSecondary)
+                        .foregroundColor(NightarcTheme.textSecondary)
                 }
                 .padding(.horizontal)
             }
@@ -695,7 +714,7 @@ struct ContinueWatchingRow: View {
                 Spacer()
                 Image(systemName: "chevron.right")
                     .font(.system(size: 13, weight: .semibold))
-                    .foregroundColor(LunaTheme.textSecondary)
+                    .foregroundColor(NightarcTheme.textSecondary)
             }
             .padding(.horizontal)
 

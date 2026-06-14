@@ -9,7 +9,7 @@ public final class CatalogResponseCache: @unchecked Sendable {
     private let diskURL: URL = {
         let dir = FileManager.default
             .urls(for: .cachesDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("LunaCatalogCache")
+            .appendingPathComponent("NightarcCatalogCache")
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         return dir.appendingPathComponent("catalogs.json")
     }()

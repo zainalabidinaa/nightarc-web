@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct FolderScreen: View {
     let row: CatalogRow
@@ -20,18 +20,37 @@ struct FolderScreen: View {
         catalogRepo.allFolderRows[row.id] ?? row
     }
 
-    private let columns = [
-        GridItem(.flexible(), spacing: 10),
-        GridItem(.flexible(), spacing: 10)
-    ]
+    // Landscape layout only applies when the folder contains nested sub-groups (folder items)
+    // with landscape art — never for regular movies/TV shows.
+    private var useLandscapeLayout: Bool {
+        let sample = displayRow.items.prefix(6)
+        guard !sample.isEmpty else { return false }
+        let hasMediaItems = sample.contains { !$0.id.hasPrefix("folder_") }
+        if hasMediaItems { return false }
+        let landscapeCount = sample.filter { $0.posterShape == .landscape }.count
+        return landscapeCount > sample.count / 2
+    }
 
-    /// A shape-normalised version of displayRow: uses the row's tileShape when set,
-    /// but clamps "landscape" to "poster" — landscape cards (230pt) overflow the
-    /// 2-column flexible grid (~166pt per column on a 375pt screen). Falls back
-    /// to "poster" when no shape is specified.
+    private var columns: [GridItem] {
+        if useLandscapeLayout {
+            return [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)]
+        }
+        return [
+            GridItem(.flexible(), spacing: 10),
+            GridItem(.flexible(), spacing: 10),
+            GridItem(.flexible(), spacing: 10)
+        ]
+    }
+
+    // Width available to each landscape cell: screen minus two 14pt paddings and one 10pt gap.
+    private var landscapeCellWidth: CGFloat {
+        (UIScreen.main.bounds.width - 38) / 2
+    }
+    private var landscapeCellHeight: CGFloat { landscapeCellWidth * 9 / 16 }
+
+    /// Folder grids always use poster cards. The home collection row can use
+    /// landscape group art, but opened folders should keep the original poster grid.
     private var shapeRow: CatalogRow {
-        let shape = displayRow.tileShape
-        guard shape == nil || shape == "landscape" else { return displayRow }
         return CatalogRow(
             id: displayRow.id,
             title: displayRow.title,
@@ -40,7 +59,7 @@ struct FolderScreen: View {
             addonId: displayRow.addonId,
             page: displayRow.page,
             hasMore: displayRow.hasMore,
-            tileShape: "poster",
+            tileShape: useLandscapeLayout ? "landscape" : "poster",
             coverImage: displayRow.coverImage,
             focusGif: displayRow.focusGif,
             focusGifEnabled: displayRow.focusGifEnabled,
@@ -71,7 +90,7 @@ struct FolderScreen: View {
                                     .clipped()
                                     .overlay(
                                         LinearGradient(
-                                            colors: [.black.opacity(0.15), LunaTheme.background],
+                                            colors: [.black.opacity(0.15), NightarcTheme.background],
                                             startPoint: .top,
                                             endPoint: .bottom
                                         )
@@ -93,14 +112,24 @@ struct FolderScreen: View {
                     .padding(.horizontal, 14)
                     .padding(.top, 16)
                 } else {
-                    // Poster grid — pass shapeRow so all cards use a uniform tile shape
                     LazyVGrid(columns: columns, spacing: 10) {
                         ForEach(Array(displayRow.items.enumerated()), id: \.element.id) { index, item in
-                            ContentCard(item: item, row: shapeRow, index: index)
+                            ContentCard(
+                                item: item,
+                                row: shapeRow,
+                                index: index,
+                                width: useLandscapeLayout ? landscapeCellWidth : nil,
+                                height: useLandscapeLayout ? landscapeCellHeight : nil
+                            )
                                 .onTapGesture {
-                                    if item.id.hasPrefix("folder_"),
-                                       let folderRow = catalogRepo.allFolderRows[item.id] {
-                                        selectedFolder = folderRow
+                                    if item.id.hasPrefix("folder_") {
+                                        selectedFolder = catalogRepo.allFolderRows[item.id] ?? CatalogRow(
+                                            id: item.id,
+                                            title: item.name,
+                                            items: [],
+                                            tileShape: item.posterShape?.rawValue ?? "poster",
+                                            coverImage: item.poster ?? item.banner
+                                        )
                                         showFolder = true
                                     } else {
                                         selectedMedia = item
@@ -119,15 +148,14 @@ struct FolderScreen: View {
                     .padding(.bottom, isLoadingMoreItems ? 0 : 24)
 
                     if isLoadingMoreItems {
-                        ProgressView()
-                            .tint(.white)
+                        LottieLoadingView(size: 36)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 18)
                     }
                 }
             }
         }
-        .background(LunaTheme.background)
+        .background(NightarcTheme.background)
         .navigationTitle(displayRow.title)
         .navigationBarTitleDisplayMode(.large)
         .navigationDestination(isPresented: $showDetail) {
@@ -161,5 +189,14 @@ struct FolderScreen: View {
             collectionRepo: CollectionRepository.shared,
             addons: AddonRepository.shared.enabledAddons
         )
+    }
+
+    private var gridHeight: CGFloat {
+        guard !displayRow.items.isEmpty else { return 0 }
+        let estimatedColumns = max(1, Int(UIScreen.main.bounds.width / 120))
+        let rows = Int(ceil(Double(displayRow.items.count) / Double(estimatedColumns)))
+        let estimatedCardHeight: CGFloat = 184
+        let spacing = CGFloat(max(0, rows - 1)) * 10
+        return CGFloat(rows) * estimatedCardHeight + spacing + 40
     }
 }

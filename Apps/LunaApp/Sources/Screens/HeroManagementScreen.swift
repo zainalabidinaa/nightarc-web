@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct HeroManagementScreen: View {
     @StateObject private var catalogRepo = CatalogRepository.shared
@@ -44,7 +44,7 @@ struct HeroManagementScreen: View {
             Section {
                 Text("Choose which catalog rows feed into the hero carousel and drag to set priority order.")
                     .font(.caption)
-                    .foregroundColor(LunaTheme.textSecondary)
+                    .foregroundColor(NightarcTheme.textSecondary)
                     .listRowBackground(Color.clear)
             }
 
@@ -60,15 +60,15 @@ struct HeroManagementScreen: View {
                                 if let addonName = row.addonName {
                                     Text(addonName)
                                         .font(.caption2)
-                                        .foregroundColor(LunaTheme.textTertiary)
+                                        .foregroundColor(NightarcTheme.textTertiary)
                                 }
                             }
                             Spacer()
                             Image(systemName: "line.3.horizontal")
                                 .font(.body)
-                                .foregroundColor(LunaTheme.textTertiary)
+                                .foregroundColor(NightarcTheme.textTertiary)
                         }
-                        .listRowBackground(LunaTheme.surfaceElevated.opacity(0.5))
+                        .listRowBackground(NightarcTheme.surfaceElevated.opacity(0.5))
                     }
                     .onMove { source, destination in
                         // Build current order, apply move, save
@@ -86,7 +86,7 @@ struct HeroManagementScreen: View {
                 if allRows.isEmpty {
                     Text("No catalogs loaded yet. Return to Home to load content first.")
                         .font(.caption)
-                        .foregroundColor(LunaTheme.textTertiary)
+                        .foregroundColor(NightarcTheme.textTertiary)
                         .listRowBackground(Color.clear)
                 } else {
                     ForEach(allRows) { row in
@@ -97,7 +97,7 @@ struct HeroManagementScreen: View {
                                 if let addonName = row.addonName {
                                     Text(addonName)
                                         .font(.caption2)
-                                        .foregroundColor(LunaTheme.textTertiary)
+                                        .foregroundColor(NightarcTheme.textTertiary)
                                 }
                             }
                             Spacer()
@@ -115,15 +115,15 @@ struct HeroManagementScreen: View {
                                 }
                             ))
                             .labelsHidden()
-                            .tint(LunaTheme.accent)
+                            .tint(NightarcTheme.accent)
                         }
-                        .listRowBackground(LunaTheme.surfaceElevated.opacity(0.5))
+                        .listRowBackground(NightarcTheme.surfaceElevated.opacity(0.5))
                     }
                 }
             }
         }
         .scrollContentBackground(.hidden)
-        .background(LunaTheme.background)
+        .background(NightarcTheme.background)
         .navigationTitle("Hero Management")
         .navigationBarTitleDisplayMode(.large)
         .environment(\.editMode, .constant(.active))

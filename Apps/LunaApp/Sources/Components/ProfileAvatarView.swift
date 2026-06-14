@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 private let defaultAvatarURLs: [String] = [
     "https://media1.tenor.com/m/BbkxgHGg-EEAAAAC/butcher-billy-butcher.gif",
@@ -10,7 +10,7 @@ private let defaultAvatarURLs: [String] = [
 ]
 
 struct ProfileAvatarView: View {
-    let profile: LunaProfile
+    let profile: NightarcProfile
     var size: CGFloat = 32
 
     private var avatarURL: URL? {
@@ -53,7 +53,7 @@ struct ProfileAvatarView: View {
     }
 
     @ViewBuilder private var fallbackAvatar: some View {
-        let color = profile.avatarColor.map { Color(hex: $0) } ?? LunaTheme.accent
+        let color = profile.avatarColor.map { Color(hex: $0) } ?? NightarcTheme.accent
         Circle()
             .fill(color)
             .frame(width: size, height: size)

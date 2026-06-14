@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct NetworkOfflineBanner: View {
     @ObservedObject private var monitor = NetworkMonitor.shared

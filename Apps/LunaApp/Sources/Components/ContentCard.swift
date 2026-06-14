@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct ContentCard: View {
     let item: MetaPreview
@@ -21,7 +21,7 @@ struct ContentCard: View {
         VStack(alignment: .leading, spacing: 4) {
             ZStack(alignment: .bottom) {
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(LunaTheme.surfaceElevated)
+                    .fill(NightarcTheme.surfaceElevated)
                     .frame(width: cardWidth, height: cardHeight)
 
                 // Use primary URL first; if it fails switch to the fallback URL (e.g.
@@ -50,7 +50,7 @@ struct ContentCard: View {
                                     if !primaryFailed { primaryFailed = true }
                                 }
                             case .empty:
-                                LunaTheme.surfaceElevated
+                                NightarcTheme.surfaceElevated
                             @unknown default:
                                 placeholderView
                             }
@@ -82,7 +82,7 @@ struct ContentCard: View {
         VStack(spacing: 4) {
             Text(item.name)
                 .font(.system(size: 22, weight: .bold))
-                .foregroundColor(LunaTheme.textSecondary)
+                .foregroundColor(NightarcTheme.textSecondary)
                 .lineLimit(2)
                 .padding(.horizontal, 4)
                 .multilineTextAlignment(.center)
@@ -98,7 +98,7 @@ struct ContentCard: View {
     }
 
     private var usesFittedArtwork: Bool {
-        item.id.hasPrefix("folder_") || row?.id.hasPrefix("collection_") == true
+        item.id.hasPrefix("folder_")
     }
 
     private var groupArtworkScale: CGFloat {

@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 public struct ToastOverlay: View {
     @ObservedObject private var presenter = ToastPresenter.shared
@@ -20,11 +20,11 @@ public struct ToastOverlay: View {
                 .padding(14)
                 .background(
                     RoundedRectangle(cornerRadius: 18)
-                        .fill(LunaTheme.surface)
+                        .fill(NightarcTheme.surface)
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 18)
-                        .stroke(LunaTheme.outline, lineWidth: 0.5)
+                        .stroke(NightarcTheme.outline, lineWidth: 0.5)
                 )
                 .shadow(color: .black.opacity(0.3), radius: 16, y: 8)
                 .padding(.horizontal, 16)
@@ -48,7 +48,7 @@ public struct ToastOverlay: View {
 
     private func colorFor(_ style: ToastStyle) -> Color {
         switch style {
-        case .info: return LunaTheme.accent
+        case .info: return NightarcTheme.accent
         case .success: return .green
         case .error: return .red
         case .warning: return .orange

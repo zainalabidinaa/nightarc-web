@@ -1,7 +1,7 @@
 import SwiftUI
 
 @MainActor
-public struct LunaTheme {
+public struct NightarcTheme {
     public static var primary: Color { .white }
     public static var secondary: Color { .white.opacity(0.82) }
     public static var accent: Color { ThemeManager.shared.accent }
@@ -216,7 +216,7 @@ extension View {
     }
 }
 
-public struct LunaPrimaryButtonStyle: ButtonStyle {
+public struct NightarcPrimaryButtonStyle: ButtonStyle {
     @Environment(\.isEnabled) private var isEnabled
     let cornerRadius: CGFloat
 
@@ -244,10 +244,10 @@ public struct LunaPrimaryButtonStyle: ButtonStyle {
 extension View {
     @ViewBuilder
     public func glassProminentButtonStyle(
-        tint: Color = LunaTheme.accent,
+        tint: Color = NightarcTheme.accent,
         cornerRadius: CGFloat = 14
     ) -> some View {
-        self.buttonStyle(LunaPrimaryButtonStyle(cornerRadius: cornerRadius))
+        self.buttonStyle(NightarcPrimaryButtonStyle(cornerRadius: cornerRadius))
     }
 }
 
@@ -329,7 +329,7 @@ public struct EmptyStateView: View {
         VStack(spacing: 16) {
             Image(systemName: icon)
                 .font(.system(size: 44))
-                .foregroundColor(LunaTheme.textTertiary)
+                .foregroundColor(NightarcTheme.textTertiary)
                 .frame(width: 80, height: 80)
                 .glassCircle()
 
@@ -339,7 +339,7 @@ public struct EmptyStateView: View {
 
             Text(message)
                 .font(.subheadline)
-                .foregroundColor(LunaTheme.textSecondary)
+                .foregroundColor(NightarcTheme.textSecondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
 
@@ -383,7 +383,7 @@ public struct ErrorStateView: View {
 
             Text(message)
                 .font(.subheadline)
-                .foregroundColor(LunaTheme.textSecondary)
+                .foregroundColor(NightarcTheme.textSecondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
 

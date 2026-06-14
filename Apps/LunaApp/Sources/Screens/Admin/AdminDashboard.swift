@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct AdminDashboard: View {
     @StateObject private var adminService = AdminService.shared
@@ -14,7 +14,7 @@ struct AdminDashboard: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                LunaTheme.background.ignoresSafeArea()
+                NightarcTheme.background.ignoresSafeArea()
 
                 VStack(spacing: 0) {
                     Picker("Section", selection: $selectedSection) {
@@ -24,7 +24,7 @@ struct AdminDashboard: View {
                     }
                     .pickerStyle(.segmented)
                     .padding()
-                    .colorMultiply(LunaTheme.accent)
+                    .colorMultiply(NightarcTheme.accent)
 
                     switch selectedSection {
                     case .dashboard:
@@ -82,11 +82,11 @@ struct StatCard: View {
                 .foregroundColor(.white)
             Text(title)
                 .font(.caption)
-                .foregroundColor(LunaTheme.textSecondary)
+                .foregroundColor(NightarcTheme.textSecondary)
         }
         .padding()
         .frame(maxWidth: .infinity)
-        .background(LunaTheme.surface)
+        .background(NightarcTheme.surface)
         .cornerRadius(12)
     }
 }
@@ -98,7 +98,7 @@ struct AdminInviteCodesView: View {
 
     var body: some View {
         ZStack {
-            LunaTheme.background.ignoresSafeArea()
+            NightarcTheme.background.ignoresSafeArea()
 
             List {
                 Section {
@@ -107,9 +107,9 @@ struct AdminInviteCodesView: View {
                     } label: {
                         HStack {
                             Image(systemName: "plus.circle.fill")
-                                .foregroundColor(LunaTheme.accent)
+                                .foregroundColor(NightarcTheme.accent)
                             Text("Generate New Invite Code")
-                                .foregroundColor(LunaTheme.accent)
+                                .foregroundColor(NightarcTheme.accent)
                         }
                     }
                 }
@@ -123,7 +123,7 @@ struct AdminInviteCodesView: View {
                             HStack {
                                 Text("Created: \(code.createdAt, style: .date)")
                                     .font(.caption2)
-                                    .foregroundColor(LunaTheme.textTertiary)
+                                    .foregroundColor(NightarcTheme.textTertiary)
                                 if code.isUsed {
                                     Text("Used")
                                         .font(.caption2)
@@ -143,17 +143,17 @@ struct AdminInviteCodesView: View {
                                 .tint(.red)
                             }
                         }
-                        .listRowBackground(LunaTheme.surface)
+                        .listRowBackground(NightarcTheme.surface)
                     }
                 }
-                .listRowBackground(LunaTheme.surface)
+                .listRowBackground(NightarcTheme.surface)
             }
             .scrollContentBackground(.hidden)
         }
         .sheet(isPresented: $showGenerateSheet) {
             NavigationStack {
                 ZStack {
-                    LunaTheme.background.ignoresSafeArea()
+                    NightarcTheme.background.ignoresSafeArea()
 
                     VStack(spacing: 20) {
                         Text("Generate Invite Code")
@@ -202,7 +202,7 @@ struct AdminUsersView: View {
 
     var body: some View {
         ZStack {
-            LunaTheme.background.ignoresSafeArea()
+            NightarcTheme.background.ignoresSafeArea()
 
             List {
                 ForEach(adminService.allUsers) { user in
@@ -211,12 +211,12 @@ struct AdminUsersView: View {
                             .foregroundColor(.white)
                         Text("Joined: \(user.createdAt, style: .date)")
                             .font(.caption)
-                            .foregroundColor(LunaTheme.textSecondary)
+                            .foregroundColor(NightarcTheme.textSecondary)
                         Text("ID: \(user.id)")
                             .font(.caption2)
-                            .foregroundColor(LunaTheme.textTertiary)
+                            .foregroundColor(NightarcTheme.textTertiary)
                     }
-                    .listRowBackground(LunaTheme.surface)
+                    .listRowBackground(NightarcTheme.surface)
                 }
             }
             .scrollContentBackground(.hidden)

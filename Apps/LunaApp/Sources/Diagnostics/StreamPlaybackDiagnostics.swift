@@ -1,10 +1,10 @@
 import Foundation
-import LunaCore
+import NightarcCore
 
 enum StreamPlaybackDiagnostics {
     static func logSelectedStream(_ stream: StreamItem, reason: String) {
         print(
-            "[Luna][StreamDebug] selected reason=\(reason) " +
+            "[Nightarc][StreamDebug] selected reason=\(reason) " +
             "addon=\(stream.addonName ?? "nil") " +
             "quality=\(qualityLabel(for: stream)) " +
             "type=\(stream.sourceType.rawValue) " +
@@ -16,7 +16,7 @@ enum StreamPlaybackDiagnostics {
 
     static func logLaunch(_ launch: PlayerLaunch) {
         print(
-            "[Luna][StreamDebug] launch provider=\(launch.providerName ?? "nil") " +
+            "[Nightarc][StreamDebug] launch provider=\(launch.providerName ?? "nil") " +
             "content=\(launch.contentType.rawValue) " +
             "videoId=\(launch.videoId) " +
             "parent=\(launch.parentMetaId ?? "nil") " +

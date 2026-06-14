@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct MacLibraryView: View {
     let onSelectMedia: (MetaPreview) -> Void
@@ -28,10 +28,10 @@ struct MacLibraryView: View {
                 upcomingSection
                 Spacer().frame(height: 40)
             }
-            .padding(.top, LunaTheme.navBarTopInset)
+            .padding(.top, NightarcTheme.navBarTopInset)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(LunaTheme.background)
+        .background(NightarcTheme.background)
         .task {
             guard let profile = profileManager.currentProfile else { return }
             if addonRepo.enabledAddons.isEmpty {
@@ -46,7 +46,7 @@ struct MacLibraryView: View {
 
     // MARK: - Computed
 
-    private var filteredWatchlist: [LunaCore.LibraryItem] {
+    private var filteredWatchlist: [NightarcCore.LibraryItem] {
         switch watchlistFilter {
         case .all:    return libraryRepo.libraryItems
         case .movies: return libraryRepo.libraryItems.filter { $0.mediaType == "movie" }
@@ -100,7 +100,7 @@ struct MacLibraryView: View {
         }
     }
 
-    private func watchlistCard(_ item: LunaCore.LibraryItem) -> some View {
+    private func watchlistCard(_ item: NightarcCore.LibraryItem) -> some View {
         let progress = watchProgressRepo.getProgress(mediaId: item.mediaId)?.progressFraction ?? 0
         return VStack(alignment: .leading, spacing: 4) {
             ZStack(alignment: .bottom) {
@@ -108,10 +108,10 @@ struct MacLibraryView: View {
                     img.resizable().aspectRatio(2/3, contentMode: .fill)
                 } placeholder: {
                     Rectangle()
-                        .fill(LunaTheme.surfaceElevated)
+                        .fill(NightarcTheme.surfaceElevated)
                         .overlay(
                             Image(systemName: item.mediaType == "series" ? "tv" : "film")
-                                .foregroundColor(LunaTheme.textTertiary)
+                                .foregroundColor(NightarcTheme.textTertiary)
                         )
                 }
                 .frame(height: 195)
@@ -121,7 +121,7 @@ struct MacLibraryView: View {
                 if progress > 0.02 {
                     GeometryReader { geo in
                         Rectangle()
-                            .fill(LunaTheme.accent)
+                            .fill(NightarcTheme.accent)
                             .frame(width: geo.size.width * progress, height: 3)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
@@ -184,10 +184,10 @@ struct MacLibraryView: View {
                 img.resizable().aspectRatio(2/3, contentMode: .fill)
             } placeholder: {
                 Rectangle()
-                    .fill(LunaTheme.surfaceElevated)
+                    .fill(NightarcTheme.surfaceElevated)
                     .overlay(
                         Image(systemName: item.mediaType == "series" ? "tv" : "film")
-                            .foregroundColor(LunaTheme.textTertiary)
+                            .foregroundColor(NightarcTheme.textTertiary)
                     )
             }
             .frame(height: 195)
@@ -221,7 +221,7 @@ struct MacLibraryView: View {
                         }
                     }
                 }
-                .background(LunaTheme.surface)
+                .background(NightarcTheme.surface)
                 .cornerRadius(10)
                 .padding(.horizontal, 16)
                 .padding(.bottom, 8)
@@ -234,7 +234,7 @@ struct MacLibraryView: View {
             CachedAsyncImage(url: item.poster.flatMap { URL(string: $0) }) { img in
                 img.resizable().aspectRatio(2/3, contentMode: .fill)
             } placeholder: {
-                Rectangle().fill(LunaTheme.surfaceElevated)
+                Rectangle().fill(NightarcTheme.surfaceElevated)
             }
             .frame(width: 44, height: 66)
             .clipped()
@@ -247,7 +247,7 @@ struct MacLibraryView: View {
                 if let badge = upcomingService.badge(for: item.mediaId) {
                     Text(badge)
                         .font(.caption)
-                        .foregroundColor(LunaTheme.textTertiary)
+                        .foregroundColor(NightarcTheme.textTertiary)
                 }
             }
             Spacer()
@@ -256,8 +256,8 @@ struct MacLibraryView: View {
                 .fontWeight(.semibold)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
-                .background(LunaTheme.accent.opacity(0.2))
-                .foregroundColor(LunaTheme.accent)
+                .background(NightarcTheme.accent.opacity(0.2))
+                .foregroundColor(NightarcTheme.accent)
                 .cornerRadius(6)
         }
         .padding(.horizontal, 14)
@@ -280,14 +280,14 @@ struct MacLibraryView: View {
         HStack(spacing: 6) {
             Image(systemName: icon)
                 .font(.caption)
-                .foregroundColor(LunaTheme.accent)
+                .foregroundColor(NightarcTheme.accent)
             Text(title.uppercased())
                 .font(.system(size: 11, weight: .bold))
-                .foregroundColor(LunaTheme.textTertiary)
+                .foregroundColor(NightarcTheme.textTertiary)
                 .tracking(1)
             Text("(\(count))")
                 .font(.system(size: 11, weight: .bold))
-                .foregroundColor(LunaTheme.textTertiary)
+                .foregroundColor(NightarcTheme.textTertiary)
         }
         .padding(.horizontal, 20)
         .padding(.top, 24)
@@ -303,8 +303,8 @@ struct MacLibraryView: View {
                 .font(.caption.weight(.semibold))
                 .padding(.horizontal, 12)
                 .padding(.vertical, 5)
-                .background(selection.wrappedValue == filter ? LunaTheme.accent : LunaTheme.surface)
-                .foregroundColor(selection.wrappedValue == filter ? .white : LunaTheme.textSecondary)
+                .background(selection.wrappedValue == filter ? NightarcTheme.accent : NightarcTheme.surface)
+                .foregroundColor(selection.wrappedValue == filter ? .white : NightarcTheme.textSecondary)
                 .cornerRadius(20)
                 .buttonStyle(.plain)
             }
@@ -319,10 +319,10 @@ struct MacLibraryView: View {
             VStack(spacing: 8) {
                 Image(systemName: icon)
                     .font(.system(size: 28))
-                    .foregroundColor(LunaTheme.textTertiary)
+                    .foregroundColor(NightarcTheme.textTertiary)
                 Text(message)
                     .font(.subheadline)
-                    .foregroundColor(LunaTheme.textTertiary)
+                    .foregroundColor(NightarcTheme.textTertiary)
             }
             Spacer()
         }

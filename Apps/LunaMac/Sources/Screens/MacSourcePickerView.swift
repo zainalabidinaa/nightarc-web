@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct MacSourcePickerView: View {
     let mediaType: MediaType
@@ -25,7 +25,7 @@ struct MacSourcePickerView: View {
                 Spacer()
                 Button { dismiss() } label: {
                     Image(systemName: "xmark")
-                        .foregroundColor(LunaTheme.textSecondary)
+                        .foregroundColor(NightarcTheme.textSecondary)
                 }
                 .buttonStyle(.plain)
             }
@@ -33,16 +33,16 @@ struct MacSourcePickerView: View {
 
             if streamRepo.isLoading {
                 Spacer()
-                ProgressView().tint(LunaTheme.accent)
+                ProgressView().tint(NightarcTheme.accent)
                 Spacer()
             } else if streamRepo.streams.isEmpty {
                 Spacer()
                 VStack(spacing: 8) {
                     Image(systemName: "play.slash")
                         .font(.title)
-                        .foregroundColor(LunaTheme.textTertiary)
+                        .foregroundColor(NightarcTheme.textTertiary)
                     Text("No streams available")
-                        .foregroundColor(LunaTheme.textSecondary)
+                        .foregroundColor(NightarcTheme.textSecondary)
                 }
                 Spacer()
             } else {
@@ -52,7 +52,7 @@ struct MacSourcePickerView: View {
                             VStack(alignment: .leading, spacing: 0) {
                                 Text(addonName)
                                     .font(.system(size: 10, weight: .bold))
-                                    .foregroundColor(LunaTheme.textTertiary)
+                                    .foregroundColor(NightarcTheme.textTertiary)
                                     .tracking(1)
                                     .textCase(.uppercase)
                                     .padding(.horizontal, 16)
@@ -89,7 +89,7 @@ struct MacSourcePickerView: View {
             }
         }
         .frame(minWidth: 500, minHeight: 400)
-        .background(LunaTheme.background)
+        .background(NightarcTheme.background)
         .task {
             await streamRepo.fetchStreams(
                 type: mediaType.rawValue,
@@ -127,12 +127,12 @@ struct StreamRowView: View {
                     if let codec = meta.videoCodec {
                         Text(codec)
                             .font(.system(size: 10))
-                            .foregroundColor(LunaTheme.textTertiary)
+                            .foregroundColor(NightarcTheme.textTertiary)
                     }
                     if let audio = meta.audioCodec {
                         Text(audio)
                             .font(.system(size: 10))
-                            .foregroundColor(LunaTheme.textTertiary)
+                            .foregroundColor(NightarcTheme.textTertiary)
                     }
                     if let hdr = meta.hdr {
                         Text(hdr)
@@ -140,7 +140,7 @@ struct StreamRowView: View {
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
                             .background(Color.purple.opacity(0.3))
-                            .foregroundColor(LunaTheme.accent)
+                            .foregroundColor(NightarcTheme.accent)
                             .cornerRadius(4)
                     }
                 }
@@ -153,7 +153,7 @@ struct StreamRowView: View {
                 if let desc = stream.description, !desc.isEmpty {
                     Text(desc)
                         .font(.caption2)
-                        .foregroundColor(LunaTheme.textTertiary)
+                        .foregroundColor(NightarcTheme.textTertiary)
                         .lineLimit(2)
                 }
             }
@@ -162,12 +162,12 @@ struct StreamRowView: View {
 
             Image(systemName: "play.circle.fill")
                 .font(.title3)
-                .foregroundColor(LunaTheme.accent)
+                .foregroundColor(NightarcTheme.accent)
                 .opacity(isHovering ? 1 : 0.5)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
-        .background(isHovering ? LunaTheme.surfaceElevated : LunaTheme.surface)
+        .background(isHovering ? NightarcTheme.surfaceElevated : NightarcTheme.surface)
         .onHover { isHovering = $0 }
     }
 

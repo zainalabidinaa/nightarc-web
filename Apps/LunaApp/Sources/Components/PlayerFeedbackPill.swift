@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct PlayerFeedbackPill: View {
     let mode: PlayerGestureMode
@@ -11,7 +11,7 @@ struct PlayerFeedbackPill: View {
                 .font(.system(size: 16))
                 .foregroundColor(.white)
                 .frame(width: 28, height: 28)
-                .background(Circle().fill(LunaTheme.accent.opacity(0.6)))
+                .background(Circle().fill(NightarcTheme.accent.opacity(0.6)))
 
             Text(value)
                 .font(.subheadline.weight(.bold))

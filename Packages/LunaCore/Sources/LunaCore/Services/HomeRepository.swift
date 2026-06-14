@@ -192,7 +192,7 @@ public class HomeRepository: ObservableObject {
                         let directAIOMetadataThumbnail: String? = {
                             guard fallbackThumbnail == nil,
                                   effectiveSeason != nil || effectiveEpisode != nil,
-                                  let manifestURL = LunaConfig.defaultAddons.first(where: { $0.contains("aiometadata") }) else {
+                                  let manifestURL = NightarcConfig.defaultAddons.first(where: { $0.contains("aiometadata") }) else {
                                 return nil
                             }
                             return manifestURL.replacingOccurrences(of: "/manifest.json", with: "")

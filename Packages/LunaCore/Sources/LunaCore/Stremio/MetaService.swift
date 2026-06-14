@@ -8,8 +8,17 @@ public final class MetaService: @unchecked Sendable {
 
     public func fetchMeta(type: String, id: String, baseURL: String) async throws -> MetaDetail {
         let url = "\(baseURL)/meta/\(type)/\(id).json"
-        let text = try await client.getText(url: url)
+        let text = try await getTextWithNetworkRetry(url: url)
         return try Self.decodeMetaResponse(json: text, type: type, id: id, baseURL: baseURL)
+    }
+
+    private func getTextWithNetworkRetry(url: String) async throws -> String {
+        do {
+            return try await client.getText(url: url)
+        } catch StremioError.networkError(_) {
+            try await Task.sleep(for: .seconds(1))
+            return try await client.getText(url: url)
+        }
     }
 
     public static func decodeMetaResponse(json: String, type: String, id: String, baseURL: String = "") throws -> MetaDetail {

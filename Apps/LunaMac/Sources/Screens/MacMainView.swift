@@ -1,5 +1,5 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct MacMainView: View {
     @EnvironmentObject var profileManager: ProfileManager
@@ -26,7 +26,14 @@ struct MacMainView: View {
             VStack(spacing: 0) {
                 if let folder = folderItem {
                     MacFolderView(row: folder.row, onBack: { folderItem = nil }) { item in
-                        detailItem = DetailItem(id: item.id, type: item.type.rawValue, name: item.name)
+                        if item.id.hasPrefix("folder_"),
+                           let row = catalogRepo.allFolderRows[item.id] {
+                            folderItem = FolderItem(id: item.id, row: row)
+                        } else {
+                            detailItem = DetailItem(id: item.id, type: item.type.rawValue, name: item.name)
+                        }
+                    } onSelectFolder: { row in
+                        folderItem = FolderItem(id: row.id, row: row)
                     }
                 } else if let detail = detailItem {
                     MacDetailView(
@@ -45,6 +52,8 @@ struct MacMainView: View {
                             } else {
                                 detailItem = DetailItem(id: item.id, type: item.type.rawValue, name: item.name)
                             }
+                        }, onSelectFolder: { row in
+                            folderItem = FolderItem(id: row.id, row: row)
                         })
                     case .search:
                         MacSearchView(onSelectMedia: { item in
@@ -60,7 +69,7 @@ struct MacMainView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(LunaTheme.background)
+            .background(NightarcTheme.background)
 
             if detailItem == nil && folderItem == nil {
                 VStack {

@@ -1,155 +1,242 @@
 import SwiftUI
-import LunaCore
+import NightarcCore
 
 struct HomeHero: View {
-    let item: MetaPreview
-    let rowTitle: String
-    let onTap: () -> Void
-    let dotCount: Int
-    let activeIndex: Int
-    let onDotTap: (Int) -> Void
+    let items: [MetaPreview]
+    @Binding var currentIndex: Int
+    let onWatchNow: (MetaPreview) -> Void
+    let onToggleLibrary: (MetaPreview) -> Void
 
-    private let heroHeight: CGFloat = 400
+    @State private var autoTimer: Timer?
+    @StateObject private var libraryRepo = LibraryRepository.shared
+    @StateObject private var artwork = MacHeroArtworkProvider.shared
+
+    private let heroHeight: CGFloat = 560
+
+    private var currentItem: MetaPreview? {
+        guard items.indices.contains(currentIndex) else { return nil }
+        return items[currentIndex]
+    }
+
+    private var isCurrentInLibrary: Bool {
+        guard let currentItem else { return false }
+        return libraryRepo.libraryItems.contains { $0.mediaId == currentItem.id }
+    }
 
     var body: some View {
-        ZStack(alignment: .bottomLeading) {
-            // Backdrop
-            Group {
-                if let banner = item.banner ?? item.poster, let url = URL(string: banner) {
-                    CachedAsyncImage(url: url) { img in
-                        img.resizable().aspectRatio(contentMode: .fill)
-                    } placeholder: {
-                        LunaTheme.surface
-                    }
-                } else {
-                    LunaTheme.surface
+        GeometryReader { geometry in
+            let minY = geometry.frame(in: .global).minY
+            let pullDown = max(minY, 0)
+            ZStack(alignment: .bottomLeading) {
+                if let currentItem {
+                    heroImage(for: currentItem, width: geometry.size.width)
+                        .id(currentItem.id)
+                        .scaleEffect(1 + min(pullDown / 900, 0.08), anchor: .top)
+                        .offset(y: minY < 0 ? minY * 0.18 : -pullDown * 0.35)
+                        .transition(.opacity)
+                        .animation(.easeInOut(duration: 0.35), value: currentItem.id)
                 }
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: heroHeight)
-            .clipped()
-            .overlay {
-                // Single unified gradient for readability
-                LinearGradient(
-                    stops: [
-                        .init(color: LunaTheme.background, location: 0),
-                        .init(color: .clear, location: 0.15),
-                        .init(color: .clear, location: 0.55),
-                        .init(color: .black.opacity(0.7), location: 0.8),
-                        .init(color: .black.opacity(0.95), location: 1),
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
+
+                HStack {
+                    heroStepButton(systemName: "chevron.left") {
+                        stepHero(-1)
+                    }
+                    Spacer()
+                    heroStepButton(systemName: "chevron.right") {
+                        stepHero(1)
+                    }
+                }
+                .padding(.horizontal, 22)
+                .opacity(items.count > 1 ? 1 : 0)
+                .allowsHitTesting(items.count > 1)
+
+                Color.clear
+                    .frame(width: geometry.size.width, height: heroHeight)
+                .mask(
+                    LinearGradient(
+                        stops: [
+                            .init(color: .black, location: 0.0),
+                            .init(color: .black, location: 0.56),
+                            .init(color: .black.opacity(0.40), location: 0.82),
+                            .init(color: .clear, location: 1.0)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
                 )
-            }
 
-            // Content
-            VStack(alignment: .leading, spacing: 0) {
-                Text(rowTitle.uppercased())
-                    .font(.system(size: 11, weight: .bold))
-                    .foregroundColor(LunaTheme.accent)
-                    .tracking(2)
-                    .padding(.bottom, 10)
-
-                if let logoUrl = item.logo.flatMap({ URL(string: $0) }) {
-                    CachedAsyncImage(url: logoUrl) { img in
-                        img.resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(height: 56)
-                            .frame(maxWidth: 300, alignment: .leading)
-                    } placeholder: {
-                        titleText.padding(.bottom, 4)
+                VStack(alignment: .leading, spacing: 8) {
+                    if let genre = currentItem?.genres?.first {
+                        Text(genre.uppercased())
+                            .font(.system(size: 12, weight: .bold))
+                            .tracking(2)
+                            .foregroundColor(NightarcTheme.accent)
                     }
-                    .padding(.bottom, 10)
-                } else {
-                    titleText.padding(.bottom, 10)
-                }
 
-                HStack(spacing: 12) {
-                    if let rating = item.imdbRating {
-                        Label(rating, systemImage: "star.fill")
-                            .font(.caption)
-                            .foregroundColor(.yellow)
+                    if let logo = currentItem?.logo.flatMap(URL.init) {
+                        CachedAsyncImage(url: logo) { image in
+                            image.resizable()
+                                .scaledToFit()
+                                .frame(maxWidth: 330, maxHeight: 120, alignment: .leading)
+                                .shadow(color: .black.opacity(0.55), radius: 8, x: 0, y: 3)
+                        } placeholder: {
+                            heroTitle
+                        }
+                    } else {
+                        heroTitle
                     }
-                    if let release = item.releaseInfo {
-                        Text("·").foregroundColor(.white.opacity(0.3))
-                        Text(release)
-                            .font(.caption)
-                            .foregroundColor(.white.opacity(0.5))
-                    }
-                    if let genres = item.genres?.prefix(2) {
-                        Text("·").foregroundColor(.white.opacity(0.3))
-                        Text(genres.joined(separator: " · "))
-                            .font(.caption)
-                            .foregroundColor(.white.opacity(0.5))
-                    }
-                }
-                .padding(.bottom, 12)
 
-                if let desc = item.description {
-                    Text(desc)
-                        .font(.body)
-                        .foregroundColor(.white.opacity(0.6))
-                        .lineLimit(2)
-                        .frame(maxWidth: 480, alignment: .leading)
-                        .padding(.bottom, 18)
-                } else {
-                    Spacer().frame(height: 18)
-                }
+                    metaRow
+                        .padding(.bottom, 4)
 
-                HStack(spacing: 10) {
-                    Button(action: onTap) {
-                        Label("Watch Now", systemImage: "play.fill")
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundColor(.black)
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 10)
-                            .background(.white)
-                            .clipShape(Capsule())
-                    }
-                    .buttonStyle(.plain)
-
-                    Button(action: onTap) {
-                        Image(systemName: "info.circle")
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundColor(.white)
-                            .padding(10)
-                            .background(.ultraThinMaterial)
-                            .clipShape(Circle())
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-            .padding(.horizontal, 28)
-            .padding(.bottom, 28)
-
-            // Dots
-            if dotCount > 1 {
-                HStack(spacing: 6) {
-                    ForEach(0..<dotCount, id: \.self) { i in
-                        Button { onDotTap(i) } label: {
-                            RoundedRectangle(cornerRadius: 1.5)
-                                .fill(i == activeIndex ? .white : .white.opacity(0.3))
-                                .frame(width: i == activeIndex ? 18 : 6, height: 3)
+                    HStack(spacing: 12) {
+                        Button {
+                            if let currentItem { onWatchNow(currentItem) }
+                        } label: {
+                            Label("Watch Now", systemImage: "play.fill")
+                                .font(.system(size: 15, weight: .bold))
+                                .foregroundStyle(.black)
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 12)
+                                .background(.white, in: Capsule())
                         }
                         .buttonStyle(.plain)
-                        .animation(.easeInOut(duration: 0.3), value: activeIndex)
+
+                        Button {
+                            if let currentItem { onToggleLibrary(currentItem) }
+                        } label: {
+                            Label(isCurrentInLibrary ? "In My List" : "My List", systemImage: isCurrentInLibrary ? "bookmark.fill" : "bookmark")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 11)
+                                .macGlassCapsule(interactive: true)
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
-                .padding(.trailing, 24)
-                .padding(.bottom, 14)
-                .frame(maxWidth: .infinity, alignment: .trailing)
+                .padding(.horizontal, 42)
+                .padding(.bottom, 58)
+            }
+            .overlay(alignment: .bottom) {
+                pageIndicator
+                    .padding(.bottom, 22)
             }
         }
         .frame(height: heroHeight)
-        .clipped()
+        .onAppear {
+            artwork.prefetch(items: items)
+            startAutoAdvance()
+        }
+        .onChange(of: items.map(\.id)) { _, _ in
+            artwork.prefetch(items: items)
+        }
+        .onDisappear {
+            autoTimer?.invalidate()
+            autoTimer = nil
+        }
     }
 
-    private var titleText: some View {
-        Text(item.name)
-            .font(.system(size: 40, weight: .black, design: .rounded))
+    private var heroTitle: some View {
+        Text(currentItem?.name ?? "")
+            .font(.system(size: 46, weight: .black, design: .rounded))
             .foregroundColor(.white)
             .lineLimit(2)
-            .minimumScaleFactor(0.7)
+            .shadow(color: .black.opacity(0.55), radius: 8, x: 0, y: 3)
+    }
+
+    private var metaRow: some View {
+        HStack(spacing: 9) {
+            if let rating = currentItem?.imdbRating {
+                Label(rating, systemImage: "star.fill")
+                    .font(.caption.weight(.semibold))
+                    .foregroundColor(.white.opacity(0.72))
+            }
+            if let year = currentItem?.releaseInfo {
+                Text(year)
+                    .font(.caption.weight(.medium))
+                    .foregroundColor(.white.opacity(0.62))
+            }
+            if let genres = currentItem?.genres {
+                Text(genres.prefix(2).joined(separator: ", "))
+                    .font(.caption.weight(.medium))
+                    .foregroundColor(.white.opacity(0.62))
+                    .lineLimit(1)
+            }
+        }
+    }
+
+    private var pageIndicator: some View {
+        let maxVisible = 9
+        let count = items.count
+        let start = count <= maxVisible ? 0 : min(max(currentIndex - maxVisible / 2, 0), count - maxVisible)
+        let end = min(start + maxVisible, count)
+
+        return HStack(spacing: 7) {
+            ForEach(start..<end, id: \.self) { index in
+                Capsule()
+                    .fill(index == currentIndex ? Color.white : Color.white.opacity(0.42))
+                    .frame(width: index == currentIndex ? 28 : 8, height: 5)
+            }
+        }
+        .animation(.easeInOut(duration: 0.25), value: currentIndex)
+    }
+
+    private func heroImage(for item: MetaPreview, width: CGFloat) -> some View {
+        Group {
+            if let url = artwork.heroArtURL(for: item) {
+                CachedAsyncImage(url: url) { image in
+                    image.resizable().scaledToFill()
+                } placeholder: {
+                    NightarcTheme.surfaceElevated
+                }
+            } else {
+                NightarcTheme.surfaceElevated
+            }
+        }
+        .frame(width: width, height: heroHeight)
+        .clipped()
+        .mask(
+            LinearGradient(
+                stops: [
+                    .init(color: .black, location: 0.0),
+                    .init(color: .black, location: 0.56),
+                    .init(color: .black.opacity(0.40), location: 0.82),
+                    .init(color: .clear, location: 1.0)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        )
+    }
+
+    private func heroStepButton(systemName: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: systemName)
+                .font(.system(size: 18, weight: .bold))
+                .foregroundStyle(.white)
+                .frame(width: 44, height: 44)
+                .macGlassCapsule(interactive: true)
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func startAutoAdvance() {
+        autoTimer?.invalidate()
+        guard items.count > 1 else { return }
+        autoTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in
+            Task { @MainActor in
+                withAnimation(.spring(response: 0.5, dampingFraction: 0.82)) {
+                    currentIndex = (currentIndex + 1) % max(items.count, 1)
+                }
+            }
+        }
+    }
+
+    private func stepHero(_ delta: Int) {
+        guard !items.isEmpty else { return }
+        withAnimation(.spring(response: 0.42, dampingFraction: 0.82)) {
+            currentIndex = ((currentIndex + delta) % items.count + items.count) % items.count
+        }
     }
 }
