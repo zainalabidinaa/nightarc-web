@@ -16,7 +16,8 @@ settings:
     INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "portrait portraitUpsideDown landscapeLeft landscapeRight"
     INFOPLIST_KEY_UIRequiresFullScreen: true
     INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: true
-    INFOPLIST_KEY_UILaunchScreen_Generation: true
+    INFOPLIST_KEY_UILaunchScreen_Generation: false
+    INFOPLIST_KEY_UILaunchStoryboardName: LaunchScreen
     INFOPLIST_KEY_UIRequiredDeviceCapabilities: "arm64"
     INFOPLIST_KEY_UIStatusBarStyle: "UIStatusBarStyleDarkContent"
     INFOPLIST_KEY_CFBundleURLTypes:
