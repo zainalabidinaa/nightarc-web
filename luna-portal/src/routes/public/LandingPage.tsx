@@ -1,14 +1,39 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
 import { Navbar } from '../../components/layout/Navbar';
 import { Button } from '../../components/ui/Button';
+import type { Collection, Folder } from '../../types';
 
 const chips = ['4K • HDR', 'Multi-profile', 'Curated collections', 'iOS · Mac · Web'];
 
-const vibes = [
-  { name: 'Cinema', desc: 'Hand-picked films, franchise stacks & 4K showcases.', seed: 'coll-movies', glow: 'rgba(250,130,77,.5)' },
-  { name: 'Series', desc: 'Trending shows, bingeable seasons, continue-watching that follows you.', seed: 'coll-tv', glow: 'rgba(52,230,200,.45)' },
-  { name: 'Live & UK TV', desc: 'Channels, sports and curated live rows built by your admin.', seed: 'coll-live', glow: 'rgba(255,77,210,.45)' },
-];
+interface CollectionPreview extends Collection {
+  folders: Folder[];
+}
+
+function useCollectionPreviews() {
+  const [items, setItems] = useState<CollectionPreview[]>([]);
+  useEffect(() => {
+    async function load() {
+      try {
+        const [{ data: cols }, { data: folders }] = await Promise.all([
+          supabase.from('collections').select('*').order('sort_order').limit(6),
+          supabase.from('folders').select('*').order('sort_order'),
+        ]);
+        if (!cols) return;
+        const folderList = (folders ?? []) as Folder[];
+        setItems(
+          (cols as Collection[]).map((c) => ({
+            ...c,
+            folders: folderList.filter((f) => f.collection_id === c.id),
+          }))
+        );
+      } catch { /* ignore on public page if RLS blocks */ }
+    }
+    load();
+  }, []);
+  return items;
+}
 
 const stats = [
   { n: '∞', l: 'Collections per account' },
@@ -33,6 +58,81 @@ const plans = [
     cta: 'Have a code?', to: '/signup?tab=invite',
   },
 ];
+
+function CollectionsPreviewSection() {
+  const navigate = useNavigate();
+  const collections = useCollectionPreviews();
+
+  if (collections.length === 0) return null;
+
+  return (
+    <section className="mx-auto max-w-7xl px-5 py-24">
+      <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.28em] text-accent">The catalog</p>
+          <h2 className="font-display text-[clamp(32px,5vw,60px)] font-extrabold uppercase">
+            Curated collections
+          </h2>
+          <p className="mt-2 text-sm text-muted">
+            {collections.length} collections · {collections.reduce((s, c) => s + c.folders.length, 0)} groups
+          </p>
+        </div>
+        <Button variant="ghost" size="sm" className="rounded-full" onClick={() => navigate('/catalog')}>
+          Browse all →
+        </Button>
+      </div>
+
+      <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {collections.map((col) => {
+          const heroImg = col.backdrop_image ?? col.folders[0]?.hero_backdrop ?? col.folders[0]?.cover_image;
+          const isGrouped = col.folders.length > 1;
+          return (
+            <button
+              key={col.id}
+              onClick={() => navigate('/catalog')}
+              className="group overflow-hidden rounded-2xl border border-border bg-surface text-left transition-transform hover:-translate-y-1.5"
+            >
+              <div className="relative h-[200px] overflow-hidden bg-bg2">
+                {heroImg ? (
+                  <img src={heroImg} alt="" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                ) : (
+                  <div className="flex h-full items-center justify-center bg-bg2">
+                    <span className="font-mono text-[10px] text-faint">no image</span>
+                  </div>
+                )}
+                <div
+                  className="absolute inset-0"
+                  style={{ background: 'linear-gradient(160deg,rgba(200,148,26,.06),transparent 40%),linear-gradient(0deg,rgba(13,6,4,.92),transparent 55%)' }}
+                />
+                {isGrouped && (
+                  <div className="absolute right-3 top-3">
+                    <span className="rounded-full border border-accent/40 bg-accent/15 px-2.5 py-1 font-mono text-[10px] text-accent">
+                      {col.folders.length} groups
+                    </span>
+                  </div>
+                )}
+              </div>
+              <div className="p-4">
+                <h3 className="font-display text-lg font-extrabold uppercase">{col.name}</h3>
+                {isGrouped && (
+                  <p className="mt-1 truncate font-mono text-[10px] text-faint">
+                    {col.folders.map((f) => f.name).slice(0, 3).join(' · ')}{col.folders.length > 3 ? ' …' : ''}
+                  </p>
+                )}
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="mt-8 text-center">
+        <Button className="rounded-full" onClick={() => navigate('/catalog')}>
+          Explore all collections →
+        </Button>
+      </div>
+    </section>
+  );
+}
 
 function Marquee({ items }: { items: string[] }) {
   const row = (
@@ -109,27 +209,8 @@ export default function LandingPage() {
 
       <Marquee items={['Streaming', 'Collections', '4K HDR', 'Multi-profile', 'No ads', 'Cross-device']} />
 
-      {/* VIBES */}
-      <section className="mx-auto max-w-7xl px-5 py-24">
-        <div className="text-center">
-          <p className="mb-3.5 font-mono text-[11px] uppercase tracking-[0.28em] text-accent">The collection</p>
-          <h2 className="font-display text-[clamp(32px,5vw,60px)] font-extrabold uppercase">Three ways to watch</h2>
-        </div>
-        <div className="mt-12 grid gap-5 md:grid-cols-3">
-          {vibes.map((v) => (
-            <div key={v.name} className="overflow-hidden rounded-2xl border border-border bg-surface transition-transform hover:-translate-y-1.5">
-              <div className="relative flex h-[300px] items-end p-5" style={{ boxShadow: `inset 0 0 80px -30px ${v.glow}` }}>
-                <img src={`https://picsum.photos/seed/${v.seed}/600/700`} alt="" className="absolute inset-0 h-full w-full object-cover" />
-                <div className="absolute inset-0" style={{ background: 'linear-gradient(0deg,rgba(13,6,4,.95),transparent 60%)' }} />
-              </div>
-              <div className="p-5">
-                <h3 className="font-display text-lg font-extrabold">{v.name}</h3>
-                <p className="mt-1 text-sm text-muted">{v.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* COLLECTIONS PREVIEW */}
+      <CollectionsPreviewSection />
 
       <div className="px-5 pb-8 text-center">
         <div className="text-stroke font-display text-[clamp(60px,12vw,150px)] font-extrabold uppercase leading-[.9] opacity-60">

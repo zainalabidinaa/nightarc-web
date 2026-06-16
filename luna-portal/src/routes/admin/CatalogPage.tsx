@@ -186,6 +186,120 @@ export default function CatalogPage() {
   // ---- JSON pack import ----
   async function importPack(pack: Record<string, unknown>) {
     const p = pack as any;
+
+    // Detect format: Nuvio = top-level array of collections with nested folders+sources
+    if (Array.isArray(p)) {
+      return importNuvioPack(p);
+    }
+    // BEST format: object with flat collections[], folders[], folder_catalogs[] arrays
+    return importBESTPack(p);
+  }
+
+  // ---- Nuvio format import ----
+  // Top-level array: [{ id, title, folders: [{ id, title, sources: [...], heroBackdropUrl, tileShape }] }]
+  async function importNuvioPack(nuvio: any[]) {
+    let totalCollections = 0, totalFolders = 0, totalSources = 0;
+
+    for (let ci = 0; ci < nuvio.length; ci++) {
+      const col = nuvio[ci];
+      const colName: string = col.title ?? col.name ?? `Collection ${ci + 1}`;
+      const nuvioFolders: any[] = Array.isArray(col.folders) ? col.folders : [];
+
+      // Use first folder's heroBackdropUrl as collection backdrop if none set
+      const firstHero = nuvioFolders[0]?.heroBackdropUrl ?? null;
+
+      const { data: colRow, error: colErr } = await supabase.from('collections').insert({
+        name: colName,
+        view_mode: col.viewMode ?? 'FOLLOW_LAYOUT',
+        show_all_tab: col.showAllTab ?? false,
+        pin_to_top: col.pinToTop ?? false,
+        backdrop_image: col.backdropImageUrl ?? firstHero,
+        sort_order: collections.length + ci,
+      }).select().single();
+      if (colErr || !colRow) continue;
+      const collectionId = (colRow as Collection).id;
+      totalCollections++;
+
+      for (let fi = 0; fi < nuvioFolders.length; fi++) {
+        const f = nuvioFolders[fi];
+        const shape = normalizeShape(f.tileShape ?? f.tile_shape);
+        const { data: folderRow, error: folderErr } = await supabase.from('folders').insert({
+          collection_id: collectionId,
+          name: f.title ?? f.name ?? `Folder ${fi + 1}`,
+          cover_image: f.coverImageUrl ?? f.cover_image ?? null,
+          hero_backdrop: f.heroBackdropUrl ?? f.hero_backdrop ?? null,
+          focus_gif: f.focusGifUrl ?? f.focus_gif ?? null,
+          title_logo: f.titleLogoUrl ?? f.title_logo ?? null,
+          hero_video_url: f.heroVideoUrl ?? f.hero_video_url ?? null,
+          hide_title: f.hideTitle ?? f.hide_title ?? false,
+          tile_shape: shape,
+          focus_gif_enabled: f.focusGifEnabled ?? f.focus_gif_enabled ?? false,
+          sort_order: fi,
+        }).select().single();
+        if (folderErr || !folderRow) continue;
+        const folderId = (folderRow as Folder).id;
+        totalFolders++;
+
+        // Import sources as folder_catalogs
+        const sources: any[] = Array.isArray(f.sources) ? f.sources : [];
+        const seenCatalogIds = new Set<string>();
+        for (let si = 0; si < sources.length; si++) {
+          const src = sources[si];
+          const catalogId = resolveNuvioCatalogId(src);
+          if (!catalogId) continue;
+          const dedupeKey = `${folderId}:${catalogId}`;
+          if (seenCatalogIds.has(dedupeKey)) continue;
+          seenCatalogIds.add(dedupeKey);
+
+          const mediaType = normalizeMediaType(src.type ?? src.mediaType);
+          const genre = src.genre && src.genre.toLowerCase() !== 'none' ? src.genre : null;
+
+          const { error } = await supabase.from('folder_catalogs').insert({
+            folder_id: folderId,
+            catalog_id: catalogId,
+            media_type: mediaType,
+            genre,
+            extras: null,
+          });
+          if (!error) totalSources++;
+        }
+      }
+    }
+
+    await loadCollections();
+    return { collections: totalCollections, folders: totalFolders, sources: totalSources };
+  }
+
+  function resolveNuvioCatalogId(src: any): string | null {
+    if (src.catalogId) return src.catalogId;
+    if (src.traktListId) return `trakt.list.${src.traktListId}`;
+    if (src.tmdbId && src.tmdbSourceType?.toUpperCase() === 'COLLECTION') return `tmdb.collection.${src.tmdbId}`;
+    if (src.tmdbSourceType?.toUpperCase() === 'DISCOVER') {
+      const mt = normalizeMediaType(src.type ?? src.mediaType);
+      const title = (src.title ?? '').toLowerCase();
+      const known: Record<string, string> = {
+        'movie:new movies': 'tmdb.discover.movie.new-movies.069d5312',
+        'movie:popular movies': 'tmdb.discover.movie.popular-movies.29727d26',
+        'movie:top all time movies': 'tmdb.discover.movie.top-all-time-movies.39f5a0c4',
+        'series:new series': 'tmdb.discover.series.new-series.76fc7ade',
+        'series:popular series': 'tmdb.discover.series.popular-series.20af3ad9',
+        'series:top all time series': 'tmdb.discover.series.top-all-time-series.53046f30',
+      };
+      return known[`${mt}:${title}`] ?? (mt === 'series' ? 'tmdb.discover.series.series.mo7biroh' : 'tmdb.discover.movie.movies.mo7bd2ar');
+    }
+    return null;
+  }
+
+  function normalizeMediaType(v?: string): string {
+    switch (v?.toUpperCase()) { case 'TV': case 'SERIES': return 'series'; case 'MOVIE': return 'movie'; default: return v?.toLowerCase() ?? 'movie'; }
+  }
+
+  function normalizeShape(v?: string): string {
+    switch (v?.toUpperCase()) { case 'LANDSCAPE': return 'landscape'; case 'SQUARE': return 'square'; default: return 'poster'; }
+  }
+
+  // ---- BEST format import (existing logic) ----
+  async function importBESTPack(p: any) {
     const col = p.collections?.[0] ?? { name: p.pack?.title ?? 'Imported pack' };
     const { data: colRow, error: colErr } = await supabase.from('collections').insert({
       name: col.name ?? 'Imported pack',
@@ -220,7 +334,6 @@ export default function CatalogPage() {
     let sourceCount = 0;
     const perFolder: Record<string, number> = {};
 
-    // folder_catalogs (Stremio catalog IDs)
     const cats: any[] = Array.isArray(p.folder_catalogs) ? p.folder_catalogs : [];
     for (const c of cats) {
       const fid = nameToId[c.folder_name ?? c.folder];
@@ -236,7 +349,6 @@ export default function CatalogPage() {
       if (!error) { sourceCount++; perFolder[fid] = idx + 1; }
     }
 
-    // folder_sources (TMDB/provider rows)
     const srcs: any[] = Array.isArray(p.folder_sources) ? p.folder_sources : [];
     for (const s of srcs) {
       const fid = nameToId[s.folder_name ?? s.folder];
