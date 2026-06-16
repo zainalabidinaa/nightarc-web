@@ -32,6 +32,7 @@ struct PlayerScreen: View {
     @State private var didWireCustomEngine = false
     @State private var engineBindings: Set<AnyCancellable> = []
     @State private var isFetchingStream = false
+    @State private var isSwitchingStream = false
     @State private var isFillingVideo = false
     // Snapshots frozen when a menu opens so 250ms currentPosition re-renders
     // don't rebuild the content and reset the menu's scroll position.
@@ -148,6 +149,19 @@ struct PlayerScreen: View {
                     .ignoresSafeArea()
             }
 
+            // ── STREAM-SWITCH LOADING OVERLAY ─────────────────────────────
+            if isSwitchingStream {
+                ZStack {
+                    Color.black.opacity(0.6).ignoresSafeArea()
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                        .tint(.white)
+                        .scaleEffect(1.4)
+                }
+                .transition(.opacity)
+                .allowsHitTesting(true)
+            }
+
             PlayerLockMode(isLocked: $isLocked, showHint: $showUnlockHint)
 
             if showControls && !isLocked {
@@ -203,6 +217,9 @@ struct PlayerScreen: View {
         }
         .onChange(of: engine.isPlaying) { _, _ in
             scheduleControlsAutoHide()
+        }
+        .onChange(of: ksEngine.hasRenderedFrame) { _, hasFrame in
+            if hasFrame { isSwitchingStream = false }
         }
         .onChange(of: streamRepo.streams) { _, _ in refreshSourceControlState() }
         .onChange(of: activeLaunch.sourceUrl) { _, _ in refreshSourceControlState() }
@@ -730,6 +747,7 @@ struct PlayerScreen: View {
         )
 
         savePlaybackSource(for: stream, url: url, launch: nextLaunch)
+        isSwitchingStream = true
         engine.pause()
         ksEngine.stop()
         engine.resetState()
