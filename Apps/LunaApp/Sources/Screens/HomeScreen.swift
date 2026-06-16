@@ -21,19 +21,23 @@ struct HomeScreen: View {
     @State private var playerLaunch: PlayerLaunch?
     @State private var streamSelectionLaunch: PlayerLaunch?
     @State private var ambientColor: Color = .clear
+    @State private var ambientColor2: Color = .clear
     @AppStorage("luna.cinematicModeEnabled") private var cinematicModeEnabled = true
 
     private let mainRowNames: Set<String> = [
         "Popular Movies", "Popular TV Shows",
-        "Trending Movies", "Trending TV Shows"
+        "Trending Movies", "Trending TV Shows",
+        "Popular Shows", "Trending Shows",
+        "Latest", "Top Rated"
     ]
 
     private var featuredItems: [MetaPreview] {
         let allRows = catalogRepo.catalogRows
         let heroRows: [CatalogRow]
         if heroStore.rowOrder.isEmpty {
-            // Default: main rows in natural order
-            heroRows = allRows.filter { mainRowNames.contains($0.title) }
+            // Default: prefer named rows, fall back to all rows with items
+            let named = allRows.filter { mainRowNames.contains($0.title) }
+            heroRows = named.isEmpty ? allRows.filter { !$0.items.isEmpty } : named
         } else {
             // Respect saved order and enabled/disabled state
             let enabledOrdered = heroStore.rowOrder
@@ -46,10 +50,14 @@ struct HomeScreen: View {
                 heroStore.isEnabled(rowTitle: $0.title)
             }
             let computed = enabledOrdered + missing
-            // Fall back to default rows when all hero-configured rows are disabled
-            heroRows = computed.isEmpty ? allRows.filter { mainRowNames.contains($0.title) } : computed
+            // Fall back: named rows → any rows with items
+            if computed.isEmpty {
+                let named = allRows.filter { mainRowNames.contains($0.title) }
+                heroRows = named.isEmpty ? allRows.filter { !$0.items.isEmpty } : named
+            } else {
+                heroRows = computed
+            }
         }
-        // Respect hero management row priority: earlier rows contribute first.
         // Cap per row so a single row can't fill the whole carousel.
         let perRowCap = 8
         let totalCap = 20
@@ -85,12 +93,14 @@ struct HomeScreen: View {
                 ZStack {
                     FusionAmbientBackground(
                         ambientColor: ambientColor,
+                        ambientColor2: ambientColor2,
                         heroBackdropURL: currentHeroBackdropURL,
                         isEnabled: cinematicModeEnabled,
                         screenWidth: geo.size.width,
                         screenHeight: geo.size.height
                     )
                     .animation(.easeInOut(duration: 0.9), value: ambientColor)
+                    .animation(.easeInOut(duration: 0.9), value: ambientColor2)
                     .animation(.easeInOut(duration: 0.6), value: currentHeroBackdropURL)
                     .animation(.easeInOut(duration: 0.35), value: cinematicModeEnabled)
 
@@ -277,7 +287,7 @@ struct HomeScreen: View {
                 catalogRepo.isLoading = true
                 await addonRepo.loadAddons(profileId: profile.id)
                 async let continueWatching: Void = homeRepo.loadContinueWatching(profileId: profile.id)
-                await loadGlobalOrganizer()
+                loadGlobalOrganizer()
                 await libraryRepo.loadLibrary(profileId: profile.id)
                 if catalogRepo.catalogRows.isEmpty {
                     if collectionRepo.collections.isEmpty {
@@ -289,7 +299,10 @@ struct HomeScreen: View {
                         )
                     }
                 } else {
+                    // Disk cache is warm — show it immediately, but refresh in background
+                    // so a corrupted/stale cache never permanently hides the hero.
                     catalogRepo.isLoading = false
+                    Task { await reloadCatalogRows() }
                 }
                 await continueWatching
                 warmupContinueWatching()
@@ -350,7 +363,7 @@ struct HomeScreen: View {
     }
 
     private func reloadCatalogRows() async {
-        await loadGlobalOrganizer()
+        loadGlobalOrganizer()
         if collectionRepo.collections.isEmpty {
             await catalogRepo.loadAllCatalogs(addons: addonRepo.enabledAddons)
         } else {
@@ -361,16 +374,8 @@ struct HomeScreen: View {
         }
     }
 
-    private func loadGlobalOrganizer() async {
-        guard let url = Bundle.main.url(forResource: "home-organizer", withExtension: "json"),
-              let data = try? Data(contentsOf: url) else {
-            await collectionRepo.load()
-            return
-        }
-        await collectionRepo.loadOrganizer(
-            bundledData: data,
-            remoteURL: NightarcConfig.homeOrganizerRemoteURL.flatMap(URL.init(string:))
-        )
+    private func loadGlobalOrganizer() {
+        collectionRepo.load()
     }
 
     @MainActor
@@ -378,24 +383,26 @@ struct HomeScreen: View {
         guard cinematicModeEnabled,
               featuredItems.indices.contains(heroIndex) else {
             ambientColor = .clear
+            ambientColor2 = .clear
             return
         }
         let item = featuredItems[heroIndex]
-        // Use the same URL the hero actually displays — textless TMDB art when available,
-        // falling back to the addon-provided banner/poster.
         guard let url = HeroArtworkProvider.shared.heroArtURL(for: item)
                 ?? (item.banner ?? item.poster).flatMap(URL.init) else {
             ambientColor = .clear
+            ambientColor2 = .clear
             return
         }
 
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
             guard let image = UIImage(data: data),
-                  let color = image.lunaDominantColor else { return }
-            ambientColor = color.lunaClampedForAmbient
+                  let (c1, c2) = image.nightarcAmbientColors() else { return }
+            ambientColor  = c1.nightarcBoostedForAmbient
+            ambientColor2 = c2.nightarcBoostedForAmbient
         } catch {
             ambientColor = .clear
+            ambientColor2 = .clear
         }
     }
 
@@ -405,6 +412,7 @@ struct HomeScreen: View {
 
 private struct FusionAmbientBackground: View {
     let ambientColor: Color
+    let ambientColor2: Color
     let heroBackdropURL: URL?
     let isEnabled: Bool
     let screenWidth: CGFloat
@@ -415,8 +423,6 @@ private struct FusionAmbientBackground: View {
             NightarcTheme.background
 
             if isEnabled, let url = heroBackdropURL {
-                // Gray-tinted blurred backdrop — Fusion's "atmospheric base".
-                // Keep some color (saturation 0.32) so the image isn't pure gray.
                 CachedAsyncImage(url: url) { phase in
                     if case .success(let image) = phase {
                         image.resizable().scaledToFill()
@@ -428,7 +434,7 @@ private struct FusionAmbientBackground: View {
                 .clipped()
                 .scaleEffect(1.1)
                 .blur(radius: 30)
-                .saturation(0.08)
+                .saturation(0.28)
                 .brightness(0.14)
                 .opacity(0.90)
                 .frame(width: screenWidth, height: screenHeight * 0.72, alignment: .top)
@@ -450,29 +456,29 @@ private struct FusionAmbientBackground: View {
             }
 
             if isEnabled {
-                // Strong color bleed from the hero's dominant color — Fusion-style.
+                // Primary glow — left-region color, centered at top.
                 RadialGradient(
                     stops: [
-                        .init(color: ambientColor.opacity(0.72), location: 0.0),
+                        .init(color: ambientColor.opacity(0.75), location: 0.0),
                         .init(color: ambientColor.opacity(0.45), location: 0.30),
                         .init(color: ambientColor.opacity(0.18), location: 0.60),
                         .init(color: .clear, location: 1.0),
                     ],
                     center: .top,
                     startRadius: 0,
-                    endRadius: screenHeight * 0.78
+                    endRadius: screenHeight * 0.80
                 )
                 .blur(radius: 28)
 
-                // Subtle off-center accent to avoid perfect symmetry.
+                // Accent glow — right-region color, off-center right.
                 RadialGradient(
-                    colors: [ambientColor.opacity(0.22), .clear],
-                    center: UnitPoint(x: 0.78, y: 0.05),
+                    colors: [ambientColor2.opacity(0.45), .clear],
+                    center: UnitPoint(x: 0.80, y: 0.05),
                     startRadius: 0,
-                    endRadius: screenHeight * 0.42
+                    endRadius: screenHeight * 0.50
                 )
 
-                // Dark overlay: very transparent at top, fully opaque at bottom.
+                // Dark overlay: transparent at top, opaque at bottom.
                 LinearGradient(
                     stops: [
                         .init(color: .black.opacity(0.0),  location: 0.00),
@@ -511,52 +517,46 @@ struct CollectionRowContainer: View {
 }
 
 private extension UIImage {
-    var lunaDominantColor: Color? {
-        guard let inputImage = CIImage(image: self) else { return nil }
-        let extent = inputImage.extent
-        guard let filter = CIFilter(
-            name: "CIAreaAverage",
-            parameters: [
-                kCIInputImageKey: inputImage,
-                kCIInputExtentKey: CIVector(cgRect: extent)
-            ]
-        ),
-        let outputImage = filter.outputImage else { return nil }
+    // Samples left and right regions of the top 60% of the image to extract two
+    // distinct ambient colors. Avoids dark letterbox bars at the bottom.
+    func nightarcAmbientColors() -> (Color, Color)? {
+        guard let ci = CIImage(image: self) else { return nil }
+        let e = ci.extent
+        let topH = e.height * 0.6
 
-        var bitmap = [UInt8](repeating: 0, count: 4)
-        let context = CIContext(options: [.workingColorSpace: kCFNull as Any])
-        context.render(
-            outputImage,
-            toBitmap: &bitmap,
-            rowBytes: 4,
-            bounds: CGRect(x: 0, y: 0, width: 1, height: 1),
-            format: .RGBA8,
-            colorSpace: nil
-        )
+        func avgColor(in rect: CGRect) -> Color? {
+            guard let filter = CIFilter(name: "CIAreaAverage", parameters: [
+                kCIInputImageKey: ci,
+                kCIInputExtentKey: CIVector(cgRect: rect)
+            ]), let out = filter.outputImage else { return nil }
+            var px = [UInt8](repeating: 0, count: 4)
+            let ctx = CIContext(options: [.workingColorSpace: kCFNull as Any])
+            ctx.render(out, toBitmap: &px, rowBytes: 4,
+                       bounds: CGRect(x: 0, y: 0, width: 1, height: 1),
+                       format: .RGBA8, colorSpace: nil)
+            return Color(red: Double(px[0]) / 255, green: Double(px[1]) / 255, blue: Double(px[2]) / 255)
+        }
 
-        return Color(
-            red: Double(bitmap[0]) / 255,
-            green: Double(bitmap[1]) / 255,
-            blue: Double(bitmap[2]) / 255
-        )
+        let leftRect  = CGRect(x: e.minX,                    y: e.minY, width: e.width * 0.45, height: topH)
+        let rightRect = CGRect(x: e.minX + e.width * 0.55,   y: e.minY, width: e.width * 0.45, height: topH)
+
+        guard let c1 = avgColor(in: leftRect), let c2 = avgColor(in: rightRect) else { return nil }
+        return (c1, c2)
     }
 }
 
 private extension Color {
-    var lunaClampedForAmbient: Color {
+    var nightarcBoostedForAmbient: Color {
         #if canImport(UIKit)
         let uiColor = UIColor(self)
-        var hue: CGFloat = 0
-        var saturation: CGFloat = 0
-        var brightness: CGFloat = 0
-        var alpha: CGFloat = 0
+        var hue: CGFloat = 0, saturation: CGFloat = 0, brightness: CGFloat = 0, alpha: CGFloat = 0
         guard uiColor.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha) else {
             return self
         }
         return Color(
             hue: Double(hue),
-            saturation: Double(min(max(saturation * 0.70, 0.20), 0.65)),
-            brightness: Double(min(max(brightness * 0.65, 0.25), 0.55))
+            saturation: Double(min(max(saturation * 2.2, 0.60), 1.0)),
+            brightness: Double(min(max(brightness * 1.3, 0.40), 0.75))
         )
         #else
         return self
@@ -807,122 +807,58 @@ struct ContinueWatchingCard: View {
                 }
                 .frame(width: width, height: height)
                 .clipped()
-                .clipShape(RoundedRectangle(cornerRadius: 12))
 
-                // Bottom gradient
-                LinearGradient(colors: [.black.opacity(0.55), .clear],
-                               startPoint: .bottom, endPoint: .top)
-                    .frame(height: height * 0.55)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                // Frosted blur layer — fades in from bottom
+                Rectangle()
+                    .fill(.ultraThinMaterial)
+                    .frame(height: 50)
+                    .mask(
+                        LinearGradient(
+                            colors: [.clear, .black],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
 
-                // Play button row (above the glass strip)
-                HStack(spacing: 6) {
-                    Image(systemName: "play.fill")
-                        .font(.system(size: 9, weight: .bold))
-                        .foregroundColor(.white)
-                        .padding(5)
-                        .background(Color.black.opacity(0.55))
-                        .clipShape(Circle())
-                    Spacer()
-                }
-                .padding(.horizontal, 6)
-                .padding(.bottom, 38)
+                // Dark scrim for text legibility
+                LinearGradient(
+                    colors: [.clear, .black.opacity(0.55)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 55)
 
-                // Frosted glass strip at bottom
-                VStack(spacing: 0) {
-                    Spacer()
-                    ZStack {
-                        // Glass background
-                        if #available(iOS 26, *) {
-                            Color.clear
-                                .glassEffect(
-                                    .regular,
-                                    in: UnevenRoundedRectangle(
-                                        topLeadingRadius: 0,
-                                        bottomLeadingRadius: 12,
-                                        bottomTrailingRadius: 12,
-                                        topTrailingRadius: 0
-                                    )
-                                )
-                        } else {
-                            Rectangle()
-                                .fill(.ultraThinMaterial)
-                                .clipShape(
-                                    UnevenRoundedRectangle(
-                                        topLeadingRadius: 0,
-                                        bottomLeadingRadius: 12,
-                                        bottomTrailingRadius: 12,
-                                        topTrailingRadius: 0
-                                    )
-                                )
-                        }
-
-                        // Content row
-                        HStack(spacing: 4) {
-                            if let episodeLabel {
-                                Text(episodeLabel)
-                                    .font(.system(size: 8, weight: .medium))
-                                    .foregroundStyle(.white.opacity(0.55))
-                            }
-                            Spacer()
-                            if let mins = minutesRemaining {
-                                Text("\(mins) min left")
-                                    .font(.system(size: 8, weight: .bold))
-                                    .foregroundStyle(.white)
-                            }
-                        }
-                        .padding(.horizontal, 8)
+                // Info row
+                HStack(spacing: 4) {
+                    if let episodeLabel {
+                        Text(episodeLabel)
+                            .font(.system(size: 10, weight: .semibold))
+                            .foregroundStyle(.white)
                     }
-                    .frame(height: 30)
+                    Spacer()
+                    if let mins = minutesRemaining {
+                        Text("\(mins) min left")
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundStyle(.white.opacity(0.72))
+                    }
                 }
+                .padding(.horizontal, 10)
+                .padding(.bottom, 9)
             }
             .frame(width: width, height: height)
+            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
 
             Text(item.name)
                 .font(.system(size: 13, weight: .medium))
                 .foregroundColor(.white)
                 .lineLimit(1)
                 .frame(width: width, alignment: .leading)
-
-            if let subtitle = cardSubtitle {
-                Text(subtitle)
-                    .font(.system(size: 11))
-                    .foregroundColor(.white.opacity(0.55))
-                    .lineLimit(1)
-                    .frame(width: width, alignment: .leading)
-            }
         }
-    }
-
-    private var cardSubtitle: String? {
-        if let s = item.seasonNumber, let e = item.episodeNumber {
-            let epLabel = formattedEpisodeLabel(season: s, episode: e).replacingOccurrences(of: " · ", with: " ")
-            if let title = item.episodeTitle, !title.isEmpty {
-                return "\(epLabel) · \(title)"
-            }
-            return epLabel
-        }
-        // Movie: show timestamp
-        if item.resumePositionMs > 0 {
-            let secs = Int(item.resumePositionMs / 1000)
-            let h = secs / 3600
-            let m = (secs % 3600) / 60
-            let s = secs % 60
-            let ts = h > 0
-                ? String(format: "%d:%02d:%02d", h, m, s)
-                : String(format: "%d:%02d", m, s)
-            return ts
-        }
-        return nil
     }
 
     private var episodeLabel: String? {
         guard let s = item.seasonNumber, let e = item.episodeNumber else { return nil }
-        return formattedEpisodeLabel(season: s, episode: e)
-    }
-
-    private func formattedEpisodeLabel(season: Int, episode: Int) -> String {
-        "S\(String(format: "%02d", season)) · E\(String(format: "%02d", episode))"
+        return "S\(s), E\(e)"
     }
 
     private var cwPlaceholder: some View {

@@ -15,7 +15,7 @@ struct ContinueWatchingCard: View {
 
     private var episodeLabel: String? {
         guard let s = item.seasonNumber, let e = item.episodeNumber else { return nil }
-        return "S\(String(format: "%02d", s)) · E\(String(format: "%02d", e))"
+        return "S\(s), E\(e)"
     }
 
     private var minutesRemaining: Int? {
@@ -41,51 +41,54 @@ struct ContinueWatchingCard: View {
                 }
                 .frame(width: width, height: height)
                 .clipped()
-                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
 
+                // Frosted blur layer — fades in from bottom
+                Rectangle()
+                    .fill(.ultraThinMaterial)
+                    .frame(height: 50)
+                    .mask(
+                        LinearGradient(
+                            colors: [.clear, .black],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+
+                // Dark scrim for text legibility
                 LinearGradient(
-                    colors: [.clear, .black.opacity(0.72)],
-                    startPoint: .center,
+                    colors: [.clear, .black.opacity(0.55)],
+                    startPoint: .top,
                     endPoint: .bottom
                 )
-                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .frame(height: 55)
 
-                VStack(spacing: 8) {
-                    HStack(spacing: 6) {
-                        if let episodeLabel {
-                            Text(episodeLabel)
-                                .font(.system(size: 10, weight: .semibold))
-                                .foregroundStyle(.white.opacity(0.75))
-                        }
-                        Spacer()
-                        if let minutesRemaining {
-                            Text("\(minutesRemaining) min left")
-                                .font(.system(size: 10, weight: .bold))
-                                .foregroundStyle(.white)
-                        }
+                // Info row
+                HStack(spacing: 4) {
+                    if let episodeLabel {
+                        Text(episodeLabel)
+                            .font(.system(size: 10, weight: .semibold))
+                            .foregroundStyle(.white)
                     }
-
-                    GeometryReader { geo in
-                        ZStack(alignment: .leading) {
-                            Capsule().fill(Color.white.opacity(0.18))
-                            Capsule()
-                                .fill(NightarcTheme.accent)
-                                .frame(width: geo.size.width * item.progressFraction)
-                        }
+                    Spacer()
+                    if let minutesRemaining {
+                        Text("\(minutesRemaining) min left")
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundStyle(.white.opacity(0.72))
                     }
-                    .frame(height: 4)
                 }
-                .padding(10)
+                .padding(.horizontal, 10)
+                .padding(.bottom, 9)
 
                 if isLoading {
                     Color.black.opacity(0.34)
-                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                     MacLottieLoadingView(size: 24)
                 }
             }
             .frame(width: width, height: height)
+            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
                     .strokeBorder(Color.white.opacity(isHovering ? 0.18 : 0.06), lineWidth: 1)
             )
             .scaleEffect(isHovering ? 1.025 : 1.0)
@@ -97,30 +100,7 @@ struct ContinueWatchingCard: View {
                 .foregroundColor(.white)
                 .lineLimit(1)
                 .frame(width: width, alignment: .leading)
-
-            if let subtitle = cardSubtitle {
-                Text(subtitle)
-                    .font(.system(size: 11))
-                    .foregroundColor(NightarcTheme.textTertiary)
-                    .lineLimit(1)
-                    .frame(width: width, alignment: .leading)
-            }
         }
-    }
-
-    private var cardSubtitle: String? {
-        if let episodeLabel {
-            if let title = item.episodeTitle, !title.isEmpty {
-                return "\(episodeLabel) · \(title)"
-            }
-            return episodeLabel
-        }
-        guard item.resumePositionMs > 0 else { return nil }
-        let seconds = Int(item.resumePositionMs / 1000)
-        let h = seconds / 3600
-        let m = (seconds % 3600) / 60
-        let s = seconds % 60
-        return h > 0 ? String(format: "%d:%02d:%02d", h, m, s) : String(format: "%d:%02d", m, s)
     }
 
     private var fallbackView: some View {
