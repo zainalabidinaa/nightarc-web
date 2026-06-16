@@ -897,7 +897,8 @@ public class CatalogRepository: ObservableObject {
             }
             for await result in group { items.append(contentsOf: result) }
         }
-        return items
+        var seen = Set<String>()
+        return items.filter { seen.insert($0.id).inserted }
     }
 
     public func loadMore(rowId: String, addons: [AddonManifest]) async {
