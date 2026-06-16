@@ -29,9 +29,9 @@ struct LibraryScreen: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
+                    upcomingSection
                     watchlistSection
                     likedSection
-                    upcomingSection
                     Spacer().frame(height: 40)
                 }
             }
