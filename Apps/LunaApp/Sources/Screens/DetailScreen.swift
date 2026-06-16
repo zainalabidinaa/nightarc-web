@@ -22,7 +22,6 @@ struct DetailScreen: View {
     @State private var playerLaunch: PlayerLaunch?
     @State private var streamSelectionLaunch: PlayerLaunch?
     @State private var trailerLink: URL?
-    @State private var deepDiveLink: URL?
     @State private var moreLikeThisItems: [MetaPreview] = []
     @State private var streailerTrailers: [Trailer] = []
     @State private var isLiked = false
@@ -221,16 +220,6 @@ struct DetailScreen: View {
                     }
                     .padding(.horizontal, 16)
                     .padding(.top, 16)
-
-                    if let deepDiveLink {
-                        HStack(spacing: 10) {
-                            companionButton(title: "Deep Dive", systemImage: "text.magnifyingglass") {
-                                openURL(deepDiveLink)
-                            }
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.top, 12)
-                    }
 
                     // ── OVERVIEW ──────────────────────────────────────────
                     if let description = detail.description, !description.isEmpty {
@@ -722,7 +711,6 @@ struct DetailScreen: View {
 
     private func loadCompanionLinks() async {
         trailerLink = nil
-        deepDiveLink = nil
 
         let streamAddons = addonRepo.enabledAddons.filter {
             $0.hasResource("stream")
@@ -746,24 +734,7 @@ struct DetailScreen: View {
             }
         )
 
-        async let deepDive = companionLink(
-            from: streamAddons,
-            matching: { addon in
-                addon.id == "org.stremio.deepdivecompanion"
-                || addon.name.localizedCaseInsensitiveContains("Deep Dive")
-                || addon.transportUrl?.contains("deepdive") == true
-            },
-            streamMatching: { stream in
-                let text = [stream.name, stream.title, stream.description]
-                    .compactMap { $0 }
-                    .joined(separator: " ")
-                    .lowercased()
-                return text.contains("deep dive") || text.contains("analysis")
-            }
-        )
-
         trailerLink = await trailer
-        deepDiveLink = await deepDive
     }
 
     private func companionLink(
