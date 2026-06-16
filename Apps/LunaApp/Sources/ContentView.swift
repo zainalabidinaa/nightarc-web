@@ -25,6 +25,9 @@ struct ContentView: View {
         .onChange(of: profileManager.currentProfile) { _, profile in
             roleManager.evaluateRole(profile: profile)
         }
+        .onOpenURL { url in
+            TraktAuthService.shared.handleCallback(url: url)
+        }
     }
 }
 

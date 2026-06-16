@@ -15,6 +15,7 @@ struct SettingsScreen: View {
     @EnvironmentObject var roleManager: RoleManager
     @StateObject private var addonRepo = AddonRepository.shared
     @StateObject private var metadataIntegrations = MetadataIntegrationStore.shared
+    @StateObject private var traktAuth = TraktAuthService.shared
     @State private var showAddons = false
     @State private var showCatalogManagement = false
     @State private var showSubtitleAppearance = false
@@ -81,6 +82,59 @@ struct SettingsScreen: View {
                                 title: "Metadata",
                                 subtitle: metadataIntegrations.effectiveTVDBAPIKey == nil ? "TMDB" : "TVDB + TMDB"
                             )
+                        }
+                    }
+                    .glassCard(cornerRadius: 14)
+                    .padding(.horizontal, 16)
+
+                    // ── TRAKT ─────────────────────────────────────────
+                    settingsSectionLabel("Trakt")
+                    VStack(spacing: 0) {
+                        if traktAuth.isConnected {
+                            HStack(spacing: 12) {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 7)
+                                        .fill(Color(red: 0.92, green: 0.27, blue: 0.0))
+                                        .frame(width: 28, height: 28)
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .font(.system(size: 14, weight: .semibold))
+                                        .foregroundColor(.white)
+                                }
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Connected")
+                                        .font(.subheadline)
+                                        .foregroundColor(.white)
+                                    Text("Watchlist synced to Upcoming")
+                                        .font(.caption)
+                                        .foregroundColor(NightarcTheme.textTertiary)
+                                }
+                                Spacer()
+                                Button("Disconnect") {
+                                    guard let profile = profileManager.currentProfile else { return }
+                                    Task { await traktAuth.disconnect(profileId: profile.id) }
+                                }
+                                .font(.caption.weight(.semibold))
+                                .foregroundColor(.red)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 5)
+                                .background(Color.red.opacity(0.1))
+                                .cornerRadius(8)
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 11)
+                        } else {
+                            Button {
+                                guard let profile = profileManager.currentProfile else { return }
+                                traktAuth.connect(profileId: profile.id)
+                            } label: {
+                                settingsRowLabel(
+                                    icon: "tv.and.mediabox",
+                                    iconColor: Color(red: 0.92, green: 0.27, blue: 0.0),
+                                    title: "Connect Trakt",
+                                    subtitle: traktAuth.isConnecting ? "Waiting for authorization…" : "Sync your watchlist to Upcoming"
+                                )
+                            }
+                            .disabled(traktAuth.isConnecting)
                         }
                     }
                     .glassCard(cornerRadius: 14)
@@ -198,6 +252,15 @@ struct SettingsScreen: View {
             .sheet(isPresented: $showAddons) { AddonsScreen() }
             .sheet(isPresented: $showCatalogManagement) { CatalogManagementScreen() }
             .sheet(isPresented: $showSubtitleAppearance) { SubtitleAppearanceScreen() }
+            .task {
+                if let profile = profileManager.currentProfile {
+                    await TraktAuthService.shared.loadToken(profileId: profile.id)
+                }
+            }
+            .onChange(of: profileManager.currentProfile) { _, profile in
+                guard let profile else { return }
+                Task { await TraktAuthService.shared.loadToken(profileId: profile.id) }
+            }
         }
     }
 

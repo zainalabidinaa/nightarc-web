@@ -12,6 +12,7 @@ struct LibraryScreen: View {
     @StateObject private var addonRepo = AddonRepository.shared
     @StateObject private var likedRepo = LikedRepository.shared
     @StateObject private var upcomingService = UpcomingItemsService.shared
+    @StateObject private var traktAuth = TraktAuthService.shared
     @StateObject private var watchProgressRepo = WatchProgressRepository.shared
     @EnvironmentObject var profileManager: ProfileManager
 
@@ -47,6 +48,7 @@ struct LibraryScreen: View {
             await libraryRepo.loadLibrary(profileId: profile.id)
             await watchProgressRepo.loadAll(profileId: profile.id)
             await likedRepo.loadLibrary()
+            await TraktAuthService.shared.loadToken(profileId: profile.id)
             await upcomingService.refresh(likedItems: likedRepo.likedItems)
             await resolveLibraryArtwork()
         }
@@ -71,7 +73,15 @@ struct LibraryScreen: View {
     }
 
     private var upcomingItems: [LikedItem] {
-        likedRepo.likedItems.filter { upcomingService.isUpcoming($0.mediaId) }
+        let liked = likedRepo.likedItems.filter { upcomingService.isUpcoming($0.mediaId) }
+        let traktOnly = upcomingService.traktUpcomingItems.filter { upcomingService.isUpcoming($0.mediaId) }
+        // Deduplicate: liked items take priority; Trakt items sharing a tmdbId are dropped
+        let likedTmdbIds = Set(liked.compactMap(\.tmdbId))
+        let uniqueTrakt = traktOnly.filter { item in
+            guard let tmdbId = item.tmdbId else { return true }
+            return !likedTmdbIds.contains(tmdbId)
+        }
+        return liked + uniqueTrakt
     }
 
     // MARK: - Watchlist Section
@@ -258,10 +268,21 @@ struct LibraryScreen: View {
             .clipShape(RoundedRectangle(cornerRadius: 6))
 
             VStack(alignment: .leading, spacing: 3) {
-                Text(item.name)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundColor(.white)
-                    .lineLimit(1)
+                HStack(spacing: 5) {
+                    Text(item.name)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundColor(.white)
+                        .lineLimit(1)
+                    if item.mediaId.hasPrefix("trakt:") {
+                        Text("Trakt")
+                            .font(.system(size: 9, weight: .bold))
+                            .foregroundColor(Color(red: 0.92, green: 0.27, blue: 0.0))
+                            .padding(.horizontal, 4)
+                            .padding(.vertical, 2)
+                            .background(Color(red: 0.92, green: 0.27, blue: 0.0).opacity(0.15))
+                            .cornerRadius(4)
+                    }
+                }
                 Text(item.mediaType == "movie" ? "Movie" : "Series")
                     .font(.caption)
                     .foregroundColor(NightarcTheme.textTertiary)

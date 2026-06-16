@@ -35,6 +35,7 @@ public final class MetadataIntegrationStore: ObservableObject {
     private let defaults: UserDefaults
     private let tvdbKey = "luna.metadataIntegrations.tvdbAPIKey"
     private let tmdbKey = "luna.metadataIntegrations.tmdbAPIKey"
+    private let traktKey = "nightarc.traktClientId"
 
     public convenience init() {
         self.init(defaults: .standard)
@@ -64,6 +65,14 @@ public final class MetadataIntegrationStore: ObservableObject {
         tmdbAPIKey = value.trimmingCharacters(in: .whitespacesAndNewlines)
         defaults.set(tmdbAPIKey, forKey: tmdbKey)
         revision += 1
+    }
+
+    public var traktClientId: String {
+        get { defaults.string(forKey: traktKey) ?? NightarcConfig.traktClientId ?? "" }
+        set {
+            defaults.set(newValue.trimmingCharacters(in: .whitespacesAndNewlines), forKey: traktKey)
+            revision += 1
+        }
     }
 }
 

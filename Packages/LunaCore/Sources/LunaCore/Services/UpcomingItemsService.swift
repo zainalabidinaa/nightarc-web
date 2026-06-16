@@ -13,6 +13,7 @@ public final class UpcomingItemsService: ObservableObject {
     public static let shared = UpcomingItemsService()
 
     @Published public private(set) var upcomingInfo: [String: UpcomingInfo] = [:]
+    @Published public private(set) var traktUpcomingItems: [LikedItem] = []
 
     private let base = "https://api.themoviedb.org/3"
     private var apiKey: String? { MetadataIntegrationStore.shared.effectiveTMDBAPIKey }
@@ -57,7 +58,59 @@ public final class UpcomingItemsService: ObservableObject {
         }
         upcomingInfo = result
         lastRefresh = Date()
+
+        // Merge Trakt watchlist items if the user is connected
+        await mergeTraktItems(likedItems: likedItems)
     }
+
+    // MARK: - Trakt merge
+
+    private func mergeTraktItems(likedItems: [LikedItem]) async {
+        guard TraktAuthService.shared.isConnected,
+              let token = TraktAuthService.shared.accessToken else {
+            traktUpcomingItems = []
+            return
+        }
+        let watchlist = await TraktService.shared.fetchWatchlist(accessToken: token)
+
+        // Build a set of tmdbIds already in likedItems so we can deduplicate
+        let likedTmdbIds = Set(likedItems.compactMap(\.tmdbId))
+
+        var merged: [LikedItem] = []
+        for entry in watchlist {
+            // Skip if already represented in liked items by tmdbId
+            if let tmdbId = entry.tmdbId, likedTmdbIds.contains(tmdbId) { continue }
+            let mediaId = "trakt:\(entry.traktId)"
+            let item = LikedItem(
+                mediaId: mediaId,
+                mediaType: entry.mediaType,
+                name: entry.title,
+                poster: nil,
+                tmdbId: entry.tmdbId
+            )
+            merged.append(item)
+        }
+        traktUpcomingItems = merged
+
+        // Also fetch upcoming info for Trakt items that have a TMDB id
+        guard let key = apiKey, !key.isEmpty else { return }
+        await withTaskGroup(of: (String, UpcomingInfo?).self) { group in
+            for item in merged where item.tmdbId != nil {
+                group.addTask {
+                    guard let tmdbId = item.tmdbId else { return (item.mediaId, nil) }
+                    let info = await self.fetchUpcomingInfo(mediaId: item.mediaId, tmdbId: tmdbId, mediaType: item.mediaType, apiKey: key)
+                    return (item.mediaId, info)
+                }
+            }
+            var extra = upcomingInfo
+            for await (mediaId, info) in group {
+                if let info { extra[mediaId] = info }
+            }
+            upcomingInfo = extra
+        }
+    }
+
+    // MARK: - TMDB helpers
 
     private func resolveTMDBId(imdbId: String, mediaType: String, apiKey: String) async -> Int? {
         // Only attempt for plain IMDb IDs (tt\d+), not episode IDs.
