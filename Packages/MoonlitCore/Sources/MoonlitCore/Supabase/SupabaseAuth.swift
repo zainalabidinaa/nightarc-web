@@ -161,7 +161,10 @@ public actor SupabaseAuth {
         request.setValue(anonKey, forHTTPHeaderField: "apikey")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        let body: [String: String] = ["email": email]
+        let body: [String: String] = [
+            "email": email,
+            "redirect_to": "https://trymoonlit.app/login"
+        ]
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
 
         let (data, response) = try await session.data(for: request)
