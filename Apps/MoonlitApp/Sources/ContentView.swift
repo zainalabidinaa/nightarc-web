@@ -33,6 +33,16 @@ struct ContentView: View {
         .onChange(of: profileManager.currentProfile) { _, profile in
             roleManager.evaluateRole(profile: profile)
         }
+        .onChange(of: profileManager.hasRestoredSession) { _, restored in
+            if restored, let profile = profileManager.currentProfile {
+                roleManager.evaluateRole(profile: profile)
+            }
+        }
+        .onAppear {
+            if profileManager.hasRestoredSession, let profile = profileManager.currentProfile {
+                roleManager.evaluateRole(profile: profile)
+            }
+        }
         .onOpenURL { url in
             TraktAuthService.shared.handleCallback(url: url)
         }
