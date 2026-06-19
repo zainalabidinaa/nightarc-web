@@ -16,10 +16,22 @@ public actor SupabaseClient {
         self.decoder = JSONDecoder()
         self.encoder = JSONEncoder()
 
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSZZZZZ"
-        self.decoder.dateDecodingStrategy = .formatted(dateFormatter)
-        self.encoder.dateEncodingStrategy = .formatted(dateFormatter)
+        let isoFormatter = ISO8601DateFormatter()
+        isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        self.decoder.dateDecodingStrategy = .custom { decoder in
+            let container = try decoder.singleValueContainer()
+            let dateString = try container.decode(String.self)
+            if let date = isoFormatter.date(from: dateString) { return date }
+            // Fallback: try without fractional seconds
+            let noFraction = ISO8601DateFormatter()
+            noFraction.formatOptions = [.withInternetDateTime]
+            if let date = noFraction.date(from: dateString) { return date }
+            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid date: \(dateString)")
+        }
+        self.encoder.dateEncodingStrategy = .custom { date, encoder in
+            var container = encoder.singleValueContainer()
+            try container.encode(isoFormatter.string(from: date))
+        }
 
         let config = URLSessionConfiguration.default
         config.timeoutIntervalForRequest = 10
