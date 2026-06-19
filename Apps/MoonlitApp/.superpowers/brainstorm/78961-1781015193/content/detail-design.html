@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detail Screen Design</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0a0a0f; color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif; padding: 20px; }
+  h2 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .subtitle { color: #888; font-size: 14px; margin-bottom: 24px; }
+  .row { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 28px; }
+  .col { flex: 1; min-width: 240px; max-width: 320px; }
+  .col-label { font-size: 11px; font-weight: 600; color: #555; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; text-align: center; }
+
+  /* Phone */
+  .phone { background: #111; border-radius: 30px; padding: 0; border: 1px solid rgba(255,255,255,0.1); overflow: hidden; position: relative; }
+  .phone-inner { padding: 0; }
+
+  /* Backdrop hero */
+  .backdrop { width: 100%; height: 200px; background: linear-gradient(135deg, #1a2a4a 0%, #2d1a3a 60%, #1a2a1a 100%); position: relative; display: flex; align-items: flex-end; }
+  .backdrop-img { position: absolute; inset: 0; background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200"><rect fill="%23102030" width="320" height="200"/><text x="160" y="110" text-anchor="middle" font-size="60" opacity="0.15">🎬</text></svg>'); background-size: cover; }
+  .backdrop-gradient { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 30%, #111 100%); }
+  .backdrop-title { position: relative; z-index: 1; padding: 12px 14px; }
+  .genre-tag { font-size: 10px; color: rgba(255,255,255,0.5); margin-bottom: 4px; }
+  .show-title { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; }
+  .meta-row { display: flex; gap: 8px; align-items: center; margin-top: 4px; }
+  .star { font-size: 10px; color: #fbbf24; }
+  .meta-tag { font-size: 10px; color: rgba(255,255,255,0.5); }
+
+  /* Content below hero */
+  .detail-body { padding: 10px 14px; background: #111; }
+  .action-row { display: flex; gap: 8px; margin-bottom: 12px; }
+  .play-btn { flex: 1; background: #fff; color: #000; border-radius: 10px; padding: 10px; text-align: center; font-size: 13px; font-weight: 700; }
+  .secondary-btn { width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+
+  /* Description — truncated, tappable */
+  .description-block { margin-bottom: 12px; }
+  .desc-text { font-size: 12px; color: rgba(255,255,255,0.65); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .desc-tap-hint { font-size: 11px; color: #7C3AED; margin-top: 4px; font-weight: 500; }
+
+  /* Cast section */
+  .section-title { font-size: 13px; font-weight: 700; margin-bottom: 10px; }
+  .cast-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; }
+  .cast-scroll::-webkit-scrollbar { display: none; }
+  .cast-card { flex-shrink: 0; width: 72px; cursor: pointer; }
+  .cast-photo { width: 72px; height: 90px; border-radius: 12px; background: linear-gradient(135deg, #2a3a4a, #1a2030); display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 5px; overflow: hidden; position: relative; }
+  .cast-photo-real { position: absolute; inset: 0; background-size: cover; background-position: center; border-radius: 12px; }
+  .cast-name { font-size: 10px; color: #fff; font-weight: 500; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cast-role { font-size: 9px; color: #666; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* Description sheet overlay */
+  .sheet-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 10; display: flex; align-items: flex-end; border-radius: 30px; overflow: hidden; }
+  .sheet { background: rgba(28,28,35,0.96); backdrop-filter: blur(24px); border-radius: 20px 20px 0 0; padding: 14px; width: 100%; border-top: 1px solid rgba(255,255,255,0.1); }
+  .sheet-handle { width: 36px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; margin: 0 auto 12px; }
+  .sheet-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+  .sheet-body { font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6; max-height: 200px; overflow-y: auto; }
+
+  /* Actor bio screen */
+  .actor-screen { background: #111; }
+  .actor-photos { display: flex; gap: 6px; padding: 10px 14px 6px; overflow-x: auto; }
+  .actor-photos::-webkit-scrollbar { display: none; }
+  .actor-photo-card { flex-shrink: 0; width: 90px; height: 110px; border-radius: 12px; background: linear-gradient(135deg, #2a3a4a, #1a2030); display: flex; align-items: center; justify-content: center; font-size: 30px; }
+  .actor-photo-card.primary { width: 110px; height: 130px; }
+  .actor-body { padding: 10px 14px; }
+  .actor-name { font-size: 18px; font-weight: 800; margin-bottom: 2px; }
+  .actor-bio { font-size: 11px; color: rgba(255,255,255,0.6); line-height: 1.5; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .show-more { font-size: 11px; color: #7C3AED; font-weight: 500; }
+  .info-section { margin-top: 10px; }
+  .info-row { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .info-key { font-size: 11px; color: #666; font-weight: 500; }
+  .info-val { font-size: 11px; color: rgba(255,255,255,0.8); text-align: right; max-width: 60%; }
+  .known-for-row { display: flex; gap: 8px; overflow-x: auto; margin-top: 10px; }
+  .known-for-row::-webkit-scrollbar { display: none; }
+  .kf-card { flex-shrink: 0; width: 70px; }
+  .kf-poster { width: 70px; height: 100px; border-radius: 8px; background: linear-gradient(135deg, #1a3a2a, #2a1a3a); display: flex; align-items: center; justify-content: center; font-size: 20px; }
+  .kf-title { font-size: 9px; color: #888; text-align: center; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* Annotations */
+  .annotations { max-width: 700px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+  .ann { padding: 10px 14px; background: rgba(255,255,255,0.04); border-radius: 10px; border-left: 3px solid; }
+  .ann .lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+  .ann p { font-size: 12px; color: #aaa; line-height: 1.5; }
+
+  .nav-bar { display: flex; align-items: center; padding: 10px 14px 8px; }
+  .back-btn { font-size: 13px; color: #7C3AED; font-weight: 500; }
+  .nav-title-sm { flex: 1; text-align: center; font-size: 14px; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<h2>Detail Screen — Design Section 2</h2>
+<p class="subtitle">Description bottom sheet · Large clickable cast cards · Actor bio page</p>
+
+<div class="row">
+
+  <!-- Detail screen — description sheet open -->
+  <div class="col">
+    <div class="col-label">Description sheet (tapped)</div>
+    <div class="phone" style="height:520px">
+      <div class="phone-inner">
+        <div class="backdrop">
+          <div class="backdrop-img"></div>
+          <div class="backdrop-gradient"></div>
+          <div class="backdrop-title">
+            <div class="genre-tag">Mystery · TV-MA</div>
+            <div class="show-title">FROM</div>
+            <div class="meta-row">
+              <span class="star">★</span><span class="meta-tag">8.5 · 2022</span>
+            </div>
+          </div>
+        </div>
+        <div class="detail-body">
+          <div class="action-row">
+            <div class="play-btn">▶ Resume S01E07 · 31m left</div>
+            <div class="secondary-btn">🔖</div>
+            <div class="secondary-btn">❤️</div>
+          </div>
+          <div class="description-block">
+            <div class="desc-text">Unravel the mystery of a nightmarish town in middle America that traps all those who enter. As the unwilling residents fight to keep a sense of normalcy...</div>
+            <div class="desc-tap-hint">Read more →</div>
+          </div>
+          <div class="section-title">Cast</div>
+          <div class="cast-scroll">
+            <div class="cast-card">
+              <div class="cast-photo">👨🏾</div>
+              <div class="cast-name">Harold P.</div>
+              <div class="cast-role">Boyd Stevens</div>
+            </div>
+            <div class="cast-card">
+              <div class="cast-photo">👩🏼</div>
+              <div class="cast-name">Catalina S.</div>
+              <div class="cast-role">Tabitha</div>
+            </div>
+            <div class="cast-card">
+              <div class="cast-photo">👨🏻</div>
+              <div class="cast-name">Ricky He</div>
+              <div class="cast-role">Kenny Liu</div>
+            </div>
+            <div class="cast-card">
+              <div class="cast-photo">👩</div>
+              <div class="cast-name">Avery Konrad</div>
+              <div class="cast-role">Sara</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sheet overlay -->
+      <div class="sheet-overlay">
+        <div class="sheet">
+          <div class="sheet-handle"></div>
+          <div class="sheet-title">FROM</div>
+          <div class="sheet-body">Unravel the mystery of a nightmarish town in middle America that traps all those who enter. As the unwilling residents fight to keep a sense of normalcy and search for a way out, they must also survive the threats of the surrounding forest – including the terrifying creatures that come out when the sun goes down.<br><br>Created by John Griffin. Season 3 now streaming.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Actor bio page -->
+  <div class="col">
+    <div class="col-label">Actor bio page (tapped cast card)</div>
+    <div class="phone" style="height:520px;overflow-y:auto">
+      <div class="actor-screen">
+        <div class="nav-bar">
+          <div class="back-btn">‹ FROM</div>
+          <div class="nav-title-sm">Harold Perrineau</div>
+          <div style="width:60px"></div>
+        </div>
+        <!-- Multi-photo strip -->
+        <div class="actor-photos">
+          <div class="actor-photo-card primary">🧑🏾</div>
+          <div class="actor-photo-card">🧑🏾</div>
+          <div class="actor-photo-card">🧑🏾</div>
+        </div>
+        <div class="actor-body">
+          <div class="actor-name">Harold Perrineau</div>
+          <div style="font-size:11px;color:#7C3AED;margin-bottom:8px;font-weight:500">Boyd Stevens in FROM</div>
+          <div class="actor-bio">Harold Perrineau (born August 7, 1963) is an American actor known for the roles of Michael Dawson in Lost, Augustus Hill in Oz, and Mercutio in Romeo + Juliet.</div>
+          <div class="show-more">Show more ↓</div>
+
+          <div class="info-section">
+            <div class="info-row">
+              <span class="info-key">Born</span>
+              <span class="info-val">August 7, 1963 (62 years)</span>
+            </div>
+            <div class="info-row">
+              <span class="info-key">Birthplace</span>
+              <span class="info-val">Brooklyn, New York</span>
+            </div>
+            <div class="info-row">
+              <span class="info-key">Also known as</span>
+              <span class="info-val">Harold Perrineau Jr.</span>
+            </div>
+            <div class="info-row">
+              <span class="info-key">IMDb</span>
+              <span class="info-val" style="color:#7C3AED">nm0674782 ↗</span>
+            </div>
+          </div>
+
+          <div class="section-title" style="margin-top:14px;font-size:12px">Known For</div>
+          <div class="known-for-row">
+            <div class="kf-card">
+              <div class="kf-poster">🏝️</div>
+              <div class="kf-title">Lost</div>
+            </div>
+            <div class="kf-card">
+              <div class="kf-poster">⚖️</div>
+              <div class="kf-title">Oz</div>
+            </div>
+            <div class="kf-card">
+              <div class="kf-poster">🎭</div>
+              <div class="kf-title">Romeo+Juliet</div>
+            </div>
+            <div class="kf-card">
+              <div class="kf-poster">🏘️</div>
+              <div class="kf-title">FROM</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="annotations">
+  <div class="ann" style="border-color:#7C3AED">
+    <div class="lbl" style="color:#7C3AED">Description sheet</div>
+    <p>Tapping anywhere on the truncated description (or "Read more →") opens a bottom sheet with the full synopsis. Episode descriptions use the same sheet when tapped in the episodes list.</p>
+  </div>
+  <div class="ann" style="border-color:#60a5fa">
+    <div class="lbl" style="color:#60a5fa">Cast cards</div>
+    <p>Larger portrait cards (72×90pt) instead of small circles. Shows character role below name. Horizontally scrollable. Tapping navigates to the actor bio page.</p>
+  </div>
+  <div class="ann" style="border-color:#34d399">
+    <div class="lbl" style="color:#34d399">Actor bio page</div>
+    <p>Powered by TMDB Person API. Multiple photos in a horizontal strip. Bio, personal info table, IMDb link, and "Known For" filmography row. Back nav returns to the originating show.</p>
+  </div>
+  <div class="ann" style="border-color:#f59e0b">
+    <div class="lbl" style="color:#f59e0b">❤️ Like button</div>
+    <p>New heart button next to the bookmark on the detail screen — this feeds into the "Liked" tab in the new Library. Library now has two tabs: Watchlist (saved) and Liked.</p>
+  </div>
+</div>
+
+<div style="margin-top:16px;padding:14px;background:rgba(255,255,255,0.04);border-radius:10px;border:1px solid rgba(255,255,255,0.08);max-width:700px">
+  <p style="font-size:13px;color:#ccc">Does this look right? Last section: <strong>Library</strong> redesign with Watchlist + Liked tabs.</p>
+</div>
+
+<script src="/helper.js"></script>
+</body>
+</html>

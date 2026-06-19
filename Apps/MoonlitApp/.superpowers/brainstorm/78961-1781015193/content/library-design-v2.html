@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Library Design v2</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0a0a0f; color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif; padding: 20px; }
+  h2 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .subtitle { color: #888; font-size: 14px; margin-bottom: 24px; }
+  .row { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 28px; }
+  .col { flex: 1; min-width: 260px; max-width: 340px; }
+  .col-label { font-size: 11px; font-weight: 600; color: #555; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; text-align: center; }
+  .phone { background: #111; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); overflow: hidden; }
+  .phone-scroll { height: 580px; overflow-y: auto; }
+  .phone-scroll::-webkit-scrollbar { width: 3px; }
+  .phone-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+  .nav-large { font-size: 26px; font-weight: 700; padding: 12px 14px 10px; position: sticky; top: 0; background: #111; z-index: 5; }
+
+  /* Section header row */
+  .section-header { display: flex; align-items: baseline; justify-content: space-between; padding: 16px 14px 10px; }
+  .section-header:first-of-type { padding-top: 4px; }
+  .section-name { font-size: 16px; font-weight: 700; }
+  .section-count { font-size: 11px; color: #555; font-weight: 500; }
+
+  /* Poster grid — inline under each section */
+  .poster-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 0 14px 4px; }
+  .poster-card { position: relative; }
+  .poster-img { width: 100%; aspect-ratio: 2/3; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 26px; position: relative; overflow: hidden; }
+  .p1 { background: linear-gradient(135deg,#1a3060,#3a1a60); }
+  .p2 { background: linear-gradient(135deg,#601a1a,#3a601a); }
+  .p3 { background: linear-gradient(135deg,#1a6060,#601a60); }
+  .p4 { background: linear-gradient(135deg,#3a2a10,#102a3a); }
+  .p5 { background: linear-gradient(135deg,#2a1060,#601020); }
+  .p6 { background: linear-gradient(135deg,#106030,#301060); }
+  .p7 { background: linear-gradient(135deg,#402010,#104040); }
+  .p8 { background: linear-gradient(135deg,#203040,#402030); }
+
+  /* Rating badges */
+  .rating-row { position: absolute; bottom: 5px; left: 4px; right: 4px; display: flex; gap: 3px; flex-wrap: wrap; }
+  .badge { font-size: 8px; font-weight: 700; padding: 2px 4px; border-radius: 4px; backdrop-filter: blur(8px); }
+  .badge.imdb { background: rgba(245,197,24,0.88); color: #000; }
+  .badge.rt { background: rgba(250,80,60,0.88); color: #fff; }
+
+  /* Progress bar */
+  .progress-bar { position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: rgba(255,255,255,0.12); }
+  .progress-fill { height: 100%; background: #7C3AED; }
+
+  .poster-title { font-size: 10px; color: #ccc; margin-top: 4px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* Upcoming — horizontal list rows (not grid) to show release info */
+  .upcoming-list { padding: 0 14px 4px; display: flex; flex-direction: column; gap: 8px; }
+  .upcoming-item { display: flex; gap: 10px; align-items: center; background: rgba(255,255,255,0.04); border-radius: 12px; padding: 8px; }
+  .upcoming-poster { width: 48px; height: 68px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .upcoming-info { flex: 1; }
+  .upcoming-title { font-size: 12px; font-weight: 600; color: #fff; }
+  .upcoming-type { font-size: 10px; color: #666; margin-top: 2px; }
+  .upcoming-badge { display: inline-flex; align-items: center; gap: 4px; margin-top: 5px; font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 20px; }
+  .upcoming-badge.movie { background: rgba(124,58,237,0.18); color: #a78bfa; border: 1px solid rgba(124,58,237,0.3); }
+  .upcoming-badge.series { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.25); }
+
+  /* Section divider */
+  .divider { height: 1px; background: rgba(255,255,255,0.05); margin: 8px 14px 0; }
+
+  /* Annotations */
+  .annotations { max-width: 700px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+  .ann { padding: 10px 14px; background: rgba(255,255,255,0.04); border-radius: 10px; border-left: 3px solid; }
+  .ann .lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+  .ann p { font-size: 12px; color: #aaa; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<h2>Library Redesign — v2 <span style="font-size:12px;color:#22C55E;background:rgba(34,197,94,0.12);padding:2px 8px;border-radius:20px;font-weight:600;vertical-align:middle">Inline sections</span></h2>
+<p class="subtitle">One scrollable page · Watchlist → Liked → Upcoming (unreleased / new season pending)</p>
+
+<div class="row">
+
+  <div class="col">
+    <div class="col-label">Library — full page (scroll down)</div>
+    <div class="phone">
+      <div class="phone-scroll">
+        <div class="nav-large">Library</div>
+
+        <!-- ── WATCHLIST ─────────────────── -->
+        <div class="section-header">
+          <div class="section-name">🔖 Watchlist</div>
+          <div class="section-count">6 titles</div>
+        </div>
+        <div class="poster-grid">
+          <div class="poster-card">
+            <div class="poster-img p1">🎬
+              <div class="rating-row"><span class="badge imdb">7.0</span><span class="badge rt">58%</span></div>
+              <div class="progress-bar"><div class="progress-fill" style="width:61%"></div></div>
+            </div>
+            <div class="poster-title">Man on Fire</div>
+          </div>
+          <div class="poster-card">
+            <div class="poster-img p2">👻
+              <div class="rating-row"><span class="badge imdb">7.3</span></div>
+            </div>
+            <div class="poster-title">Backrooms</div>
+          </div>
+          <div class="poster-card">
+            <div class="poster-img p3">🎭
+              <div class="rating-row"><span class="badge imdb">5.9</span><span class="badge rt">27%</span></div>
+              <div class="progress-bar"><div class="progress-fill" style="width:30%"></div></div>
+            </div>
+            <div class="poster-title">Scary Movie</div>
+          </div>
+          <div class="poster-card">
+            <div class="poster-img p4">🕷️
+              <div class="rating-row"><span class="badge imdb">8.5</span></div>
+            </div>
+            <div class="poster-title">Spider-Noir</div>
+          </div>
+          <div class="poster-card">
+            <div class="poster-img p5">🏘️
+              <div class="rating-row"><span class="badge imdb">8.5</span></div>
+              <div class="progress-bar"><div class="progress-fill" style="width:75%"></div></div>
+            </div>
+            <div class="poster-title">FROM</div>
+          </div>
+          <div class="poster-card">
+            <div class="poster-img p6">🦸
+              <div class="rating-row"><span class="badge imdb">8.7</span><span class="badge rt">89%</span></div>
+            </div>
+            <div class="poster-title">The Boys</div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- ── LIKED ─────────────────────── -->
+        <div class="section-header">
+          <div class="section-name">❤️ Liked</div>
+          <div class="section-count">4 titles</div>
+        </div>
+        <div class="poster-grid">
+          <div class="poster-card">
+            <div class="poster-img p5">🏘️
+              <div class="rating-row"><span class="badge imdb">8.5</span></div>
+            </div>
+            <div class="poster-title">FROM</div>
+          </div>
+          <div class="poster-card">
+            <div class="poster-img p7">🌌
+              <div class="rating-row"><span class="badge imdb">8.7</span></div>
+            </div>
+            <div class="poster-title">Interstellar</div>
+          </div>
+          <div class="poster-card">
+            <div class="poster-img p8">⚔️
+              <div class="rating-row"><span class="badge imdb">9.2</span><span class="badge rt">89%</span></div>
+            </div>
+            <div class="poster-title">The Boys S4</div>
+          </div>
+          <div class="poster-card">
+            <div class="poster-img p6">🦸
+              <div class="rating-row"><span class="badge imdb">8.7</span></div>
+            </div>
+            <div class="poster-title">Dune: Part Two</div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- ── UPCOMING ───────────────────── -->
+        <div class="section-header">
+          <div class="section-name">🗓 Upcoming</div>
+          <div class="section-count">3 titles</div>
+        </div>
+        <div class="upcoming-list">
+
+          <div class="upcoming-item">
+            <div class="upcoming-poster p5">🏘️</div>
+            <div class="upcoming-info">
+              <div class="upcoming-title">FROM</div>
+              <div class="upcoming-type">Series · Season 4</div>
+              <div class="upcoming-badge series">📅 No air date yet</div>
+            </div>
+          </div>
+
+          <div class="upcoming-item">
+            <div class="upcoming-poster p7">🎬</div>
+            <div class="upcoming-info">
+              <div class="upcoming-title">Avatar 3</div>
+              <div class="upcoming-type">Movie</div>
+              <div class="upcoming-badge movie">📅 Dec 19, 2025</div>
+            </div>
+          </div>
+
+          <div class="upcoming-item">
+            <div class="upcoming-poster p8">⚔️</div>
+            <div class="upcoming-info">
+              <div class="upcoming-title">Stranger Things</div>
+              <div class="upcoming-type">Series · Season 5</div>
+              <div class="upcoming-badge series">📅 Jul 1, 2025</div>
+            </div>
+          </div>
+
+        </div>
+
+        <div style="height:20px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- How upcoming detection works -->
+  <div class="col" style="max-width:340px">
+    <div class="col-label">How Upcoming detection works</div>
+    <div style="background:rgba(255,255,255,0.04);border-radius:16px;padding:16px;border:1px solid rgba(255,255,255,0.08)">
+
+      <div style="margin-bottom:16px">
+        <div style="font-size:11px;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Movies</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;gap:8px">
+            <div style="width:20px;height:20px;border-radius:50%;background:#7C3AED;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">1</div>
+            <div style="font-size:12px;color:#bbb;line-height:1.5">Check TMDB <code style="background:rgba(255,255,255,0.08);padding:1px 5px;border-radius:4px;font-size:11px;color:#a5f3fc">release_date</code> from the detail response</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <div style="width:20px;height:20px;border-radius:50%;background:#7C3AED;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">2</div>
+            <div style="font-size:12px;color:#bbb;line-height:1.5">If <code style="background:rgba(255,255,255,0.08);padding:1px 5px;border-radius:4px;font-size:11px;color:#a5f3fc">release_date > today</code> → move to Upcoming with that date shown</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px">
+        <div style="font-size:11px;font-weight:700;color:#fbbf24;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">TV Series</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;gap:8px">
+            <div style="width:20px;height:20px;border-radius:50%;background:#b45309;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">1</div>
+            <div style="font-size:12px;color:#bbb;line-height:1.5">Check TMDB <code style="background:rgba(255,255,255,0.08);padding:1px 5px;border-radius:4px;font-size:11px;color:#a5f3fc">next_episode_to_air</code> on the series object</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <div style="width:20px;height:20px;border-radius:50%;background:#b45309;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">2</div>
+            <div style="font-size:12px;color:#bbb;line-height:1.5">If present → next season is announced. Show season number + air date (or "No date yet" if null)</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <div style="width:20px;height:20px;border-radius:50%;background:#b45309;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">3</div>
+            <div style="font-size:12px;color:#bbb;line-height:1.5">If <code style="background:rgba(255,255,255,0.08);padding:1px 5px;border-radius:4px;font-size:11px;color:#a5f3fc">status == "Ended"</code> → don't show in Upcoming</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.03);border-radius:10px;padding:10px;border:1px solid rgba(255,255,255,0.06)">
+        <div style="font-size:10px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px">Refresh strategy</div>
+        <div style="font-size:12px;color:#777;line-height:1.5">TMDB data is re-fetched for Liked items once per day in the background. No manual refresh needed — dates update automatically.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="annotations">
+  <div class="ann" style="border-color:#7C3AED">
+    <div class="lbl" style="color:#7C3AED">Inline sections</div>
+    <p>Single scrollable page — Watchlist → Liked → Upcoming stacked vertically with section headers. No tabs to switch between.</p>
+  </div>
+  <div class="ann" style="border-color:#fbbf24">
+    <div class="lbl" style="color:#fbbf24">Upcoming row style</div>
+    <p>Upcoming items use a horizontal list row (not grid) so there's room to show the release badge — movie date or season info.</p>
+  </div>
+  <div class="ann" style="border-color:#60a5fa">
+    <div class="lbl" style="color:#60a5fa">Auto-sort into sections</div>
+    <p>When you ❤️ a title, the app checks TMDB on save. If unreleased → goes straight to Upcoming. If available → goes to Liked. No manual sorting.</p>
+  </div>
+  <div class="ann" style="border-color:#34d399">
+    <div class="lbl" style="color:#34d399">Long-press context menu</div>
+    <p>Long-pressing any item shows: Mark as Watched · Remove from Library. On Continue Watching cards: Mark Watched · Revert to previous episode · Remove.</p>
+  </div>
+</div>
+
+<div style="margin-top:16px;padding:14px;background:rgba(255,255,255,0.04);border-radius:10px;border:1px solid rgba(255,255,255,0.08);max-width:700px">
+  <p style="font-size:13px;color:#ccc">Does this match what you had in mind? Ready to write the full spec doc.</p>
+</div>
+
+<script src="/helper.js"></script>
+</body>
+</html>

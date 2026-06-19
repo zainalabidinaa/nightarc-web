@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Moonlit Player V2 Preview</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #050506;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+      padding: 28px 20px;
+      min-height: 100vh;
+    }
+    h2 {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 10px;
+    }
+    .row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+
+    /* ─── PHONE SHELL ───────────────────────────────── */
+    .phone {
+      position: relative;
+      width: 320px;
+      height: 192px; /* landscape 16:9 ratio-ish for iPhone */
+      border-radius: 14px;
+      overflow: hidden;
+      background: #000;
+      box-shadow: 0 0 0 1.5px rgba(255,255,255,0.12), 0 20px 60px rgba(0,0,0,0.7);
+      flex-shrink: 0;
+    }
+
+    /* video backdrop */
+    .video-bg {
+      position: absolute;
+      inset: 0;
+      background: url('https://images.unsplash.com/photo-1524985069026-dd778a71c7b4?auto=format&fit=crop&w=800&q=60') center/cover;
+      filter: brightness(0.55);
+    }
+
+    /* ─── GLASS UTIL ─────────────────────────────────── */
+    .glass {
+      background: rgba(30,30,34,0.55);
+      border: 1px solid rgba(255,255,255,0.13);
+      backdrop-filter: blur(24px) saturate(1.4);
+      -webkit-backdrop-filter: blur(24px) saturate(1.4);
+      box-shadow: inset 0 1px rgba(255,255,255,0.1);
+    }
+    .glass-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 14px;
+    }
+
+    /* ─── CONTROLS LAYER ─────────────────────────────── */
+    .controls {
+      position: absolute;
+      inset: 0;
+      padding: 10px 14px 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* TOP BAR */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* CENTER TRANSPORT */
+    .transport {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 24px;
+      flex: 1;
+    }
+    .btn-play {
+      width: 52px; height: 52px; border-radius: 50%;
+      display: grid; place-items: center;
+      font-size: 22px;
+    }
+    .btn-skip {
+      width: 40px; height: 40px; border-radius: 50%;
+      display: grid; place-items: center;
+      font-size: 13px; font-weight: 700;
+      flex-direction: column;
+    }
+    .skip-inner { display: flex; flex-direction: column; align-items: center; gap: 0; line-height: 1; }
+    .skip-icon { font-size: 18px; }
+    .skip-num { font-size: 9px; font-weight: 800; }
+
+    /* BOTTOM */
+    .bottom-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .title-area {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+    .title-line {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .chevron { font-size: 9px; color: rgba(255,255,255,0.45); }
+    .subtitle-line { font-size: 10px; color: rgba(255,255,255,0.5); }
+
+    .pill-buttons {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 7px 12px;
+      border-radius: 999px;
+    }
+    .pill-icon { font-size: 14px; color: rgba(255,255,255,0.88); cursor: pointer; }
+
+    /* SCRUBBER */
+    .scrubber-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .scrubber-track {
+      position: relative;
+      height: 3px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.22);
+      overflow: visible;
+    }
+    .scrubber-fill {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 28%;
+      border-radius: 999px;
+      background: #fff;
+    }
+    .scrubber-thumb {
+      position: absolute;
+      left: 28%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 11px; height: 11px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.6);
+    }
+    .time-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      color: rgba(255,255,255,0.4);
+      font-weight: 500;
+    }
+
+    /* ─── LOADING STATE ──────────────────────────────── */
+    .loading-center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+    }
+    .movie-logo {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      text-shadow: 0 8px 30px rgba(0,0,0,0.95);
+      text-align: center;
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+    .provider-pill {
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.75);
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+    .loading-status {
+      position: absolute;
+      bottom: 12px;
+      left: 14px;
+      right: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 10px;
+      border-radius: 14px;
+      font-size: 9px;
+      color: rgba(255,255,255,0.6);
+    }
+    .spinner {
+      width: 11px; height: 11px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.25);
+      border-top-color: #fff;
+      animation: spin 0.8s linear infinite;
+      display: inline-block;
+      margin-right: 5px;
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 0.45; transform: scale(0.97); }
+      50% { opacity: 1; transform: scale(1); }
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── POPOVER PANEL ──────────────────────────────── */
+    .panel-overlay {
+      position: absolute;
+      inset: 0;
+    }
+    .side-panel {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      bottom: 10px;
+      width: 148px;
+      border-radius: 18px;
+      padding: 8px 0;
+      overflow: hidden;
+    }
+    .panel-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 12px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.8);
+      border-radius: 10px;
+      margin: 0 4px;
+    }
+    .panel-row.active {
+      background: rgba(255,255,255,0.14);
+      color: #fff;
+      font-weight: 700;
+    }
+    .panel-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+      margin: 3px 12px;
+    }
+    .panel-chevron { font-size: 9px; color: rgba(255,255,255,0.4); }
+
+    /* ─── MORE MENU (… popover) ──────────────────────── */
+    .more-menu {
+      position: absolute;
+      top: 52px;
+      right: 14px;
+      width: 160px;
+      border-radius: 18px;
+      padding: 6px 0;
+    }
+    .more-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 14px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.85);
+    }
+    .more-row .label { display: flex; align-items: center; gap: 7px; }
+    .more-row .icon { font-size: 13px; }
+    .more-row .badge {
+      font-size: 10px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.5);
+      background: rgba(255,255,255,0.1);
+      padding: 2px 7px;
+      border-radius: 999px;
+    }
+    .more-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+      margin: 2px 10px;
+    }
+
+    .note {
+      font-size: 11px;
+      color: rgba(255,255,255,0.35);
+      margin-top: 6px;
+      max-width: 320px;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- ROW 1 — PLAYING + LOADING                       -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <h2>State 1 · Playing (controls visible)</h2>
+  <div class="row">
+
+    <!-- PLAYING STATE -->
+    <div>
+      <div class="phone">
+        <div class="video-bg"></div>
+        <div class="controls">
+          <!-- Top bar -->
+          <div class="topbar">
+            <div class="glass-circle glass">✕</div>
+            <div class="glass-circle glass" style="font-size:11px">⬜↔</div>
+          </div>
+          <!-- Transport -->
+          <div class="transport">
+            <div class="btn-skip glass glass-circle">
+              <div class="skip-inner">
+                <span class="skip-icon">↩</span>
+                <span class="skip-num">15</span>
+              </div>
+            </div>
+            <div class="btn-play glass">▶</div>
+            <div class="btn-skip glass glass-circle">
+              <div class="skip-inner">
+                <span class="skip-icon">↪</span>
+                <span class="skip-num">15</span>
+              </div>
+            </div>
+          </div>
+          <!-- Bottom -->
+          <div>
+            <div class="bottom-row" style="margin-bottom:8px">
+              <div class="title-area">
+                <div class="title-line">Off Campus <span class="chevron">›</span></div>
+                <div class="subtitle-line">The Practice · S1 E3</div>
+              </div>
+              <div class="pill-buttons glass">
+                <span class="pill-icon">💬</span>
+                <span class="pill-icon">🔊</span>
+              </div>
+            </div>
+            <div class="scrubber-wrap">
+              <div class="scrubber-track">
+                <div class="scrubber-fill"></div>
+                <div class="scrubber-thumb"></div>
+              </div>
+              <div class="time-row"><span>00:20</span><span>50:25</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="note">Exact layout from recording.<br>Top: ✕ left · fit/fill right.<br>Bottom: title left · CC+Audio pill right.</p>
+    </div>
+
+    <!-- LOADING STATE -->
+    <div>
+      <div class="phone">
+        <div class="video-bg" style="filter:brightness(0.3) blur(8px)"></div>
+        <div class="loading-center">
+          <div class="movie-logo">Off<br>Campus</div>
+          <!-- NEW: provider pill below logo -->
+          <div class="provider-pill glass">⚡ Torrentio · 1080p</div>
+        </div>
+        <div class="loading-status glass">
+          <span><span class="spinner"></span>Opening stream…</span>
+          <span>Waiting for first frame</span>
+        </div>
+        <!-- top-left X still visible during loading -->
+        <div style="position:absolute;top:10px;left:14px">
+          <div class="glass-circle glass">✕</div>
+        </div>
+      </div>
+      <p class="note">Loading screen — movie logo pulses.<br><strong>NEW:</strong> provider name pill below logo<br>(e.g. "⚡ Torrentio · 1080p" from stream).</p>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- ROW 2 — PANELS                                  -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <h2>State 2 · Panels (slide from right)</h2>
+  <div class="row">
+
+    <!-- CC PANEL -->
+    <div>
+      <div class="phone">
+        <div class="video-bg"></div>
+        <!-- dimmed controls behind panel -->
+        <div class="controls" style="opacity:0.35">
+          <div class="topbar">
+            <div class="glass-circle glass">✕</div>
+            <div class="glass-circle glass" style="font-size:11px">⬜↔</div>
+          </div>
+          <div class="transport">
+            <div class="btn-skip glass glass-circle"><div class="skip-inner"><span class="skip-icon">↩</span><span class="skip-num">15</span></div></div>
+            <div class="btn-play glass">▶</div>
+            <div class="btn-skip glass glass-circle"><div class="skip-inner"><span class="skip-icon">↪</span><span class="skip-num">15</span></div></div>
+          </div>
+          <div>
+            <div class="bottom-row" style="margin-bottom:8px">
+              <div class="title-area">
+                <div class="title-line">Off Campus <span class="chevron">›</span></div>
+                <div class="subtitle-line">The Practice · S1 E3</div>
+              </div>
+              <div class="pill-buttons glass"><span class="pill-icon">💬</span><span class="pill-icon">🔊</span></div>
+            </div>
+            <div class="scrubber-wrap">
+              <div class="scrubber-track"><div class="scrubber-fill"></div><div class="scrubber-thumb"></div></div>
+              <div class="time-row"><span>00:20</span><span>50:25</span></div>
+            </div>
+          </div>
+        </div>
+        <!-- CC panel sliding from right -->
+        <div class="panel-overlay">
+          <div class="side-panel glass">
+            <div class="panel-row active">English <span class="panel-chevron">∨</span></div>
+            <div style="padding:2px 8px 6px; font-size:9px; color:rgba(255,255,255,0.45); padding-left:14px">SDH · eng ✓</div>
+            <div class="panel-divider"></div>
+            <div class="panel-row">Arabic <span class="panel-chevron">›</span></div>
+            <div class="panel-row">BAQ <span class="panel-chevron">›</span></div>
+            <div class="panel-row">Chinese <span class="panel-chevron">›</span></div>
+            <div class="panel-row">Danish <span class="panel-chevron">›</span></div>
+            <div class="panel-row">Dutch <span class="panel-chevron">›</span></div>
+            <div class="panel-divider"></div>
+            <div class="panel-row">None</div>
+          </div>
+        </div>
+      </div>
+      <p class="note">CC panel — slides from right.<br>Same behaviour as recording.</p>
+    </div>
+
+    <!-- AUDIO PANEL -->
+    <div>
+      <div class="phone">
+        <div class="video-bg"></div>
+        <div class="controls" style="opacity:0.35">
+          <div class="topbar">
+            <div class="glass-circle glass">✕</div>
+            <div class="glass-circle glass" style="font-size:11px">⬜↔</div>
+          </div>
+          <div class="transport">
+            <div class="btn-skip glass glass-circle"><div class="skip-inner"><span class="skip-icon">↩</span><span class="skip-num">15</span></div></div>
+            <div class="btn-play glass">▶</div>
+            <div class="btn-skip glass glass-circle"><div class="skip-inner"><span class="skip-icon">↪</span><span class="skip-num">15</span></div></div>
+          </div>
+          <div>
+            <div class="bottom-row" style="margin-bottom:8px">
+              <div class="title-area">
+                <div class="title-line">Off Campus <span class="chevron">›</span></div>
+                <div class="subtitle-line">The Practice · S1 E3</div>
+              </div>
+              <div class="pill-buttons glass"><span class="pill-icon">💬</span><span class="pill-icon">🔊</span></div>
+            </div>
+            <div class="scrubber-wrap">
+              <div class="scrubber-track"><div class="scrubber-fill"></div><div class="scrubber-thumb"></div></div>
+              <div class="time-row"><span>00:20</span><span>50:25</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="panel-overlay">
+          <div class="side-panel glass">
+            <div class="panel-row active">English 5.1 <span class="panel-chevron">✓</span></div>
+            <div class="panel-row">English AAC</div>
+            <div class="panel-row">Arabic</div>
+            <div class="panel-divider"></div>
+            <div style="padding:6px 14px; font-size:9px; color:rgba(255,255,255,0.4)">Audio Track</div>
+          </div>
+        </div>
+      </div>
+      <p class="note">Audio panel — same slide-in behaviour.</p>
+    </div>
+
+    <!-- … MORE MENU -->
+    <div>
+      <div class="phone">
+        <div class="video-bg"></div>
+        <div class="controls">
+          <div class="topbar">
+            <div class="glass-circle glass">✕</div>
+            <div class="glass-circle glass" style="font-size:11px">⬜↔</div>
+          </div>
+          <div class="transport" style="opacity:0.35">
+            <div class="btn-skip glass glass-circle"><div class="skip-inner"><span class="skip-icon">↩</span><span class="skip-num">15</span></div></div>
+            <div class="btn-play glass">▶</div>
+            <div class="btn-skip glass glass-circle"><div class="skip-inner"><span class="skip-icon">↪</span><span class="skip-num">15</span></div></div>
+          </div>
+          <div style="opacity:0.35">
+            <div class="bottom-row" style="margin-bottom:8px">
+              <div class="title-area">
+                <div class="title-line">Off Campus <span class="chevron">›</span></div>
+                <div class="subtitle-line">The Practice · S1 E3</div>
+              </div>
+              <div class="pill-buttons glass"><span class="pill-icon">💬</span><span class="pill-icon">🔊</span></div>
+            </div>
+            <div class="scrubber-wrap">
+              <div class="scrubber-track"><div class="scrubber-fill"></div><div class="scrubber-thumb"></div></div>
+              <div class="time-row"><span>00:20</span><span>50:25</span></div>
+            </div>
+          </div>
+        </div>
+        <!-- … menu drops down from top-right -->
+        <div class="more-menu glass">
+          <div class="more-row">
+            <div class="label"><span class="icon">🔁</span> Retry source</div>
+            <span class="badge">next</span>
+          </div>
+          <div class="more-row">
+            <div class="label"><span class="icon">📋</span> Sources</div>
+          </div>
+          <div class="more-divider"></div>
+          <div class="more-row">
+            <div class="label"><span class="icon">⏩</span> Speed</div>
+            <span class="badge">1×</span>
+          </div>
+          <div class="more-row" style="opacity:0.45">
+            <div class="label"><span class="icon">📺</span> 4K available</div>
+          </div>
+        </div>
+      </div>
+      <p class="note">… menu drops from top-right.<br>Contains: Retry · Sources · Speed · 4K.<br>The fit/fill button moves here too.</p>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- ROW 3 — SCRUBBER DETAIL                         -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <h2>Scrubber detail (expanded)</h2>
+  <div class="row">
+    <div style="background:#111; border-radius:14px; padding:20px 24px; width:320px">
+      <div style="margin-bottom:6px; display:flex; justify-content:space-between; font-size:12px; font-weight:700; color:rgba(255,255,255,0.85)">
+        <span>Off Campus</span>
+        <div style="display:flex; gap:10px">
+          <span style="font-size:13px">💬</span>
+          <span style="font-size:13px">🔊</span>
+        </div>
+      </div>
+      <div style="font-size:10px; color:rgba(255,255,255,0.4); margin-bottom:14px">The Practice · S1 E3</div>
+      <!-- fat scrubber (scrubbing state) -->
+      <div style="position:relative; height:6px; border-radius:999px; background:rgba(255,255,255,0.2); margin-bottom:5px">
+        <div style="position:absolute; left:0; top:0; bottom:0; width:28%; border-radius:999px; background:#fff"></div>
+        <div style="position:absolute; left:28%; top:50%; transform:translate(-50%,-50%); width:16px; height:16px; border-radius:50%; background:#fff; box-shadow:0 2px 6px rgba(0,0,0,0.5)"></div>
+      </div>
+      <div style="display:flex; justify-content:space-between; font-size:10px; color:rgba(255,255,255,0.4); font-weight:500">
+        <span>00:20</span><span>50:25</span>
+      </div>
+      <p style="font-size:10px; color:rgba(255,255,255,0.3); margin-top:10px">Normal: 3px thin line · Scrubbing: grows to 6px + large thumb</p>
+    </div>
+  </div>
+
+</body>
+</html>

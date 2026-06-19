@@ -1,0 +1,101 @@
+<h2>Which editor layout feels right?</h2>
+<p class="subtitle">Pick the layout that matches how you think about editing collections.</p>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 1.5rem;">
+
+  <div data-choice="a" onclick="toggleSelect(this)" style="cursor:pointer; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden;">
+    <div style="padding: 1rem; border-bottom: 0.5px solid var(--color-border-tertiary);">
+      <span style="font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:.05em; color:var(--color-text-secondary);">Option A</span>
+      <h3 style="margin: 4px 0 2px; font-size:15px; font-weight:500;">Sidebar + panel</h3>
+      <p style="font-size:12px; color:var(--color-text-secondary); margin:0;">List on left, edit on right</p>
+    </div>
+    <div style="padding: 12px; background: var(--color-background-secondary);">
+      <div style="display:flex; gap: 6px; height: 160px;">
+        <div style="width: 38%; background: var(--color-background-primary); border-radius: 6px; border: 0.5px solid var(--color-border-tertiary); padding: 8px; display:flex; flex-direction:column; gap:5px;">
+          <div style="font-size:9px; color:var(--color-text-secondary); font-weight:500; margin-bottom:3px;">COLLECTIONS</div>
+          <div style="background: #185FA5; border-radius:4px; padding: 5px 7px; font-size:9px; color:white;">Trending Shows</div>
+          <div style="background: var(--color-background-secondary); border-radius:4px; padding: 5px 7px; font-size:9px; color:var(--color-text-primary);">Trending Movies</div>
+          <div style="background: var(--color-background-secondary); border-radius:4px; padding: 5px 7px; font-size:9px; color:var(--color-text-primary);">Decades</div>
+          <div style="background: var(--color-background-secondary); border-radius:4px; padding: 5px 7px; font-size:9px; color:var(--color-text-primary);">Action</div>
+        </div>
+        <div style="flex:1; background: var(--color-background-primary); border-radius: 6px; border: 0.5px solid var(--color-border-tertiary); padding: 8px;">
+          <div style="font-size:10px; font-weight:500; margin-bottom:8px; color:var(--color-text-primary);">Trending Shows</div>
+          <div style="font-size:8px; color:var(--color-text-secondary); margin-bottom:3px;">BACKDROP IMAGE</div>
+          <div style="height:28px; background: var(--color-background-secondary); border-radius:4px; border: 0.5px solid var(--color-border-tertiary); margin-bottom:8px; display:flex; align-items:center; padding: 0 6px;"><span style="font-size:8px; color:var(--color-text-secondary);">https://i.postimg.cc/...</span></div>
+          <div style="font-size:8px; color:var(--color-text-secondary); margin-bottom:4px;">FOLDERS</div>
+          <div style="background: var(--color-background-secondary); border-radius:4px; padding:5px 7px; font-size:8px; margin-bottom:3px; display:flex; justify-content:space-between;"><span>Trending Shows</span><span style="color:#185FA5;">edit</span></div>
+          <div style="background: var(--color-background-secondary); border-radius:4px; padding:5px 7px; font-size:8px;">+ add folder</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div data-choice="b" onclick="toggleSelect(this)" style="cursor:pointer; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden;">
+    <div style="padding: 1rem; border-bottom: 0.5px solid var(--color-border-tertiary);">
+      <span style="font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:.05em; color:var(--color-text-secondary);">Option B</span>
+      <h3 style="margin: 4px 0 2px; font-size:15px; font-weight:500;">Accordion / tree</h3>
+      <p style="font-size:12px; color:var(--color-text-secondary); margin:0;">Expand collections inline</p>
+    </div>
+    <div style="padding: 12px; background: var(--color-background-secondary);">
+      <div style="background: var(--color-background-primary); border-radius: 6px; border: 0.5px solid var(--color-border-tertiary); padding: 8px; height: 160px; overflow: hidden; display:flex; flex-direction:column; gap:4px;">
+        <div style="border-radius:4px; border: 0.5px solid var(--color-border-tertiary); overflow:hidden;">
+          <div style="padding: 6px 8px; display:flex; justify-content:space-between; align-items:center; background: var(--color-background-secondary);">
+            <span style="font-size:9px; font-weight:500;">▾ Trending Shows</span>
+            <div style="display:flex; gap:6px;"><span style="font-size:8px; color:#185FA5;">edit</span><span style="font-size:8px; color:#A32D2D;">remove</span></div>
+          </div>
+          <div style="padding: 6px 8px 6px 20px; background: var(--color-background-primary); display:flex; flex-direction:column; gap:3px;">
+            <div style="display:flex; align-items:center; gap:6px; padding:4px 6px; background:var(--color-background-secondary); border-radius:4px;">
+              <div style="width:18px; height:18px; border-radius:3px; background:#378ADD;"></div>
+              <span style="font-size:8px;">Trending Shows</span>
+              <span style="font-size:8px; color:#185FA5; margin-left:auto;">edit</span>
+            </div>
+          </div>
+        </div>
+        <div style="border-radius:4px; border: 0.5px solid var(--color-border-tertiary);">
+          <div style="padding: 6px 8px; display:flex; justify-content:space-between; align-items:center; background: var(--color-background-secondary);">
+            <span style="font-size:9px; font-weight:500;">▸ Trending Movies</span>
+            <div style="display:flex; gap:6px;"><span style="font-size:8px; color:#185FA5;">edit</span><span style="font-size:8px; color:#A32D2D;">remove</span></div>
+          </div>
+        </div>
+        <div style="border-radius:4px; border: 0.5px solid var(--color-border-tertiary);">
+          <div style="padding: 6px 8px; display:flex; justify-content:space-between; align-items:center; background: var(--color-background-secondary);">
+            <span style="font-size:9px; font-weight:500;">▸ Decades</span>
+            <div style="display:flex; gap:6px;"><span style="font-size:8px; color:#185FA5;">edit</span><span style="font-size:8px; color:#A32D2D;">remove</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div data-choice="c" onclick="toggleSelect(this)" style="cursor:pointer; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden;">
+    <div style="padding: 1rem; border-bottom: 0.5px solid var(--color-border-tertiary);">
+      <span style="font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:.05em; color:var(--color-text-secondary);">Option C</span>
+      <h3 style="margin: 4px 0 2px; font-size:15px; font-weight:500;">Card grid + drawer</h3>
+      <p style="font-size:12px; color:var(--color-text-secondary); margin:0;">Grid overview, click to edit</p>
+    </div>
+    <div style="padding: 12px; background: var(--color-background-secondary);">
+      <div style="background: var(--color-background-primary); border-radius: 6px; border: 0.5px solid var(--color-border-tertiary); padding: 8px; height: 160px; overflow:hidden;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px;">
+          <div style="border-radius:5px; border: 0.5px solid var(--color-border-tertiary); overflow:hidden;">
+            <div style="height:36px; background:#185FA5; display:flex; align-items:center; justify-content:center;"><span style="font-size:7px; color:white; font-weight:500;">POSTER</span></div>
+            <div style="padding:5px;"><div style="font-size:8px; font-weight:500;">Trending Shows</div><div style="font-size:7px; color:var(--color-text-secondary);">1 folder</div></div>
+          </div>
+          <div style="border-radius:5px; border: 0.5px solid var(--color-border-tertiary); overflow:hidden;">
+            <div style="height:36px; background:#3B6D11; display:flex; align-items:center; justify-content:center;"><span style="font-size:7px; color:white; font-weight:500;">LANDSCAPE</span></div>
+            <div style="padding:5px;"><div style="font-size:8px; font-weight:500;">Trending Movies</div><div style="font-size:7px; color:var(--color-text-secondary);">1 folder</div></div>
+          </div>
+          <div style="border-radius:5px; border: 0.5px solid var(--color-border-tertiary); overflow:hidden;">
+            <div style="height:36px; background:#3C3489; display:flex; align-items:center; justify-content:center;"><span style="font-size:7px; color:white; font-weight:500;">POSTER</span></div>
+            <div style="padding:5px;"><div style="font-size:8px; font-weight:500;">Decades</div><div style="font-size:7px; color:var(--color-text-secondary);">5 folders</div></div>
+          </div>
+          <div style="border-radius:5px; border: 1.5px dashed var(--color-border-secondary); display:flex; align-items:center; justify-content:center; height:62px;">
+            <span style="font-size:18px; color:var(--color-text-secondary);">+</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p style="margin-top:1.5rem; font-size:13px; color:var(--color-text-secondary);">Click an option to select it, then reply in the terminal.</p>

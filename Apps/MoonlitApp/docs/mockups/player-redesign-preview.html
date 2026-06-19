@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Moonlit Player Issues Preview</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+      background: #050506;
+      color: #fff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 26px;
+      background: #050506;
+    }
+
+    .grid {
+      width: min(1460px, 100%);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .panel {
+      position: relative;
+      overflow: hidden;
+      min-height: 760px;
+      border-radius: 18px;
+      background: #09090b;
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 24px 80px rgba(0,0,0,0.42);
+    }
+
+    .panel-header {
+      position: absolute;
+      left: 16px;
+      top: 16px;
+      z-index: 5;
+      display: grid;
+      gap: 4px;
+      max-width: calc(100% - 32px);
+    }
+
+    .kicker {
+      font-size: 11px;
+      font-weight: 750;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.58);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.12;
+    }
+
+    .bg {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.78)),
+        url("https://images.unsplash.com/photo-1524985069026-dd778a71c7b4?auto=format&fit=crop&w=1400&q=80");
+      background-position: center;
+      background-size: cover;
+      filter: saturate(0.88);
+    }
+
+    .glass {
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(22, 23, 26, 0.42);
+      box-shadow: inset 0 1px rgba(255,255,255,0.11), 0 18px 46px rgba(0,0,0,0.34);
+      backdrop-filter: blur(30px) saturate(1.35);
+      -webkit-backdrop-filter: blur(30px) saturate(1.35);
+    }
+
+    .source-list {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      top: 92px;
+      bottom: 18px;
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .source-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 14px;
+      border-radius: 16px;
+    }
+
+    .source-row.pick {
+      outline: 2px solid rgba(255,255,255,0.74);
+      background: rgba(255,255,255,0.15);
+    }
+
+    .rank {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      background: rgba(255,255,255,0.12);
+    }
+
+    .source-main {
+      min-width: 0;
+      display: grid;
+      gap: 3px;
+    }
+
+    .source-title {
+      font-size: 14px;
+      font-weight: 720;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .source-meta {
+      color: rgba(255,255,255,0.6);
+      font-size: 12px;
+    }
+
+    .badge {
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.12);
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .status {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 18px;
+      color: rgba(255,255,255,0.72);
+      font-size: 12px;
+    }
+
+    .spinner {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.24);
+      border-top-color: #fff;
+      animation: spin 0.8s linear infinite;
+    }
+
+    .loading-center {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      text-align: center;
+    }
+
+    .logo-lockup {
+      display: grid;
+      gap: 18px;
+      justify-items: center;
+      animation: breathe 1.8s ease-in-out infinite;
+      transform: translateY(-20px);
+    }
+
+    .media-logo {
+      font-size: clamp(52px, 7vw, 86px);
+      line-height: 0.88;
+      font-weight: 900;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      text-shadow: 0 12px 40px rgba(0,0,0,0.96);
+    }
+
+    .provider-logo {
+      padding: 9px 13px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 720;
+      color: rgba(255,255,255,0.82);
+    }
+
+    .controls {
+      position: absolute;
+      inset: 0;
+      padding: 18px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      pointer-events: none;
+    }
+
+    .topbar,
+    .native-pill,
+    .dock,
+    .popover {
+      pointer-events: auto;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .round {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .title {
+      display: grid;
+      gap: 2px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 760;
+    }
+
+    .title span {
+      font-size: 11px;
+      color: rgba(255,255,255,0.58);
+      font-weight: 600;
+    }
+
+    .transport {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 22px;
+    }
+
+    .transport .round {
+      width: 62px;
+      height: 62px;
+      font-size: 24px;
+    }
+
+    .transport .small {
+      width: 46px;
+      height: 46px;
+      font-size: 16px;
+    }
+
+    .bottom {
+      display: grid;
+      gap: 12px;
+    }
+
+    .timeline {
+      height: 5px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.24);
+      overflow: hidden;
+    }
+
+    .timeline::before {
+      content: "";
+      display: block;
+      width: 38%;
+      height: 100%;
+      border-radius: inherit;
+      background: #fff;
+    }
+
+    .dock {
+      justify-self: center;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px;
+      border-radius: 999px;
+    }
+
+    .native-pill {
+      min-width: 54px;
+      height: 38px;
+      padding: 0 12px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 760;
+      color: rgba(255,255,255,0.92);
+    }
+
+    .popover {
+      position: absolute;
+      right: 18px;
+      bottom: 118px;
+      width: 246px;
+      border-radius: 24px;
+      padding: 10px;
+      overflow: hidden;
+    }
+
+    .row {
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      font-size: 14px;
+      color: rgba(255,255,255,0.86);
+    }
+
+    .row.active {
+      background: rgba(255,255,255,0.13);
+      color: #fff;
+      font-weight: 760;
+    }
+
+    .divider {
+      height: 1px;
+      margin: 4px 8px;
+      background: rgba(255,255,255,0.12);
+    }
+
+    .callout {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 18px;
+      padding: 13px 14px;
+      border-radius: 18px;
+      color: rgba(255,255,255,0.72);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    @keyframes breathe {
+      0%, 100% { opacity: 0.58; transform: translateY(-20px) scale(0.985); }
+      50% { opacity: 1; transform: translateY(-20px) scale(1); }
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 1040px) {
+      body { padding: 14px; }
+      .grid { grid-template-columns: 1fr; }
+      .panel { min-height: 680px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="grid">
+    <section class="panel">
+      <div class="bg"></div>
+      <div class="panel-header">
+        <div class="kicker">Automatic source rule</div>
+        <h1>Pick bolt, then cached, then Mbps</h1>
+      </div>
+      <div class="source-list">
+        <div class="source-row glass pick">
+          <div class="rank">1</div>
+          <div class="source-main">
+            <div class="source-title">Bolt source - 1080p WEB</div>
+            <div class="source-meta">Default streaming addon - loaded and ready</div>
+          </div>
+          <div class="badge">bolt</div>
+        </div>
+        <div class="source-row glass">
+          <div class="rank">2</div>
+          <div class="source-main">
+            <div class="source-title">Cached source - 4K HDR</div>
+            <div class="source-meta">Loaded after bolt, still above raw Mbps</div>
+          </div>
+          <div class="badge">cached</div>
+        </div>
+        <div class="source-row glass">
+          <div class="rank">3</div>
+          <div class="source-main">
+            <div class="source-title">High bitrate source - 4K</div>
+            <div class="source-meta">80 Mbps, used only if no bolt/cached source</div>
+          </div>
+          <div class="badge">80 Mbps</div>
+        </div>
+      </div>
+      <div class="status glass">
+        <span>Automatic waits for ready markers before launching.</span>
+        <span>3 of 5 addons loaded</span>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="bg"></div>
+      <div class="panel-header">
+        <div class="kicker">Pre-play loading</div>
+        <h1>Backdrop plus fading original logo</h1>
+      </div>
+      <div class="loading-center">
+        <div class="logo-lockup">
+          <div class="media-logo">Media<br>Logo</div>
+          <div class="provider-logo glass">Original source logo fades while player warms</div>
+        </div>
+      </div>
+      <div class="status glass">
+        <span style="display:flex;align-items:center;gap:9px"><span class="spinner"></span> Opening selected source...</span>
+        <span>Ready when first frame renders</span>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="bg"></div>
+      <div class="panel-header">
+        <div class="kicker">Native-style controls</div>
+        <h1>Only requested button/popover changes</h1>
+      </div>
+      <div class="controls">
+        <div class="topbar">
+          <div class="round glass">x</div>
+          <div class="title">Off Campus <span>The Practice</span></div>
+          <div class="round glass">...</div>
+        </div>
+        <div class="transport">
+          <div class="round small glass">15</div>
+          <div class="round glass">play</div>
+          <div class="round small glass">15</div>
+        </div>
+        <div class="bottom">
+          <div class="timeline"></div>
+          <div class="dock glass">
+            <div class="native-pill">Sources</div>
+            <div class="native-pill">4K</div>
+            <div class="native-pill">Episodes</div>
+            <div class="native-pill">CC</div>
+            <div class="native-pill">Audio</div>
+          </div>
+        </div>
+      </div>
+      <div class="popover glass">
+        <div class="row"><span>English</span><span>&rsaquo;</span></div>
+        <div class="row"><span>Arabic</span><span>&rsaquo;</span></div>
+        <div class="row active"><span>BAQ</span><span>v</span></div>
+        <div class="divider"></div>
+        <div class="row"><span>European</span><span></span></div>
+        <div class="row"><span>None</span><span></span></div>
+      </div>
+      <div class="callout glass">
+        More menu contains Retry and Speed. Fit/fill is removed. Duplicate audio/subtitle controls are removed. Auto-hide behavior is not part of this design change.
+      </div>
+    </section>
+  </main>
+</body>
+</html>

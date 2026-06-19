@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Library Design</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0a0a0f; color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif; padding: 20px; }
+  h2 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .subtitle { color: #888; font-size: 14px; margin-bottom: 24px; }
+  .row { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 28px; }
+  .col { flex: 1; min-width: 240px; max-width: 320px; }
+  .col-label { font-size: 11px; font-weight: 600; color: #555; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; text-align: center; }
+  .phone { background: #111; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); overflow: hidden; }
+
+  /* Nav */
+  .nav-large { font-size: 26px; font-weight: 700; padding: 12px 14px 8px; }
+
+  /* Segmented tab bar */
+  .tab-bar { display: flex; gap: 6px; padding: 0 14px 12px; }
+  .tab { flex: 1; text-align: center; padding: 7px 0; font-size: 13px; font-weight: 600; border-radius: 10px; cursor: pointer; }
+  .tab.active { background: #fff; color: #000; }
+  .tab.inactive { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.5); }
+
+  /* Grid */
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 0 14px 14px; }
+  .poster-card { position: relative; }
+  .poster-img { width: 100%; aspect-ratio: 2/3; border-radius: 10px; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 28px; position: relative; }
+  .poster-img.p1 { background: linear-gradient(135deg,#1a3060,#3a1a60); }
+  .poster-img.p2 { background: linear-gradient(135deg,#601a1a,#3a601a); }
+  .poster-img.p3 { background: linear-gradient(135deg,#1a6060,#601a60); }
+  .poster-img.p4 { background: linear-gradient(135deg,#3a2a10,#102a3a); }
+  .poster-img.p5 { background: linear-gradient(135deg,#2a1060,#601020); }
+  .poster-img.p6 { background: linear-gradient(135deg,#106030,#301060); }
+
+  /* Progress bar on poster */
+  .progress-bar { position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: rgba(255,255,255,0.15); border-radius: 0 0 10px 10px; }
+  .progress-fill { height: 100%; border-radius: 0 0 10px 10px; background: #7C3AED; }
+
+  /* Rating badges */
+  .rating-row { position: absolute; bottom: 5px; left: 4px; right: 4px; display: flex; gap: 3px; }
+  .badge { font-size: 8px; font-weight: 700; padding: 2px 4px; border-radius: 4px; backdrop-filter: blur(8px); }
+  .badge.imdb { background: rgba(245,197,24,0.85); color: #000; }
+  .badge.rt { background: rgba(250,80,60,0.85); color: #fff; }
+  .badge.tmdb { background: rgba(1,180,228,0.85); color: #fff; }
+
+  .poster-title { font-size: 10px; color: #ccc; margin-top: 4px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* Sort/filter bar */
+  .filter-bar { display: flex; gap: 6px; padding: 0 14px 10px; overflow-x: auto; }
+  .filter-bar::-webkit-scrollbar { display: none; }
+  .filter-chip { flex-shrink: 0; font-size: 10px; font-weight: 600; padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.6); white-space: nowrap; }
+  .filter-chip.active { background: #7C3AED; border-color: #7C3AED; color: #fff; }
+
+  /* Empty state */
+  .empty-state { padding: 40px 20px; text-align: center; }
+  .empty-icon { font-size: 44px; margin-bottom: 12px; opacity: 0.4; }
+  .empty-title { font-size: 15px; font-weight: 600; color: rgba(255,255,255,0.7); margin-bottom: 6px; }
+  .empty-msg { font-size: 12px; color: #555; line-height: 1.5; }
+
+  /* Annotations */
+  .annotations { max-width: 700px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+  .ann { padding: 10px 14px; background: rgba(255,255,255,0.04); border-radius: 10px; border-left: 3px solid; }
+  .ann .lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+  .ann p { font-size: 12px; color: #aaa; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<h2>Library Redesign</h2>
+<p class="subtitle">Watchlist + Liked tabs · Rating badges · Progress bar on poster · Sort/filter chips</p>
+
+<div class="row">
+
+  <!-- Watchlist tab -->
+  <div class="col">
+    <div class="col-label">Watchlist tab</div>
+    <div class="phone">
+      <div class="nav-large">Library</div>
+      <div class="tab-bar">
+        <div class="tab active">Watchlist</div>
+        <div class="tab inactive">Liked ♥</div>
+      </div>
+      <div class="filter-bar">
+        <div class="filter-chip active">All</div>
+        <div class="filter-chip">Movies</div>
+        <div class="filter-chip">Series</div>
+        <div class="filter-chip">Recently Added</div>
+      </div>
+      <div class="grid">
+        <div class="poster-card">
+          <div class="poster-img p1">🎬
+            <div class="rating-row"><span class="badge imdb">7/10</span><span class="badge rt">58%</span></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:61%"></div></div>
+          </div>
+          <div class="poster-title">Man on Fire</div>
+        </div>
+        <div class="poster-card">
+          <div class="poster-img p2">👻
+            <div class="rating-row"><span class="badge imdb">7.3</span><span class="badge rt">89%</span></div>
+          </div>
+          <div class="poster-title">Backrooms</div>
+        </div>
+        <div class="poster-card">
+          <div class="poster-img p3">🎭
+            <div class="rating-row"><span class="badge imdb">5.9</span><span class="badge rt">27%</span></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:30%"></div></div>
+          </div>
+          <div class="poster-title">Scary Movie</div>
+        </div>
+        <div class="poster-card">
+          <div class="poster-img p4">🕷️
+            <div class="rating-row"><span class="badge imdb">8.5</span></div>
+          </div>
+          <div class="poster-title">Spider-Noir</div>
+        </div>
+        <div class="poster-card">
+          <div class="poster-img p5">🏘️
+            <div class="rating-row"><span class="badge imdb">8.5</span></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:75%"></div></div>
+          </div>
+          <div class="poster-title">FROM</div>
+        </div>
+        <div class="poster-card">
+          <div class="poster-img p6">🦸
+            <div class="rating-row"><span class="badge imdb">8.7</span><span class="badge rt">89%</span></div>
+          </div>
+          <div class="poster-title">The Boys</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Liked tab -->
+  <div class="col">
+    <div class="col-label">Liked tab</div>
+    <div class="phone">
+      <div class="nav-large">Library</div>
+      <div class="tab-bar">
+        <div class="tab inactive">Watchlist</div>
+        <div class="tab active">Liked ♥</div>
+      </div>
+      <div class="filter-bar">
+        <div class="filter-chip active">All</div>
+        <div class="filter-chip">Movies</div>
+        <div class="filter-chip">Series</div>
+        <div class="filter-chip">Recently Added</div>
+      </div>
+      <div class="grid">
+        <div class="poster-card">
+          <div class="poster-img p5">🏘️
+            <div class="rating-row"><span class="badge imdb">8.5</span></div>
+          </div>
+          <div class="poster-title">FROM</div>
+        </div>
+        <div class="poster-card">
+          <div class="poster-img p6">🦸
+            <div class="rating-row"><span class="badge imdb">8.7</span><span class="badge rt">89%</span></div>
+          </div>
+          <div class="poster-title">The Boys</div>
+        </div>
+        <div class="poster-card">
+          <div class="poster-img p1">🎬
+            <div class="rating-row"><span class="badge imdb">7.9</span></div>
+          </div>
+          <div class="poster-title">Interstellar</div>
+        </div>
+        <!-- Empty row hint -->
+      </div>
+      <div style="text-align:center;padding:12px 20px 20px;font-size:11px;color:#444">
+        ❤️ Tap the heart on any title to add it here
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty state (Liked, nothing yet) -->
+  <div class="col">
+    <div class="col-label">Liked tab — empty state</div>
+    <div class="phone">
+      <div class="nav-large">Library</div>
+      <div class="tab-bar">
+        <div class="tab inactive">Watchlist</div>
+        <div class="tab active">Liked ♥</div>
+      </div>
+      <div class="empty-state">
+        <div class="empty-icon">♥</div>
+        <div class="empty-title">Nothing liked yet</div>
+        <div class="empty-msg">Tap the ❤️ on any movie or show to save it here.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="annotations">
+  <div class="ann" style="border-color:#7C3AED">
+    <div class="lbl" style="color:#7C3AED">Two tabs</div>
+    <p><strong>Watchlist</strong> = bookmark (existing 🔖 button). <strong>Liked</strong> = heart (new ❤️ button on detail screen). Separate lists, both in the Library screen.</p>
+  </div>
+  <div class="ann" style="border-color:#f59e0b">
+    <div class="lbl" style="color:#f59e0b">Rating badges</div>
+    <p>IMDb, Rotten Tomatoes, and TMDB score badges on each poster. Sourced from the metadata already fetched for the detail screen. Shown at poster bottom-left.</p>
+  </div>
+  <div class="ann" style="border-color:#60a5fa">
+    <div class="lbl" style="color:#60a5fa">Progress bar</div>
+    <p>Purple bar at poster bottom for in-progress titles. Sourced from WatchProgressRepository — same data already used in the Continue Watching row.</p>
+  </div>
+  <div class="ann" style="border-color:#34d399">
+    <div class="lbl" style="color:#34d399">Filter chips</div>
+    <p>All · Movies · Series · Recently Added. Simple client-side filter — no network calls. Persisted per tab so switching tabs remembers your last filter.</p>
+  </div>
+</div>
+
+<div style="margin-top:16px;padding:14px;background:rgba(255,255,255,0.04);border-radius:10px;border:1px solid rgba(255,255,255,0.08);max-width:700px">
+  <p style="font-size:13px;color:#ccc">Does this look right? That's all 4 sections covered — ready to write the spec doc.</p>
+</div>
+
+<script src="/helper.js"></script>
+</body>
+</html>

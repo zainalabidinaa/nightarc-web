@@ -1,0 +1,76 @@
+<h2>Role-gating: how should restricted settings appear?</h2>
+<p class="subtitle">This shapes the entire settings screen for Friends & Family and Premium users</p>
+
+<div class="options">
+  <div class="option" data-choice="hidden" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Hidden rows (Recommended)</h3>
+      <p>Admin-only rows simply don't appear for lower-tier users. The settings screen is clean and uncluttered. Users never see features they can't use. This matches how Netflix/Apple TV+ handle profile permissions.</p>
+      <div class="pros-cons" style="margin-top:12px">
+        <div class="pros"><h4>Pros</h4><ul><li>Cleanest UX</li><li>No confusion</li><li>Matches your description</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>No visibility that admin features exist</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="locked" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Locked/greyed rows</h3>
+      <p>Admin-only rows are visible but shown with a lock icon and 50% opacity. Tapping shows "Only the admin can change this." More transparent — users know the feature exists.</p>
+      <div class="pros-cons" style="margin-top:12px">
+        <div class="pros"><h4>Pros</h4><ul><li>Users understand why things are missing</li><li>Good if users might want to request access</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Cluttered for F&F users</li><li>Confusing on a shared device</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="separate" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Completely separate screens per role</h3>
+      <p>Each role renders a different settings screen (AdminSettingsScreen, FamilySettingsScreen, etc). Maximum control over the experience per role.</p>
+      <div class="pros-cons" style="margin-top:12px">
+        <div class="pros"><h4>Pros</h4><ul><li>Perfect tailoring per role</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>3–4x the code to maintain</li><li>Easy to diverge and get stale</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:20px;padding:14px;background:rgba(255,255,255,0.04);border-radius:10px;border:1px solid rgba(255,255,255,0.08)">
+  <p class="label">Role summary</p>
+  <table style="width:100%;margin-top:10px;border-collapse:collapse;font-size:13px">
+    <tr style="color:#888;text-align:left">
+      <th style="padding:6px 10px;border-bottom:1px solid rgba(255,255,255,0.08)">Role</th>
+      <th style="padding:6px 10px;border-bottom:1px solid rgba(255,255,255,0.08)">Admin Tab</th>
+      <th style="padding:6px 10px;border-bottom:1px solid rgba(255,255,255,0.08)">Addons</th>
+      <th style="padding:6px 10px;border-bottom:1px solid rgba(255,255,255,0.08)">Catalogs/Hero/Meta</th>
+    </tr>
+    <tr style="color:#fff">
+      <td style="padding:6px 10px">Admin</td>
+      <td style="padding:6px 10px">✅</td>
+      <td style="padding:6px 10px">✅ Full</td>
+      <td style="padding:6px 10px">✅</td>
+    </tr>
+    <tr style="color:#ccc;background:rgba(255,255,255,0.02)">
+      <td style="padding:6px 10px">Friends & Family</td>
+      <td style="padding:6px 10px">❌</td>
+      <td style="padding:6px 10px">Uses admin's</td>
+      <td style="padding:6px 10px">❌</td>
+    </tr>
+    <tr style="color:#ccc">
+      <td style="padding:6px 10px">Premium Full</td>
+      <td style="padding:6px 10px">❌</td>
+      <td style="padding:6px 10px">Uses admin's</td>
+      <td style="padding:6px 10px">❌</td>
+    </tr>
+    <tr style="color:#ccc;background:rgba(255,255,255,0.02)">
+      <td style="padding:6px 10px">Premium Self-Manage</td>
+      <td style="padding:6px 10px">❌</td>
+      <td style="padding:6px 10px">✅ Own addons</td>
+      <td style="padding:6px 10px">❌</td>
+    </tr>
+  </table>
+</div>

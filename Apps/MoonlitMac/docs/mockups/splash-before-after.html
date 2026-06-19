@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Moonlit Splash Before / After</title>
+  <style>
+    :root {
+      --ink: #111113;
+      --muted: rgba(17,17,19,.58);
+      --paper: #f7f7f4;
+      --ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+      --icon: url("/Users/zain/projects/Moonlit/Apps/MoonlitApp/Resources/Assets.xcassets/AppIcon.appiconset/icon-1024.png");
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      font-family: var(--ui);
+      color: var(--ink);
+      background: linear-gradient(180deg, #dcded9, #bfc2bb);
+      padding: 24px;
+    }
+
+    .shell {
+      width: min(980px, 100%);
+      display: grid;
+      gap: 18px;
+    }
+
+    header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: 24px;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+      max-width: 680px;
+    }
+
+    .boards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+      align-items: center;
+    }
+
+    .board {
+      display: grid;
+      justify-items: center;
+      gap: 12px;
+    }
+
+    .label {
+      width: min(390px, 100%);
+      display: flex;
+      justify-content: space-between;
+      color: rgba(17,17,19,.54);
+      font-size: 12px;
+    }
+
+    .label strong {
+      color: var(--ink);
+    }
+
+    .phone {
+      width: min(390px, 100%);
+      aspect-ratio: 390 / 844;
+      padding: 9px;
+      border-radius: 44px;
+      background: #0b0b0c;
+      box-shadow: 0 34px 90px rgba(31,32,28,.32), inset 0 0 0 1px rgba(255,255,255,.12);
+    }
+
+    .screen {
+      position: relative;
+      height: 100%;
+      overflow: hidden;
+      border-radius: 36px;
+    }
+
+    .status {
+      position: absolute;
+      z-index: 20;
+      top: 11px;
+      left: 15px;
+      right: 15px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .island {
+      position: absolute;
+      z-index: 20;
+      top: 0;
+      left: 50%;
+      width: 126px;
+      height: 34px;
+      transform: translateX(-50%);
+      border-radius: 0 0 20px 20px;
+      background: #050506;
+    }
+
+    .old {
+      color: #fff;
+      background: #000;
+    }
+
+    .stars {
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 20% 16%, rgba(255,255,255,.65) 0 1px, transparent 1.5px),
+        radial-gradient(circle at 78% 22%, rgba(255,255,255,.45) 0 1px, transparent 1.5px),
+        radial-gradient(circle at 48% 46%, rgba(255,255,255,.35) 0 1px, transparent 1.5px),
+        radial-gradient(circle at 24% 70%, rgba(255,255,255,.4) 0 1px, transparent 1.5px);
+      background-size: 90px 140px, 130px 170px, 110px 120px, 150px 160px;
+      animation: drift 9s linear infinite;
+      opacity: .8;
+    }
+
+    .old-center {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+    }
+
+    .old-stack {
+      display: grid;
+      justify-items: center;
+      gap: 20px;
+    }
+
+    .orbit {
+      position: relative;
+      width: 110px;
+      height: 110px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 999px;
+    }
+
+    .orbit::before {
+      content: "";
+      position: absolute;
+      top: -3px;
+      left: 50%;
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.55);
+      box-shadow: 0 0 10px rgba(255,255,255,.8);
+      transform-origin: 0 58px;
+      animation: spin 8s linear infinite;
+    }
+
+    .app-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 16px;
+      background: var(--icon) center / cover no-repeat;
+      box-shadow: 0 18px 42px rgba(255,255,255,.1);
+    }
+
+    .old-title {
+      font-size: 40px;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .old-progress {
+      position: absolute;
+      left: 32px;
+      right: 32px;
+      bottom: 54px;
+      height: 2px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      overflow: hidden;
+    }
+
+    .old-progress::after {
+      content: "";
+      display: block;
+      width: 72%;
+      height: 100%;
+      border-radius: inherit;
+      background: rgba(255,255,255,.5);
+      animation: load 2.8s ease-in-out infinite alternate;
+    }
+
+    .new {
+      color: #f8f4ef;
+      background:
+        radial-gradient(circle at 50% 36%, rgba(255,255,255,.085), transparent 30%),
+        linear-gradient(180deg, #101114 0%, #050506 100%);
+    }
+
+    .new .status { color: rgba(248,244,239,.72); }
+
+    .new-center {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+    }
+
+    .new-copy {
+      display: grid;
+      justify-items: center;
+      gap: 14px;
+      transform: translateY(-8px);
+    }
+
+    .moon-mark {
+      position: relative;
+      width: 104px;
+      height: 104px;
+      border-radius: 26px;
+      background: var(--icon) center / cover no-repeat;
+      box-shadow: 0 24px 58px rgba(0,0,0,.42), 0 0 48px rgba(255,255,255,.08);
+    }
+
+    .moon-mark::before {
+      content: "";
+      position: absolute;
+      inset: -62px;
+      z-index: -1;
+      border-radius: 999px;
+      background:
+        radial-gradient(circle, rgba(255, 136, 54, .52) 0%, rgba(255, 136, 54, .24) 30%, rgba(255, 136, 54, .08) 52%, transparent 72%);
+      filter: blur(8px);
+    }
+
+    .new-wordmark {
+      color: #fff;
+      -webkit-text-fill-color: #fff;
+      opacity: 1;
+      filter: none;
+      mix-blend-mode: normal;
+      font-size: 34px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: 0;
+      text-shadow: 0 0 1px rgba(255,255,255,.95), 0 10px 34px rgba(255,255,255,.10);
+    }
+
+    .new-caption {
+      color: rgba(248,244,239,.58);
+      font-size: 13px;
+    }
+
+    .new-progress {
+      width: 108px;
+      height: 5px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.12);
+      overflow: hidden;
+    }
+
+    .new-progress::after {
+      content: "";
+      display: block;
+      width: 56%;
+      height: 100%;
+      border-radius: inherit;
+      background: rgba(248,244,239,.92);
+      animation: load 2.2s ease-in-out infinite alternate;
+    }
+
+    @keyframes drift {
+      from { background-position: 0 0, 0 0, 0 0, 0 0; }
+      to { background-position: 0 -120px, 0 -160px, 0 -140px, 0 -100px; }
+    }
+
+    @keyframes spin {
+      from { rotate: 0deg; }
+      to { rotate: 360deg; }
+    }
+
+    @keyframes load {
+      from { transform: translateX(-20%); }
+      to { transform: translateX(78%); }
+    }
+
+    @media (max-width: 900px) {
+      header, .boards { display: grid; grid-template-columns: 1fr; }
+      .board { justify-items: center; }
+    }
+    .concept.after {
+      background:
+        radial-gradient(circle at 50% 38%, rgba(255, 255, 255, 0.08), transparent 34%),
+        linear-gradient(180deg, #101114 0%, #050506 100%);
+      color: #f6f3ee;
+      border-color: rgba(255, 255, 255, 0.08);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 24px 70px rgba(0, 0, 0, 0.34);
+    }
+
+    .concept.after .device {
+      background:
+        radial-gradient(circle at 50% 36%, rgba(255, 255, 255, 0.10), transparent 28%),
+        linear-gradient(180deg, #111216 0%, #050506 100%);
+      border-color: rgba(255, 255, 255, 0.10);
+      box-shadow: 0 28px 72px rgba(0, 0, 0, 0.46);
+    }
+
+    .concept.after .screen,
+    .concept.after .new-screen {
+      background:
+        radial-gradient(circle at 50% 38%, rgba(255, 255, 255, 0.085), transparent 31%),
+        linear-gradient(180deg, #111216 0%, #050506 100%);
+    }
+
+    .concept.after .moon-mark {
+      background-color: rgba(255, 255, 255, 0.96);
+      box-shadow: 0 18px 52px rgba(255, 255, 255, 0.12), 0 18px 52px rgba(0, 0, 0, 0.42);
+    }
+
+    .concept.after .new-wordmark,
+    .concept.after .wordmark {
+      color: #f8f4ef;
+    }
+
+    .concept.after .new-caption,
+    .concept.after .caption {
+      color: rgba(248, 244, 239, 0.58);
+    }
+
+    .concept.after .new-progress {
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .concept.after .new-progress::after {
+      background: rgba(248, 244, 239, 0.92);
+    }
+  </style>
+  <style>
+    /* Final override: keep the redesigned "after" splash dark. */
+    .concept.after,
+    .concept.after .device,
+    .concept.after .phone,
+    .concept.after .screen,
+    .concept.after .new-screen,
+    .concept.after [class*="screen"] {
+      background:
+        radial-gradient(circle at 50% 38%, rgba(255, 255, 255, 0.08), transparent 32%),
+        linear-gradient(180deg, #101114 0%, #050506 100%) !important;
+      color: #f8f4ef !important;
+    }
+
+    .concept.after {
+      border-color: rgba(255, 255, 255, 0.08) !important;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 24px 70px rgba(0, 0, 0, 0.34) !important;
+    }
+
+    .concept.after .device,
+    .concept.after .phone {
+      border-color: rgba(255, 255, 255, 0.10) !important;
+      box-shadow: 0 28px 72px rgba(0, 0, 0, 0.46) !important;
+    }
+
+    .concept.after .moon-mark {
+      background-color: rgba(255, 255, 255, 0.96) !important;
+      box-shadow: 0 18px 52px rgba(255, 255, 255, 0.12), 0 18px 52px rgba(0, 0, 0, 0.42) !important;
+    }
+
+    .concept.after .new-wordmark,
+    .concept.after .wordmark {
+      color: #f8f4ef !important;
+    }
+
+    .concept.after .new-caption,
+    .concept.after .caption {
+      color: rgba(248, 244, 239, 0.58) !important;
+    }
+
+    .concept.after .new-progress {
+      background: rgba(255, 255, 255, 0.12) !important;
+    }
+
+    .concept.after .new-progress::after {
+      background: rgba(248, 244, 239, 0.92) !important;
+    }
+
+    /* The actual after splash screen inside the phone, not just the comparison shell. */
+    .after .new-splash,
+    .after .splash,
+    .after .splash-screen,
+    .after .phone-screen,
+    .after .app-screen,
+    .after .mock-screen,
+    .after .screen,
+    .after .new-screen,
+    .after [class*="splash"],
+    .after [class*="Screen"],
+    .after [class*="screen"] {
+      background:
+        radial-gradient(circle at 50% 38%, rgba(255, 255, 255, 0.085), transparent 31%),
+        linear-gradient(180deg, #101114 0%, #050506 100%) !important;
+      color: #f8f4ef !important;
+    }
+
+    .after .new-center,
+    .after .splash-center,
+    .after .logo-center {
+      background: transparent !important;
+      color: #f8f4ef !important;
+    }
+
+    /* Source-level dark splash override: this is the actual redesigned phone screen. */
+    .new-screen,
+    .new-screen::before,
+    .new-screen::after,
+    .new-splash,
+    .new-splash::before,
+    .new-splash::after,
+    .splash-after,
+    .splash-after::before,
+    .splash-after::after,
+    .after-screen,
+    .after-screen::before,
+    .after-screen::after {
+      background:
+        radial-gradient(circle at 50% 38%, rgba(255, 255, 255, 0.08), transparent 30%),
+        linear-gradient(180deg, #101114 0%, #050506 100%) !important;
+      background-color: #050506 !important;
+      color: #f8f4ef !important;
+    }
+
+    .new-screen * ,
+    .new-splash * ,
+    .splash-after * ,
+    .after-screen * {
+      color-scheme: dark;
+    }
+
+    .new-center {
+      background: transparent !important;
+    }
+
+    .new-wordmark {
+      color: #fff !important;
+      -webkit-text-fill-color: #fff !important;
+      opacity: 1 !important;
+      filter: none !important;
+      mix-blend-mode: normal !important;
+      text-shadow: 0 0 1px rgba(255,255,255,.95), 0 10px 34px rgba(255,255,255,.10) !important;
+    }
+
+    .new-caption {
+      color: rgba(248, 244, 239, 0.58) !important;
+    }
+
+    .screen.new .new-center .new-copy > .new-wordmark {
+      color: rgb(255, 255, 255) !important;
+      -webkit-text-fill-color: rgb(255, 255, 255) !important;
+      opacity: 1 !important;
+      filter: none !important;
+      mix-blend-mode: normal !important;
+      text-shadow: none !important;
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div>
+        <h1>Moonlit splash before / after</h1>
+        <p>The current splash is dark, starfield-based, and icon-orbit focused. The new direction removes poster decoration and keeps a minimal dark launch screen centered on the Moonlit logo and wordmark.</p>
+      </div>
+    </header>
+
+    <section class="boards">
+      <article class="board">
+        <div class="label"><strong>Before</strong><span>current session restore</span></div>
+        <div class="phone">
+          <div class="screen old">
+            <div class="status"><span>23:02</span><span>▵ 5G  ▱</span></div>
+            <div class="island"></div>
+            <div class="stars"></div>
+            <div class="old-center">
+              <div class="old-stack">
+                <div class="orbit"><div class="app-icon"></div></div>
+                <div class="old-title">Moonlit</div>
+              </div>
+            </div>
+            <div class="old-progress"></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="board">
+        <div class="label"><strong>After</strong><span>dark centered logo</span></div>
+        <div class="phone">
+          <div class="screen new">
+            <div class="status"><span>23:02</span><span>▵ 5G  ▱</span></div>
+            <div class="island"></div>
+            <div class="new-center">
+              <div class="new-copy">
+                <div class="moon-mark"></div>
+                <div class="new-wordmark" style="color: rgb(255, 255, 255) !important; -webkit-text-fill-color: rgb(255, 255, 255) !important; opacity: 1 !important;">Moonlit</div>
+                <div class="new-caption">Preparing your library</div>
+                <div class="new-progress"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

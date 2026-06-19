@@ -1,0 +1,254 @@
+<h2>Splash Screen Options</h2>
+<p class="subtitle">Three directions for Luna's launch moment — click one to select it</p>
+
+<style>
+  .phone-grid {
+    display: flex;
+    gap: 28px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 32px 0;
+  }
+  .phone-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    opacity: 0.85;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .phone-wrap:hover { opacity: 1; transform: translateY(-4px); }
+  .phone-wrap.selected-phone { opacity: 1; transform: translateY(-6px); }
+  .phone-wrap.selected-phone .phone-frame { box-shadow: 0 0 0 3px #a78bfa, 0 16px 48px rgba(167,139,250,0.35); }
+
+  .phone-frame {
+    width: 160px;
+    height: 290px;
+    border-radius: 28px;
+    border: 3px solid rgba(255,255,255,0.12);
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    background: #000;
+    transition: box-shadow 0.2s;
+  }
+  .phone-notch {
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 48px;
+    height: 8px;
+    background: #1a1a1a;
+    border-radius: 4px;
+    z-index: 10;
+  }
+  .screen-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.9);
+    letter-spacing: 0.04em;
+    text-align: center;
+  }
+  .screen-desc {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    text-align: center;
+    max-width: 160px;
+    line-height: 1.5;
+  }
+
+  /* ── Option A: Minimal Glow ── */
+  .screen-a {
+    width: 100%; height: 100%;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: relative;
+  }
+  .screen-a .glow-ring {
+    position: absolute;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(139,92,246,0.22) 0%, transparent 70%);
+    animation: pulse 2.5s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100% { transform: scale(1); opacity: 0.6; }
+    50% { transform: scale(1.18); opacity: 1; }
+  }
+  .screen-a .logo-mark {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #7c3aed, #4f46e5);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; color: white; font-weight: 800;
+    position: relative; z-index: 1;
+    box-shadow: 0 0 20px rgba(139,92,246,0.5);
+  }
+  .screen-a .wordmark {
+    font-size: 17px; font-weight: 700; color: white;
+    letter-spacing: 0.08em;
+    position: relative; z-index: 1;
+  }
+
+  /* ── Option B: Cinematic Bloom ── */
+  .screen-b {
+    width: 100%; height: 100%;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .bloom {
+    position: absolute;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(99,102,241,0.35) 0%, rgba(168,85,247,0.18) 40%, transparent 70%);
+    animation: bloom-pulse 3s ease-in-out infinite;
+  }
+  @keyframes bloom-pulse {
+    0%,100% { transform: scale(0.8); opacity: 0.7; }
+    50% { transform: scale(1.1); opacity: 1; }
+  }
+  .screen-b .center-logo {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .moon-icon {
+    font-size: 36px;
+    filter: drop-shadow(0 0 12px rgba(168,85,247,0.8));
+    animation: float 3s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%,100% { transform: translateY(0px); }
+    50% { transform: translateY(-5px); }
+  }
+  .screen-b .wordmark {
+    font-size: 16px; font-weight: 700; color: white;
+    letter-spacing: 0.12em;
+  }
+  .screen-b .tagline {
+    font-size: 9px; color: rgba(255,255,255,0.45);
+    letter-spacing: 0.15em; text-transform: uppercase;
+  }
+
+  /* ── Option C: Gradient Wipe ── */
+  .screen-c {
+    width: 100%; height: 100%;
+    background: linear-gradient(160deg, #0f0c29 0%, #1a1040 50%, #24243e 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .star-field {
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 70% 20%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 40% 70%, rgba(255,255,255,0.35) 0%, transparent 100%),
+      radial-gradient(1px 1px at 85% 60%, rgba(255,255,255,0.25) 0%, transparent 100%),
+      radial-gradient(1px 1px at 55% 85%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 10% 55%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 40%, rgba(255,255,255,0.2) 0%, transparent 100%);
+  }
+  .screen-c .center-logo {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .crescent {
+    font-size: 42px;
+    color: white;
+    filter: drop-shadow(0 2px 16px rgba(139,92,246,0.6));
+  }
+  .screen-c .wordmark {
+    font-size: 18px; font-weight: 700; color: white;
+    letter-spacing: 0.06em;
+  }
+  .progress-bar {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px; height: 2px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 1px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 40%;
+    background: linear-gradient(90deg, #7c3aed, #a78bfa);
+    border-radius: 1px;
+    animation: progress 2s ease-in-out infinite;
+  }
+  @keyframes progress {
+    0% { width: 0%; }
+    80% { width: 85%; }
+    100% { width: 85%; }
+  }
+</style>
+
+<div class="phone-grid">
+
+  <!-- Option A -->
+  <div class="phone-wrap" data-choice="a" onclick="toggleSelect(this); this.classList.toggle('selected-phone')">
+    <div class="phone-frame">
+      <div class="phone-notch"></div>
+      <div class="screen-a">
+        <div class="glow-ring"></div>
+        <div class="logo-mark">L</div>
+        <div class="wordmark">LUNA</div>
+      </div>
+    </div>
+    <div class="screen-label">A — Minimal Glow</div>
+    <div class="screen-desc">Black canvas, logo icon + wordmark, soft pulsing purple glow behind it</div>
+  </div>
+
+  <!-- Option B -->
+  <div class="phone-wrap" data-choice="b" onclick="toggleSelect(this); this.classList.toggle('selected-phone')">
+    <div class="phone-frame">
+      <div class="phone-notch"></div>
+      <div class="screen-b">
+        <div class="bloom"></div>
+        <div class="center-logo">
+          <div class="moon-icon">🌙</div>
+          <div class="wordmark">LUNA</div>
+          <div class="tagline">Your universe of content</div>
+        </div>
+      </div>
+    </div>
+    <div class="screen-label">B — Cinematic Bloom</div>
+    <div class="screen-desc">Moon icon floats above a deep color bloom, subtle tagline below</div>
+  </div>
+
+  <!-- Option C -->
+  <div class="phone-wrap" data-choice="c" onclick="toggleSelect(this); this.classList.toggle('selected-phone')">
+    <div class="phone-frame">
+      <div class="phone-notch"></div>
+      <div class="screen-c">
+        <div class="star-field"></div>
+        <div class="center-logo">
+          <div class="crescent">☽</div>
+          <div class="wordmark">Luna</div>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill"></div>
+        </div>
+      </div>
+    </div>
+    <div class="screen-label">C — Night Sky</div>
+    <div class="screen-desc">Deep space gradient, star field, crescent moon, thin progress bar at bottom</div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="text-align:center; margin-top: 8px;">All three transition out via a scale+fade when the app finishes loading — click a card to select it, then let me know in the terminal.</p>

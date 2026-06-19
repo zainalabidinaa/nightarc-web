@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Player UI Design</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0a0a0f; color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif; padding: 20px; }
+  h2 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .subtitle { color: #888; font-size: 14px; margin-bottom: 28px; }
+
+  /* Player mockup — landscape */
+  .player-wrap { position: relative; width: 100%; max-width: 720px; aspect-ratio: 16/9; border-radius: 16px; overflow: hidden; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 8px; }
+
+  .player-bg { position: absolute; inset: 0; background: linear-gradient(135deg, #1a2a1a 0%, #0d1a2e 40%, #1a0d0d 100%); }
+  .player-bg-scene { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 0.18; font-size: 80px; }
+
+  /* Controls overlay */
+  .controls-overlay { position: absolute; inset: 0; }
+
+  /* Top bar */
+  .top-bar { position: absolute; top: 0; left: 0; right: 0; display: flex; align-items: flex-start; justify-content: space-between; padding: 14px 16px 0; }
+
+  .close-btn { width: 32px; height: 32px; border-radius: 50%; background: rgba(0,0,0,0.55); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; font-size: 13px; color: #fff; border: 1px solid rgba(255,255,255,0.12); }
+
+  /* Liquid Glass volume slider */
+  .volume-slider-pill { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.12); backdrop-filter: blur(20px) saturate(180%); border: 1px solid rgba(255,255,255,0.22); border-radius: 40px; padding: 7px 14px; box-shadow: 0 4px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.18); min-width: 180px; }
+  .vol-icon { font-size: 13px; opacity: 0.9; }
+  .vol-track { flex: 1; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; position: relative; }
+  .vol-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 55%; background: #fff; border-radius: 2px; }
+  .vol-thumb { position: absolute; top: 50%; left: 55%; transform: translate(-50%, -50%); width: 14px; height: 14px; border-radius: 50%; background: #fff; box-shadow: 0 1px 6px rgba(0,0,0,0.5); }
+
+  /* Center controls */
+  .center-controls { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; gap: 28px; }
+  .ctrl-btn { width: 50px; height: 50px; border-radius: 50%; background: rgba(0,0,0,0.45); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; font-size: 16px; border: 1px solid rgba(255,255,255,0.12); }
+  .ctrl-btn.primary { width: 58px; height: 58px; background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.3); font-size: 20px; box-shadow: 0 2px 16px rgba(255,255,255,0.08); }
+
+  /* Skip Intro pill */
+  .skip-intro-pill { position: absolute; bottom: 56px; right: 16px; display: flex; align-items: center; gap: 7px; background: rgba(255,255,255,0.14); backdrop-filter: blur(20px) saturate(180%); border: 1.5px solid rgba(255,255,255,0.3); border-radius: 40px; padding: 9px 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.2); cursor: pointer; }
+  .skip-intro-pill span { font-size: 13px; font-weight: 600; color: #fff; letter-spacing: 0.01em; }
+  .skip-arrow { font-size: 11px; opacity: 0.8; }
+
+  /* Bottom bar */
+  .bottom-bar { position: absolute; bottom: 0; left: 0; right: 0; padding: 0 16px 14px; background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%); }
+  .episode-label { font-size: 10px; color: rgba(255,255,255,0.5); margin-bottom: 1px; }
+  .episode-title { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 8px; }
+
+  .timeline-wrap { position: relative; margin-bottom: 8px; }
+  .timeline-track { height: 3px; background: rgba(255,255,255,0.2); border-radius: 2px; position: relative; }
+  .timeline-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 38%; background: #fff; border-radius: 2px; }
+  /* Highlight markers on timeline */
+  .highlight-dot { position: absolute; top: -2px; width: 7px; height: 7px; border-radius: 50%; background: #F59E0B; border: 1.5px solid rgba(0,0,0,0.6); }
+  .timeline-thumb { position: absolute; top: 50%; left: 38%; transform: translate(-50%, -50%); width: 13px; height: 13px; border-radius: 50%; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.5); }
+  .time-row { display: flex; justify-content: space-between; align-items: center; }
+  .time-label { font-size: 11px; color: rgba(255,255,255,0.6); font-variant-numeric: tabular-nums; }
+
+  .bottom-right-controls { display: flex; align-items: center; gap: 2px; background: rgba(0,0,0,0.45); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.12); border-radius: 24px; padding: 5px 10px; }
+  .br-btn { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; font-size: 13px; opacity: 0.8; }
+
+  /* Info button (bottom left) */
+  .info-btn { font-size: 12px; color: rgba(255,255,255,0.6); font-weight: 500; }
+
+  /* Annotations */
+  .annotations { max-width: 720px; margin-top: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .ann { padding: 10px 14px; background: rgba(255,255,255,0.04); border-radius: 10px; border-left: 3px solid; }
+  .ann .ann-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+  .ann p { font-size: 12px; color: #aaa; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<h2>Player UI — Controls Design</h2>
+<p class="subtitle">Liquid Glass audio slider (top-right) · Skip Intro pill (bottom-right above progress) · Yellow highlight dots on timeline</p>
+
+<div class="player-wrap">
+  <div class="player-bg"></div>
+  <div class="player-bg-scene">🎬</div>
+
+  <div class="controls-overlay">
+
+    <!-- Top bar -->
+    <div class="top-bar">
+      <div class="close-btn">✕</div>
+      <!-- Liquid Glass volume slider -->
+      <div class="volume-slider-pill">
+        <span class="vol-icon">🔊</span>
+        <div class="vol-track">
+          <div class="vol-fill"></div>
+          <div class="vol-thumb"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center controls -->
+    <div class="center-controls">
+      <div class="ctrl-btn">↺15</div>
+      <div class="ctrl-btn primary">⏸</div>
+      <div class="ctrl-btn">↻15</div>
+    </div>
+
+    <!-- Skip Intro pill — appears when player is at intro timestamps -->
+    <div class="skip-intro-pill">
+      <span>Skip Intro</span>
+      <span class="skip-arrow">⏭</span>
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="bottom-bar">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:6px">
+        <div>
+          <div class="episode-label">S01E07</div>
+          <div class="episode-title">All Good Things</div>
+        </div>
+        <div class="bottom-right-controls">
+          <div class="br-btn">💬</div>
+          <div class="br-btn">🎵</div>
+          <div class="br-btn">⧉</div>
+          <div class="br-btn">⏭</div>
+        </div>
+      </div>
+
+      <div class="timeline-wrap">
+        <div class="timeline-track">
+          <div class="timeline-fill"></div>
+          <!-- Highlight dots (chapter markers) -->
+          <div class="highlight-dot" style="left:15%"></div>
+          <div class="highlight-dot" style="left:52%"></div>
+          <div class="highlight-dot" style="left:74%"></div>
+          <div class="timeline-thumb"></div>
+        </div>
+      </div>
+
+      <div class="time-row">
+        <span class="time-label">19:25</span>
+        <span class="info-btn">Info</span>
+        <span class="time-label">50:05</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div style="max-width:720px;margin-bottom:4px">
+  <p style="font-size:11px;color:#555;padding:4px 0">↑ Scroll up in the browser if the player is cut off — it's a 16:9 landscape mockup</p>
+</div>
+
+<div class="annotations">
+  <div class="ann" style="border-color:#60a5fa">
+    <div class="ann-label" style="color:#60a5fa">Liquid Glass volume slider</div>
+    <p>Frosted pill in top-right. Visible only when controls are shown. Drag left/right to adjust. Uses iOS 26 UIVisualEffectView / SwiftUI .glassEffect for the blur+refraction look from your reference images.</p>
+  </div>
+  <div class="ann" style="border-color:#34d399">
+    <div class="ann-label" style="color:#34d399">Skip Intro pill</div>
+    <p>Appears bottom-right above the scrubber when playback position enters a detected intro window. Tapping jumps to intro end. Auto-skips silently if the setting is enabled. Animates in/out with a spring.</p>
+  </div>
+  <div class="ann" style="border-color:#f59e0b">
+    <div class="ann-label" style="color:#f59e0b">Timeline highlights</div>
+    <p>Small amber dots on the scrubber at chapter/highlight positions — sourced from PublicMetaDB alongside intro timestamps. Toggled by "Show highlights on timeline" in Video Player settings.</p>
+  </div>
+  <div class="ann" style="border-color:#a78bfa">
+    <div class="ann-label" style="color:#a78bfa">IntroDB source</div>
+    <p>Queried once per episode on load using IMDB ID + S/E numbers. Cached locally so repeat plays don't hit the network. Falls back gracefully if no data found — no button shown.</p>
+  </div>
+</div>
+
+<div style="margin-top:16px;padding:14px;background:rgba(255,255,255,0.04);border-radius:10px;border:1px solid rgba(255,255,255,0.08);max-width:720px">
+  <p style="font-size:13px;color:#ccc">Does this player layout look right? Next: <strong>Detail screen</strong> — description sheet + cast cards.</p>
+</div>
+
+<script src="/helper.js"></script>
+</body>
+</html>

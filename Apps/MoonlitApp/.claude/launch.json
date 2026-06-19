@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "imdb-picker",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "-l", "4321", "/Users/zain/projects/Moonlit"],
+      "port": 4321
+    }
+  ]
+}

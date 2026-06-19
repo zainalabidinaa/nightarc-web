@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detail Design v3</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0a0a0f; color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif; padding: 20px; }
+  h2 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .subtitle { color: #888; font-size: 14px; margin-bottom: 24px; }
+  .row { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 28px; }
+  .col { flex: 1; min-width: 240px; max-width: 320px; }
+  .col-label { font-size: 11px; font-weight: 600; color: #555; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; text-align: center; }
+
+  .phone { background: #111; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); overflow: hidden; }
+
+  /* Detail screen */
+  .backdrop { width: 100%; height: 200px; background: linear-gradient(135deg, #1a2a4a 0%, #2d1a3a 60%, #1a2a1a 100%); position: relative; display: flex; align-items: flex-end; }
+  .backdrop-img { position: absolute; inset: 0; background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200"><rect fill="%23102030" width="320" height="200"/></svg>'); background-size: cover; }
+  .backdrop-gradient { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 30%, #111 100%); }
+  .backdrop-title { position: relative; z-index: 1; padding: 12px 14px; }
+  .show-title { font-size: 20px; font-weight: 800; }
+  .meta-row { display: flex; gap: 8px; align-items: center; margin-top: 4px; }
+  .meta-tag { font-size: 10px; color: rgba(255,255,255,0.5); }
+  .detail-body { padding: 10px 14px; background: #111; }
+  .action-row { display: flex; gap: 8px; margin-bottom: 12px; }
+  .play-btn { flex: 1; background: #fff; color: #000; border-radius: 10px; padding: 10px; text-align: center; font-size: 13px; font-weight: 700; }
+  .icon-btn { width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .desc-text { font-size: 12px; color: rgba(255,255,255,0.65); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 4px; }
+  .desc-tap-hint { font-size: 11px; color: #7C3AED; font-weight: 500; margin-bottom: 12px; }
+  .section-title { font-size: 13px; font-weight: 700; margin-bottom: 10px; }
+  .cast-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; }
+  .cast-scroll::-webkit-scrollbar { display: none; }
+  .cast-card { flex-shrink: 0; width: 72px; }
+  .cast-photo { width: 72px; height: 90px; border-radius: 12px; background: linear-gradient(135deg, #2a3a4a, #1a2030); display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 5px; }
+  .cast-name { font-size: 10px; color: #fff; font-weight: 500; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cast-role { font-size: 9px; color: #666; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* Sheet */
+  .sheet-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 10; display: flex; align-items: flex-end; border-radius: 30px; overflow: hidden; }
+  .sheet { background: rgba(28,28,35,0.96); backdrop-filter: blur(24px); border-radius: 20px 20px 0 0; padding: 14px; width: 100%; border-top: 1px solid rgba(255,255,255,0.1); }
+  .sheet-handle { width: 36px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; margin: 0 auto 12px; }
+  .sheet-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+  .sheet-body { font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6; max-height: 200px; overflow-y: auto; }
+
+  /* Actor page — matching screenshot exactly */
+  .actor-page { background: #111; height: 520px; overflow-y: auto; }
+  .actor-page::-webkit-scrollbar { width: 3px; }
+  .actor-page::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+  .nav-bar { display: flex; align-items: center; padding: 10px 14px 8px; position: sticky; top: 0; background: #111; z-index: 5; }
+  .back-btn { font-size: 13px; color: #7C3AED; font-weight: 500; }
+  .nav-title-sm { flex: 1; text-align: center; font-size: 14px; font-weight: 600; }
+
+  /* Photo + name hero */
+  .actor-hero { display: flex; gap: 12px; padding: 4px 14px 14px; }
+  .actor-single-photo { width: 90px; height: 120px; border-radius: 14px; background: linear-gradient(135deg, #2a3a4a, #1a2030); display: flex; align-items: center; justify-content: center; font-size: 36px; flex-shrink: 0; }
+  .actor-hero-info { flex: 1; padding-top: 4px; }
+  .actor-name { font-size: 16px; font-weight: 800; margin-bottom: 3px; }
+  .actor-role-in-show { font-size: 11px; color: #7C3AED; font-weight: 500; margin-bottom: 8px; }
+  .actor-bio-short { font-size: 11px; color: rgba(255,255,255,0.6); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+
+  /* Info table */
+  .info-table { margin: 0 14px 14px; background: rgba(255,255,255,0.04); border-radius: 10px; overflow: hidden; }
+  .info-row { display: flex; flex-direction: column; padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .info-row:last-child { border-bottom: none; }
+  .info-key { font-size: 10px; color: #666; font-weight: 500; margin-bottom: 2px; }
+  .info-val { font-size: 12px; color: rgba(255,255,255,0.85); }
+  .info-val.link { color: #7C3AED; }
+
+  /* Known For — large landscape cards like the screenshot */
+  .known-for-section { margin-bottom: 16px; }
+  .known-for-label { font-size: 13px; font-weight: 700; padding: 0 14px 10px; }
+  .known-for-scroll { display: flex; gap: 10px; padding: 0 14px; overflow-x: auto; }
+  .known-for-scroll::-webkit-scrollbar { display: none; }
+  .kf-card { flex-shrink: 0; width: 140px; }
+  .kf-backdrop { width: 140px; height: 80px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 28px; overflow: hidden; position: relative; }
+  .kf-backdrop-bg { position: absolute; inset: 0; border-radius: 10px; }
+  .kf-title { font-size: 10px; color: rgba(255,255,255,0.8); font-weight: 500; margin-top: 5px; text-align: center; }
+
+  /* Credits */
+  .credits-section { padding: 0 14px 20px; }
+  .credits-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .credits-title-lbl { font-size: 13px; font-weight: 700; }
+  .filter-chip { font-size: 10px; color: #888; background: rgba(255,255,255,0.08); border-radius: 20px; padding: 3px 8px; }
+  .year-group { margin-bottom: 12px; }
+  .year-lbl { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.35); margin-bottom: 8px; }
+  .credit-item { display: flex; gap: 10px; margin-bottom: 10px; }
+  .credit-poster { width: 44px; height: 62px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .credit-info .c-title { font-size: 12px; font-weight: 600; color: #fff; }
+  .credit-info .c-meta { font-size: 10px; color: #666; margin-top: 2px; }
+  .credit-info .c-score { font-size: 10px; color: rgba(255,255,255,0.45); margin-top: 2px; }
+  .credit-info .c-char { font-size: 10px; color: #7C3AED; margin-top: 2px; font-weight: 500; }
+</style>
+</head>
+<body>
+
+<h2>Detail Screen — v3 <span style="font-size:12px;color:#22C55E;background:rgba(34,197,94,0.12);padding:2px 8px;border-radius:20px;font-weight:600;vertical-align:middle">Updated</span></h2>
+<p class="subtitle">Known For (large landscape cards) + Credits list — both present, matching your reference screenshot</p>
+
+<div class="row">
+
+  <!-- Description sheet -->
+  <div class="col">
+    <div class="col-label">Description sheet open</div>
+    <div class="phone" style="position:relative;height:520px">
+      <div class="backdrop">
+        <div class="backdrop-img"></div>
+        <div class="backdrop-gradient"></div>
+        <div class="backdrop-title">
+          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-bottom:4px">Mystery · TV-MA</div>
+          <div class="show-title">FROM</div>
+          <div class="meta-row"><span style="font-size:10px;color:#fbbf24">★</span><span class="meta-tag">8.5 · 2022</span></div>
+        </div>
+      </div>
+      <div class="detail-body">
+        <div class="action-row">
+          <div class="play-btn">▶ Resume S01E07 · 31m left</div>
+          <div class="icon-btn">🔖</div>
+          <div class="icon-btn">❤️</div>
+        </div>
+        <div class="desc-text">Unravel the mystery of a nightmarish town in middle America that traps all those who enter. As the unwilling residents fight...</div>
+        <div class="desc-tap-hint">Read more →</div>
+        <div class="section-title">Cast</div>
+        <div class="cast-scroll">
+          <div class="cast-card"><div class="cast-photo">👨🏾</div><div class="cast-name">Harold P.</div><div class="cast-role">Boyd Stevens</div></div>
+          <div class="cast-card"><div class="cast-photo">👩🏼</div><div class="cast-name">Catalina S.</div><div class="cast-role">Tabitha</div></div>
+          <div class="cast-card"><div class="cast-photo">👨🏻</div><div class="cast-name">Ricky He</div><div class="cast-role">Kenny Liu</div></div>
+          <div class="cast-card"><div class="cast-photo">👩</div><div class="cast-name">Avery K.</div><div class="cast-role">Sara</div></div>
+        </div>
+      </div>
+      <div class="sheet-overlay">
+        <div class="sheet">
+          <div class="sheet-handle"></div>
+          <div class="sheet-title">FROM</div>
+          <div class="sheet-body">Unravel the mystery of a nightmarish town in middle America that traps all those who enter. As the unwilling residents fight to keep a sense of normalcy and search for a way out, they must also survive the threats of the surrounding forest – including the terrifying creatures that come out when the sun goes down.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Actor page — matching screenshot layout exactly -->
+  <div class="col">
+    <div class="col-label">Actor bio page (scrollable)</div>
+    <div class="phone">
+      <div class="actor-page">
+        <div class="nav-bar">
+          <div class="back-btn">‹ FROM</div>
+          <div class="nav-title-sm">Harold Perrineau</div>
+          <div style="width:60px"></div>
+        </div>
+
+        <!-- Single photo + name -->
+        <div class="actor-hero">
+          <div class="actor-single-photo">🧑🏾</div>
+          <div class="actor-hero-info">
+            <div class="actor-name">Harold Perrineau</div>
+            <div class="actor-role-in-show">Boyd Stevens in FROM</div>
+            <div class="actor-bio-short">Born August 7, 1963 in Brooklyn, NY. Known for his roles in Lost, Oz, and Romeo + Juliet.</div>
+          </div>
+        </div>
+
+        <!-- Info table: stacked label → value like the screenshot -->
+        <div class="info-table">
+          <div class="info-row">
+            <div class="info-key">Also Known As</div>
+            <div class="info-val">Harold Perrineau Jr.</div>
+          </div>
+          <div class="info-row">
+            <div class="info-key">IMDb</div>
+            <div class="info-val link">nm0674782</div>
+          </div>
+        </div>
+
+        <!-- Known For — large landscape backdrops -->
+        <div class="known-for-section">
+          <div class="known-for-label">Known For</div>
+          <div class="known-for-scroll">
+            <div class="kf-card">
+              <div class="kf-backdrop" style="background:linear-gradient(135deg,#1a3a2a,#2a1a3a)">
+                <div class="kf-backdrop-bg" style="background:rgba(0,0,0,0.2)"></div>
+                🎭
+              </div>
+              <div class="kf-title">Matrix Reloaded</div>
+            </div>
+            <div class="kf-card">
+              <div class="kf-backdrop" style="background:linear-gradient(135deg,#1a2a3a,#2a3a1a)">
+                🏝️
+              </div>
+              <div class="kf-title">Lost</div>
+            </div>
+            <div class="kf-card">
+              <div class="kf-backdrop" style="background:linear-gradient(135deg,#3a1a1a,#1a1a3a)">
+                🏘️
+              </div>
+              <div class="kf-title">FROM</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Credits -->
+        <div class="credits-section">
+          <div class="credits-header">
+            <div class="credits-title-lbl">Credits</div>
+            <div class="filter-chip">All ↓</div>
+            <div class="filter-chip">Acting ↓</div>
+          </div>
+
+          <div class="year-group">
+            <div class="year-lbl">2024</div>
+            <div class="credit-item">
+              <div class="credit-poster" style="background:linear-gradient(135deg,#1a3a2a,#2a1a3a)">🏝️</div>
+              <div class="credit-info">
+                <div class="c-title">Getting LOST</div>
+                <div class="c-meta">Acting · Movie</div>
+                <div class="c-score">★ 6.5 · 17 votes</div>
+                <div class="c-char">Self (archive footage)</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="year-group">
+            <div class="year-lbl">2023</div>
+            <div class="credit-item">
+              <div class="credit-poster" style="background:linear-gradient(135deg,#1a2a3a,#2a1a2a)">🔮</div>
+              <div class="credit-info">
+                <div class="c-title">LOST: Circle</div>
+                <div class="c-meta">Acting · Series · 80 eps</div>
+                <div class="c-score">★ 0.0 · 0 votes</div>
+                <div class="c-char">Michael Dawson</div>
+              </div>
+            </div>
+            <div class="credit-item">
+              <div class="credit-poster" style="background:linear-gradient(135deg,#2a1a3a,#1a2a1a)">🦄</div>
+              <div class="credit-info">
+                <div class="c-title">Unicorn Boy</div>
+                <div class="c-meta">Voice · Movie</div>
+                <div class="c-score">★ 10.0 · 1 vote</div>
+                <div class="c-char">Guard Pantius (voice)</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="year-group">
+            <div class="year-lbl">2022</div>
+            <div class="credit-item">
+              <div class="credit-poster" style="background:linear-gradient(135deg,#3a2a1a,#1a2a3a)">🎩</div>
+              <div class="credit-info">
+                <div class="c-title">The Best Man: Final Chapters</div>
+                <div class="c-meta">Acting · Series · 8 eps</div>
+                <div class="c-score">★ 7.5 · 30 votes</div>
+                <div class="c-char">Julian Murch</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div style="padding:14px;background:rgba(255,255,255,0.04);border-radius:10px;border:1px solid rgba(255,255,255,0.08);max-width:700px">
+  <p style="font-size:13px;color:#ccc">Does this match what you had in mind? Last section: <strong>Library</strong> redesign — Watchlist + Liked tabs.</p>
+</div>
+
+<script src="/helper.js"></script>
+</body>
+</html>

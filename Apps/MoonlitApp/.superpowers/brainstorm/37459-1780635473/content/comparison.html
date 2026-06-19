@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luna vs Omni — Visual Comparison</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0a0a0f;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+    padding: 24px;
+  }
+  h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .sub { color: #888; font-size: 13px; margin-bottom: 28px; }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #666;
+    margin-bottom: 14px;
+    margin-top: 32px;
+  }
+
+  /* ───────── SPLIT COMPARE ───────── */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+  .compare-col {
+    background: #12121a;
+    border-radius: 16px;
+    padding: 16px;
+    border: 1px solid #1e1e2a;
+  }
+  .compare-col.new {
+    border-color: #6c5ce7;
+    background: #0f0f1e;
+  }
+  .col-tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+    display: inline-block;
+  }
+  .col-tag.current { background: #333; color: #999; }
+  .col-tag.new { background: #6c5ce720; color: #9d8bf4; border: 1px solid #6c5ce7; }
+
+  /* ───────── PHONE SHELL ───────── */
+  .phone {
+    width: 100%;
+    max-width: 200px;
+    margin: 0 auto;
+    background: #000;
+    border-radius: 28px;
+    overflow: hidden;
+    border: 2px solid #2a2a3a;
+    position: relative;
+  }
+  .phone-screen { padding: 0; overflow: hidden; }
+
+  /* ───────── HERO ───────── */
+  .hero {
+    position: relative;
+    height: 160px;
+    overflow: hidden;
+  }
+  .hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  }
+  .hero-grad {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 30%, #000 100%);
+  }
+  .hero-content {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+  }
+  .hero-genre {
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  .hero-title { font-size: 18px; font-weight: 900; line-height: 1.1; margin-bottom: 4px; }
+  .hero-meta { font-size: 7px; color: rgba(255,255,255,0.6); margin-bottom: 8px; }
+  .hero-buttons { display: flex; gap: 6px; align-items: center; }
+  .btn-watch-now {
+    background: #fff;
+    color: #000;
+    border: none;
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 8px;
+    font-weight: 700;
+    display: flex; align-items: center; gap: 3px;
+  }
+  .btn-mylist {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 20px;
+    padding: 5px 10px;
+    font-size: 8px;
+    font-weight: 600;
+    backdrop-filter: blur(8px);
+  }
+
+  /* dots */
+  .hero-dots { display: flex; gap: 4px; justify-content: center; padding: 6px 0 2px; }
+  .dot { height: 2px; border-radius: 2px; background: rgba(255,255,255,0.3); }
+  .dot.active { width: 14px; background: #fff; }
+  .dot:not(.active) { width: 4px; }
+
+  /* ───────── CONTINUE WATCHING ───────── */
+  .section-row { padding: 10px 10px 4px; }
+  .row-title { font-size: 10px; font-weight: 700; margin-bottom: 8px; }
+  .cw-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+  .cw-scroll::-webkit-scrollbar { display: none; }
+
+  /* CURRENT CW card */
+  .cw-card-current {
+    flex: 0 0 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #1e1e2e;
+    position: relative;
+  }
+  .cw-thumb-current {
+    width: 100px;
+    height: 56px;
+    background: linear-gradient(135deg, #2a1a3e, #1a2a3e);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .play-circle {
+    width: 20px; height: 20px;
+    background: rgba(0,0,0,0.5);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .play-triangle {
+    width: 0; height: 0;
+    border-style: solid;
+    border-width: 4px 0 4px 7px;
+    border-color: transparent transparent transparent #fff;
+    margin-left: 1px;
+  }
+  .cw-progress { height: 2px; background: rgba(255,255,255,0.15); }
+  .cw-progress-fill { height: 2px; width: 35%; background: #6c5ce7; }
+  .cw-label-current { font-size: 7px; color: #fff; padding: 3px 4px 1px; }
+  .cw-sub-current { font-size: 6px; color: #888; padding: 0 4px 4px; }
+
+  /* NEW CW card */
+  .cw-card-new {
+    flex: 0 0 110px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #1a1a2a;
+    position: relative;
+  }
+  .cw-thumb-new {
+    width: 110px;
+    height: 62px;
+    background: linear-gradient(135deg, #0d1117, #1a2a4e);
+    position: relative;
+  }
+  .cw-thumb-new-inner {
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 62'%3E%3Crect width='110' height='62' fill='%230d1117'/%3E%3Crect x='0' y='0' width='110' height='62' fill='url(%23g)'/%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%231a1a4e'/%3E%3Cstop offset='100%25' stop-color='%230a0a1e'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E");
+  }
+  .cw-ep-badge {
+    position: absolute;
+    top: 5px; left: 5px;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    border-radius: 4px;
+    padding: 2px 5px;
+    font-size: 6px;
+    font-weight: 700;
+    color: #fff;
+    display: flex; align-items: center; gap: 3px;
+  }
+  .ep-dot { width: 3px; height: 3px; background: #6c5ce7; border-radius: 50%; }
+  .cw-play-new {
+    position: absolute;
+    bottom: 6px; left: 50%;
+    transform: translateX(-50%);
+    width: 18px; height: 18px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .cw-progress-new { height: 3px; background: rgba(255,255,255,0.1); }
+  .cw-progress-fill-new { height: 3px; width: 35%; background: #6c5ce7; border-radius: 0 2px 2px 0; }
+  .cw-label-new { font-size: 7.5px; color: #fff; padding: 4px 6px 2px; font-weight: 600; }
+  .cw-ep-text-new { font-size: 6.5px; color: rgba(255,255,255,0.5); padding: 0 6px 5px; }
+
+  /* ───────── CONTENT CARDS ───────── */
+  .card-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+  .card-scroll::-webkit-scrollbar { display: none; }
+
+  /* CURRENT card */
+  .content-card-current {
+    flex: 0 0 62px;
+    display: flex; flex-direction: column; gap: 3px;
+  }
+  .card-img-current {
+    width: 62px; height: 93px;
+    border-radius: 6px;
+    background: linear-gradient(160deg, #2a1a3e, #1e2a3e, #1a3e2e);
+    position: relative;
+  }
+  .card-title-current { font-size: 6.5px; color: #fff; line-height: 1.2; }
+  .card-rating-current { font-size: 5.5px; color: #888; }
+
+  /* NEW card */
+  .content-card-new {
+    flex: 0 0 68px;
+    display: flex; flex-direction: column; gap: 3px;
+  }
+  .card-img-new {
+    width: 68px; height: 102px;
+    border-radius: 10px;
+    background: linear-gradient(160deg, #2a1a3e, #1e2a3e, #1a3e2e);
+    position: relative;
+    overflow: hidden;
+  }
+  .card-rank-badge {
+    position: absolute;
+    top: 5px; left: 5px;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(4px);
+    border-radius: 4px;
+    padding: 2px 5px;
+    font-size: 6px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .card-genre-badge {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 16px 5px 5px;
+    background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.85));
+    font-size: 6px;
+    color: rgba(255,255,255,0.75);
+    font-weight: 600;
+  }
+  .card-title-new { font-size: 7px; color: #fff; line-height: 1.2; font-weight: 600; }
+  .card-rating-new { font-size: 5.5px; color: #888; }
+
+  /* source tag */
+  .source-tag {
+    position: absolute;
+    top: 5px; right: 5px;
+    background: rgba(108, 92, 231, 0.8);
+    border-radius: 3px;
+    padding: 1px 4px;
+    font-size: 5px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  /* ───────── DETAIL PAGE ───────── */
+  .detail-backdrop {
+    width: 100%;
+    height: 110px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
+    position: relative;
+  }
+  .detail-backdrop-grad {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 40%, #000 100%);
+  }
+  .detail-x {
+    position: absolute;
+    top: 8px; left: 8px;
+    width: 20px; height: 20px;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(6px);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; color: #fff;
+  }
+  .detail-more {
+    position: absolute;
+    top: 8px; right: 8px;
+    width: 20px; height: 20px;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(6px);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: #fff;
+  }
+  .detail-title-overlay {
+    position: absolute;
+    bottom: 12px; left: 12px; right: 12px;
+  }
+  .detail-genre-tag {
+    font-size: 7px; color: rgba(255,255,255,0.6);
+    margin-bottom: 3px;
+  }
+  .detail-title-big {
+    font-size: 17px; font-weight: 900;
+    line-height: 1.1;
+  }
+  .detail-meta-row {
+    font-size: 7px; color: rgba(255,255,255,0.55);
+    display: flex; gap: 5px; align-items: center;
+    margin-top: 3px;
+  }
+  .detail-body { padding: 10px; background: #000; }
+  .detail-actions { display: flex; gap: 6px; margin-bottom: 10px; }
+  .btn-play-big {
+    flex: 1;
+    background: #fff; color: #000;
+    border-radius: 20px;
+    padding: 6px 8px;
+    font-size: 7.5px; font-weight: 700;
+    text-align: center;
+    display: flex; align-items: center; justify-content: center; gap: 3px;
+  }
+  .btn-add {
+    width: 28px; height: 28px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; color: #fff;
+    flex-shrink: 0;
+  }
+  .detail-desc {
+    font-size: 7px; color: rgba(255,255,255,0.65);
+    line-height: 1.5; margin-bottom: 10px;
+  }
+  .season-label { font-size: 9px; font-weight: 700; margin-bottom: 6px; }
+  .season-picker {
+    display: inline-flex; align-items: center; gap: 3px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 6px; padding: 3px 7px;
+    font-size: 8px; color: #fff;
+    margin-bottom: 8px;
+  }
+  .ep-card {
+    display: flex; gap: 7px;
+    margin-bottom: 7px; padding-bottom: 7px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .ep-thumb {
+    width: 70px; height: 40px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #1a1a3e, #0d1b3e);
+    flex-shrink: 0;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .ep-info { flex: 1; }
+  .ep-num { font-size: 6px; color: rgba(255,255,255,0.45); margin-bottom: 2px; }
+  .ep-name { font-size: 7.5px; font-weight: 600; color: #fff; margin-bottom: 2px; }
+  .ep-desc { font-size: 6px; color: rgba(255,255,255,0.45); line-height: 1.4; }
+
+  /* OLD detail layout */
+  .old-poster-row {
+    display: flex; gap: 10px; padding: 10px;
+    margin-top: -20px; position: relative;
+  }
+  .old-poster {
+    width: 55px; height: 82px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #2a1a3e, #1e2a3e);
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+  }
+  .old-title-col { padding-top: 30px; }
+  .old-title { font-size: 11px; font-weight: 800; }
+  .old-meta { font-size: 6px; color: #888; margin-top: 3px; }
+  .old-actions { display: flex; gap: 5px; padding: 0 10px 8px; }
+  .old-btn {
+    flex: 1; background: rgba(255,255,255,0.1);
+    border-radius: 6px; padding: 5px 4px;
+    font-size: 6.5px; color: #fff; text-align: center;
+  }
+  .old-btn.primary { background: #6c5ce7; }
+
+  /* ───────── PLAYER ───────── */
+  .player-screen {
+    background: #000;
+    height: 160px;
+    position: relative;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .player-top {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 10px 0;
+  }
+  .player-icon-btn {
+    width: 22px; height: 22px;
+    background: rgba(0,0,0,0.5);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; color: #fff;
+    backdrop-filter: blur(6px);
+  }
+  .player-title { font-size: 9px; font-weight: 600; }
+  .player-progress-area { padding: 0 8px; }
+  .player-slider-track {
+    height: 3px; background: rgba(255,255,255,0.2); border-radius: 2px;
+    position: relative; margin-bottom: 4px;
+  }
+  .player-slider-fill { height: 3px; width: 30%; background: #fff; border-radius: 2px; }
+  .player-thumb-current {
+    position: absolute;
+    top: 50%; left: 30%;
+    transform: translate(-50%, -50%);
+    width: 12px; height: 12px;
+    background: #fff; border-radius: 50%;
+  }
+  .player-thumb-new {
+    position: absolute;
+    top: 50%; left: 30%;
+    transform: translate(-50%, -50%);
+    width: 14px; height: 14px;
+    background: #fff; border-radius: 50%;
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.2);
+  }
+  .player-time { display: flex; justify-content: space-between; font-size: 6px; color: rgba(255,255,255,0.5); }
+  .player-controls-current {
+    display: flex; justify-content: space-around; align-items: center;
+    padding: 6px 8px 10px;
+    background: rgba(255,255,255,0.05);
+  }
+  .player-controls-new {
+    margin: 0 8px 10px;
+    display: flex; justify-content: space-around; align-items: center;
+    padding: 7px 12px;
+    background: rgba(30, 30, 50, 0.85);
+    backdrop-filter: blur(16px);
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .ctrl-icon { font-size: 11px; color: rgba(255,255,255,0.8); }
+
+  /* ───────── CHANGE TAGS ───────── */
+  .changes-list { margin-top: 12px; }
+  .change-item {
+    display: flex; align-items: flex-start; gap: 8px;
+    padding: 8px 10px;
+    background: #12121a;
+    border-radius: 8px; margin-bottom: 6px;
+    border: 1px solid #1e1e2a;
+  }
+  .change-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    margin-top: 4px; flex-shrink: 0;
+  }
+  .change-dot.card { background: #e17055; }
+  .change-dot.cw { background: #00cec9; }
+  .change-dot.hero { background: #fdcb6e; }
+  .change-dot.detail { background: #a29bfe; }
+  .change-dot.player { background: #fd79a8; }
+  .change-text strong { font-size: 11px; display: block; color: #fff; }
+  .change-text span { font-size: 10px; color: #888; line-height: 1.4; }
+</style>
+</head>
+<body>
+
+<h1>Luna → Omni-Inspired Redesign</h1>
+<p class="sub">Visual comparison of current state vs. proposed changes across all screens</p>
+
+<!-- ════════════════════════════════════════ -->
+<!-- SECTION 1: CONTENT CARDS               -->
+<!-- ════════════════════════════════════════ -->
+<div class="section-label">1 · Content Cards (Poster Grid)</div>
+<div class="compare">
+  <div class="compare-col">
+    <span class="col-tag current">Current Luna</span>
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="section-row">
+          <div class="row-title">Popular Movies</div>
+          <div class="card-scroll">
+            <div class="content-card-current">
+              <div class="card-img-current" style="background:linear-gradient(135deg,#2a1030,#1a2030)"></div>
+              <div class="card-title-current">Scary Movie</div>
+              <div class="card-rating-current">5.9 · Comedy</div>
+            </div>
+            <div class="content-card-current">
+              <div class="card-img-current" style="background:linear-gradient(135deg,#103020,#102030)"></div>
+              <div class="card-title-current">Backrooms</div>
+              <div class="card-rating-current">7.1 · Horror</div>
+            </div>
+            <div class="content-card-current">
+              <div class="card-img-current" style="background:linear-gradient(135deg,#301020,#203010)"></div>
+              <div class="card-title-current">Ladies First</div>
+              <div class="card-rating-current">5.8</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p style="font-size:10px;color:#666;margin-top:8px;text-align:center">Plain cards, no badges on card, small corners</p>
+  </div>
+  <div class="compare-col new">
+    <span class="col-tag new">✦ Proposed</span>
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="section-row">
+          <div class="row-title">Popular Movies <span style="font-size:8px;color:#6c5ce7;font-weight:600">›</span></div>
+          <div class="card-scroll">
+            <div class="content-card-new">
+              <div class="card-img-new" style="background:linear-gradient(135deg,#3a1040,#1a2040)">
+                <div class="card-rank-badge">#1 Today</div>
+                <div class="source-tag">Jovie</div>
+                <div class="card-genre-badge">Comedy</div>
+              </div>
+              <div class="card-title-new">Scary Movie</div>
+              <div class="card-rating-new">⭐ 5.9</div>
+            </div>
+            <div class="content-card-new">
+              <div class="card-img-new" style="background:linear-gradient(135deg,#103a20,#102040)">
+                <div class="card-rank-badge">#2 Today</div>
+                <div class="card-genre-badge">Horror</div>
+              </div>
+              <div class="card-title-new">Backrooms</div>
+              <div class="card-rating-new">⭐ 7.1</div>
+            </div>
+            <div class="content-card-new">
+              <div class="card-img-new" style="background:linear-gradient(135deg,#3a1020,#203a10)">
+                <div class="card-rank-badge">#3</div>
+                <div class="card-genre-badge">Comedy</div>
+              </div>
+              <div class="card-title-new">Ladies First</div>
+              <div class="card-rating-new">⭐ 5.8</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p style="font-size:10px;color:#9d8bf4;margin-top:8px;text-align:center">Rank badge (top-left), genre overlay (bottom), larger corners, source tag</p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- SECTION 2: CONTINUE WATCHING           -->
+<!-- ════════════════════════════════════════ -->
+<div class="section-label">2 · Continue Watching Row</div>
+<div class="compare">
+  <div class="compare-col">
+    <span class="col-tag current">Current Luna</span>
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="section-row">
+          <div class="row-title">Continue Watching</div>
+          <div class="cw-scroll">
+            <div class="cw-card-current">
+              <div class="cw-thumb-current">
+                <div class="play-circle"><div class="play-triangle"></div></div>
+              </div>
+              <div class="cw-progress"><div class="cw-progress-fill"></div></div>
+              <div class="cw-label-current">Unknown</div>
+              <div class="cw-sub-current">16% watched</div>
+            </div>
+            <div class="cw-card-current">
+              <div class="cw-thumb-current" style="background:linear-gradient(135deg,#1a3e2e,#1a2a3e)">
+                <div class="play-circle"><div class="play-triangle"></div></div>
+              </div>
+              <div class="cw-progress"><div class="cw-progress-fill" style="width:5%"></div></div>
+              <div class="cw-label-current">Unknown</div>
+              <div class="cw-sub-current">0% watched</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p style="font-size:10px;color:#666;margin-top:8px;text-align:center">Portrait poster image, "X% watched" text, small cards</p>
+  </div>
+  <div class="compare-col new">
+    <span class="col-tag new">✦ Proposed</span>
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="section-row">
+          <div class="row-title" style="display:flex;align-items:center;gap:4px">Continue Watching <span style="font-size:7px;color:rgba(255,255,255,0.4)">↕</span></div>
+          <div class="cw-scroll">
+            <div class="cw-card-new">
+              <div class="cw-thumb-new">
+                <div class="cw-ep-badge"><div class="ep-dot"></div>S1, E1</div>
+                <div class="cw-play-new"><div class="play-triangle" style="border-width:3px 0 3px 5px"></div></div>
+              </div>
+              <div class="cw-progress-new"><div class="cw-progress-fill-new"></div></div>
+              <div class="cw-label-new">FROM</div>
+              <div class="cw-ep-text-new">S1 E1 · Long Day's Journey</div>
+            </div>
+            <div class="cw-card-new">
+              <div class="cw-thumb-new" style="background:linear-gradient(135deg,#1a3e0d,#0d2a3e)">
+                <div class="cw-ep-badge"><div class="ep-dot" style="background:#00cec9"></div>S9, E2</div>
+                <div class="cw-play-new"><div class="play-triangle" style="border-width:3px 0 3px 5px"></div></div>
+              </div>
+              <div class="cw-progress-new"><div class="cw-progress-fill-new" style="width:8%"></div></div>
+              <div class="cw-label-new">Rick and Morty</div>
+              <div class="cw-ep-text-new">S9 E2 · A Few Good Rick</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p style="font-size:10px;color:#9d8bf4;margin-top:8px;text-align:center">Landscape 16:9 thumbnail, episode badge (S1, E1), episode title text</p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- SECTION 3: DETAIL PAGE                 -->
+<!-- ════════════════════════════════════════ -->
+<div class="section-label">3 · Detail Page</div>
+<div class="compare">
+  <div class="compare-col">
+    <span class="col-tag current">Current Luna</span>
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="detail-backdrop" style="height:90px">
+          <div class="detail-backdrop-grad"></div>
+        </div>
+        <div class="old-poster-row">
+          <div class="old-poster"></div>
+          <div class="old-title-col">
+            <div class="old-title">FROM</div>
+            <div class="old-meta">⭐ 7.8 · 2022 · Horror</div>
+          </div>
+        </div>
+        <div class="old-actions">
+          <div class="old-btn primary" style="font-size:7px">▶ Play</div>
+          <div class="old-btn" style="font-size:7px">🔖 Save</div>
+          <div class="old-btn" style="font-size:7px">✓ Watched</div>
+        </div>
+        <div style="padding:0 10px;font-size:6.5px;color:#888;line-height:1.5">In a nightmarish town in middle America that traps everyone who enters...</div>
+      </div>
+    </div>
+    <p style="font-size:10px;color:#666;margin-top:8px;text-align:center">Poster + title side-by-side layout, separate button row</p>
+  </div>
+  <div class="compare-col new">
+    <span class="col-tag new">✦ Proposed</span>
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="detail-backdrop">
+          <div class="detail-backdrop-grad"></div>
+          <div class="detail-x">✕</div>
+          <div class="detail-more">···</div>
+          <div class="detail-title-overlay">
+            <div class="detail-genre-tag">TV Show · Mystery · Horror</div>
+            <div class="detail-title-big">FROM</div>
+            <div class="detail-meta-row">⭐ 7.8 <span>·</span> 2022 <span>·</span> S3</div>
+          </div>
+        </div>
+        <div class="detail-body">
+          <div class="detail-actions">
+            <div class="btn-play-big">▶ Play First Episode</div>
+            <div class="btn-add">+</div>
+          </div>
+          <div class="detail-desc">In a nightmarish town in middle America that traps everyone who enters, unwilling residents fight to survive...</div>
+          <div class="season-label">Episodes</div>
+          <div class="season-picker">Season 1 ↓</div>
+          <div class="ep-card">
+            <div class="ep-thumb">
+              <div class="play-circle" style="width:14px;height:14px"><div class="play-triangle" style="border-width:3px 0 3px 5px"></div></div>
+            </div>
+            <div class="ep-info">
+              <div class="ep-num">EPISODE 1</div>
+              <div class="ep-name">Long Day's Journey Into Night</div>
+              <div class="ep-desc">The Matthews' family road trip takes a horrifying turn...</div>
+            </div>
+          </div>
+          <div class="ep-card">
+            <div class="ep-thumb" style="background:linear-gradient(135deg,#1a2a3e,#1a3a2e)">
+              <div class="play-circle" style="width:14px;height:14px"><div class="play-triangle" style="border-width:3px 0 3px 5px"></div></div>
+            </div>
+            <div class="ep-info">
+              <div class="ep-num">EPISODE 2</div>
+              <div class="ep-name">The Way Things Are</div>
+              <div class="ep-desc">At Colony House, new residents learn the rules...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p style="font-size:10px;color:#9d8bf4;margin-top:8px;text-align:center">Full-bleed hero with X button, title on image, "Play First Episode" pill, landscape episode cards</p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- SECTION 4: PLAYER BAR                  -->
+<!-- ════════════════════════════════════════ -->
+<div class="section-label">4 · Player Controls</div>
+<div class="compare">
+  <div class="compare-col">
+    <span class="col-tag current">Current Luna</span>
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="player-screen">
+          <div class="player-top">
+            <div class="player-icon-btn">✕</div>
+            <div class="player-title">FROM</div>
+            <div style="display:flex;gap:4px">
+              <div class="player-icon-btn">🔒</div>
+              <div class="player-icon-btn">···</div>
+            </div>
+          </div>
+          <div style="flex:1"></div>
+          <div class="player-progress-area">
+            <div class="player-slider-track">
+              <div class="player-slider-fill"></div>
+              <div class="player-thumb-current"></div>
+            </div>
+            <div class="player-time"><span>12:30</span><span>-32:15</span></div>
+          </div>
+          <div class="player-controls-current">
+            <span class="ctrl-icon">⬜</span>
+            <span class="ctrl-icon">⏱</span>
+            <span class="ctrl-icon">💬</span>
+            <span class="ctrl-icon">🎵</span>
+            <span class="ctrl-icon">↩</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p style="font-size:10px;color:#666;margin-top:8px;text-align:center">Flat controls bar, basic thumb, slightly dim background</p>
+  </div>
+  <div class="compare-col new">
+    <span class="col-tag new">✦ Proposed</span>
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="player-screen">
+          <div class="player-top">
+            <div class="player-icon-btn">✕</div>
+            <div class="player-title">FROM</div>
+            <div style="display:flex;gap:4px">
+              <div class="player-icon-btn">🔒</div>
+              <div class="player-icon-btn">···</div>
+            </div>
+          </div>
+          <div style="flex:1"></div>
+          <div class="player-progress-area">
+            <div class="player-slider-track">
+              <div class="player-slider-fill"></div>
+              <div class="player-thumb-new"></div>
+            </div>
+            <div class="player-time"><span>12:30</span><span>-32:15</span></div>
+          </div>
+          <div class="player-controls-new">
+            <span class="ctrl-icon">⬜</span>
+            <span class="ctrl-icon">⏱</span>
+            <span class="ctrl-icon">💬</span>
+            <span class="ctrl-icon">🎵</span>
+            <span class="ctrl-icon">↩</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p style="font-size:10px;color:#9d8bf4;margin-top:8px;text-align:center">Frosted pill container, thumb with glow ring, elevated material feel</p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- SUMMARY OF CHANGES                     -->
+<!-- ════════════════════════════════════════ -->
+<div class="section-label">Summary of Proposed Changes</div>
+<div class="changes-list">
+  <div class="change-item">
+    <div class="change-dot card"></div>
+    <div class="change-text">
+      <strong>Content Cards</strong>
+      <span>Larger corner radius (8→12pt), rank badge overlay (#1 Today), genre badge at bottom with gradient, optional source tag. Slightly taller card height for more poster presence.</span>
+    </div>
+  </div>
+  <div class="change-item">
+    <div class="change-dot cw"></div>
+    <div class="change-text">
+      <strong>Continue Watching Cards</strong>
+      <span>Switch to landscape 16:9 thumbnail, episode badge (S1, E1) top-left, episode title below card instead of "X% watched", colored progress bar edge-to-edge.</span>
+    </div>
+  </div>
+  <div class="change-item">
+    <div class="change-dot hero"></div>
+    <div class="change-text">
+      <strong>Hero Section</strong>
+      <span>Genre displayed as "TV Show · Mystery · Horror" format. Button styling already close — minor polish only (ensure My List uses glass capsule consistently).</span>
+    </div>
+  </div>
+  <div class="change-item">
+    <div class="change-dot detail"></div>
+    <div class="change-text">
+      <strong>Detail Page</strong>
+      <span>Remove floating poster layout. Move title/genre/meta onto the backdrop hero. Add X dismiss button, "Play First Episode" pill. Episode cards with landscape thumbnails replacing the current episode list style.</span>
+    </div>
+  </div>
+  <div class="change-item">
+    <div class="change-dot player"></div>
+    <div class="change-text">
+      <strong>Player Bottom Bar</strong>
+      <span>Wrap controls in frosted-glass rounded pill (dark material, blur backdrop). Thumb gets a glow ring. Minor visual lift — no functional change.</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

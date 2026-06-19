@@ -1,0 +1,42 @@
+<h2>10 improvements → 4 subsystems</h2>
+<p class="subtitle">Each subsystem is independent. Which do you want to design first?</p>
+
+<div class="options" data-multiselect>
+  <div class="option" data-choice="player" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Player Enhancements</h3>
+      <p><strong>Items 1, 4, 5, 6, 7</strong> — Liquid Glass audio slider in player · Video player settings screen (Skip Intro / IntroDB, autoplay next episode, highlights on timeline) · Media type player selection (AVPlayer vs KSPlayer) · Source caching · Long-press context menu on Continue Watching cards</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="detail" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Detail Screen Enhancements</h3>
+      <p><strong>Items 2, 3</strong> — Description bottom sheet (tap to expand full synopsis + episode descriptions) · Larger clickable cast cards with full actor/director bio page (TMDB-powered, multi-photo, personal info, known-for filmography)</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="library" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Library Redesign</h3>
+      <p><strong>Item 8</strong> — Separate Watchlist (saved) and Liked (heart) tabs · Richer grid with rating badges and progress rings · Filter/sort bar · Empty states per tab</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="settings" onclick="toggleSelect(this)">
+    <div class="letter">D</div>
+    <div class="content">
+      <h3>Settings Redesign + Roles</h3>
+      <p><strong>Items 9, 10</strong> — Modern settings rows with icons and tinted backgrounds · Full Subtitle Appearance screen (font, size, color, outline, preview with real player frame) · Remove Appearance screen · Role-gated settings: Admin / Friends&Family / Premium Full / Premium Self-Manage · Apple App Store compliant approach</p>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:24px;padding:16px;background:rgba(255,255,255,0.04);border-radius:12px;border:1px solid rgba(255,255,255,0.08)">
+  <p class="label">Recommended order</p>
+  <p style="margin-top:8px">Start with <strong>A (Player)</strong> since it has the most items and touches the most code, then <strong>D (Settings + Roles)</strong> since roles affect what every other screen shows, then B and C.</p>
+  <p style="margin-top:8px;color:#aaa">Select the ones you want to tackle — or just tell me in the terminal.</p>
+</div>

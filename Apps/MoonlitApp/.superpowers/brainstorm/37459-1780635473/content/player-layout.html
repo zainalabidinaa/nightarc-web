@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luna Player — New Layout</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #0a0a0f;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+  padding: 32px 16px;
+  gap: 32px;
+}
+
+h2 { color: #fff; font-size: 18px; font-weight: 700; }
+.label { color: #666; font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase; }
+
+/* ── PHONE SHELL (landscape) ── */
+.phone {
+  position: relative;
+  width: 680px;
+  height: 340px;
+  background: #000;
+  border-radius: 24px;
+  border: 2px solid #2a2a3a;
+  overflow: hidden;
+}
+
+/* fake video bg */
+.video-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 60% 40%, #1a1a3e 0%, #000 70%);
+  display: flex; align-items: center; justify-content: center;
+}
+.loading-text {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  color: rgba(255,255,255,0.35);
+  font-size: 11px;
+}
+
+/* ── CONTROLS OVERLAY ── */
+.controls {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 16px 20px 20px;
+}
+
+/* TOP BAR */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.glass-circle {
+  width: 38px; height: 38px;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.glass-circle.large {
+  width: 56px; height: 56px;
+  font-size: 22px;
+  background: rgba(255,255,255,0.15);
+}
+.glass-circle.play-btn {
+  width: 68px; height: 68px;
+  font-size: 26px;
+  background: rgba(40,40,80,0.75);
+  border-color: rgba(255,255,255,0.2);
+}
+
+/* CENTER TRANSPORT */
+.center-transport {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  flex: 1;
+}
+
+/* BOTTOM */
+.bottom-area {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.title-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.title-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.show-title {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 14px; font-weight: 700; color: #fff;
+}
+.show-title .chevron { color: rgba(255,255,255,0.4); font-size: 10px; }
+.ep-label { font-size: 12px; color: rgba(255,255,255,0.5); }
+
+/* Subtitle+audio pill */
+.sa-pill {
+  display: flex; align-items: center; gap: 14px;
+  padding: 8px 14px;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 20px;
+  color: rgba(255,255,255,0.85);
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+/* Progress bar */
+.progress-wrap {
+  display: flex; flex-direction: column; gap: 4px;
+}
+.track-wrap {
+  position: relative;
+  height: 20px;
+  display: flex; align-items: center;
+}
+.track-bg {
+  position: absolute;
+  inset: 8px 0;
+  background: rgba(255,255,255,0.18);
+  border-radius: 2px;
+}
+.track-fill {
+  position: absolute;
+  top: 8px; bottom: 8px; left: 0;
+  width: 35%;
+  background: #fff;
+  border-radius: 2px;
+}
+.thumb {
+  position: absolute;
+  left: calc(35% - 6px);
+  top: 4px;
+  width: 12px; height: 12px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(255,255,255,0.4);
+}
+.times {
+  display: flex; justify-content: space-between;
+  font-size: 10px; font-weight: 500;
+  color: rgba(255,255,255,0.4);
+}
+
+/* ── ANNOTATIONS ── */
+.annotation-wrap {
+  position: relative;
+  width: 680px;
+}
+.annotation {
+  position: absolute;
+  display: flex; align-items: center; gap: 6px;
+  white-space: nowrap;
+}
+.ann-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.ann-text { font-size: 11px; color: #888; }
+.ann-line {
+  width: 1px;
+  background: rgba(255,255,255,0.1);
+  flex-shrink: 0;
+}
+
+/* comparison note */
+.note {
+  background: #12121a;
+  border: 1px solid #1e1e2a;
+  border-radius: 12px;
+  padding: 16px 20px;
+  width: 680px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.note-row {
+  display: flex; gap: 8px; align-items: baseline;
+  font-size: 12px;
+}
+.note-row .tag {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.8px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+.before { background: #333; color: #999; }
+.after  { background: #6c5ce720; color: #9d8bf4; border: 1px solid #6c5ce7; }
+.note-row span { color: #ccc; }
+
+/* skip icon circles */
+.skip-icon {
+  display: flex; flex-direction: column; align-items: center; gap: 1px;
+}
+.skip-icon .arc {
+  font-size: 18px;
+  color: #fff;
+}
+</style>
+</head>
+<body>
+
+<h2>New Player Layout — Landscape</h2>
+<p class="label" style="margin-top:-24px">matches Omni Content Hub</p>
+
+<!-- PHONE -->
+<div class="phone">
+  <div class="video-bg">
+    <div class="loading-text">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="opacity:.4">
+        <circle cx="10" cy="10" r="8" stroke="white" stroke-width="2" stroke-dasharray="30 20"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="controls">
+    <!-- TOP BAR -->
+    <div class="top-bar">
+      <div class="glass-circle">✕</div>
+      <div class="glass-circle">···</div>
+    </div>
+
+    <!-- CENTER TRANSPORT -->
+    <div class="center-transport">
+      <div class="glass-circle large">⏮15</div>
+      <div class="glass-circle play-btn">▶</div>
+      <div class="glass-circle large">15⏭</div>
+    </div>
+
+    <!-- BOTTOM -->
+    <div class="bottom-area">
+      <div class="title-row">
+        <div class="title-info">
+          <div class="show-title">
+            FROM
+            <span class="chevron">›</span>
+          </div>
+          <div class="ep-label">S1 · E1</div>
+        </div>
+        <div class="sa-pill">
+          <span>💬</span>
+          <span>🔊</span>
+        </div>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="track-wrap">
+          <div class="track-bg"></div>
+          <div class="track-fill"></div>
+          <div class="thumb"></div>
+        </div>
+        <div class="times">
+          <span>12:30</span>
+          <span>32:15</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CHANGES SUMMARY -->
+<div class="note">
+  <div class="note-row">
+    <span class="tag before">Before</span>
+    <span>Title centered in top bar — no play/pause/skip in center — huge native slider thumb — bottom pill for all controls</span>
+  </div>
+  <div class="note-row">
+    <span class="tag after">After</span>
+    <span>Minimal top bar (✕ + ···) — center skip·play·skip buttons — thin 3px slider — title + episode bottom-left — subtitle+audio pill bottom-right</span>
+  </div>
+  <div class="note-row" style="margin-top:4px; padding-top:8px; border-top:1px solid #1e1e2a">
+    <span style="color:#9d8bf4; font-size:11px">··· ellipsis expands the full controls pill (aspect ratio, speed, sources, episodes) from the top</span>
+  </div>
+</div>
+
+</body>
+</html>

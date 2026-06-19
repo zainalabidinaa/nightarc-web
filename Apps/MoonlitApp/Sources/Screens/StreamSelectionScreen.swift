@@ -263,7 +263,7 @@ struct StreamSelectionScreen: View {
         selectedStream = stream
 
         // Block free accounts from playing
-        if ProfileManager.shared.currentProfile?.profileRole == .free {
+        if RoleManager.shared.profileRole == .free {
             upgradeAlert = true
             return
         }
