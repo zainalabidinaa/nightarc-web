@@ -509,11 +509,7 @@ struct DetailScreen: View {
         .alert("Streaming unavailable", isPresented: $showGuestStreamingAlert) {
             Button("OK", role: .cancel) {}
         } message: {
-            if RoleManager.shared.profileRole == .free {
-                Text("Your account is set to Free. Visit the Moonlit website to upgrade your account and unlock streaming.")
-            } else {
-                Text("Guest mode supports catalog and metadata addons only.")
-            }
+            Text("Your account is set to Free. Visit the Moonlit website to upgrade your account and unlock streaming.")
         }
         .fullScreenCover(item: $playerLaunch) { launch in
             PlayerScreen(launch: launch) {
@@ -876,7 +872,7 @@ struct DetailScreen: View {
             return
         }
 
-        if RoleManager.shared.profileRole == .free {
+        if ProfileManager.shared.currentProfile?.role == "free" {
             showGuestStreamingAlert = true
             return
         }

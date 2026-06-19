@@ -379,7 +379,7 @@ struct HomeScreen: View {
             return
         }
 
-        if RoleManager.shared.profileRole == .free {
+        if ProfileManager.shared.currentProfile?.role == "free" {
             showFreeUpgradeAlert = true
             return
         }
