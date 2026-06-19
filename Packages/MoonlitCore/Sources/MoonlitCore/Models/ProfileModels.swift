@@ -60,10 +60,15 @@ public enum ProfileRole: String, Codable, Sendable, CaseIterable {
     case premiumFull      = "premium_full"
     case premiumSelfManage = "premium_self_manage"
     case free             = "free"
+    case restricted       = "restricted"
     case user             = "user"
 
     public var isRestricted: Bool {
-        self == .free
+        self == .restricted
+    }
+
+    public var canBrowse: Bool {
+        self != .restricted
     }
 
     public var canManageOwnAddons: Bool {
@@ -80,6 +85,7 @@ public enum ProfileRole: String, Codable, Sendable, CaseIterable {
         case .premiumFull:       return "Premium"
         case .premiumSelfManage: return "Premium"
         case .free:              return "Free"
+        case .restricted:        return "Restricted"
         case .user:              return "User"
         }
     }
