@@ -1,9 +1,8 @@
 {
   "framework": null,
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "installCommand": "npm install",
-  "rootDirectory": "moonlit-web",
+  "buildCommand": "cd moonlit-web && npm run build",
+  "outputDirectory": "moonlit-web/dist",
+  "installCommand": "cd moonlit-web && npm install",
   "rewrites": [
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ],
