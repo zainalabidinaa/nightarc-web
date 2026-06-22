@@ -72,6 +72,7 @@ export async function fetchCatalog(query: StremioCatalogQuery): Promise<MetaPrev
       banner: m.banner || undefined,
       description: m.description || undefined,
       releaseInfo: m.releaseInfo || m.year ? String(m.releaseInfo || m.year) : undefined,
+      logo: m.logo || undefined,
       imdbRating: m.imdbRating || undefined,
       genres: m.genres || undefined,
       popularity: typeof m.popularity === 'number' ? m.popularity : undefined,

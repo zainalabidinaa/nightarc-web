@@ -1,8 +1,7 @@
 import {
-  OrganizedCollections, DBCollection, DBFolder,
-  DBFolderCatalog, DBFolderSource,
+  OrganizedCollections, DBFolderSource,
   CatalogRow, MetaPreview,
-  CollectionDisplayPreferences, AddonManifest, AddonCatalog,
+  CollectionDisplayPreferences, AddonManifest,
 } from './types';
 import { fetchCatalog, fetchTMDBCollection } from './fetcher';
 import { CollectionDisplayPreferencesStore } from './preferences';
@@ -121,7 +120,7 @@ export async function buildCollectionRows(options: BuilderOptions): Promise<Cata
   return supplemented;
 }
 
-async function resolveRawSource(
+export async function resolveRawSource(
   source: DBFolderSource,
   addons: AddonManifest[],
   tmdbApiKey?: string,
@@ -136,7 +135,7 @@ async function resolveRawSource(
   }
 
   // Build catalog ID for addon-based raw sources
-  let catalogId = '';
+  let catalogId: string;
   switch (provider) {
     case 'trakt': catalogId = `trakt.list.${tmdbId}`; break;
     case 'tmdb':
@@ -163,7 +162,7 @@ async function resolveRawSource(
   });
 }
 
-function deduplicateItems(items: MetaPreview[]): MetaPreview[] {
+export function deduplicateItems(items: MetaPreview[]): MetaPreview[] {
   const seen = new Set<string>();
   const result: MetaPreview[] = [];
   for (const item of items) {
@@ -192,15 +191,19 @@ function supplementWithAddonCatalogs(
   }
 
   const result = [...existingRows];
+  const seenRowIds = new Set(result.map(row => row.id));
 
   for (const addon of addons) {
     if (!addon.transportUrl || !addon.catalogs) continue;
     for (const catalog of addon.catalogs) {
       if (coveredCatalogIds.has(catalog.id)) continue;
+      const rowId = `${addon.id}-${catalog.type}-${catalog.id}`;
+      if (seenRowIds.has(rowId)) continue;
+      seenRowIds.add(rowId);
       // Add as a supplementary row — won't show content immediately
       // but marks it for lazy loading
       result.push({
-        id: `${addon.id}-${catalog.type}-${catalog.id}`,
+        id: rowId,
         title: catalog.name,
         items: [],
         addonName: addon.name,

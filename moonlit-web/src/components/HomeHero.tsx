@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FeaturedHomeItem, MetaDetail } from '@/lib/types';
 import { Link } from '@tanstack/react-router';
 
@@ -12,6 +12,26 @@ interface HomeHeroProps {
 
 export function HomeHero({ featuredItems, activeIndex, metas, backdrops, onIndexChange }: HomeHeroProps) {
   const [logoFailed, setLogoFailed] = React.useState(false);
+  const [scrollY, setScrollY] = useState(0);
+  const prefersReducedMotion = typeof window !== 'undefined'
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          setScrollY(window.scrollY);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [prefersReducedMotion]);
 
   if (featuredItems.length === 0) return null;
 
@@ -35,12 +55,17 @@ export function HomeHero({ featuredItems, activeIndex, metas, backdrops, onIndex
     ? featured.item.type.charAt(0).toUpperCase() + featured.item.type.slice(1)
     : null;
 
+  // Parallax transforms
+  const heroHeight = typeof window !== 'undefined'
+    ? Math.min(800, Math.max(520, window.innerHeight * 0.74))
+    : 600;
+  const parallaxBgY = prefersReducedMotion ? 0 : scrollY * 0.4;
+  const parallaxContentY = prefersReducedMotion ? 0 : scrollY * 0.15;
+  const heroOpacity = Math.max(0, Math.min(1, 1 - scrollY / (heroHeight * 0.7)));
+
   return (
-    <section
-      className="relative w-full overflow-hidden"
-      style={{ height: 'clamp(520px, 74vh, 800px)' }}
-    >
-      {/* Background image with crossfade */}
+    <div className="relative w-full overflow-hidden" style={{ height: heroHeight }}>
+      {/* Background image with parallax and crossfade */}
       {bgImage ? (
         <img
           key={bgImage}
@@ -48,6 +73,7 @@ export function HomeHero({ featuredItems, activeIndex, metas, backdrops, onIndex
           alt=""
           fetchPriority="high"
           className="absolute inset-0 w-full h-full object-cover object-[center_18%] animate-fade-in"
+          style={{ transform: `translateY(${parallaxBgY}px) scale(1.08)`, height: `calc(100% + 80px)` }}
         />
       ) : (
         <div className="absolute inset-0 bg-moonlit-elevated" />
@@ -61,9 +87,11 @@ export function HomeHero({ featuredItems, activeIndex, metas, backdrops, onIndex
       {/* Top fade — hero goes behind navbar */}
       <div className="absolute top-0 left-0 right-0 h-36 bg-gradient-to-b from-[#080808]/80 to-transparent pointer-events-none" />
 
-      {/* Content — bottom-left anchored */}
-      <div className="absolute bottom-0 left-0 right-0 px-8 md:px-14 pb-16">
-
+      {/* Content — bottom-left anchored, parallax */}
+      <div
+        className="absolute bottom-0 left-0 right-0 px-8 md:px-14 pb-16"
+        style={{ transform: `translateY(${parallaxContentY}px)`, opacity: heroOpacity }}
+      >
         {/* Logo or title */}
         {logoSrc ? (
           <img
@@ -152,6 +180,6 @@ export function HomeHero({ featuredItems, activeIndex, metas, backdrops, onIndex
           ))}
         </div>
       )}
-    </section>
+    </div>
   );
 }

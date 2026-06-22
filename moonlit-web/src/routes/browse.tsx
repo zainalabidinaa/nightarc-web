@@ -264,12 +264,7 @@ export default function DetailPage() {
             target="_blank" rel="noopener noreferrer" className="flex-shrink-0 w-52 group cursor-pointer">
             <div className="relative w-52 h-[117px] rounded-xl overflow-hidden bg-moonlit-elevated mb-2">
               <img src={`https://img.youtube.com/vi/${trailer.youtubeId}/mqdefault.jpg`} alt={trailer.title}
-                className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
-              <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/25">
-                  <svg viewBox="0 0 24 24" fill="white" className="w-5 h-5 ml-0.5"><polygon points="6,4 20,12 6,20" /></svg>
-                </div>
-              </div>
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.025]" loading="lazy" />
               <div className="absolute bottom-2 right-2 bg-red-600/90 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">YouTube</div>
             </div>
             <p className="text-sm font-semibold text-white line-clamp-1">{trailer.title}</p>
@@ -463,7 +458,7 @@ export default function DetailPage() {
             ) : (
               <div className="space-y-1">
                 {streams.slice(0, 30).map((s, i) => (
-                  <button key={s.url || i} onClick={() => handlePlay(s)}
+                  <button key={s.url ? `${s.url}-${i}` : `stream-${i}`} onClick={() => handlePlay(s)}
                     className="w-full text-left p-3 hover:bg-white/5 rounded-lg transition-all flex items-center justify-between group">
                     <div className="min-w-0">
                       <p className="text-sm text-white truncate">{s.title || s.name || s.description || 'Unknown'}</p>
@@ -498,15 +493,10 @@ export default function DetailPage() {
                   className={`flex-shrink-0 w-52 text-left group rounded-xl overflow-hidden transition-all ${selectedEpisodeId === ep.id ? 'ring-2 ring-moonlit-accent' : ''}`}>
                   <div className="relative w-full aspect-video bg-moonlit-elevated rounded-xl overflow-hidden mb-2">
                     {ep.thumbnail ? (
-                      <img src={ep.thumbnail} alt={ep.title} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+                      <img src={ep.thumbnail} alt={ep.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.025]" loading="lazy" />
                     ) : (
                       <div className="absolute inset-0 flex items-center justify-center text-white/15 text-sm font-semibold">E{ep.episode}</div>
                     )}
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                        <svg viewBox="0 0 24 24" fill="white" className="w-4 h-4 ml-0.5"><polygon points="6,4 20,12 6,20" /></svg>
-                      </div>
-                    </div>
                     {epProgress[ep.id] !== undefined && epProgress[ep.id] > 0 && (
                       <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white/20">
                         <div className="h-full bg-moonlit-accent" style={{ width: `${Math.round(epProgress[ep.id] * 100)}%` }} />

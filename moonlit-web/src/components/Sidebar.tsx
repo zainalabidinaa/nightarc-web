@@ -31,7 +31,7 @@ export function Sidebar({ children }: { children: ReactNode }) {
     <div className="relative min-h-screen">
       {/* Floating pill navbar */}
       <nav className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-0.5 px-2 py-2 rounded-full shadow-xl shadow-black/50"
-        style={{ background: 'rgba(18,18,22,0.80)', backdropFilter: 'blur(24px) saturate(1.6)', border: '1px solid rgba(255,255,255,0.09)' }}>
+        style={{ background: 'rgba(18,18,22,0.80)', backdropFilter: 'blur(30px) saturate(1.8)', border: '1px solid rgba(255,255,255,0.08)' }}>
 
         {/* Nav links */}
         {navItems.map(({ href, label, symbol }) => {

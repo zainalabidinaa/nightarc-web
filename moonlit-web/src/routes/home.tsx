@@ -4,6 +4,7 @@ import { useAuth } from '@/app/AuthProvider';
 import { usePlayer } from '@/app/PlayerProvider';
 import { Sidebar } from '@/components/Sidebar';
 import { HomeHero } from '@/components/HomeHero';
+import { CinematicBackground } from '@/components/CinematicBackground';
 import { MediaRow } from '@/components/MediaRow';
 import { CollectionRow } from '@/components/CollectionRow';
 import { FeaturedHomeItem, MetaDetail, WatchProgressEntry } from '@/lib/types';
@@ -193,25 +194,27 @@ export default function HomePage() {
           try {
             if (entry.media_type === 'series' && season !== undefined && episode !== undefined) {
               // Look up TMDB ID via IMDb ID, then fetch episode still
-              const findRes = await fetch(
-                `https://api.themoviedb.org/3/find/${baseId}?api_key=${TMDB_API_KEY}&external_source=imdb_id`
-              );
-              if (findRes.ok) {
-                const findData = await findRes.json();
-                const hit = findData.tv_results?.[0];
-                if (hit?.id) {
-                  const epRes = await fetch(
-                    `https://api.themoviedb.org/3/tv/${hit.id}/season/${season}/episode/${episode}?api_key=${TMDB_API_KEY}`
-                  );
-                  if (epRes.ok) {
-                    const epData = await epRes.json();
-                    results[entry.media_id] = {
-                      name: hit.name,
-                      poster: epData.still_path
-                        ? `https://image.tmdb.org/t/p/w780${epData.still_path}`
-                        : undefined,
-                    };
-                    return;
+              if (season > 0) {
+                const findRes = await fetch(
+                  `https://api.themoviedb.org/3/find/${baseId}?api_key=${TMDB_API_KEY}&external_source=imdb_id`
+                );
+                if (findRes.ok) {
+                  const findData = await findRes.json();
+                  const hit = findData.tv_results?.[0];
+                  if (hit?.id) {
+                    const epRes = await fetch(
+                      `https://api.themoviedb.org/3/tv/${hit.id}/season/${season}/episode/${episode}?api_key=${TMDB_API_KEY}`
+                    );
+                    if (epRes.ok) {
+                      const epData = await epRes.json();
+                      results[entry.media_id] = {
+                        name: hit.name,
+                        poster: epData.still_path
+                          ? `https://image.tmdb.org/t/p/w780${epData.still_path}`
+                          : undefined,
+                      };
+                      return;
+                    }
                   }
                 }
               }
@@ -282,6 +285,16 @@ export default function HomePage() {
 
   return (
     <Sidebar>
+      <CinematicBackground
+        backdropUrl={
+          (() => {
+            if (featuredItems.length === 0) return null;
+            const f = featuredItems[featuredIndex] ?? featuredItems[0];
+            const m = featuredMetas[f.item.id] ?? null;
+            return m?.background || featuredBackdrops[f.item.id] || f.item.banner || null;
+          })()
+        }
+      />
       {featuredItems.length > 0 && (
         <div className="-mt-16"
           onMouseEnter={() => { heroPausedRef.current = true; }}
@@ -321,10 +334,10 @@ export default function HomePage() {
                     onClick={() => handleCwPlay(item)}
                     className="flex-shrink-0 w-64 group cursor-pointer text-left"
                   >
-                    <div className="relative h-36 bg-moonlit-elevated rounded-xl overflow-hidden mb-2">
+                    <div className="relative h-36 bg-moonlit-elevated rounded-xl overflow-hidden mb-2 transition-shadow duration-300 group-hover:shadow-lg group-hover:shadow-black/30 group-hover:ring-1 group-hover:ring-white/10">
                       {poster ? (
                         <img src={poster} alt={name || item.media_id}
-                          className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+                          className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.025]" loading="lazy" />
                       ) : (
                         <div className="absolute inset-0 flex items-center justify-center">
                           <svg className="w-6 h-6 text-white/15" viewBox="0 0 24 24" fill="currentColor">
@@ -332,14 +345,6 @@ export default function HomePage() {
                           </svg>
                         </div>
                       )}
-                      {/* Hover overlay — play button only */}
-                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                        <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 ml-0.5">
-                            <path fillRule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clipRule="evenodd" />
-                          </svg>
-                        </div>
-                      </div>
                       <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white/10">
                         <div className="h-full bg-moonlit-accent" style={{ width: `${pct}%` }} />
                       </div>
@@ -365,10 +370,11 @@ export default function HomePage() {
           </div>
         ) : null}
 
-        {mainRows.map(row => <MediaRow key={row.id} title={row.title} items={row.items} />)}
+        {mainRows.map(row => <MediaRow key={row.id} title={row.title} titleLogo={row.titleLogo} items={row.items} />)}
         {groupRows.map(row => (
           <CollectionRow
             key={row.id}
+            titleLogo={row.titleLogo}
             collection={{
               id: row.id,
               name: row.title,

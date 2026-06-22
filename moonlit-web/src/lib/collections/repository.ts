@@ -1,4 +1,4 @@
-import { OrganizedCollections, CatalogRow, CollectionDisplayPreferences, AddonManifest } from './types';
+import { OrganizedCollections, CatalogRow, AddonManifest } from './types';
 import { parseOrganizerJSON } from './parser';
 import { mergeOrganizedCollections } from './merge';
 import { buildCollectionRows } from './builder';
@@ -24,14 +24,18 @@ export async function loadCollections(
       const json = await res.json();
       base = parseOrganizerJSON(json);
     }
-  } catch {}
+  } catch {
+    // Ignore missing or malformed bundled organizer data.
+  }
 
   // 2. Check IndexedDB for cached remote snapshot
   let cachedRemote: OrganizedCollections | null = null;
   try {
     const raw = localStorage.getItem(CACHE_KEY);
     if (raw) cachedRemote = parseOrganizerJSON(JSON.parse(raw));
-  } catch {}
+  } catch {
+    // Ignore missing or malformed cached organizer data.
+  }
 
   // 3. Merge
   let merged: OrganizedCollections;
@@ -43,7 +47,7 @@ export async function loadCollections(
     merged = cachedRemote;
   } else {
     // No collections data — fall back to addon catalogs
-    return buildFallbackRows(addons, prefs);
+    return buildFallbackRows(addons);
   }
 
   currentOrganized = merged;
@@ -75,7 +79,9 @@ export async function refreshCollections(
   // Cache to localStorage
   try {
     localStorage.setItem(CACHE_KEY, JSON.stringify(currentOrganized));
-  } catch {}
+  } catch {
+    // Ignore cache write failures.
+  }
 
   const prefs = CollectionDisplayPreferencesStore.load();
   const rows = await buildCollectionRows({
@@ -91,14 +97,17 @@ export async function refreshCollections(
 
 function buildFallbackRows(
   addons: AddonManifest[],
-  prefs: CollectionDisplayPreferences,
 ): CatalogRow[] {
   const rows: CatalogRow[] = [];
+  const seenRowIds = new Set<string>();
   for (const addon of addons) {
     if (!addon.transportUrl || !addon.catalogs) continue;
     for (const catalog of addon.catalogs) {
+      const rowId = `${addon.id}-${catalog.type}-${catalog.id}`;
+      if (seenRowIds.has(rowId)) continue;
+      seenRowIds.add(rowId);
       rows.push({
-        id: `${addon.id}-${catalog.type}-${catalog.id}`,
+        id: rowId,
         title: catalog.name,
         items: [],
         addonName: addon.name,
@@ -116,4 +125,46 @@ export function getCurrentOrganized(): OrganizedCollections | null {
 
 export function getCachedRows(): CatalogRow[] | null {
   return cachedRows;
+}
+
+export interface ResolvedFolder {
+  id: string;
+  name: string;
+  collectionId: string;
+  coverImage?: string;
+  titleLogo?: string;
+  heroBackdrop?: string;
+  heroVideoUrl?: string;
+  hideTitle?: boolean;
+  tileShape?: string;
+  focusGif?: string;
+  focusGifEnabled?: boolean;
+  catalogs: import('./types').DBFolderCatalog[];
+  sources: import('./types').DBFolderSource[];
+}
+
+export function resolveFolderFromOrganizer(folderId: string): ResolvedFolder | null {
+  if (!currentOrganized) return null;
+
+  const folder = currentOrganized.folders.find(f => f.id === folderId);
+  if (!folder) return null;
+
+  const catalogs = currentOrganized.folderCatalogs.filter(c => c.folderId === folder.id);
+  const sources = currentOrganized.folderSources.filter(s => s.folderId === folder.id);
+
+  return {
+    id: folder.id,
+    name: folder.name,
+    collectionId: folder.collectionId,
+    coverImage: folder.coverImage,
+    titleLogo: folder.titleLogo,
+    heroBackdrop: folder.heroBackdrop,
+    heroVideoUrl: folder.heroVideoUrl,
+    hideTitle: folder.hideTitle,
+    tileShape: folder.tileShape,
+    focusGif: folder.focusGif,
+    focusGifEnabled: folder.focusGifEnabled,
+    catalogs,
+    sources,
+  };
 }

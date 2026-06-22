@@ -35,10 +35,10 @@ export function FolderTile({ folder, showGlow = false }: FolderTileProps) {
       style={{ width: `${width}px` }}
     >
       <div
-        className="relative overflow-hidden rounded-xl mb-2 transition-all duration-300"
+        className="relative overflow-hidden rounded-xl mb-2 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-black/30 group-hover:ring-1 group-hover:ring-white/10"
         style={{
           aspectRatio,
-          boxShadow: glowing ? '0 0 28px 4px rgba(192,132,252,0.45)' : 'none',
+          boxShadow: glowing ? '0 0 28px 4px rgba(192,132,252,0.45)' : undefined,
         }}
         onMouseEnter={handleEnter}
         onMouseLeave={handleLeave}
@@ -48,21 +48,13 @@ export function FolderTile({ folder, showGlow = false }: FolderTileProps) {
             src={imgSrc}
             alt={folder.name}
             loading="lazy"
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.025]"
           />
         ) : (
           <div className="w-full h-full bg-moonlit-elevated flex items-center justify-center">
             <span className="text-xs font-bold text-white/40 text-center px-2">{folder.name}</span>
           </div>
         )}
-        {/* Hover overlay */}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/25 transition-colors duration-300 flex items-center justify-center">
-          <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-            <svg viewBox="0 0 24 24" fill="white" className="w-4 h-4 ml-0.5">
-              <polygon points="6,4 20,12 6,20" />
-            </svg>
-          </div>
-        </div>
       </div>
       <p className="text-sm font-semibold text-white/80 truncate group-hover:text-white transition-colors duration-200">
         {folder.name}
