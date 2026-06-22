@@ -51,7 +51,7 @@ export class WebCodecsPlayerEngine {
     this.audioCtx = new AudioContext();
 
     try {
-      this.demuxer = new WebDemuxer({ wasmFilePath: `${location.origin}/web-demuxer-mini.wasm` });
+      this.demuxer = new WebDemuxer({ wasmFilePath: `${location.origin}/web-demuxer.wasm` });
       const proxied = `/api/media-proxy?url=${encodeURIComponent(url)}`;
       await this.demuxer.load(proxied);
 
