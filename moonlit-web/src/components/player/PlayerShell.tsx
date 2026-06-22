@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import Player from '@/components/Player';
 import WebCodecsPlayer from '@/components/WebCodecsPlayer';
+import MediabunnyPlayer from '@/components/MediabunnyPlayer';
 import { usePlayer } from '@/app/PlayerProvider';
 import { PlayerLaunch } from '@/app/PlayerProvider';
 import { StreamItem } from '@/lib/types';
@@ -22,7 +23,7 @@ interface PlayerShellProps {
 }
 
 type ShellPhase = 'resolving' | 'preflighting' | 'playing' | 'error';
-type PlayerType = 'vidstack' | 'webcodecs';
+type PlayerType = 'vidstack' | 'mediabunny' | 'webcodecs';
 
 export function PlayerShell({ launch, onBack, onVideoReady, onError, profileId }: PlayerShellProps) {
   const { setAllStreams, setActiveStream, registerStreamSwitchHandler } = usePlayer();
@@ -38,7 +39,9 @@ export function PlayerShell({ launch, onBack, onVideoReady, onError, profileId }
   const [errorMsg, setErrorMsg] = useState('');
   const [resumePosition, setResumePosition] = useState(launch.startPosition || 0);
   const [playerType, setPlayerType] = useState<PlayerType>(
-    launch.streamUrl && launch.streamUrl.toLowerCase().includes('.mkv') ? 'webcodecs' : 'vidstack'
+    launch.streamUrl
+      ? determinePlayerTypeFromUrl(launch.streamUrl)
+      : 'vidstack'
   );
 
   const failedUrlsRef = useRef<Set<string>>(new Set());
@@ -47,9 +50,17 @@ export function PlayerShell({ launch, onBack, onVideoReady, onError, profileId }
   const { type, id, metadata } = launch;
   const cacheKey = `${type}:${id}`;
 
-  function determinePlayerType(stream: StreamItem): PlayerType {
-    if (isStreamMKV(stream)) return 'webcodecs';
+  function determinePlayerTypeFromUrl(url: string): PlayerType {
+    if (url.toLowerCase().includes('.mkv')) return 'mediabunny';
     return 'vidstack';
+  }
+
+  function determinePlayerType(stream: StreamItem): PlayerType {
+    if (!isStreamMKV(stream)) return 'vidstack';
+    // MKV with incompatible codecs → WebCodecsPlayer
+    if (getStreamCompatibility(stream) === 'transcode') return 'webcodecs';
+    // MKV with compatible codecs → MediabunnyPlayer (transmux)
+    return 'mediabunny';
   }
 
   function resolveUrlForStream(stream: StreamItem): { url: string; stream: StreamItem } {
@@ -133,11 +144,7 @@ export function PlayerShell({ launch, onBack, onVideoReady, onError, profileId }
           if (url && !failedUrlsRef.current.has(url)) {
             const result = await preflightUrl(url);
             if (result.reachable) {
-              const resolved = resolveUrlForStream(lastMatch);
-              setActiveUrl(resolved.url);
-              setActiveStreamLocal(resolved.stream);
-              setPlayerType(determinePlayerType(lastMatch));
-              saveLastStream(cacheKey, { url, addonName: lastMatch.addonName, streamTitle: lastMatch.title ?? lastMatch.name });
+              selectStream(lastMatch);
               setPhase('playing');
               return;
             }
@@ -152,11 +159,7 @@ export function PlayerShell({ launch, onBack, onVideoReady, onError, profileId }
         if (!rawUrl || failedUrlsRef.current.has(rawUrl)) continue;
         const result = await preflightUrl(rawUrl);
         if (result.reachable) {
-          const resolved = resolveUrlForStream(stream);
-          setActiveUrl(resolved.url);
-          setActiveStreamLocal(resolved.stream);
-          setPlayerType(determinePlayerType(stream));
-          saveLastStream(cacheKey, { url: rawUrl, addonName: stream.addonName, streamTitle: stream.title ?? stream.name });
+          selectStream(stream);
           setPhase('playing');
           return;
         }
@@ -171,25 +174,27 @@ export function PlayerShell({ launch, onBack, onVideoReady, onError, profileId }
     resolveAndPreflight();
   }, [phase, allStreamsLocal, activeUrl, cacheKey]);
 
-  // Register stream switch handler
-  const handleStreamSwitch = useCallback((newStream: StreamItem) => {
-    const rawUrl = getPlayableStreamUrl(newStream);
-    if (!rawUrl) return;
+  function selectStream(stream: StreamItem) {
+    const rawUrl = getPlayableStreamUrl(stream)!;
+    const newPlayerType = determinePlayerType(stream);
 
-    const newPlayerType = determinePlayerType(newStream);
-
-    if (newPlayerType === 'webcodecs') {
-      // WebCodecsPlayer handles MKV natively — pass raw URL directly
-      setActiveUrl(rawUrl);
-      setActiveStreamLocal(newStream);
-    } else {
-      const resolved = resolveUrlForStream(newStream);
+    if (newPlayerType === 'vidstack') {
+      const resolved = resolveUrlForStream(stream);
       setActiveUrl(resolved.url);
       setActiveStreamLocal(resolved.stream);
+    } else {
+      // Mediabunny and WebCodecs handle MKV client-side — raw URL
+      setActiveUrl(rawUrl);
+      setActiveStreamLocal(stream);
     }
 
     setPlayerType(newPlayerType);
-    saveLastStream(cacheKey, { url: rawUrl, addonName: newStream.addonName, streamTitle: newStream.title ?? newStream.name });
+    saveLastStream(cacheKey, { url: rawUrl, addonName: stream.addonName, streamTitle: stream.title ?? stream.name });
+  }
+
+  // Register stream switch handler
+  const handleStreamSwitch = useCallback((newStream: StreamItem) => {
+    selectStream(newStream);
   }, [cacheKey]);
 
   useEffect(() => {
@@ -225,6 +230,22 @@ export function PlayerShell({ launch, onBack, onVideoReady, onError, profileId }
   }
 
   if (phase !== 'playing' || !activeUrl || !activeStreamLocal) return null;
+
+  if (playerType === 'mediabunny') {
+    return (
+      <MediabunnyPlayer
+        streamUrl={activeUrl}
+        streams={allStreamsLocal}
+        currentStream={activeStreamLocal}
+        title={metadata.title}
+        mediaLogo={metadata.logo}
+        startPosition={resumePosition}
+        onSwitchStream={handleStreamSwitch}
+        onBack={onBack}
+        onError={onError}
+      />
+    );
+  }
 
   if (playerType === 'webcodecs') {
     return (
