@@ -7,7 +7,8 @@ import { Sidebar } from '@/components/Sidebar';
 import { MetaPreview } from '@/lib/types';
 import { getFolder, getSystemAddon } from '@/lib/services/api';
 import { fetchCatalog } from '@/lib/stremio';
-import { resolveFolderFromOrganizer } from '@/lib/collections/repository';
+import { TMDB_API_KEY } from '@/lib/supabase';
+import { resolveFolderFromOrganizer, getCurrentOrganized, loadCollections } from '@/lib/collections/repository';
 import { resolveRawSource, deduplicateItems } from '@/lib/collections/builder';
 import { fetchCatalog as fetchCollectionCatalog } from '@/lib/collections/fetcher';
 import { useState } from 'react';
@@ -20,16 +21,39 @@ export default function FolderDetailPage() {
   const { data, isLoading, isError } = useQuery({
     queryKey: ['folder', folderId, addons.map(a => a.id).join(',')],
     queryFn: async () => {
-      // 1. Try organizer engine first
-      const resolved = resolveFolderFromOrganizer(folderId);
+      // Ensure organizer engine is loaded
+      let resolved = resolveFolderFromOrganizer(folderId);
+      if (!resolved && !getCurrentOrganized()) {
+        await loadCollections(addons, TMDB_API_KEY);
+        resolved = resolveFolderFromOrganizer(folderId);
+      }
+
       if (resolved) {
         let allItems: MetaPreview[] = [];
 
+        // Fetch raw sources first (TMDB, Trakt, etc.)
+        for (const src of resolved.sources) {
+          const items = await resolveRawSource(src, addons, TMDB_API_KEY);
+          allItems = deduplicateItems([...allItems, ...items]);
+        }
+
+        // Fetch addon catalog sources
         for (const cat of resolved.catalogs) {
-          const addon = addons.find(a =>
+          // Try exact catalog ID match first
+          let baseURL: string | undefined;
+          let addon = addons.find(a =>
             a.transportUrl && a.catalogs?.some(ac => ac.id === cat.catalogId || ac.type === cat.catalogId)
           );
-          const baseURL = addon?.transportUrl;
+          baseURL = addon?.transportUrl;
+
+          // Fallback: use first addon with catalog resource
+          if (!baseURL) {
+            addon = addons.find(a =>
+              a.transportUrl && a.resources?.some(r => (typeof r === 'string' ? r : r.name) === 'catalog')
+            );
+            baseURL = addon?.transportUrl;
+          }
+
           if (!baseURL) continue;
 
           const mediaTypes = cat.mediaType === 'all' ? ['movie', 'series'] : [cat.mediaType || 'movie'];
@@ -42,11 +66,6 @@ export default function FolderDetailPage() {
             });
             allItems = deduplicateItems([...allItems, ...items]);
           }
-        }
-
-        for (const src of resolved.sources) {
-          const items = await resolveRawSource(src, addons);
-          allItems = deduplicateItems([...allItems, ...items]);
         }
 
         return {
@@ -65,7 +84,7 @@ export default function FolderDetailPage() {
         };
       }
 
-      // 2. Fall back to legacy Supabase folder
+      // Fall back to legacy Supabase folder
       const [folderData, addonData] = await Promise.all([
         getFolder(folderId),
         getSystemAddon(),

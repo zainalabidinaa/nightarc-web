@@ -26,21 +26,16 @@ export function CinematicBackground({ backdropUrl }: CinematicBackgroundProps) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [prefersReducedMotion]);
 
-  if (!backdropUrl) {
-    return <div className="fixed inset-0 pointer-events-none bg-[#080808]" />;
-  }
+  if (!backdropUrl) return null;
 
   const parallaxY = prefersReducedMotion ? 0 : scrollY * 0.15;
   const opacity = Math.max(0, 1 - scrollY / 600);
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-0">
-      {/* Dark base */}
-      <div className="absolute inset-0 bg-[#080808]" />
-
+    <div className="fixed inset-0 pointer-events-none -z-[1]">
       {/* Blurred backdrop */}
       <div
-        className="absolute inset-0 opacity-90"
+        className="absolute inset-0"
         style={{
           transform: `translateY(${parallaxY}px) scale(1.1)`,
           opacity,
@@ -55,10 +50,9 @@ export function CinematicBackground({ backdropUrl }: CinematicBackgroundProps) {
           }}
         />
         {/* Mask: visible at top, fades to bg at 72% */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#080808]"
+        <div className="absolute inset-0"
           style={{
-            maskImage: 'linear-gradient(to bottom, black 0%, black 50%, transparent 72%)',
-            WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 50%, transparent 72%)',
+            background: 'linear-gradient(to bottom, transparent 0%, transparent 50%, #080808 72%)',
           }}
         />
       </div>

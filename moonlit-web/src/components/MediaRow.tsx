@@ -51,8 +51,6 @@ interface MediaRowProps {
 }
 
 export function MediaRow({ title, items, viewAllHref, titleLogo }: MediaRowProps) {
-  if (!items || items.length === 0) return null;
-
   return (
     <section className="mb-10">
       <div className="flex items-baseline justify-between mb-4 pr-1">
@@ -70,11 +68,15 @@ export function MediaRow({ title, items, viewAllHref, titleLogo }: MediaRowProps
           </Link>
         )}
       </div>
-      <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1">
-        {items.map(item => (
-          <MediaCard key={`${item.type}-${item.id}`} item={item} />
-        ))}
-      </div>
+      {items && items.length > 0 ? (
+        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1">
+          {items.map(item => (
+            <MediaCard key={`${item.type}-${item.id}`} item={item} />
+          ))}
+        </div>
+      ) : (
+        <p className="text-[13px] text-white/25 italic px-1">Loading...</p>
+      )}
     </section>
   );
 }
