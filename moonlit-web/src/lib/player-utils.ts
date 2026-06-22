@@ -25,7 +25,7 @@ export function browserPlaybackScore(stream: StreamItem): number {
   if (text.includes('720')) score += 20;
   if (text.includes('1080')) score += 35;
   if (text.includes('2160') || text.includes('4k')) score -= 35;
-  if (text.includes('.mkv')) score -= 80;
+  if (text.includes('.mkv')) score -= 20;
   if (text.includes('hevc') || text.includes('h.265') || text.includes('h265') || text.includes('x265')) score -= 100;
   if (text.includes('dolby vision') || text.includes(' dv ') || text.includes('hdr')) score -= 45;
   if (text.includes('truehd') || text.includes('atmos') || text.includes('dts')) score -= 60;
@@ -98,6 +98,10 @@ export function getStreamCompatibility(stream: StreamItem): StreamTier {
 /** Convenience alias — true for anything that needs the remux server. */
 export function isLikelyIncompatible(stream: StreamItem): boolean {
   return getStreamCompatibility(stream) !== 'direct';
+}
+
+export function isStreamMKV(stream: StreamItem): boolean {
+  return streamSearchText(stream).includes('.mkv');
 }
 
 // /elfmagic/ is AIOStreams' ElfHosted HLS proxy path — those segments are served

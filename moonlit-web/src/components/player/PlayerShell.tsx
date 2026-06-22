@@ -1,11 +1,12 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import Player from '@/components/Player';
+import WebCodecsPlayer from '@/components/WebCodecsPlayer';
 import { usePlayer } from '@/app/PlayerProvider';
 import { PlayerLaunch } from '@/app/PlayerProvider';
 import { StreamItem } from '@/lib/types';
 import { SubtitleItem, fetchStreamsFromAll, fetchSubtitlesFromAll } from '@/lib/stremio';
 import { getCachedStreams, cacheStreams } from '@/lib/stream-cache';
-import { getPlayableStreamUrl, sortStreamsForBrowserPlayback, getStreamCompatibility } from '@/lib/player-utils';
+import { getPlayableStreamUrl, sortStreamsForBrowserPlayback, getStreamCompatibility, isStreamMKV } from '@/lib/player-utils';
 import { getLastStream, saveLastStream } from '@/lib/last-stream';
 import { getStreamingServerUrl } from '@/lib/config';
 import { buildRemuxUrl } from '@/lib/streaming-server';
@@ -21,6 +22,7 @@ interface PlayerShellProps {
 }
 
 type ShellPhase = 'resolving' | 'preflighting' | 'playing' | 'error';
+type PlayerType = 'vidstack' | 'webcodecs';
 
 export function PlayerShell({ launch, onBack, onVideoReady, onError, profileId }: PlayerShellProps) {
   const { setAllStreams, setActiveStream, registerStreamSwitchHandler } = usePlayer();
@@ -35,12 +37,38 @@ export function PlayerShell({ launch, onBack, onVideoReady, onError, profileId }
   const [subtitles, setSubtitles] = useState<SubtitleItem[]>(launch.subtitles ?? []);
   const [errorMsg, setErrorMsg] = useState('');
   const [resumePosition, setResumePosition] = useState(launch.startPosition || 0);
+  const [playerType, setPlayerType] = useState<PlayerType>(
+    launch.streamUrl && launch.streamUrl.toLowerCase().includes('.mkv') ? 'webcodecs' : 'vidstack'
+  );
 
   const failedUrlsRef = useRef<Set<string>>(new Set());
   const resolvedRef = useRef(false);
 
   const { type, id, metadata } = launch;
   const cacheKey = `${type}:${id}`;
+
+  function determinePlayerType(stream: StreamItem): PlayerType {
+    if (isStreamMKV(stream)) return 'webcodecs';
+    return 'vidstack';
+  }
+
+  function resolveUrlForStream(stream: StreamItem): { url: string; stream: StreamItem } {
+    const rawUrl = getPlayableStreamUrl(stream)!;
+    const serverUrl = getStreamingServerUrl();
+    const tier = getStreamCompatibility(stream);
+    const needsServer = serverUrl && (
+      tier !== 'direct' ||
+      (rawUrl.startsWith('http:') && window.location.protocol === 'https:')
+    );
+    if (needsServer) {
+      const effectiveTier = tier === 'direct' ? 'remux' : tier;
+      return {
+        url: buildRemuxUrl(serverUrl, rawUrl, effectiveTier),
+        stream: { ...stream, behaviorHints: { ...stream.behaviorHints, webPlayableType: 'application/x-mpegurl' } },
+      };
+    }
+    return { url: rawUrl, stream };
+  }
 
   // Phase 1: Resolve streams if not provided
   useEffect(() => {
@@ -105,8 +133,10 @@ export function PlayerShell({ launch, onBack, onVideoReady, onError, profileId }
           if (url && !failedUrlsRef.current.has(url)) {
             const result = await preflightUrl(url);
             if (result.reachable) {
-              setActiveUrl(url);
-              setActiveStreamLocal(lastMatch);
+              const resolved = resolveUrlForStream(lastMatch);
+              setActiveUrl(resolved.url);
+              setActiveStreamLocal(resolved.stream);
+              setPlayerType(determinePlayerType(lastMatch));
               saveLastStream(cacheKey, { url, addonName: lastMatch.addonName, streamTitle: lastMatch.title ?? lastMatch.name });
               setPhase('playing');
               return;
@@ -122,24 +152,10 @@ export function PlayerShell({ launch, onBack, onVideoReady, onError, profileId }
         if (!rawUrl || failedUrlsRef.current.has(rawUrl)) continue;
         const result = await preflightUrl(rawUrl);
         if (result.reachable) {
-          const serverUrl = getStreamingServerUrl();
-          const tier = getStreamCompatibility(stream);
-          const needsServer = serverUrl && (
-            tier !== 'direct' ||
-            (rawUrl.startsWith('http:') && window.location.protocol === 'https:')
-          );
-          if (needsServer) {
-            const effectiveTier = tier === 'direct' ? 'remux' : tier;
-            const remuxed = buildRemuxUrl(serverUrl, rawUrl, effectiveTier);
-            setActiveUrl(remuxed);
-            setActiveStreamLocal({
-              ...stream,
-              behaviorHints: { ...stream.behaviorHints, webPlayableType: 'application/x-mpegurl' },
-            });
-          } else {
-            setActiveUrl(rawUrl);
-            setActiveStreamLocal(stream);
-          }
+          const resolved = resolveUrlForStream(stream);
+          setActiveUrl(resolved.url);
+          setActiveStreamLocal(resolved.stream);
+          setPlayerType(determinePlayerType(stream));
           saveLastStream(cacheKey, { url: rawUrl, addonName: stream.addonName, streamTitle: stream.title ?? stream.name });
           setPhase('playing');
           return;
@@ -159,23 +175,20 @@ export function PlayerShell({ launch, onBack, onVideoReady, onError, profileId }
   const handleStreamSwitch = useCallback((newStream: StreamItem) => {
     const rawUrl = getPlayableStreamUrl(newStream);
     if (!rawUrl) return;
-    const serverUrl = getStreamingServerUrl();
-    const tier = getStreamCompatibility(newStream);
-    const needsServer = serverUrl && (
-      tier !== 'direct' ||
-      (rawUrl.startsWith('http:') && window.location.protocol === 'https:')
-    );
-    if (needsServer) {
-      const effectiveTier = tier === 'direct' ? 'remux' : tier;
-      setActiveUrl(buildRemuxUrl(serverUrl, rawUrl, effectiveTier));
-      setActiveStreamLocal({
-        ...newStream,
-        behaviorHints: { ...newStream.behaviorHints, webPlayableType: 'application/x-mpegurl' },
-      });
-    } else {
+
+    const newPlayerType = determinePlayerType(newStream);
+
+    if (newPlayerType === 'webcodecs') {
+      // WebCodecsPlayer handles MKV natively — pass raw URL directly
       setActiveUrl(rawUrl);
       setActiveStreamLocal(newStream);
+    } else {
+      const resolved = resolveUrlForStream(newStream);
+      setActiveUrl(resolved.url);
+      setActiveStreamLocal(resolved.stream);
     }
+
+    setPlayerType(newPlayerType);
     saveLastStream(cacheKey, { url: rawUrl, addonName: newStream.addonName, streamTitle: newStream.title ?? newStream.name });
   }, [cacheKey]);
 
@@ -212,6 +225,23 @@ export function PlayerShell({ launch, onBack, onVideoReady, onError, profileId }
   }
 
   if (phase !== 'playing' || !activeUrl || !activeStreamLocal) return null;
+
+  if (playerType === 'webcodecs') {
+    return (
+      <WebCodecsPlayer
+        streamUrl={activeUrl}
+        streams={allStreamsLocal}
+        currentStream={activeStreamLocal}
+        title={metadata.title}
+        mediaLogo={metadata.logo}
+        startPosition={resumePosition}
+        subtitles={subtitles}
+        onSwitchStream={handleStreamSwitch}
+        onBack={onBack}
+        onError={onError}
+      />
+    );
+  }
 
   return (
     <Player

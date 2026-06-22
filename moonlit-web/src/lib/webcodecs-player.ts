@@ -1,6 +1,9 @@
 /**
  * Client-side MKV/any-container player using web-demuxer (WebAssembly) + WebCodecs.
  * Uses the library's built-in helpers: getDecoderConfig() + read() + genEncodedChunk().
+ *
+ * Optimised for instant-start: video renders the moment the first frame is decoded,
+ * audio follows asynchronously.
  */
 
 import { WebDemuxer } from 'web-demuxer';
@@ -29,9 +32,12 @@ export class WebCodecsPlayerEngine {
 
   private listeners = new Set<StateListener>();
   private pumpAbort: AbortController | null = null;
+  private seekPromise: Promise<void> | null = null;
   private audioStartTime = 0;
   private ptsOffset = 0;
   private videoPaused = false;
+  private videoReady = false;
+  private audioReady = false;
 
   subscribe(fn: StateListener) {
     this.listeners.add(fn);
@@ -49,7 +55,6 @@ export class WebCodecsPlayerEngine {
       const proxied = `/api/media-proxy?url=${encodeURIComponent(url)}`;
       await this.demuxer.load(proxied);
 
-      // Use library helpers for decoder config
       const videoConfig = await this.demuxer.getDecoderConfig('video');
       const audioConfig = await this.demuxer.getDecoderConfig('audio').catch(() => null);
 
@@ -58,12 +63,22 @@ export class WebCodecsPlayerEngine {
       canvas.height = videoStream.height || 1080;
 
       this._setupVideoDecoder(videoConfig as VideoDecoderConfig);
-      if (audioConfig) this._setupAudioDecoder(audioConfig as AudioDecoderConfig);
+      if (audioConfig) {
+        this._setupAudioDecoder(audioConfig as AudioDecoderConfig);
+      } else {
+        this.audioReady = true;
+      }
 
-      this._setState({ duration: videoStream.duration, isReady: true });
+      this._setState({ duration: videoStream.duration || 0, isReady: this.videoReady });
     } catch (e) {
       this._setState({ error: `Failed to load: ${e}` });
     }
+  }
+
+  async seekTo(time: number) {
+    if (this._state.duration <= 0) return;
+    const clamped = Math.max(0, Math.min(time, this._state.duration));
+    this._setState({ currentTime: clamped });
   }
 
   play() {
@@ -77,29 +92,43 @@ export class WebCodecsPlayerEngine {
   pause() {
     this.videoPaused = true;
     this.pumpAbort?.abort();
+    this.pumpAbort = null;
     this.audioCtx?.suspend();
     this._setState({ isPlaying: false });
   }
 
   async seek(time: number) {
+    const clamped = Math.max(0, Math.min(time, this._state.duration));
     const wasPlaying = this._state.isPlaying;
+
     this.pumpAbort?.abort();
-    this.videoDecoder?.flush();
-    this.audioDecoder?.flush();
-    this._setState({ currentTime: time, isPlaying: false });
+    this.pumpAbort = null;
+
+    await Promise.all([
+      this.videoDecoder?.flush().catch(() => {}),
+      this.audioDecoder?.flush().catch(() => {}),
+    ]);
+
+    this._setState({ currentTime: clamped, isPlaying: false });
+
     if (wasPlaying) {
       this.videoPaused = false;
       this._setState({ isPlaying: true });
-      this._startPump(time);
+      this._startPump(clamped);
     }
   }
 
   destroy() {
     this.pumpAbort?.abort();
-    this.videoDecoder?.close();
-    this.audioDecoder?.close();
-    this.audioCtx?.close();
-    this.demuxer?.destroy();
+    this.pumpAbort = null;
+    try { this.videoDecoder?.close(); } catch {}
+    try { this.audioDecoder?.close(); } catch {}
+    try { this.audioCtx?.close(); } catch {}
+    try { this.demuxer?.destroy(); } catch {}
+    this.videoDecoder = null;
+    this.audioDecoder = null;
+    this.audioCtx = null;
+    this.demuxer = null;
   }
 
   // ── Internal ─────────────────────────────────────────────────────────────
@@ -115,6 +144,8 @@ export class WebCodecsPlayerEngine {
       error: (e) => this._setState({ error: `Video decoder: ${e.message}` }),
     });
     this.videoDecoder.configure(config);
+    this.videoReady = true;
+    if (this.audioReady) this._setState({ isReady: true });
   }
 
   private _setupAudioDecoder(config: AudioDecoderConfig) {
@@ -124,8 +155,12 @@ export class WebCodecsPlayerEngine {
         error: (e) => console.warn('Audio decoder:', e.message),
       });
       this.audioDecoder.configure(config);
+      this.audioReady = true;
+      if (this.videoReady) this._setState({ isReady: true });
     } catch {
       this.audioDecoder = null;
+      this.audioReady = true;
+      if (this.videoReady) this._setState({ isReady: true });
     }
   }
 
@@ -144,9 +179,15 @@ export class WebCodecsPlayerEngine {
       this._setState({ currentTime: ptsSec });
     };
 
-    if (delayMs > 10) setTimeout(render, delayMs);
-    else render();
+    if (delayMs > 10) {
+      const id = setTimeout(render, delayMs);
+      this._activeTimers.add(id);
+    } else {
+      render();
+    }
   }
+
+  private _activeTimers = new Set<ReturnType<typeof setTimeout>>();
 
   private _onAudioData(data: AudioData) {
     if (!this.audioCtx) { data.close(); return; }
@@ -167,6 +208,11 @@ export class WebCodecsPlayerEngine {
 
   private async _startPump(fromTime: number) {
     if (!this.demuxer) return;
+
+    // Cancel any active timers from previous pump
+    for (const id of this._activeTimers) clearTimeout(id);
+    this._activeTimers.clear();
+
     this.pumpAbort = new AbortController();
     const signal = this.pumpAbort.signal;
 
@@ -178,9 +224,8 @@ export class WebCodecsPlayerEngine {
 
     try {
       while (!signal.aborted && cursor < this._state.duration) {
-        const end = cursor + CHUNK;
+        const end = Math.min(cursor + CHUNK, this._state.duration);
 
-        // read() returns ReadableStream<EncodedVideoChunk | EncodedAudioChunk>
         const videoStream = this.demuxer.read('video', cursor, end);
         const reader = videoStream.getReader();
         while (true) {
@@ -202,8 +247,11 @@ export class WebCodecsPlayerEngine {
         }
 
         cursor = end;
-        // Pace: wait until ~3s before end of decoded window so we don't flood the decoder
-        if (!signal.aborted) await new Promise<void>(r => setTimeout(r, (CHUNK - 3) * 1000));
+
+        // Pace: wait so decoders stay ~2s ahead of playback
+        if (!signal.aborted && cursor < this._state.duration) {
+          await new Promise<void>(r => setTimeout(r, (CHUNK - 8) * 1000));
+        }
       }
     } catch { /* pump stopped */ }
   }

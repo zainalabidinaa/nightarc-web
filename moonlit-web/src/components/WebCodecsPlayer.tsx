@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { ChevronLeft, X, Play, Pause, Maximize, Minimize } from 'lucide-react';
 import { WebCodecsPlayerEngine, WebCodecsPlayerState } from '@/lib/webcodecs-player';
 import { StreamItem } from '@/lib/types';
@@ -10,12 +10,16 @@ interface WebCodecsPlayerProps {
   currentStream: StreamItem;
   title: string;
   mediaLogo?: string;
+  startPosition?: number;
+  subtitles?: { lang: string; url: string }[];
   onBack: () => void;
   onSwitchStream: (stream: StreamItem) => void;
+  onError?: () => void;
 }
 
 export default function WebCodecsPlayer({
-  streamUrl, streams, currentStream, title, mediaLogo, onBack, onSwitchStream,
+  streamUrl, streams, currentStream, title, mediaLogo,
+  startPosition = 0, subtitles, onBack, onSwitchStream, onError,
 }: WebCodecsPlayerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<WebCodecsPlayerEngine | null>(null);
@@ -35,14 +39,31 @@ export default function WebCodecsPlayer({
   // Load stream into engine
   useEffect(() => {
     if (!canvasRef.current) return;
+    let cancelled = false;
+
     const engine = new WebCodecsPlayerEngine();
     engineRef.current = engine;
-    const unsub = engine.subscribe(setState);
-    engine.load(streamUrl, canvasRef.current).then(() => engine.play());
-    return () => { unsub(); engine.destroy(); engineRef.current = null; };
+    const unsub = engine.subscribe((s) => {
+      if (cancelled) return;
+      setState(s);
+      if (s.error && onError) onError();
+    });
+
+    engine.load(streamUrl, canvasRef.current).then(() => {
+      if (cancelled) return;
+      if (startPosition > 0) engine.seekTo(startPosition);
+      engine.play();
+    });
+
+    return () => {
+      cancelled = true;
+      unsub();
+      engine.destroy();
+      engineRef.current = null;
+    };
   }, [streamUrl]);
 
-  // Keyboard shortcuts
+  // Keyboard shortcuts — scoped to this component
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       const eng = engineRef.current;
@@ -55,7 +76,9 @@ export default function WebCodecsPlayer({
       } else if (e.key === 'ArrowRight') {
         eng.seek(Math.min(state.duration, state.currentTime + 10));
       } else if (e.key === 'f') {
-        document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+        e.preventDefault();
+        const el = canvasRef.current?.parentElement;
+        document.fullscreenElement ? document.exitFullscreen() : el?.requestFullscreen();
       }
     };
     window.addEventListener('keydown', handler);
@@ -64,11 +87,11 @@ export default function WebCodecsPlayer({
 
   const fmt = (s: number) => {
     const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = Math.floor(s % 60);
-    return h > 0 ? `${h}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}` : `${m}:${String(sec).padStart(2,'0')}`;
+    return h > 0 ? `${h}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}` : `${m}:${String(sec).padStart(2, '0')}`;
   };
 
   const pct = state.duration > 0 ? (state.currentTime / state.duration) * 100 : 0;
-  const sortedStreams = sortStreamsForBrowserPlayback(streams);
+  const sortedStreams = useMemo(() => sortStreamsForBrowserPlayback(streams), [streams]);
 
   if (state.error) {
     return (
@@ -134,7 +157,10 @@ export default function WebCodecsPlayer({
               {fmt(state.currentTime)} / {fmt(state.duration)}
             </span>
             <div className="flex-1" />
-            <button onClick={() => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen()} className="text-white/70 hover:text-white">
+            <button onClick={() => {
+              const el = canvasRef.current?.parentElement;
+              document.fullscreenElement ? document.exitFullscreen() : el?.requestFullscreen();
+            }} className="text-white/70 hover:text-white">
               {document.fullscreenElement ? <Minimize size={20} /> : <Maximize size={20} />}
             </button>
           </div>
