@@ -132,6 +132,7 @@ export function prepareStreamForPlayback(
   if (!rawUrl) return null;
 
   if (isAioStreamsPlaybackUrl(rawUrl)) {
+    const isHls = rawUrl.toLowerCase().includes('/elfmagic/');
     return {
       rawUrl,
       playbackUrl: buildMediaProxyUrl(rawUrl),
@@ -139,7 +140,7 @@ export function prepareStreamForPlayback(
         ...stream,
         behaviorHints: {
           ...stream.behaviorHints,
-          webPlayableType: 'video/mp4',
+          webPlayableType: isHls ? 'application/x-mpegurl' : 'video/mp4',
         },
       },
       playerType: 'vidstack',

@@ -4,10 +4,27 @@ import { prepareStreamForPlayback, prepareStreamForPlaybackAsync } from './Playe
 import type { StreamItem } from '@/lib/types';
 
 describe('prepareStreamForPlayback', () => {
-  it('routes AIOStreams elfmagic playback through the media proxy', () => {
+  it('routes AIOStreams elfmagic playback through the media proxy as HLS', () => {
     const stream: StreamItem = {
       url: 'https://aiostreams.elfhosted.com/playback/token/elfmagic/file',
       title: 'From S01E06 H.264 AAC',
+    };
+
+    const prepared = prepareStreamForPlayback(stream, '');
+
+    expect(prepared).toMatchObject({
+      rawUrl: stream.url,
+      playerType: 'vidstack',
+      shouldPreflight: true,
+    });
+    expect(prepared?.playbackUrl).toBe(`/api/media-proxy?url=${encodeURIComponent(stream.url)}`);
+    expect(prepared?.playbackStream.behaviorHints?.webPlayableType).toBe('application/x-mpegurl');
+  });
+
+  it('routes non-elfmagic AIOStreams playback through the media proxy as MP4', () => {
+    const stream: StreamItem = {
+      url: 'https://aiostreams.elfhosted.com/playback/token/movie.mp4',
+      title: 'Movie 1080p H.264 AAC',
     };
 
     const prepared = prepareStreamForPlayback(stream, '');
