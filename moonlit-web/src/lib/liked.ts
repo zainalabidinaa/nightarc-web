@@ -13,6 +13,7 @@ export interface LikedItem {
 export interface UpcomingInfo {
   badge: string;
   releaseDate?: string;
+  backdrop?: string;
 }
 
 const STORAGE_KEY = 'moonlit.liked.items';
@@ -95,7 +96,8 @@ async function fetchUpcoming(item: LikedItem): Promise<UpcomingInfo | null> {
       if (!data.release_date) return null;
       const release = new Date(data.release_date);
       if (release <= today) return null;
-      return { badge: formatDate(data.release_date), releaseDate: data.release_date };
+      const backdrop = data.backdrop_path ? `https://image.tmdb.org/t/p/w780${data.backdrop_path}` : undefined;
+      return { badge: formatDate(data.release_date), releaseDate: data.release_date, backdrop };
     } else {
       const res = await fetch(`https://api.themoviedb.org/3/tv/${tmdbId}?api_key=${TMDB_API_KEY}`);
       if (!res.ok) return null;
@@ -107,7 +109,8 @@ async function fetchUpcoming(item: LikedItem): Promise<UpcomingInfo | null> {
       const badge = next.air_date
         ? `Season ${season} · ${formatDate(next.air_date)}`
         : `Season ${season} · No air date`;
-      return { badge, releaseDate: next.air_date };
+      const backdrop = data.backdrop_path ? `https://image.tmdb.org/t/p/w780${data.backdrop_path}` : undefined;
+      return { badge, releaseDate: next.air_date, backdrop };
     }
   } catch { return null; }
 }

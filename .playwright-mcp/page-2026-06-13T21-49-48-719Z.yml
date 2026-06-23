@@ -1,0 +1,111 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5] [cursor=pointer]: LUNA
+      - navigation [ref=e7]:
+        - button "Home" [ref=e8] [cursor=pointer]
+        - button "Pricing" [ref=e9] [cursor=pointer]
+        - button "Sign in" [ref=e10] [cursor=pointer]
+        - button "Profiles" [ref=e11] [cursor=pointer]
+        - button "Addons" [ref=e12] [cursor=pointer]
+        - button "Billing" [ref=e13] [cursor=pointer]
+        - button "Collections" [active] [ref=e155] [cursor=pointer]
+        - button "Users" [ref=e156] [cursor=pointer]
+        - button "Invites" [ref=e157] [cursor=pointer]
+      - generic [ref=e14]:
+        - button "Admin" [ref=e158] [cursor=pointer]:
+          - generic [ref=e17]: Admin
+        - button "Get Luna" [ref=e18] [cursor=pointer]
+  - generic [ref=e160]:
+    - generic [ref=e161]:
+      - generic [ref=e162]:
+        - generic [ref=e163]: Admin · Catalog
+        - heading "Collection manager" [level=1] [ref=e164]
+        - paragraph [ref=e165]: Edit collections, folders, sources and every artwork slot — with live previews.
+      - generic [ref=e166]:
+        - button "⤵ Import pack JSON" [ref=e167] [cursor=pointer]
+        - button "+ New collection" [ref=e168] [cursor=pointer]
+    - generic [ref=e169]:
+      - complementary [ref=e170]:
+        - generic [ref=e172]: Collections · 5
+        - generic [ref=e173] [cursor=pointer]:
+          - generic [ref=e174]: ⠿
+          - img [ref=e175]
+          - generic [ref=e176]:
+            - generic [ref=e177]: B.E.S.T — Better TV
+            - text: 14 folders
+        - generic [ref=e178] [cursor=pointer]:
+          - generic [ref=e179]: ⠿
+          - img [ref=e180]
+          - generic [ref=e181]:
+            - generic [ref=e182]: Movie Night
+            - text: 8 folders
+        - generic [ref=e183] [cursor=pointer]:
+          - generic [ref=e184]: ⠿
+          - img [ref=e185]
+          - generic [ref=e186]:
+            - generic [ref=e187]: Bingeable Series
+            - text: 11 folders
+        - generic [ref=e188] [cursor=pointer]:
+          - generic [ref=e189]: ⠿
+          - img [ref=e190]
+          - generic [ref=e191]:
+            - generic [ref=e192]: UK TV & Live
+            - text: 6 folders
+        - generic [ref=e193] [cursor=pointer]:
+          - generic [ref=e194]: ⠿
+          - img [ref=e195]
+          - generic [ref=e196]:
+            - generic [ref=e197]: Kids Zone
+            - text: 5 folders
+      - generic [ref=e198]:
+        - generic [ref=e199]:
+          - button "Folders" [ref=e200] [cursor=pointer]
+          - button "Folder artwork" [ref=e201] [cursor=pointer]
+          - button "Sources" [ref=e202] [cursor=pointer]
+          - button "JSON" [ref=e203] [cursor=pointer]
+        - generic [ref=e205]:
+          - generic [ref=e208]:
+            - generic [ref=e209]: Collection backdrop · backdrop_image
+            - heading "B.E.S.T — Better TV" [level=2] [ref=e210]
+          - heading "Folders · drag to reorder" [level=3] [ref=e212]
+          - generic [ref=e213]:
+            - generic [ref=e214] [cursor=pointer]:
+              - generic [ref=e215]:
+                - img [ref=e216]
+                - generic [ref=e219]: GIF
+              - generic [ref=e220]:
+                - generic [ref=e221]: Trending Shows
+                - generic [ref=e222]: "22"
+            - generic [ref=e223] [cursor=pointer]:
+              - generic [ref=e224]:
+                - img [ref=e225]
+                - generic [ref=e228]: VIDEO
+              - generic [ref=e229]:
+                - generic [ref=e230]: Trending Movies
+                - generic [ref=e231]: "30"
+            - generic [ref=e232] [cursor=pointer]:
+              - generic [ref=e233]:
+                - img [ref=e234]
+                - generic [ref=e237]: LOGO
+              - generic [ref=e238]:
+                - generic [ref=e239]: Top Rated
+                - generic [ref=e240]: "40"
+            - generic [ref=e241] [cursor=pointer]:
+              - img [ref=e243]
+              - generic [ref=e245]:
+                - generic [ref=e246]: Franchises
+                - generic [ref=e247]: "18"
+            - generic [ref=e248] [cursor=pointer]:
+              - generic [ref=e249]:
+                - img [ref=e250]
+                - generic [ref=e253]: GIF
+              - generic [ref=e254]:
+                - generic [ref=e255]: UK TV
+                - generic [ref=e256]: "12"
+            - generic [ref=e257] [cursor=pointer]:
+              - img [ref=e259]
+              - generic [ref=e261]:
+                - generic [ref=e262]: Decades
+                - generic [ref=e263]: "9"
+            - generic [ref=e264] [cursor=pointer]: + Add folder

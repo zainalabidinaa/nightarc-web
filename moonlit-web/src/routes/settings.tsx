@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '@/app/AuthProvider';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Sidebar } from '@/components/Sidebar';
+import { ProfileAvatar } from '@/components/ProfileAvatar';
 import { getInstalledAddons, saveInstalledAddons } from '@/lib/services/api';
 import { fetchManifest } from '@/lib/stremio';
 import { DEFAULT_ADDONS } from '@/lib/supabase';
@@ -181,10 +182,7 @@ export default function SettingsPage() {
         {/* ── Profile card ── */}
         <div className="mt-2 rounded-2xl bg-moonlit-surface border border-moonlit-border overflow-hidden">
           <div className="px-4 py-3.5 flex items-center gap-3">
-            <div className="w-11 h-11 rounded-full flex items-center justify-center text-base font-bold shrink-0"
-              style={{ backgroundColor: currentProfile?.avatar_color || '#c084fc' }}>
-              {currentProfile?.name?.[0]?.toUpperCase()}
-            </div>
+            {currentProfile && <ProfileAvatar profile={currentProfile} size={44} className="shrink-0" />}
             <div className="flex-1 min-w-0">
               <p className="font-semibold text-white text-sm">{currentProfile?.name}</p>
               <p className="text-xs text-moonlit-muted mt-0.5">{currentProfile?.role === 'admin' ? 'Administrator' : 'Member'}</p>
@@ -208,6 +206,22 @@ export default function SettingsPage() {
             value="TMDB"
           />
         </div>
+
+        {/* ── ADMIN (admin only) ── */}
+        {currentProfile?.role === 'admin' && (
+          <>
+            <SectionLabel>Admin</SectionLabel>
+            <div className="rounded-2xl bg-moonlit-surface border border-moonlit-border overflow-hidden">
+              <SettingsRow
+                iconBg="#FF8A35"
+                icon={<svg viewBox="0 0 24 24" fill="white" className="w-4 h-4"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4zm0 6a2.5 2.5 0 100 5 2.5 2.5 0 000-5zm-4 9a4 4 0 018 0H8z"/></svg>}
+                title="Admin Dashboard"
+                subtitle="Collections, invite codes & stats"
+                onClick={() => navigate({ to: '/admin' })}
+              />
+            </div>
+          </>
+        )}
 
         {/* ── CONTENT MANAGEMENT ── */}
         <SectionLabel>Content Management</SectionLabel>

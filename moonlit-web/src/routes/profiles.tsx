@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '@/app/AuthProvider';
 import { useNavigate } from '@tanstack/react-router';
+import { ProfileAvatar } from '@/components/ProfileAvatar';
 
 const MoonIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7 text-moonlit-accent">
@@ -29,7 +30,7 @@ export default function ProfilesPage() {
   return (
     <div className="relative flex items-center justify-center min-h-screen overflow-hidden">
       <div className="absolute inset-0 bg-moonlit-bg" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-purple-600/8 blur-3xl pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-moonlit-accent/[0.08] blur-3xl pointer-events-none" />
 
       <div className="relative text-center max-w-lg w-full px-6">
         <div className="flex justify-center mb-4"><MoonIcon /></div>
@@ -40,10 +41,11 @@ export default function ProfilesPage() {
           {profiles.map(p => (
             <button key={p.id} onClick={() => handleSelect(p)}
               className="group flex flex-col items-center gap-2.5 p-4 rounded-2xl hover:bg-white/5 transition-all duration-200 cursor-pointer relative">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center text-xl font-bold ring-2 ring-transparent group-hover:ring-moonlit-accent/50 transition-all duration-200"
-                style={{ backgroundColor: p.avatar_color || '#c084fc' }}>
-                {p.name[0].toUpperCase()}
-              </div>
+              <ProfileAvatar
+                profile={p}
+                size={64}
+                className="ring-2 ring-transparent group-hover:ring-moonlit-accent/50 transition-all duration-200"
+              />
               <span className="text-sm font-medium text-white/90 group-hover:text-white">{p.name}</span>
               {p.role === 'admin' && <span className="text-xs text-moonlit-accent font-medium">Admin</span>}
               {p.id !== currentProfile?.id && (
@@ -70,9 +72,9 @@ export default function ProfilesPage() {
             <input autoFocus value={newName} onChange={e => setNewName(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleCreate()}
               placeholder="Profile name"
-              className="flex-1 px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-purple-400/60 transition-all" />
+              className="flex-1 px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-moonlit-accent/60 transition-all" />
             <button onClick={handleCreate}
-              className="px-4 py-2.5 bg-moonlit-accent hover:bg-purple-400 rounded-xl text-sm font-semibold transition-colors cursor-pointer">
+              className="px-4 py-2.5 bg-moonlit-accent hover:bg-moonlit-accent/90 rounded-xl text-sm font-semibold transition-colors cursor-pointer">
               Create
             </button>
           </div>

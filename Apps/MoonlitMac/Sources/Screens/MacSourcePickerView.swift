@@ -15,8 +15,159 @@ struct MacSourcePickerView: View {
     @StateObject private var streamRepo = StreamRepository.shared
     @StateObject private var addonRepo = AddonRepository.shared
     @Environment(\.dismiss) var dismiss
+    @State private var selectedAddonFilter: String? = nil
+    @State private var isAutoPlaying = false
+    @State private var autoLaunchAttempts = 0
+    @State private var autoLaunchStatus: String? = nil
+
+    private var autoplayMode: AutoplayMode {
+        guard let profile = ProfileManager.shared.currentProfile else { return .manual }
+        return StreamAutoplayPreferenceStore.shared.mode(profileId: profile.id) == .automatic ? .auto : .manual
+    }
+
+    private var prefer4K: Bool {
+        guard let profile = ProfileManager.shared.currentProfile else { return false }
+        return PlaybackQualityPreferenceStore.shared.prefers4K(profileId: profile.id)
+    }
+
+    private var installOrder: [String] {
+        addonRepo.managedAddons.map(\.manifest.name)
+    }
 
     var body: some View {
+        Group {
+            if streamRepo.isLoading || (autoplayMode == .auto && !isAutoPlaying) {
+                loadingView
+            } else if autoplayMode == .auto && (isAutoPlaying || !streamRepo.streams.isEmpty) {
+                autoPlayView
+            } else if streamRepo.streams.isEmpty {
+                emptyView
+            } else {
+                manualPickerView
+            }
+        }
+        .frame(minWidth: 500, minHeight: 400)
+        .background(MoonlitTheme.background)
+        .task {
+            await streamRepo.fetchStreams(
+                type: mediaType.rawValue,
+                id: videoId ?? mediaId,
+                addons: addonRepo.enabledAddons
+            )
+        }
+        .onChange(of: streamRepo.streams) { _, streams in
+            if autoplayMode == .auto && !streams.isEmpty && !isAutoPlaying {
+                startAutoPlay(streams: streams)
+            }
+        }
+        .onChange(of: streamRepo.isLoading) { _, isLoading in
+            guard !isLoading, autoplayMode == .auto,
+                  !streamRepo.streams.isEmpty, !isAutoPlaying else { return }
+            startAutoPlay(streams: streamRepo.streams)
+        }
+    }
+
+    private var loadingView: some View {
+        VStack(spacing: 16) {
+            Spacer()
+            MacLottieLoadingView(size: 56)
+            Text("Finding streams...")
+                .font(.headline)
+                .foregroundColor(.white)
+            Spacer()
+        }
+    }
+
+    private var emptyView: some View {
+        VStack(spacing: 8) {
+            Spacer()
+            Image(systemName: "play.slash")
+                .font(.largeTitle)
+                .foregroundColor(MoonlitTheme.textTertiary)
+            Text("No streams available")
+                .foregroundColor(MoonlitTheme.textSecondary)
+            Button("Dismiss") { dismiss() }
+                .buttonStyle(.borderedProminent)
+                .tint(.white.opacity(0.2))
+            Spacer()
+        }
+    }
+
+    private var autoPlayView: some View {
+        ZStack {
+            Color.black
+
+            if let backdropURL = (poster ?? logo).flatMap(URL.init) {
+                CachedAsyncImage(url: backdropURL) { image in
+                    image.resizable().scaledToFill()
+                } placeholder: { Color.clear }
+                .ignoresSafeArea()
+            }
+
+            LinearGradient(
+                colors: [
+                    .black.opacity(0.0),
+                    .black.opacity(0.3),
+                    .black.opacity(0.6),
+                    .black.opacity(0.8),
+                    .black.opacity(0.9),
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+
+            VStack(spacing: 18) {
+                Spacer()
+
+                if let logoURL = logo.flatMap(URL.init) {
+                    CachedAsyncImage(url: logoURL) { image in
+                        image.resizable().scaledToFit()
+                            .frame(width: 300, height: 180)
+                            .shadow(color: .black.opacity(0.6), radius: 12, x: 0, y: 4)
+                    } placeholder: {
+                        Text(mediaName)
+                            .font(.system(size: 24, weight: .bold))
+                            .foregroundColor(.white)
+                            .multilineTextAlignment(.center)
+                    }
+                    .id(logo)
+                    .scaleEffect(isAutoPlaying ? 1.04 : 1.0)
+                    .animation(.linear(duration: 2.0).repeatForever(autoreverses: true), value: isAutoPlaying)
+                } else {
+                    Text(mediaName)
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundColor(.white)
+                        .multilineTextAlignment(.center)
+                        .shadow(color: .black.opacity(0.6), radius: 8, x: 0, y: 2)
+                        .scaleEffect(isAutoPlaying ? 1.04 : 1.0)
+                        .animation(.linear(duration: 2.0).repeatForever(autoreverses: true), value: isAutoPlaying)
+                }
+
+                if let status = autoLaunchStatus {
+                    Text(status)
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(.white.opacity(0.7))
+                        .multilineTextAlignment(.center)
+                }
+
+                Button {
+                    dismiss()
+                } label: {
+                    Text("Cancel")
+                        .font(.subheadline)
+                        .foregroundColor(.white.opacity(0.5))
+                }
+                .buttonStyle(.plain)
+                .padding(.top, 8)
+
+                Spacer()
+            }
+            .padding(.horizontal, 32)
+        }
+    }
+
+    private var manualPickerView: some View {
         VStack(spacing: 0) {
             HStack {
                 Text("Select Source")
@@ -31,79 +182,167 @@ struct MacSourcePickerView: View {
             }
             .padding()
 
-            if streamRepo.isLoading {
-                Spacer()
-                ProgressView().tint(MoonlitTheme.accent)
-                Spacer()
-            } else if streamRepo.streams.isEmpty {
-                Spacer()
-                VStack(spacing: 8) {
-                    Image(systemName: "play.slash")
-                        .font(.title)
-                        .foregroundColor(MoonlitTheme.textTertiary)
-                    Text("No streams available")
-                        .foregroundColor(MoonlitTheme.textSecondary)
-                }
-                Spacer()
-            } else {
-                ScrollView {
-                    LazyVStack(spacing: 0) {
-                        ForEach(groupedByAddon, id: \.key) { addonName, streams in
-                            VStack(alignment: .leading, spacing: 0) {
-                                Text(addonName)
-                                    .font(.system(size: 10, weight: .bold))
-                                    .foregroundColor(MoonlitTheme.textTertiary)
-                                    .tracking(1)
-                                    .textCase(.uppercase)
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 8)
+            addonFilterBar
+                .padding(.horizontal, 16)
+                .padding(.bottom, 8)
 
-                                ForEach(streams) { stream in
-                                    Button {
-                                        guard let url = stream.url else { return }
-                                        let launch = PlayerLaunch(
-                                            title: mediaName,
-                                            sourceUrl: url,
-                                            sourceHeaders: stream.behaviorHints?.proxyHeaders?.request,
-                                            logo: logo,
-                                            poster: poster,
-                                            seasonNumber: seasonNumber,
-                                            episodeNumber: episodeNumber,
-                                            streamTitle: stream.displayName,
-                                            providerName: stream.addonName,
-                                            contentType: mediaType,
-                                            videoId: videoId ?? mediaId
-                                        )
-                                        onLaunch(launch)
-                                    } label: {
-                                        StreamRowView(stream: stream)
-                                    }
-                                    .buttonStyle(.plain)
+            ScrollView {
+                LazyVStack(spacing: 0) {
+                    let filtered = filteredStreams
+                    ForEach(groupedByAddon(filtered), id: \.key) { addonName, streams in
+                        VStack(alignment: .leading, spacing: 0) {
+                            Text(addonName)
+                                .font(.system(size: 10, weight: .bold))
+                                .foregroundColor(MoonlitTheme.textTertiary)
+                                .tracking(1)
+                                .textCase(.uppercase)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 8)
+
+                            ForEach(streams) { stream in
+                                Button {
+                                    launchStream(stream)
+                                } label: {
+                                    StreamRowView(stream: stream)
                                 }
+                                .buttonStyle(.plain)
                             }
-                            .padding(.bottom, 8)
+                        }
+                        .padding(.bottom, 8)
+                    }
+                }
+                .padding(.vertical, 8)
+            }
+        }
+    }
+
+    private var addonFilterBar: some View {
+        let addons = streamRepo.streams.compactMap(\.addonName)
+        let uniqueAddons = Array(Set(addons)).sorted()
+
+        return Group {
+            if uniqueAddons.count > 1 {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 6) {
+                        Button {
+                            selectedAddonFilter = nil
+                        } label: {
+                            Text("All")
+                                .font(.caption.weight(.medium))
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 5)
+                                .background(selectedAddonFilter == nil ? Color.white.opacity(0.2) : Color.white.opacity(0.08))
+                                .cornerRadius(14)
+                        }
+                        .buttonStyle(.plain)
+
+                        ForEach(uniqueAddons, id: \.self) { addon in
+                            let count = streamRepo.streams.filter { $0.addonName == addon }.count
+                            Button {
+                                selectedAddonFilter = addon
+                            } label: {
+                                Text("\(addon) (\(count))")
+                                    .font(.caption.weight(.medium))
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 5)
+                                    .background(selectedAddonFilter == addon ? Color.white.opacity(0.2) : Color.white.opacity(0.08))
+                                    .cornerRadius(14)
+                            }
+                            .buttonStyle(.plain)
                         }
                     }
-                    .padding(.vertical, 8)
                 }
             }
         }
-        .frame(minWidth: 500, minHeight: 400)
-        .background(MoonlitTheme.background)
-        .task {
-            await streamRepo.fetchStreams(
-                type: mediaType.rawValue,
-                id: videoId ?? mediaId,
-                addons: addonRepo.enabledAddons
-            )
-        }
     }
 
-    private var groupedByAddon: [(key: String, value: [StreamItem])] {
-        let grouped = Dictionary(grouping: streamRepo.streams) { $0.addonName ?? "Unknown" }
+    private var filteredStreams: [StreamItem] {
+        guard let filter = selectedAddonFilter else {
+            return StreamSourceSelector.rankedCandidates(from: streamRepo.streams, prefer4K: prefer4K)
+        }
+        return StreamSourceSelector.rankedCandidates(from: streamRepo.streams, prefer4K: prefer4K)
+            .filter { $0.addonName == filter }
+    }
+
+    private func groupedByAddon(_ streams: [StreamItem]) -> [(key: String, value: [StreamItem])] {
+        let grouped = Dictionary(grouping: streams) { $0.addonName ?? "Unknown" }
         return grouped.sorted { $0.key < $1.key }
     }
+
+    private func startAutoPlay(streams: [StreamItem]) {
+        isAutoPlaying = true
+        autoLaunchAttempts = 0
+        autoLaunchStatus = "Finding best source..."
+
+        let candidates = StreamSourceSelector.cachedCandidates(currentUrl: nil, from: streams)
+
+        guard !candidates.isEmpty else {
+            autoLaunchStatus = "No playable streams found"
+            return
+        }
+
+        tryNextAutoCandidate(candidates: candidates, index: 0)
+    }
+
+    private func tryNextAutoCandidate(candidates: [StreamItem], index: Int) {
+        guard index < candidates.count else {
+            autoLaunchStatus = "No working sources found"
+            return
+        }
+
+        autoLaunchAttempts += 1
+        autoLaunchStatus = autoLaunchAttempts > 1
+            ? "Trying source \(autoLaunchAttempts)..."
+            : "Starting playback..."
+
+        let candidate = candidates[index]
+        guard let url = candidate.url else {
+            tryNextAutoCandidate(candidates: candidates, index: index + 1)
+            return
+        }
+
+        let launch = PlayerLaunch(
+            title: mediaName,
+            sourceUrl: url,
+            sourceHeaders: candidate.behaviorHints?.proxyHeaders?.request,
+            logo: logo, poster: poster,
+            seasonNumber: seasonNumber,
+            episodeNumber: episodeNumber,
+            streamTitle: candidate.displayName,
+            providerName: candidate.addonName,
+            contentType: mediaType,
+            videoId: videoId ?? mediaId
+        )
+
+        onLaunch(launch)
+        dismiss()
+    }
+
+    private func launchStream(_ stream: StreamItem) {
+        guard let url = stream.url else { return }
+        let launch = PlayerLaunch(
+            title: mediaName,
+            sourceUrl: url,
+            sourceHeaders: stream.behaviorHints?.proxyHeaders?.request,
+            logo: logo, poster: poster,
+            seasonNumber: seasonNumber,
+            episodeNumber: episodeNumber,
+            streamTitle: stream.displayName,
+            providerName: stream.addonName,
+            contentType: mediaType,
+            videoId: videoId ?? mediaId
+        )
+        onLaunch(launch)
+    }
 }
+
+// MARK: - AutoplayMode enum for macOS
+
+private enum AutoplayMode {
+    case auto, manual
+}
+
+// MARK: - StreamRowView
 
 struct StreamRowView: View {
     let stream: StreamItem

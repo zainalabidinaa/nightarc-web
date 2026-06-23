@@ -1,0 +1,103 @@
+<h2>Global Catalog Display Toggle</h2>
+<p class="subtitle">Pick how Settings should expose the global option: folder catalogs stay grouped, or folders become their own Home rows.</p>
+
+<div class="split">
+  <div class="mockup" data-choice="settings-card" onclick="toggleSelect(this)">
+    <div class="mockup-header">Option A: Settings Card + Preview</div>
+    <div class="mockup-body">
+      <div style="background:#050505;border-radius:24px;padding:18px;color:white;font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:390px;margin:auto;">
+        <div style="font-size:34px;font-weight:850;margin:12px 0 20px;">Settings</div>
+        <div style="background:#1c1c1f;border-radius:22px;overflow:hidden;margin-bottom:18px;">
+          <div style="padding:16px 18px;border-bottom:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:12px;">
+            <div style="width:42px;height:42px;border-radius:14px;background:#2a2a2f;display:flex;align-items:center;justify-content:center;font-size:22px;">▦</div>
+            <div style="flex:1;">
+              <div style="font-size:19px;font-weight:750;">Catalog Display</div>
+              <div style="font-size:13px;color:#aaa;margin-top:2px;">Global home layout</div>
+            </div>
+            <div style="color:#777;font-size:24px;">›</div>
+          </div>
+          <div style="padding:16px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+            <div>
+              <div style="font-size:17px;font-weight:700;">Folders as Rows</div>
+              <div style="font-size:12px;color:#aaa;margin-top:4px;line-height:1.35;">Turn each folder in a collection into its own Home row.</div>
+            </div>
+            <div style="width:62px;height:34px;border-radius:20px;background:#65d66b;position:relative;box-shadow:inset 0 0 0 1px rgba(255,255,255,.16);">
+              <div style="width:29px;height:29px;border-radius:50%;background:white;position:absolute;right:3px;top:2.5px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="font-size:15px;color:#a8a8af;margin-bottom:10px;font-weight:700;">Preview</div>
+        <div style="background:#111113;border-radius:20px;padding:14px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <div>
+              <div style="font-weight:800;font-size:18px;">Before</div>
+              <div style="color:#999;font-size:12px;">One Catalogs folder grid</div>
+            </div>
+            <div style="color:#777;">→</div>
+            <div style="text-align:right;">
+              <div style="font-weight:800;font-size:18px;">After</div>
+              <div style="color:#999;font-size:12px;">Netflix, Marvel, etc. rows</div>
+            </div>
+          </div>
+          <div style="height:58px;border-radius:14px;background:linear-gradient(90deg,#26262a,#161618);display:flex;align-items:center;padding:0 12px;margin-bottom:8px;font-weight:800;">Netflix</div>
+          <div style="height:58px;border-radius:14px;background:linear-gradient(90deg,#26262a,#161618);display:flex;align-items:center;padding:0 12px;margin-bottom:8px;font-weight:800;">Marvel</div>
+          <div style="height:58px;border-radius:14px;background:linear-gradient(90deg,#26262a,#161618);display:flex;align-items:center;padding:0 12px;font-weight:800;">Prime Video</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mockup" data-choice="catalog-management" onclick="toggleSelect(this)">
+    <div class="mockup-header">Option B: Catalog Management Toolbar</div>
+    <div class="mockup-body">
+      <div style="background:#050505;border-radius:24px;padding:18px;color:white;font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:390px;margin:auto;">
+        <div style="text-align:center;font-size:20px;font-weight:800;margin:8px 0 22px;">Catalog Management</div>
+        <div style="background:#1c1c1f;border-radius:22px;overflow:hidden;margin-bottom:20px;">
+          <div style="padding:16px 18px;border-bottom:1px solid rgba(255,255,255,.1);">
+            <div style="font-size:16px;color:#aaa;font-weight:700;margin-bottom:12px;">Home Display Mode</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;background:#111113;border-radius:14px;padding:4px;gap:4px;">
+              <div style="padding:10px;text-align:center;border-radius:11px;color:#aaa;font-weight:700;">Folder Grid</div>
+              <div style="padding:10px;text-align:center;border-radius:11px;background:#b961ff;color:white;font-weight:800;">Folders as Rows</div>
+            </div>
+          </div>
+          <div style="padding:16px 18px;">
+            <button style="width:100%;border:0;border-radius:15px;background:#2b2b30;color:white;font-size:16px;font-weight:800;padding:14px;">Make Folders Into Rows</button>
+            <div style="font-size:12px;color:#aaa;margin-top:10px;line-height:1.35;">Applies globally to all enabled collections. Existing addon catalog toggles stay below.</div>
+          </div>
+        </div>
+
+        <div style="font-size:18px;font-weight:800;color:#aaa;margin:22px 0 10px;">Enabled Catalogs</div>
+        <div style="background:#1c1c1f;border-radius:22px;padding:14px 18px;">
+          <div style="display:flex;align-items:center;border-bottom:1px solid rgba(255,255,255,.1);padding:8px 0 14px;gap:12px;">
+            <div style="flex:1;"><div style="font-size:20px;font-weight:800;">Top Picks for You</div><div style="color:#aaa;margin-top:4px;">Type: Series</div></div>
+            <div style="width:62px;height:34px;border-radius:20px;background:#65d66b;position:relative;"><div style="width:29px;height:29px;border-radius:50%;background:white;position:absolute;right:3px;top:2.5px;"></div></div>
+          </div>
+          <div style="display:flex;align-items:center;padding:14px 0 8px;gap:12px;">
+            <div style="flex:1;"><div style="font-size:20px;font-weight:800;">My Watchlist</div><div style="color:#aaa;margin-top:4px;">Type: All</div></div>
+            <div style="width:62px;height:34px;border-radius:20px;background:#65d66b;position:relative;"><div style="width:29px;height:29px;border-radius:50%;background:white;position:absolute;right:3px;top:2.5px;"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="recommend-a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Recommended: Settings Card + Preview</h3>
+      <p>Best for users: the global toggle is easy to understand before entering the long Catalog Management list.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="recommend-b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Catalog Management Toolbar</h3>
+      <p>Best if you want all catalog controls on one screen, matching the screenshot more directly.</p>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle">Open the URL and pick A or B. The behavior is the same either way: global mode OFF shows folder tiles; global mode ON turns every folder into its own row/catalog using folder/addon images.</p>

@@ -192,8 +192,8 @@ export default function FolderDetailPage() {
             className="grid gap-3"
             style={{
               gridTemplateColumns: isLandscapeFolder
-                ? 'repeat(auto-fill, minmax(230px, 1fr))'
-                : 'repeat(auto-fill, minmax(145px, 1fr))',
+                ? 'repeat(auto-fill, minmax(290px, 1fr))'
+                : 'repeat(auto-fill, minmax(172px, 1fr))',
             }}
           >
             {items.map(item => {

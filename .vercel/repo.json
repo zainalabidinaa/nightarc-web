@@ -1,0 +1,11 @@
+{
+  "remoteName": "origin",
+  "projects": [
+    {
+      "id": "prj_Rnh0vB2omaymfcAcdB0UvS1U2XOo",
+      "name": "moonlit-web",
+      "directory": "moonlit-web",
+      "orgId": "team_KkBnP8JIHlwfZFABLdFsjt9d"
+    }
+  ]
+}

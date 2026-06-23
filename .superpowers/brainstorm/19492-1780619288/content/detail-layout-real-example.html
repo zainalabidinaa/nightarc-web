@@ -1,0 +1,103 @@
+<h2>Detail Page With Real Examples</h2>
+<p class="subtitle">Compare the recommended centered layout using real-looking content. Click a card if one feels closest to what you want.</p>
+
+<style>
+  .real-grid { display: grid; grid-template-columns: 1fr; gap: 28px; }
+  .real-option { border: 1px solid rgba(255,255,255,.12); border-radius: 22px; overflow: hidden; background: #080a0f; cursor: pointer; }
+  .real-option.selected { outline: 3px solid #7dd3fc; }
+  .mock-window { background:#080a0f; color:white; min-height:620px; font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif; }
+  .hero { height:310px; position:relative; background-size:cover; background-position:center; }
+  .hero::after { content:""; position:absolute; inset:0; background:linear-gradient(90deg,rgba(8,10,15,.86),rgba(8,10,15,.24),rgba(8,10,15,.88)),linear-gradient(to bottom,rgba(8,10,15,.1),#080a0f 94%); }
+  .back { position:absolute; z-index:2; top:20px; left:calc(50% - 560px); padding:8px 14px; border-radius:999px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.16); font-size:13px; }
+  .hero-content { position:absolute; z-index:2; left:50%; bottom:24px; transform:translateX(-50%); width:min(1120px, calc(100% - 56px)); display:flex; gap:22px; align-items:flex-end; }
+  .poster { width:132px; height:198px; border-radius:13px; background-size:cover; background-position:center; box-shadow:0 22px 60px rgba(0,0,0,.65); border:1px solid rgba(255,255,255,.18); flex:none; }
+  .title-block { padding-bottom:8px; max-width:720px; }
+  .eyebrow { color:#cbd5e1; font-size:13px; margin-bottom:8px; }
+  .title { font-size:34px; font-weight:760; letter-spacing:-.03em; margin-bottom:8px; }
+  .meta { color:#b7c0cd; font-size:14px; }
+  .body { width:min(1120px, calc(100% - 56px)); margin:0 auto; padding:22px 0 34px; }
+  .actions { display:flex; gap:10px; align-items:center; margin-bottom:24px; }
+  .play { background:#f8fafc; color:#05070b; padding:11px 28px; border-radius:12px; font-weight:720; }
+  .icon { width:42px; height:42px; border-radius:12px; background:#151a24; border:1px solid rgba(255,255,255,.09); display:grid; place-items:center; color:#d6dde8; }
+  .overview { max-width:800px; color:#d0d6df; line-height:1.45; font-size:15px; margin-bottom:18px; }
+  .chips { display:flex; gap:8px; margin-bottom:28px; }
+  .chip { padding:6px 11px; border-radius:999px; background:#151a24; color:#b9c1ce; font-size:12px; border:1px solid rgba(255,255,255,.08); }
+  .section-title { font-size:20px; font-weight:720; margin:0 0 14px; }
+  .season-tabs { display:flex; gap:8px; margin-bottom:16px; }
+  .season-tab { padding:8px 14px; border-radius:999px; background:#151a24; color:#b9c1ce; font-size:13px; }
+  .season-tab.active { background:#f8fafc; color:#070a0f; }
+  .episodes { display:flex; gap:14px; overflow:hidden; padding-bottom:4px; }
+  .episode { width:230px; flex:none; }
+  .episode-img { width:230px; height:129px; border-radius:14px; background-size:cover; background-position:center; position:relative; overflow:hidden; border:1px solid rgba(255,255,255,.1); }
+  .episode-img::after { content:"▶"; position:absolute; inset:0; display:grid; place-items:center; background:rgba(0,0,0,.22); font-size:28px; text-shadow:0 2px 12px black; }
+  .episode-title { margin-top:9px; font-weight:650; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .episode-desc { color:#9aa4b3; font-size:12px; line-height:1.35; margin-top:4px; }
+  .caption { padding:18px 22px 22px; background:#0d1118; border-top:1px solid rgba(255,255,255,.08); }
+  .caption h3 { margin:0 0 6px; }
+  .caption p { margin:0; color:#aeb8c7; }
+  .compact .hero-content, .compact .body { width:min(940px, calc(100% - 44px)); }
+  .compact .poster { width:112px; height:168px; }
+  .compact .hero { height:260px; }
+  .compact .title { font-size:29px; }
+  .compact .episode { width:210px; }
+  .compact .episode-img { width:210px; height:118px; }
+</style>
+
+<div class="real-grid">
+  <div class="real-option" data-choice="native-centered-real" onclick="toggleSelect(this)">
+    <div class="mock-window">
+      <div class="hero" style="background-image:url('https://image.tmdb.org/t/p/original/9faGSFi5jam6pDWGNd0p8JcJgXQ.jpg')">
+        <div class="back">‹ Back</div>
+        <div class="hero-content">
+          <div class="poster" style="background-image:url('https://image.tmdb.org/t/p/w500/7RyHsO4yDXtBv1zUU3mTpHeQ0d5.jpg')"></div>
+          <div class="title-block">
+            <div class="eyebrow">AIOMetadata • Movie</div>
+            <div class="title">Avengers: Endgame</div>
+            <div class="meta">2019 • PG-13 • 3h 1m • Action, Adventure, Sci-Fi</div>
+          </div>
+        </div>
+      </div>
+      <div class="body">
+        <div class="actions"><div class="play">▶ Play</div><div class="icon">＋</div><div class="icon">✓</div></div>
+        <div class="overview">After the devastating events of Infinity War, the universe is in ruins. The Avengers assemble once more to reverse Thanos' actions and restore balance to the universe.</div>
+        <div class="chips"><div class="chip">Action</div><div class="chip">Adventure</div><div class="chip">Superhero</div><div class="chip">Marvel</div></div>
+        <div class="section-title">Why this layout works</div>
+        <div class="episodes">
+          <div class="episode"><div class="episode-img" style="background-image:url('https://image.tmdb.org/t/p/w500/orjiB3oUIsyz60hoEqkiGpy5CeO.jpg')"></div><div class="episode-title">Clean centered content</div><div class="episode-desc">Everything aligns to a readable container instead of the far window edge.</div></div>
+          <div class="episode"><div class="episode-img" style="background-image:url('https://image.tmdb.org/t/p/w500/7RyHsO4yDXtBv1zUU3mTpHeQ0d5.jpg')"></div><div class="episode-title">Neutral native controls</div><div class="episode-desc">White play button and dark icon buttons replace the purple styling.</div></div>
+          <div class="episode"><div class="episode-img" style="background-image:url('https://image.tmdb.org/t/p/w500/9faGSFi5jam6pDWGNd0p8JcJgXQ.jpg')"></div><div class="episode-title">Artwork fallback</div><div class="episode-desc">Poster, banner, img, image, and AIO raw poster can all feed this view.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="caption"><h3>A. Recommended: Native Centered</h3><p>Best match for LunaMac: cinematic, readable, fixes episode alignment, and avoids purple without redesigning the whole app.</p></div>
+  </div>
+
+  <div class="real-option compact" data-choice="series-real" onclick="toggleSelect(this)">
+    <div class="mock-window">
+      <div class="hero" style="background-image:url('https://image.tmdb.org/t/p/original/2OMB0ynKlyIenMJWI2Dy9IWT4c.jpg')">
+        <div class="back" style="left:calc(50% - 470px)">‹ Back</div>
+        <div class="hero-content">
+          <div class="poster" style="background-image:url('https://image.tmdb.org/t/p/w500/7WUHnWGx5OO145IRxPDUkQSh4C7.jpg')"></div>
+          <div class="title-block">
+            <div class="eyebrow">AIOMetadata • Series</div>
+            <div class="title">The Last of Us</div>
+            <div class="meta">2023 • TV-MA • Drama, Sci-Fi & Fantasy</div>
+          </div>
+        </div>
+      </div>
+      <div class="body">
+        <div class="actions"><div class="play">▶ Play S1:E1</div><div class="icon">＋</div><div class="icon">✓</div></div>
+        <div class="overview">Twenty years after modern civilization has been destroyed, Joel is hired to smuggle Ellie out of an oppressive quarantine zone.</div>
+        <div class="section-title">Episodes</div>
+        <div class="season-tabs"><div class="season-tab active">Season 1</div><div class="season-tab">Season 2</div></div>
+        <div class="episodes">
+          <div class="episode"><div class="episode-img" style="background-image:url('https://image.tmdb.org/t/p/w500/uKvVjHNqB5VmOrdxqAt2F7J78ED.jpg')"></div><div class="episode-title">1. When You're Lost in the Darkness</div><div class="episode-desc">A hardened survivor takes charge of a teenage girl.</div></div>
+          <div class="episode"><div class="episode-img" style="background-image:url('https://image.tmdb.org/t/p/w500/oOce9hLMVFubjAJliau4kiSNPnW.jpg')"></div><div class="episode-title">2. Infected</div><div class="episode-desc">Joel and Tess navigate the ruins of Boston.</div></div>
+          <div class="episode"><div class="episode-img" style="background-image:url('https://image.tmdb.org/t/p/w500/5xeNPGbM8ImVdJACUoGpXT8Pxx3.jpg')"></div><div class="episode-title">3. Long, Long Time</div><div class="episode-desc">Bill prepares for the worst after the outbreak.</div></div>
+          <div class="episode"><div class="episode-img" style="background-image:url('https://image.tmdb.org/t/p/w500/g5TOh7eTzOEZ6HqLxL6Y6SGfV6x.jpg')"></div><div class="episode-title">4. Please Hold to My Hand</div><div class="episode-desc">A new threat appears in Kansas City.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="caption"><h3>B. Same Layout, Series Example</h3><p>This shows the actual episode-row fix: the season tabs and episode cards start inside the same centered content rail, not at the far-left edge.</p></div>
+  </div>
+</div>

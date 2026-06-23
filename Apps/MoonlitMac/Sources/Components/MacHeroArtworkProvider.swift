@@ -15,7 +15,7 @@ final class MacHeroArtworkProvider: ObservableObject {
 
     func heroArtURL(for item: MetaPreview) -> URL? {
         if let url = urls[item.id] { return url }
-        return URL(string: item.poster ?? item.banner ?? "")
+        return URL(string: item.banner ?? item.poster ?? "")
     }
 
     func prefetch(items: [MetaPreview]) {
@@ -65,8 +65,9 @@ final class MacHeroArtworkProvider: ObservableObject {
         guard let imagesURL = URL(string: "https://api.themoviedb.org/3/\(kind)/\(tmdbId)/images?api_key=\(apiKey)&include_image_language=null") else { return nil }
         let (imageData, _) = try await URLSession.shared.data(from: imagesURL)
         let images = try JSONDecoder().decode(TMDBImagesResponse.self, from: imageData)
-        guard let best = images.posters.max(by: { ($0.voteAverage ?? 0) < ($1.voteAverage ?? 0) }) else { return nil }
-        return URL(string: "https://image.tmdb.org/t/p/w780\(best.filePath)")
+        let candidates = images.backdrops.isEmpty ? images.posters : images.backdrops
+        guard let best = candidates.max(by: { ($0.voteAverage ?? 0) < ($1.voteAverage ?? 0) }) else { return nil }
+        return URL(string: "https://image.tmdb.org/t/p/w1280\(best.filePath)")
     }
 }
 
@@ -86,6 +87,7 @@ private struct TMDBFindItem: Decodable {
 
 private struct TMDBImagesResponse: Decodable {
     let posters: [TMDBImage]
+    let backdrops: [TMDBImage]
 }
 
 private struct TMDBImage: Decodable {

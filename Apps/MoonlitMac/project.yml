@@ -16,8 +16,8 @@ settings:
 packages:
   MoonlitCore:
     path: ../../Packages/MoonlitCore
-  KSPlayer:
-    path: /tmp/ksplayer-clone
+  MPVKit:
+    path: ../../Vendor/MPVKit
   Lottie:
     url: https://github.com/airbnb/lottie-spm.git
     from: "4.6.0"
@@ -32,7 +32,7 @@ targets:
       - path: Resources
     dependencies:
       - package: MoonlitCore
-      - package: KSPlayer
+      - package: MPVKit
       - package: Lottie
     settings:
       base:
@@ -40,7 +40,7 @@ targets:
         INFOPLIST_KEY_LSMinimumSystemVersion: "14.0"
         INFOPLIST_KEY_NSAppTransportSecurity:
           NSAllowsArbitraryLoads: true
-        INFOPLIST_KEY_CFBundleIconFile: "AppIcon"
+        INFOPLIST_KEY_CFBundleIconFile: "Moonlit"
     postBuildScripts:
       - name: Normalize Embedded Frameworks
         script: Scripts/normalize-embedded-frameworks.sh

@@ -16,9 +16,7 @@ import {
   Mp4OutputFormat,
   AppendOnlyStreamTarget,
   UrlSource,
-  MATROSKA,
-  type InputVideoTrack,
-  type InputAudioTrack,
+  ALL_FORMATS,
 } from 'mediabunny';
 
 export interface RemuxerCallbacks {
@@ -33,8 +31,6 @@ export class MediabunnyRemuxer {
   private output: Output | null = null;
   private conversion: Conversion | null = null;
   private writable: WritableStream<Uint8Array> | null = null;
-  private writer: WritableStreamDefaultWriter<Uint8Array> | null = null;
-  private sourceUrl = '';
   private cancelled = false;
   private executing = false;
 
@@ -45,10 +41,11 @@ export class MediabunnyRemuxer {
    */
   async start(url: string, callbacks: RemuxerCallbacks): Promise<void> {
     this.cancelled = false;
-    this.sourceUrl = url;
 
     try {
-      const proxyUrl = `/api/media-proxy?url=${encodeURIComponent(url)}`;
+      const sourceUrl = url.startsWith('/api/media-proxy')
+        ? url
+        : `/api/media-proxy?url=${encodeURIComponent(url)}`;
 
       // Create output first — we need the WritableStream ready
       this.writable = new WritableStream<Uint8Array>({
@@ -56,7 +53,6 @@ export class MediabunnyRemuxer {
           if (!this.cancelled) callbacks.onChunk(chunk);
         },
       });
-      this.writer = this.writable.getWriter();
 
       this.output = new Output({
         format: new Mp4OutputFormat({
@@ -68,8 +64,8 @@ export class MediabunnyRemuxer {
 
       // Create input from proxy URL
       this.input = new Input({
-        source: new UrlSource(proxyUrl),
-        formats: [MATROSKA],
+        source: new UrlSource(sourceUrl),
+        formats: ALL_FORMATS,
       });
 
       // Probe codec compatibility before conversion
@@ -130,12 +126,10 @@ export class MediabunnyRemuxer {
     if (this.executing) {
       try { await this.conversion?.cancel(); } catch {}
     }
-    try { await this.writer?.close(); } catch {}
     try { this.input?.dispose?.(); } catch {}
     this.input = null;
     this.output = null;
     this.conversion = null;
     this.writable = null;
-    this.writer = null;
   }
 }

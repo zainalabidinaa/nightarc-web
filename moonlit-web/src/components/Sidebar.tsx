@@ -2,6 +2,7 @@ import { Link, useRouterState, useNavigate } from '@tanstack/react-router';
 import { useAuth } from '@/app/AuthProvider';
 import { ReactNode } from 'react';
 import { SFSymbol } from '@/components/SFSymbol';
+import { ProfileAvatar } from '@/components/ProfileAvatar';
 
 const navItems = [
   { href: '/home',    label: 'Home',    symbol: 'house.fill' },
@@ -9,23 +10,10 @@ const navItems = [
   { href: '/library', label: 'Library', symbol: 'book.fill' },
 ];
 
-const adminItems = [
-  { href: '/admin', label: 'Admin', symbol: 'person.fill' },
-];
-
-// Deterministic pastel gradient from a string seed (used when no avatar_color set)
-function avatarGradient(seed: string): string {
-  let h = 0;
-  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) & 0xffffffff;
-  const hue = Math.abs(h) % 360;
-  return `linear-gradient(135deg, hsl(${hue},65%,52%), hsl(${(hue + 40) % 360},70%,42%))`;
-}
-
 export function Sidebar({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: s => s.location.pathname });
   const { currentProfile, selectProfile } = useAuth();
   const navigate = useNavigate();
-  const isAdmin = currentProfile?.role === 'admin';
 
   return (
     <div className="relative min-h-screen">
@@ -42,7 +30,7 @@ export function Sidebar({ children }: { children: ReactNode }) {
               to={href}
               className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-[13px] font-medium transition-all duration-200 ${
                 active
-                  ? 'bg-moonlit-accent/90 text-white shadow-[0_0_12px_rgba(139,92,246,0.45)]'
+                  ? 'bg-moonlit-accent/90 text-white shadow-[0_0_12px_rgba(255,138,53,0.45)]'
                   : 'text-white/50 hover:text-white hover:bg-white/8'
               }`}
             >
@@ -57,28 +45,13 @@ export function Sidebar({ children }: { children: ReactNode }) {
           to="/settings"
           className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-[13px] font-medium transition-all duration-200 ${
             pathname === '/settings'
-              ? 'bg-moonlit-accent/90 text-white shadow-[0_0_12px_rgba(139,92,246,0.45)]'
+              ? 'bg-moonlit-accent/90 text-white shadow-[0_0_12px_rgba(255,138,53,0.45)]'
               : 'text-white/50 hover:text-white hover:bg-white/8'
           }`}
         >
           <SFSymbol name="gear" size={13} opacity={pathname === '/settings' ? 1 : 0.55} />
           <span>Settings</span>
         </Link>
-
-        {isAdmin && adminItems.map(({ href, label, symbol }) => (
-          <Link
-            key={href}
-            to={href}
-            className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-[13px] font-medium transition-all duration-200 ${
-              pathname === href
-                ? 'bg-moonlit-accent/90 text-white shadow-[0_0_12px_rgba(139,92,246,0.45)]'
-                : 'text-white/50 hover:text-white hover:bg-white/8'
-            }`}
-          >
-            <SFSymbol name={symbol} size={13} opacity={pathname === href ? 1 : 0.55} />
-            <span>{label}</span>
-          </Link>
-        ))}
 
         {/* Separator + Profile */}
         {currentProfile && (
@@ -90,13 +63,12 @@ export function Sidebar({ children }: { children: ReactNode }) {
               aria-label="Switch profile"
               title={`Signed in as ${currentProfile.name}`}
             >
-              {/* Avatar circle */}
-              <div
-                className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-black text-white select-none ring-2 ring-white/20 group-hover:ring-white/35 transition-all"
-                style={{ background: currentProfile.avatar_color ? currentProfile.avatar_color : avatarGradient(currentProfile.name) }}
-              >
-                {currentProfile.name[0].toUpperCase()}
-              </div>
+              {/* Avatar */}
+              <ProfileAvatar
+                profile={currentProfile}
+                size={28}
+                className="ring-2 ring-white/20 group-hover:ring-white/35 transition-all"
+              />
               <span className="text-[13px] font-medium text-white/70 group-hover:text-white transition-colors leading-none">
                 {currentProfile.name}
               </span>

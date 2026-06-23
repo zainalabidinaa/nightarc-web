@@ -8,6 +8,7 @@ struct StreamSelectionScreen: View {
     let poster: String?
     let logo: String?
     var episodeThumbnail: String? = nil
+    var background: String? = nil
     var parentMetaId: String? = nil
     var parentMetaType: String? = nil
     var seasonNumber: Int? = nil
@@ -25,8 +26,11 @@ struct StreamSelectionScreen: View {
     @State private var upgradeAlert = false
     @State private var didAutoLaunch = false
     @State private var resolvedLogo: String?
+    @State private var resolvedBackground: String?
+    @State private var resolvedPoster: String?
     @State private var autoLaunchTask: Task<Void, Never>?
     @State private var selectedAddonFilter: String? = nil
+    @State private var cachedPlayableStreams: [StreamItem] = []
     @AppStorage("moonlit.guestMode") private var guestMode = false
     @Environment(\.dismiss) var dismiss
 
@@ -34,25 +38,45 @@ struct StreamSelectionScreen: View {
         ZStack {
             Color.black.ignoresSafeArea()
 
-            let backdropURL = autoplayMode == .automatic ? (episodeThumbnail ?? poster).flatMap(URL.init) : nil
-            if let url = backdropURL {
-                CachedAsyncImage(url: url) { phase in
-                    if case .success(let img) = phase {
-                        img.resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .ignoresSafeArea()
-                    }
-                }
-                .blur(radius: 24, opaque: true)
-                .ignoresSafeArea()
-            }
-
-            Color.black.opacity(backdropURL == nil ? 1 : 0.58).ignoresSafeArea()
-
             if autoplayMode == .manual {
+                let backdropURL = (episodeThumbnail ?? poster).flatMap(URL.init)
+                if let url = backdropURL {
+                    CachedAsyncImage(url: url) { phase in
+                        if case .success(let img) = phase {
+                            img.resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .ignoresSafeArea()
+                        }
+                    }
+                    .blur(radius: 24, opaque: true)
+                    .ignoresSafeArea()
+                }
+                Color.black.opacity(backdropURL == nil ? 1 : 0.58).ignoresSafeArea()
+
                 manualPickerContent
             } else {
-                automaticLoadingContent
+                // Auto-play: same branded card as the player, so tapping Play →
+                // video is one continuous loading screen.
+                PlaybackLoadingView(
+                    backgroundURL: background ?? resolvedBackground ?? episodeThumbnail ?? poster ?? resolvedPoster,
+                    logoURL: loadingLogoURL,
+                    title: mediaName,
+                    statusOverride: automaticStatusOverride
+                )
+                .overlay(alignment: .topLeading) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 19, weight: .semibold))
+                            .foregroundColor(.white)
+                            .frame(width: 50, height: 50)
+                    }
+                    .glassCircle(clear: true)
+                    .buttonStyle(.plain)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 12)
+                }
             }
         }
         .sensoryFeedback(.impact(weight: .light), trigger: selectedStream?.id)
@@ -78,6 +102,7 @@ struct StreamSelectionScreen: View {
             Text("Your account is set to Free. Visit the Moonlit website to upgrade your account and unlock streaming.")
         }
         .onChange(of: streamRepo.streams) { _, streams in
+            cachedPlayableStreams = StreamSourceSelector.playbackCandidates(from: streams)
             if let filter = selectedAddonFilter, !streams.contains(where: { $0.addonName == filter }) {
                 selectedAddonFilter = nil
             }
@@ -89,23 +114,25 @@ struct StreamSelectionScreen: View {
         }
         .task {
             streamRepo.clearStreams()
+            cachedPlayableStreams = []
             didAutoLaunch = false
             autoLaunchTask?.cancel()
             guard !isGuestWithoutAccount else {
                 didAutoLaunch = true
-                await resolveMissingLogoIfNeeded()
+                await resolveMissingArtworkIfNeeded()
                 return
             }
             if addonRepo.enabledAddons.isEmpty,
                let profile = ProfileManager.shared.currentProfile {
                 await addonRepo.loadAddons(profileId: profile.id)
             }
-            await resolveMissingLogoIfNeeded()
+            await resolveMissingArtworkIfNeeded()
             await streamRepo.fetchStreams(
                 type: mediaType.rawValue,
                 id: mediaId,
                 addons: streamRequestAddons
             )
+            cachedPlayableStreams = StreamSourceSelector.playbackCandidates(from: streamRepo.streams)
             if streamRepo.streams.isEmpty {
                 didAutoLaunch = true
             }
@@ -119,44 +146,12 @@ struct StreamSelectionScreen: View {
         (logo ?? resolvedLogo).flatMap(URL.init)
     }
 
-    private var loadingTitle: some View {
-        Text(mediaName)
-            .font(.system(size: 18, weight: .bold))
-            .foregroundColor(.white)
-            .multilineTextAlignment(.center)
-            .padding(.horizontal, 32)
-    }
-
-    private var automaticLoadingContent: some View {
-        VStack(spacing: 0) {
-            if let logoURL = loadingLogoURL {
-                CachedAsyncImage(url: logoURL) { phase in
-                    if case .success(let img) = phase {
-                        img.resizable()
-                            .scaledToFit()
-                            .frame(maxWidth: 220)
-                            .shadow(color: .black.opacity(0.6), radius: 12, x: 0, y: 4)
-                    } else {
-                        loadingTitle
-                    }
-                }
-            } else {
-                loadingTitle
-            }
-
-            if streamRepo.isLoading {
-                Text(automaticStatusText)
-                    .font(.caption.weight(.medium))
-                    .foregroundColor(.white.opacity(0.55))
-                    .padding(.top, 20)
-            } else if streamRepo.streams.isEmpty && didAutoLaunch {
-                Text("No streams available")
-                    .font(.subheadline.weight(.medium))
-                    .foregroundColor(.white.opacity(0.65))
-                    .padding(.top, 24)
-            }
-        }
-        .opacity(0.9)
+    /// Static status shown on the branded card instead of the animated dots —
+    /// `nil` while resolving (so "Loading" animates), a message once empty.
+    private var automaticStatusOverride: String? {
+        guard !streamRepo.isLoading else { return nil }
+        if streamRepo.streams.isEmpty && didAutoLaunch { return "No streams available" }
+        return nil
     }
 
     private var manualPickerContent: some View {
@@ -284,6 +279,7 @@ struct StreamSelectionScreen: View {
             logo: logo ?? resolvedLogo,
             poster: poster,
             episodeThumbnail: episodeThumbnail,
+            background: background ?? resolvedBackground,
             seasonNumber: seasonNumber,
             episodeNumber: episodeNumber,
             streamTitle: episodeTitle ?? stream.displayName,
@@ -335,18 +331,14 @@ struct StreamSelectionScreen: View {
         guestMode && !ProfileManager.shared.isAuthenticated
     }
 
-    private var playableStreams: [StreamItem] {
-        StreamSourceSelector.playbackCandidates(from: streamRepo.streams)
-    }
-
     private var addonNames: [String] {
         var seen = Set<String>()
-        return playableStreams.compactMap { $0.addonName }.filter { seen.insert($0).inserted }
+        return cachedPlayableStreams.compactMap { $0.addonName }.filter { seen.insert($0).inserted }
     }
 
     private var filteredStreams: [StreamItem] {
-        guard let filter = selectedAddonFilter else { return playableStreams }
-        return playableStreams.filter { $0.addonName == filter }
+        guard let filter = selectedAddonFilter else { return cachedPlayableStreams }
+        return cachedPlayableStreams.filter { $0.addonName == filter }
     }
 
     private var addonFilterBar: some View {
@@ -356,7 +348,7 @@ struct StreamSelectionScreen: View {
                     selectedAddonFilter = nil
                 }
                 ForEach(addonNames, id: \.self) { name in
-                    let count = playableStreams.filter { $0.addonName == name }.count
+                    let count = cachedPlayableStreams.filter { $0.addonName == name }.count
                     filterChip(label: "\(name) (\(count))", isSelected: selectedAddonFilter == name) {
                         selectedAddonFilter = selectedAddonFilter == name ? nil : name
                     }
@@ -378,18 +370,9 @@ struct StreamSelectionScreen: View {
         .buttonStyle(.plain)
     }
 
-    private var automaticStatusText: String {
-        guard let profile = ProfileManager.shared.currentProfile,
-              let timeout = StreamAutoplayPreferenceStore.shared.timeoutSeconds(profileId: profile.id) else {
-            return "Waiting for allowed addons..."
-        }
-        if timeout == 0 { return "Selecting first available source..." }
-        return "Waiting up to \(timeout)s for better sources..."
-    }
-
     private func scheduleAutoLaunchIfNeeded(streams: [StreamItem]) {
         guard autoplayMode == .automatic, !didAutoLaunch else { return }
-        guard !StreamSourceSelector.playbackCandidates(from: streams).isEmpty else { return }
+        guard !cachedPlayableStreams.isEmpty else { return }
 
         if !streamRepo.isLoading {
             autoLaunchTask?.cancel()
@@ -422,7 +405,10 @@ struct StreamSelectionScreen: View {
             return PlaybackQualityPreferenceStore.shared.prefers4K(profileId: profile.id)
         }()
 
-        guard let autoStream = StreamSourceSelector.initialStream(from: streams, prefer4K: prefer4K) else { return }
+        guard let autoStream = StreamSourceSelector.initialStream(
+            from: streams, prefer4K: prefer4K,
+            installOrder: addonRepo.enabledAddons.map(\.name)
+        ) else { return }
         didAutoLaunch = true
         StreamPlaybackDiagnostics.logSelectedStream(autoStream, reason: "ranked-auto")
         launchStream(autoStream)
@@ -436,8 +422,11 @@ struct StreamSelectionScreen: View {
         }
     }
 
-    private func resolveMissingLogoIfNeeded() async {
-        guard logo == nil, resolvedLogo == nil else { return }
+    private func resolveMissingArtworkIfNeeded() async {
+        let needsLogo = logo == nil && resolvedLogo == nil
+        let needsBackdrop = background == nil && resolvedBackground == nil
+        let needsPoster = poster == nil
+        guard needsLogo || needsBackdrop || needsPoster else { return }
         let detailId = parentMetaId ?? mediaId
         let detailType = parentMetaType ?? mediaType.rawValue
         guard let detail = await metaRepo.fetchDetail(
@@ -445,7 +434,9 @@ struct StreamSelectionScreen: View {
             id: detailId,
             addons: addonRepo.enabledAddons.filter { !$0.hasResource("stream") }
         ) else { return }
-        resolvedLogo = detail.logo
+        if needsLogo { resolvedLogo = detail.logo }
+        if needsBackdrop { resolvedBackground = detail.background }
+        if needsPoster { resolvedPoster = detail.poster }
     }
 
 }

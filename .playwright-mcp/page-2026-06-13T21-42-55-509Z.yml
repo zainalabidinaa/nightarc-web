@@ -1,0 +1,125 @@
+- generic [ref=e2]:
+  - generic [ref=e4]:
+    - generic [ref=e5]: LUNA
+    - generic [ref=e7]: Concept Preview
+    - generic [ref=e8]:
+      - generic [ref=e9]:
+        - generic [ref=e10]: Public
+        - button "Landing" [ref=e11] [cursor=pointer]
+        - button "Pricing" [ref=e12] [cursor=pointer]
+        - button "Auth" [ref=e13] [cursor=pointer]
+      - generic [ref=e14]:
+        - generic [ref=e15]: Account
+        - button "Profiles" [ref=e16] [cursor=pointer]
+        - button "Addons" [ref=e17] [cursor=pointer]
+        - button "Billing" [ref=e18] [cursor=pointer]
+      - generic [ref=e19]:
+        - generic [ref=e20]: Admin
+        - button "Collections" [ref=e21] [cursor=pointer]
+        - button "Users" [ref=e22] [cursor=pointer]
+        - button "Invites" [ref=e23] [cursor=pointer]
+  - generic [ref=e160]:
+    - generic [ref=e161]:
+      - generic [ref=e162]:
+        - generic [ref=e163]: Admin · Catalog
+        - heading "Collection manager" [level=1] [ref=e164]
+        - paragraph [ref=e165]: Edit collections, folders, sources and every artwork slot — with live previews.
+      - generic [ref=e166]:
+        - button "⤵ Import pack JSON" [ref=e167] [cursor=pointer]
+        - button "+ New collection" [ref=e168] [cursor=pointer]
+    - generic [ref=e169]:
+      - complementary [ref=e170]:
+        - generic [ref=e172]: Collections · 5
+        - generic [ref=e173] [cursor=pointer]:
+          - generic [ref=e174]: ⠿
+          - img [ref=e175]
+          - generic [ref=e176]:
+            - generic [ref=e177]: B.E.S.T — Better TV
+            - text: 14 folders
+        - generic [ref=e178] [cursor=pointer]:
+          - generic [ref=e179]: ⠿
+          - img [ref=e180]
+          - generic [ref=e181]:
+            - generic [ref=e182]: Movie Night
+            - text: 8 folders
+        - generic [ref=e183] [cursor=pointer]:
+          - generic [ref=e184]: ⠿
+          - img [ref=e185]
+          - generic [ref=e186]:
+            - generic [ref=e187]: Bingeable Series
+            - text: 11 folders
+        - generic [ref=e188] [cursor=pointer]:
+          - generic [ref=e189]: ⠿
+          - img [ref=e190]
+          - generic [ref=e191]:
+            - generic [ref=e192]: UK TV & Live
+            - text: 6 folders
+        - generic [ref=e193] [cursor=pointer]:
+          - generic [ref=e194]: ⠿
+          - img [ref=e195]
+          - generic [ref=e196]:
+            - generic [ref=e197]: Kids Zone
+            - text: 5 folders
+      - generic [ref=e198]:
+        - generic [ref=e199]:
+          - button "Folders" [ref=e200] [cursor=pointer]
+          - button "Folder artwork" [active] [ref=e201] [cursor=pointer]
+          - button "Sources" [ref=e202] [cursor=pointer]
+          - button "JSON" [ref=e203] [cursor=pointer]
+        - generic [ref=e265]:
+          - generic [ref=e266]:
+            - generic [ref=e267]:
+              - generic [ref=e268]: Folder · Trending Shows
+              - generic [ref=e269]: Every image slot Luna renders for this folder — set a URL and preview instantly.
+            - button "‹ Back to folders" [ref=e270] [cursor=pointer]
+          - generic [ref=e271]:
+            - generic [ref=e274]:
+              - generic [ref=e275]:
+                - generic [ref=e276]: Cover
+                - generic [ref=e277]: cover_image
+              - generic [ref=e278]:
+                - textbox [ref=e279]: https://btttr.cc/dVHLbsIwEPyV…
+                - button "Edit" [ref=e280] [cursor=pointer]
+            - generic [ref=e283]:
+              - generic [ref=e284]:
+                - generic [ref=e285]: Hero backdrop
+                - generic [ref=e286]: hero_backdrop
+              - generic [ref=e287]:
+                - textbox [ref=e288]: https://i.postimg.cc/Wbf23VDp/Playlists.jpg
+                - button "Edit" [ref=e289] [cursor=pointer]
+            - generic [ref=e292]:
+              - generic [ref=e293]:
+                - generic [ref=e294]: Title logo
+                - generic [ref=e295]: title_logo
+              - generic [ref=e296]:
+                - textbox [ref=e297]: https://images.metahub.space/logo/…
+                - button "Edit" [ref=e298] [cursor=pointer]
+            - generic [ref=e301]:
+              - generic [ref=e302]:
+                - generic [ref=e303]: Focus GIF
+                - generic [ref=e304]: focus_gif
+              - generic [ref=e305]:
+                - textbox [ref=e306]: https://i.postimg.cc/pryCFjbX/BESTEST.gif
+                - button "Edit" [ref=e307] [cursor=pointer]
+            - generic [ref=e308]:
+              - generic [ref=e310]:
+                - img [ref=e311]
+                - text: No video set
+              - generic [ref=e313]:
+                - generic [ref=e314]:
+                  - generic [ref=e315]: Hero video
+                  - generic [ref=e316]: hero_video_url
+                - generic [ref=e317]:
+                  - textbox "https://…/preview.mp4" [ref=e318]
+                  - button "Set" [ref=e319] [cursor=pointer]
+            - generic [ref=e320]:
+              - generic [ref=e322]:
+                - generic [ref=e323]: Hide title
+                - generic [ref=e325]: Focus glow
+              - generic [ref=e327]:
+                - generic [ref=e328]:
+                  - generic [ref=e329]: Display flags
+                  - generic [ref=e330]: tile_shape
+                - generic [ref=e331]:
+                  - textbox [ref=e332]: POSTER · hide_title=true
+                  - button "Edit" [ref=e333] [cursor=pointer]

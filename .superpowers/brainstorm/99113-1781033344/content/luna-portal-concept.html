@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luna Portal — Full Concept</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#07070f; color:#fff; font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif; }
+
+/* ── TOKENS ── */
+:root {
+  --bg:       #07070f;
+  --surface:  #0e0e1a;
+  --elevated: #141422;
+  --border:   rgba(255,255,255,0.07);
+  --accent:   #a78bfa;
+  --accent2:  #7c3aed;
+  --muted:    rgba(255,255,255,0.38);
+  --text:     #f0f0f8;
+}
+
+/* ── SCREEN SWITCHER ── */
+.screens { position:relative; }
+.screen { display:none; }
+.screen.active { display:block; }
+
+/* ── PAGE CHROME ── */
+.topnav {
+  height:52px; display:flex; align-items:center; justify-content:space-between;
+  padding:0 28px; background:rgba(7,7,15,0.9); border-bottom:1px solid var(--border);
+  position:sticky; top:0; z-index:200; backdrop-filter:blur(24px);
+}
+.logo { display:flex; align-items:center; gap:9px; }
+.logo-mark {
+  width:26px; height:26px; border-radius:7px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px; font-weight:800; color:#fff;
+}
+.logo-name { font-size:15px; font-weight:700; letter-spacing:-.3px; }
+.nav-center { display:flex; gap:2px; }
+.nav-btn {
+  padding:5px 14px; border-radius:7px; font-size:12.5px; font-weight:500;
+  color:var(--muted); cursor:pointer; transition:all .15s; border:none; background:transparent;
+}
+.nav-btn:hover { color:#fff; background:rgba(255,255,255,0.05); }
+.nav-btn.active { color:var(--accent); background:rgba(167,139,250,0.12); }
+.nav-right { display:flex; align-items:center; gap:10px; }
+.tier-chip {
+  padding:4px 11px; border-radius:20px; font-size:10px; font-weight:700; letter-spacing:.5px;
+  background:linear-gradient(135deg,rgba(167,139,250,.2),rgba(124,58,237,.2));
+  color:var(--accent); border:1px solid rgba(167,139,250,.25);
+}
+.user-avatar {
+  width:30px; height:30px; border-radius:50%; cursor:pointer;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700;
+}
+
+/* ── LAYOUT ── */
+.app { display:flex; min-height:calc(100vh - 52px); }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width:210px; flex-shrink:0; padding:16px 10px;
+  background:rgba(10,10,20,.6); border-right:1px solid var(--border);
+  display:flex; flex-direction:column; gap:2px;
+}
+.sb-user {
+  padding:10px 10px 14px; border-bottom:1px solid var(--border); margin-bottom:8px;
+}
+.sb-email { font-size:11px; color:var(--muted); }
+.sb-profile { display:flex; align-items:center; gap:6px; margin-top:5px; cursor:pointer; }
+.sb-dot { width:7px; height:7px; border-radius:50%; background:var(--accent); flex-shrink:0; }
+.sb-pname { font-size:12px; font-weight:600; }
+.sb-chevron { font-size:9px; color:var(--muted); margin-left:auto; }
+
+.sb-section {
+  font-size:9px; font-weight:700; letter-spacing:1.1px; text-transform:uppercase;
+  color:rgba(255,255,255,.22); padding:12px 10px 5px;
+}
+.sb-item {
+  display:flex; align-items:center; gap:9px; padding:7px 10px; border-radius:8px;
+  font-size:12.5px; color:var(--muted); cursor:pointer; transition:all .15s;
+  position:relative;
+}
+.sb-item:hover { color:#fff; background:rgba(255,255,255,.04); }
+.sb-item.active { color:var(--accent); background:rgba(167,139,250,.12); }
+.sb-item .count {
+  margin-left:auto; font-size:10px; background:rgba(255,255,255,.08);
+  padding:1px 7px; border-radius:10px; color:var(--muted);
+}
+.sb-icon { width:15px; text-align:center; font-size:13px; }
+.sb-item.admin-item { color:rgba(167,139,250,.6); }
+.sb-item.admin-item:hover { color:var(--accent); }
+.sb-item.admin-item.active { color:var(--accent); background:rgba(167,139,250,.12); }
+
+/* ── MAIN ── */
+.main { flex:1; padding:28px 32px; overflow-x:hidden; display:flex; flex-direction:column; gap:26px; }
+
+/* ── PAGE TITLE ── */
+.page-head { display:flex; align-items:flex-start; justify-content:space-between; }
+.page-title { font-size:22px; font-weight:700; letter-spacing:-.5px; }
+.page-sub { font-size:13px; color:var(--muted); margin-top:4px; }
+
+/* ── BUTTONS ── */
+.btn { padding:7px 16px; border-radius:9px; font-size:12.5px; font-weight:600; cursor:pointer; border:none; transition:all .15s; }
+.btn-primary { background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; }
+.btn-ghost { background:rgba(255,255,255,.06); color:rgba(255,255,255,.6); border:1px solid var(--border); }
+.btn-danger { background:rgba(239,68,68,.12); color:#f87171; border:1px solid rgba(239,68,68,.2); }
+.btn-sm { padding:5px 12px; font-size:11px; border-radius:7px; }
+.btn-row { display:flex; gap:8px; }
+
+/* ── STAT GRID ── */
+.stat-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:10px; }
+.stat-card {
+  background:var(--surface); border:1px solid var(--border); border-radius:12px;
+  padding:16px 14px; text-align:center;
+}
+.stat-val { font-size:22px; font-weight:700; letter-spacing:-1px; }
+.stat-lbl { font-size:10px; color:var(--muted); margin-top:3px; }
+
+/* ── CARDS / SURFACES ── */
+.card {
+  background:var(--surface); border:1px solid var(--border); border-radius:14px;
+}
+.card-pad { padding:20px; }
+.card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+.card-title { font-size:13.5px; font-weight:700; }
+.card-action { font-size:11.5px; color:var(--accent); cursor:pointer; }
+
+/* ── TABLE ── */
+.table { width:100%; border-collapse:collapse; }
+.table th { font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:rgba(255,255,255,.25); padding:9px 16px; text-align:left; border-bottom:1px solid var(--border); }
+.table td { padding:11px 16px; font-size:12.5px; border-bottom:1px solid rgba(255,255,255,.04); vertical-align:middle; }
+.table tr:last-child td { border-bottom:none; }
+.table tr:hover td { background:rgba(255,255,255,.02); }
+.table .cell-main { font-weight:600; color:var(--text); }
+.table .cell-sub { font-size:10px; color:var(--muted); margin-top:1px; }
+.table .cell-mono { font-family:monospace; font-size:11px; color:var(--muted); }
+
+/* ── BADGES ── */
+.badge { display:inline-flex; align-items:center; padding:3px 9px; border-radius:20px; font-size:9.5px; font-weight:700; letter-spacing:.4px; white-space:nowrap; }
+.badge-admin   { background:rgba(167,139,250,.18); color:#a78bfa; }
+.badge-family  { background:rgba(52,211,153,.15);  color:#34d399; }
+.badge-premium { background:rgba(244,114,182,.15); color:#f472b6; }
+.badge-power   { background:rgba(251,191,36,.15);  color:#fbbf24; }
+.badge-green   { background:rgba(52,211,153,.12);  color:#34d399; }
+.badge-red     { background:rgba(239,68,68,.12);   color:#f87171; }
+.badge-muted   { background:rgba(255,255,255,.07); color:var(--muted); }
+
+/* ── USER ROW + PROFILES ── */
+.user-row { padding:14px 16px; border-bottom:1px solid rgba(255,255,255,.04); }
+.user-row:last-child { border-bottom:none; }
+.user-row-main { display:flex; align-items:center; gap:12px; }
+.user-av { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; flex-shrink:0; }
+.user-info { flex:1; }
+.user-name { font-size:13px; font-weight:600; }
+.user-email { font-size:10.5px; color:var(--muted); margin-top:1px; }
+.profile-chips { display:flex; gap:6px; flex-wrap:wrap; margin-top:9px; padding-left:46px; }
+.pchip {
+  display:flex; align-items:center; gap:6px; padding:4px 10px 4px 6px;
+  background:rgba(255,255,255,.04); border:1px solid var(--border); border-radius:20px; cursor:pointer;
+}
+.pchip:hover { border-color:rgba(167,139,250,.3); }
+.pchip-av { width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:700; }
+.pchip-name { font-size:11px; color:rgba(255,255,255,.7); }
+.pchip-add { border-style:dashed; border-color:rgba(255,255,255,.1); color:var(--muted); }
+
+/* ── PROFILE CARDS ── */
+.profile-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; }
+.profile-card {
+  background:var(--surface); border:1px solid var(--border); border-radius:14px;
+  padding:18px 14px; text-align:center; cursor:pointer; transition:all .2s; position:relative;
+}
+.profile-card:hover { border-color:rgba(167,139,250,.35); transform:translateY(-2px); }
+.profile-card.selected { border-color:var(--accent); background:rgba(167,139,250,.07); }
+.pc-avatar { width:50px; height:50px; border-radius:50%; margin:0 auto 10px; display:flex; align-items:center; justify-content:center; font-size:19px; font-weight:700; }
+.pc-name { font-size:13px; font-weight:600; }
+.pc-meta { font-size:10px; color:var(--muted); margin-top:3px; }
+.pc-add .pc-avatar { background:rgba(255,255,255,.04); color:rgba(255,255,255,.2); font-size:22px; }
+.pc-add { border-style:dashed; border-color:rgba(255,255,255,.08); }
+.pc-badge { margin-top:7px; }
+.pc-actions { display:flex; justify-content:center; gap:6px; margin-top:10px; opacity:0; transition:opacity .15s; }
+.profile-card:hover .pc-actions { opacity:1; }
+
+/* ── SUBSCRIPTION ── */
+.plan-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+.plan-card {
+  background:var(--surface); border:1px solid var(--border); border-radius:16px;
+  padding:22px 18px; position:relative; overflow:hidden; transition:all .2s; cursor:pointer;
+}
+.plan-card:hover { transform:translateY(-3px); }
+.plan-card.current { border-color:rgba(167,139,250,.4); background:rgba(167,139,250,.06); }
+.plan-card.current::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,var(--accent),var(--accent2)); }
+.plan-current-tag { position:absolute; top:14px; right:14px; }
+.plan-icon { font-size:22px; margin-bottom:12px; }
+.plan-name { font-size:15px; font-weight:800; letter-spacing:-.3px; }
+.plan-tagline { font-size:11px; color:var(--muted); margin-top:3px; margin-bottom:14px; line-height:1.5; }
+.plan-price { font-size:26px; font-weight:800; letter-spacing:-1px; margin-bottom:2px; }
+.plan-period { font-size:11px; color:var(--muted); margin-bottom:16px; }
+.plan-features { list-style:none; display:flex; flex-direction:column; gap:7px; margin-bottom:18px; }
+.plan-features li { font-size:11.5px; color:rgba(255,255,255,.6); display:flex; align-items:flex-start; gap:8px; }
+.plan-features li .check { flex-shrink:0; margin-top:1px; }
+.feat-yes { color:var(--accent); }
+.feat-no  { color:rgba(255,255,255,.18); }
+.plan-action { width:100%; padding:9px; border-radius:9px; font-size:12.5px; font-weight:600; cursor:pointer; border:none; }
+.plan-action-primary { background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; }
+.plan-action-ghost { background:rgba(255,255,255,.06); color:rgba(255,255,255,.5); }
+.plan-action-current { background:rgba(167,139,250,.1); color:var(--accent); cursor:default; }
+
+/* ── BILLING ── */
+.billing-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.billing-info-row { display:flex; align-items:center; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border); font-size:12.5px; }
+.billing-info-row:last-child { border-bottom:none; }
+.billing-label { color:var(--muted); }
+.billing-value { font-weight:600; }
+.invoice-row { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid rgba(255,255,255,.04); }
+.invoice-row:last-child { border-bottom:none; }
+.invoice-date { font-size:11px; color:var(--muted); width:80px; }
+.invoice-desc { font-size:12px; flex:1; }
+.invoice-amount { font-size:12px; font-weight:600; }
+
+/* ── ADDON ── */
+.addon-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.addon-card {
+  background:var(--surface); border:1px solid var(--border); border-radius:12px;
+  padding:14px; display:flex; align-items:center; gap:12px; transition:all .2s;
+}
+.addon-card:hover { border-color:rgba(167,139,250,.3); }
+.addon-logo { width:38px; height:38px; border-radius:9px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:17px; }
+.addon-name { font-size:13px; font-weight:600; }
+.addon-type { font-size:10px; color:var(--muted); margin-top:2px; }
+.addon-meta { font-size:10px; color:var(--muted); margin-top:2px; }
+.toggle { width:32px; height:18px; border-radius:9px; position:relative; cursor:pointer; flex-shrink:0; margin-left:auto; }
+.toggle-on  { background:var(--accent); }
+.toggle-off { background:rgba(255,255,255,.1); }
+.toggle-knob { position:absolute; top:2px; width:14px; height:14px; border-radius:50%; background:#fff; transition:left .18s; box-shadow:0 1px 3px rgba(0,0,0,.4); }
+.toggle-on  .toggle-knob { left:16px; }
+.toggle-off .toggle-knob { left:2px; }
+.addon-inherited { opacity:.5; }
+.addon-lock { width:14px; height:14px; color:var(--muted); margin-left:auto; font-size:12px; }
+
+/* ── CATALOG ── */
+.catalog-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+.catalog-card {
+  background:var(--surface); border:1px solid var(--border); border-radius:13px;
+  overflow:hidden; cursor:pointer; transition:all .2s; position:relative;
+}
+.catalog-card:hover { border-color:rgba(167,139,250,.35); transform:translateY(-2px); }
+.catalog-cover { height:100px; display:flex; align-items:center; justify-content:center; font-size:32px; position:relative; }
+.catalog-overlay { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; gap:6px; background:rgba(0,0,0,.5); opacity:0; transition:opacity .15s; }
+.catalog-card:hover .catalog-overlay { opacity:1; }
+.catalog-body { padding:12px; }
+.catalog-title { font-size:12.5px; font-weight:600; }
+.catalog-meta { font-size:10px; color:var(--muted); margin-top:3px; }
+.source-chips { display:flex; gap:5px; flex-wrap:wrap; margin-top:7px; }
+.source-chip { padding:2px 8px; background:rgba(255,255,255,.06); border-radius:20px; font-size:9.5px; color:var(--muted); }
+.catalog-add { border-style:dashed; border-color:rgba(255,255,255,.09); background:rgba(255,255,255,.01); }
+.catalog-add .catalog-cover { color:rgba(255,255,255,.15); font-size:28px; }
+
+/* ── INVITE ── */
+.invite-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.invite-row { display:flex; align-items:center; justify-content:space-between; padding:11px 0; border-bottom:1px solid rgba(255,255,255,.04); }
+.invite-row:last-child { border-bottom:none; }
+.invite-code-chip { font-family:monospace; font-size:13px; font-weight:700; letter-spacing:3px; color:var(--accent); background:rgba(167,139,250,.1); padding:5px 12px; border-radius:7px; border:1px solid rgba(167,139,250,.2); }
+.invite-uses { font-size:10.5px; color:var(--muted); }
+
+/* ── ANALYTICS ── */
+.analytics-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+.chart-bar-group { display:flex; align-items:flex-end; gap:3px; height:60px; }
+.chart-bar { border-radius:3px 3px 0 0; min-width:14px; transition:opacity .15s; }
+.chart-bar:hover { opacity:.75; }
+
+/* ── ACTIVITY ── */
+.activity-item { display:flex; align-items:center; gap:12px; padding:9px 0; border-bottom:1px solid rgba(255,255,255,.04); }
+.activity-item:last-child { border-bottom:none; }
+.activity-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.activity-text { font-size:12px; color:rgba(255,255,255,.65); flex:1; }
+.activity-time { font-size:10px; color:var(--muted); }
+
+/* ── CMS EDITOR ── */
+.cms-layout { display:grid; grid-template-columns:1fr 320px; gap:20px; }
+.cms-field { margin-bottom:16px; }
+.cms-label { font-size:10.5px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+.cms-input {
+  width:100%; padding:9px 13px; background:rgba(255,255,255,.05);
+  border:1px solid var(--border); border-radius:9px; color:#fff;
+  font-size:13px; outline:none;
+}
+.cms-input:focus { border-color:rgba(167,139,250,.4); }
+.cms-source-row { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid rgba(255,255,255,.04); }
+.cms-source-icon { width:30px; height:30px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
+.cms-source-name { font-size:12.5px; font-weight:600; flex:1; }
+.cms-source-type { font-size:10px; color:var(--muted); }
+.img-upload-zone {
+  height:120px; border:1.5px dashed rgba(255,255,255,.12); border-radius:11px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:6px; cursor:pointer; transition:border-color .15s; color:var(--muted);
+}
+.img-upload-zone:hover { border-color:rgba(167,139,250,.4); }
+.img-upload-icon { font-size:24px; }
+.img-upload-text { font-size:11px; }
+
+/* ── OVERVIEW HERO ── */
+.overview-hero {
+  background:linear-gradient(135deg,rgba(124,58,237,.18) 0%,rgba(167,139,250,.07) 50%,transparent 100%);
+  border:1px solid rgba(167,139,250,.14); border-radius:16px; padding:24px 28px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.overview-greeting { font-size:20px; font-weight:700; letter-spacing:-.4px; }
+.overview-sub { font-size:12.5px; color:var(--muted); margin-top:4px; }
+
+/* ── TAB BAR ── */
+.tab-bar { display:flex; gap:2px; background:rgba(255,255,255,.04); border-radius:9px; padding:3px; width:fit-content; margin-bottom:18px; }
+.tab { padding:5px 14px; border-radius:6px; font-size:12px; font-weight:600; color:var(--muted); cursor:pointer; transition:all .15s; }
+.tab.active { background:rgba(167,139,250,.18); color:var(--accent); }
+
+/* ── DIVIDER ── */
+hr.divider { border:none; border-top:1px solid var(--border); margin:0; }
+
+/* ── SECTION NAV ── */
+.screen-nav { display:flex; gap:6px; padding:12px 16px; border-bottom:1px solid var(--border); background:rgba(7,7,15,.6); }
+.snav-btn { padding:5px 14px; border-radius:7px; font-size:11px; font-weight:600; cursor:pointer; border:none; background:rgba(255,255,255,.06); color:var(--muted); transition:all .15s; }
+.snav-btn:hover { color:#fff; }
+.snav-btn.active { background:rgba(167,139,250,.18); color:var(--accent); }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     SECTION SWITCHER (demo navigation)
+═══════════════════════════════════════════ -->
+<div class="screen-nav" id="screenNav">
+  <button class="snav-btn active" onclick="showScreen('overview')">① Overview</button>
+  <button class="snav-btn" onclick="showScreen('users')">② Users & Roles</button>
+  <button class="snav-btn" onclick="showScreen('profiles')">③ My Profiles</button>
+  <button class="snav-btn" onclick="showScreen('subscription')">④ Subscription</button>
+  <button class="snav-btn" onclick="showScreen('addons')">⑤ Addons</button>
+  <button class="snav-btn" onclick="showScreen('catalogs')">⑥ Catalogs CMS</button>
+  <button class="snav-btn" onclick="showScreen('invites')">⑦ Invite Codes</button>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     TOP NAV (shared)
+═══════════════════════════════════════════ -->
+<nav class="topnav">
+  <div class="logo">
+    <div class="logo-mark">L</div>
+    <span class="logo-name">Luna</span>
+  </div>
+  <div class="nav-center">
+    <button class="nav-btn active">Account</button>
+    <button class="nav-btn">Catalogs</button>
+    <button class="nav-btn">Admin ↗</button>
+  </div>
+  <div class="nav-right">
+    <span class="tier-chip">ADMIN</span>
+    <div class="user-avatar">Z</div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════
+     SHARED SIDEBAR + CONTENT WRAPPER
+═══════════════════════════════════════════ -->
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-user">
+    <div class="sb-email">zainalkafaji19@gmail.com</div>
+    <div class="sb-profile">
+      <div class="sb-dot"></div>
+      <span class="sb-pname">Zain (Main)</span>
+      <span class="sb-chevron">▾</span>
+    </div>
+  </div>
+
+  <div class="sb-section">Account</div>
+  <div class="sb-item active" onclick="showScreen('overview')"><span class="sb-icon">⊞</span> Overview</div>
+  <div class="sb-item" onclick="showScreen('profiles')"><span class="sb-icon">👤</span> My Profiles</div>
+  <div class="sb-item" onclick="showScreen('subscription')"><span class="sb-icon">💳</span> Subscription</div>
+  <div class="sb-item" onclick="showScreen('invites')"><span class="sb-icon">🎟</span> Invite Codes <span class="count">3</span></div>
+
+  <div class="sb-section">Content</div>
+  <div class="sb-item" onclick="showScreen('addons')"><span class="sb-icon">🧩</span> Addons <span class="count">9</span></div>
+  <div class="sb-item" onclick="showScreen('catalogs')"><span class="sb-icon">📁</span> Catalogs <span class="count">24</span></div>
+  <div class="sb-item"><span class="sb-icon">📊</span> Watch History</div>
+  <div class="sb-item"><span class="sb-icon">🔖</span> Library</div>
+
+  <div class="sb-section">Admin</div>
+  <div class="sb-item admin-item" onclick="showScreen('users')"><span class="sb-icon">👥</span> Users</div>
+  <div class="sb-item admin-item"><span class="sb-icon">📈</span> Analytics</div>
+  <div class="sb-item admin-item"><span class="sb-icon">⚙️</span> Settings</div>
+</aside>
+
+<!-- ════════ SCREENS ════════ -->
+<div class="screens" style="flex:1;overflow-x:hidden">
+
+<!-- ── SCREEN 1: OVERVIEW ── -->
+<div class="screen active" id="screen-overview">
+<div class="main">
+
+  <div class="overview-hero">
+    <div>
+      <div class="overview-greeting">Good evening, Zain 👋</div>
+      <div class="overview-sub">Admin · Premium Plan · 3 profiles · 9 addons active</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-ghost">Manage Profiles</button>
+      <button class="btn btn-primary">+ Invite User</button>
+    </div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-val" style="color:#a78bfa">12</div><div class="stat-lbl">Users</div></div>
+    <div class="stat-card"><div class="stat-val">31</div><div class="stat-lbl">Profiles</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:#34d399">847</div><div class="stat-lbl">Watched</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:#fbbf24">9</div><div class="stat-lbl">Addons</div></div>
+    <div class="stat-card"><div class="stat-val">24</div><div class="stat-lbl">Catalogs</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:#f472b6">3</div><div class="stat-lbl">Invites</div></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:20px">
+
+    <div>
+      <div class="card">
+        <div class="card-pad">
+          <div class="card-header"><span class="card-title">Users</span><span class="card-action" onclick="showScreen('users')">Manage all →</span></div>
+          <div class="user-row">
+            <div class="user-row-main">
+              <div class="user-av" style="background:linear-gradient(135deg,#a78bfa,#7c3aed)">Z</div>
+              <div class="user-info"><div class="user-name">Zain</div><div class="user-email">zainalkafaji19@gmail.com</div></div>
+              <span class="badge badge-admin">ADMIN</span>
+            </div>
+            <div class="profile-chips">
+              <div class="pchip"><div class="pchip-av" style="background:linear-gradient(135deg,#a78bfa,#7c3aed)">Z</div><span class="pchip-name">Zain</span></div>
+              <div class="pchip"><div class="pchip-av" style="background:linear-gradient(135deg,#60a5fa,#2563eb)">W</div><span class="pchip-name">Work</span></div>
+            </div>
+          </div>
+          <div class="user-row">
+            <div class="user-row-main">
+              <div class="user-av" style="background:linear-gradient(135deg,#34d399,#059669)">S</div>
+              <div class="user-info"><div class="user-name">Sara</div><div class="user-email">sara@example.com</div></div>
+              <span class="badge badge-family">F&F</span>
+            </div>
+            <div class="profile-chips">
+              <div class="pchip"><div class="pchip-av" style="background:linear-gradient(135deg,#34d399,#059669)">S</div><span class="pchip-name">Sara</span></div>
+              <div class="pchip"><div class="pchip-av" style="background:linear-gradient(135deg,#f472b6,#db2777)">K</div><span class="pchip-name">Kids</span></div>
+            </div>
+          </div>
+          <div class="user-row">
+            <div class="user-row-main">
+              <div class="user-av" style="background:linear-gradient(135deg,#fbbf24,#d97706)">A</div>
+              <div class="user-info"><div class="user-name">Ahmed</div><div class="user-email">ahmed@example.com</div></div>
+              <span class="badge badge-power">PREMIUM+</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="card card-pad">
+        <div class="card-header"><span class="card-title">Recent Activity</span></div>
+        <div class="activity-item"><div class="activity-dot" style="background:#a78bfa"></div><div class="activity-text">Sara watched <b>Dune: Part Two</b></div><div class="activity-time">2m</div></div>
+        <div class="activity-item"><div class="activity-dot" style="background:#fbbf24"></div><div class="activity-text">Ahmed added <b>Torrentio</b> addon</div><div class="activity-time">1h</div></div>
+        <div class="activity-item"><div class="activity-dot" style="background:#34d399"></div><div class="activity-text">New catalog <b>Best of 2025</b> live</div><div class="activity-time">3h</div></div>
+        <div class="activity-item"><div class="activity-dot" style="background:#60a5fa"></div><div class="activity-text">Lara joined via invite <b>LUNA-X9KP</b></div><div class="activity-time">2d</div></div>
+      </div>
+
+      <div style="background:linear-gradient(135deg,rgba(52,211,153,.1),rgba(16,185,129,.05));border:1px solid rgba(52,211,153,.18);border-radius:14px;padding:18px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:3px">Invite a Friend</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:12px">3 of 7 slots used · Premium plan</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <div style="font-family:monospace;font-size:14px;font-weight:700;letter-spacing:3px;color:#34d399;background:rgba(0,0,0,.3);padding:7px 14px;border-radius:8px;border:1px solid rgba(52,211,153,.25)">LUNA-X9KP</div>
+          <button class="btn btn-ghost btn-sm">Copy</button>
+          <button class="btn btn-ghost btn-sm">New code</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ── SCREEN 2: USERS & ROLES ── -->
+<div class="screen" id="screen-users">
+<div class="main">
+  <div class="page-head">
+    <div><div class="page-title">Users</div><div class="page-sub">Manage accounts, roles, and access</div></div>
+    <button class="btn btn-primary">+ Invite User</button>
+  </div>
+
+  <!-- TIER CARDS -->
+  <div class="plan-grid" style="grid-template-columns:repeat(4,1fr)">
+    <div style="background:rgba(167,139,250,.06);border:1px solid rgba(167,139,250,.2);border-radius:13px;padding:16px;text-align:center">
+      <div style="font-size:20px;margin-bottom:6px">👑</div>
+      <div style="font-size:13px;font-weight:700">Admin</div>
+      <div style="font-size:22px;font-weight:800;color:#a78bfa;margin:6px 0">1</div>
+      <div style="font-size:10px;color:var(--muted)">Full platform control</div>
+    </div>
+    <div style="background:rgba(52,211,153,.05);border:1px solid rgba(52,211,153,.18);border-radius:13px;padding:16px;text-align:center">
+      <div style="font-size:20px;margin-bottom:6px">👨‍👩‍👧</div>
+      <div style="font-size:13px;font-weight:700">Friends & Family</div>
+      <div style="font-size:22px;font-weight:800;color:#34d399;margin:6px 0">4</div>
+      <div style="font-size:10px;color:var(--muted)">Inherits admin addons</div>
+    </div>
+    <div style="background:rgba(244,114,182,.05);border:1px solid rgba(244,114,182,.18);border-radius:13px;padding:16px;text-align:center">
+      <div style="font-size:20px;margin-bottom:6px">✨</div>
+      <div style="font-size:13px;font-weight:700">Premium</div>
+      <div style="font-size:22px;font-weight:800;color:#f472b6;margin:6px 0">5</div>
+      <div style="font-size:10px;color:var(--muted)">Ready out of the box</div>
+    </div>
+    <div style="background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.18);border-radius:13px;padding:16px;text-align:center">
+      <div style="font-size:20px;margin-bottom:6px">⚡</div>
+      <div style="font-size:13px;font-weight:700">Premium+</div>
+      <div style="font-size:22px;font-weight:800;color:#fbbf24;margin:6px 0">2</div>
+      <div style="font-size:10px;color:var(--muted)">Self-managed setup</div>
+    </div>
+  </div>
+
+  <!-- USER TABLE -->
+  <div class="card">
+    <table class="table">
+      <thead><tr>
+        <th>User</th><th>Tier</th><th>Profiles</th><th>Addons</th><th>Joined</th><th>Status</th><th></th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td><div class="user-row-main" style="gap:10px"><div class="user-av" style="background:linear-gradient(135deg,#a78bfa,#7c3aed);width:28px;height:28px;font-size:11px">Z</div><div><div class="cell-main">Zain</div><div class="cell-sub">zainalkafaji19@gmail.com</div></div></div></td>
+          <td><span class="badge badge-admin">ADMIN</span></td>
+          <td class="cell-main">2</td>
+          <td class="cell-main">9</td>
+          <td><span class="cell-sub">Jan 2025</span></td>
+          <td><span class="badge badge-green">Active</span></td>
+          <td><button class="btn btn-ghost btn-sm">Manage</button></td>
+        </tr>
+        <tr>
+          <td><div class="user-row-main" style="gap:10px"><div class="user-av" style="background:linear-gradient(135deg,#34d399,#059669);width:28px;height:28px;font-size:11px">S</div><div><div class="cell-main">Sara</div><div class="cell-sub">sara@example.com</div></div></div></td>
+          <td><span class="badge badge-family">F&F</span></td>
+          <td class="cell-main">2</td>
+          <td><span style="font-size:11px;color:var(--muted)">inherited</span></td>
+          <td><span class="cell-sub">Mar 2025</span></td>
+          <td><span class="badge badge-green">Active</span></td>
+          <td><button class="btn btn-ghost btn-sm">Manage</button></td>
+        </tr>
+        <tr>
+          <td><div class="user-row-main" style="gap:10px"><div class="user-av" style="background:linear-gradient(135deg,#fbbf24,#d97706);width:28px;height:28px;font-size:11px">A</div><div><div class="cell-main">Ahmed</div><div class="cell-sub">ahmed@example.com</div></div></div></td>
+          <td><span class="badge badge-power">PREMIUM+</span></td>
+          <td class="cell-main">1</td>
+          <td class="cell-main">6</td>
+          <td><span class="cell-sub">Apr 2025</span></td>
+          <td><span class="badge badge-green">Active</span></td>
+          <td><button class="btn btn-ghost btn-sm">Manage</button></td>
+        </tr>
+        <tr>
+          <td><div class="user-row-main" style="gap:10px"><div class="user-av" style="background:linear-gradient(135deg,#f472b6,#db2777);width:28px;height:28px;font-size:11px">L</div><div><div class="cell-main">Lara</div><div class="cell-sub">lara@example.com</div></div></div></td>
+          <td><span class="badge badge-premium">PREMIUM</span></td>
+          <td class="cell-main">1</td>
+          <td><span style="font-size:11px;color:var(--muted)">managed</span></td>
+          <td><span class="cell-sub">May 2025</span></td>
+          <td><span class="badge badge-green">Active</span></td>
+          <td><button class="btn btn-ghost btn-sm">Manage</button></td>
+        </tr>
+        <tr>
+          <td><div class="user-row-main" style="gap:10px"><div class="user-av" style="background:rgba(255,255,255,.1);width:28px;height:28px;font-size:11px">M</div><div><div class="cell-main">Mia</div><div class="cell-sub">mia@example.com</div></div></div></td>
+          <td><span class="badge badge-family">F&F</span></td>
+          <td class="cell-main">3</td>
+          <td><span style="font-size:11px;color:var(--muted)">inherited</span></td>
+          <td><span class="cell-sub">May 2025</span></td>
+          <td><span class="badge badge-muted">Pending invite</span></td>
+          <td><button class="btn btn-ghost btn-sm">Manage</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+</div>
+
+<!-- ── SCREEN 3: MY PROFILES ── -->
+<div class="screen" id="screen-profiles">
+<div class="main">
+  <div class="page-head">
+    <div><div class="page-title">My Profiles</div><div class="page-sub">Manage profiles in your account</div></div>
+    <button class="btn btn-primary">+ New Profile</button>
+  </div>
+
+  <div class="profile-grid">
+    <div class="profile-card selected">
+      <div class="pc-avatar" style="background:linear-gradient(135deg,#a78bfa,#7c3aed)">Z</div>
+      <div class="pc-name">Zain</div>
+      <div class="pc-meta">Main profile</div>
+      <div class="pc-badge"><span class="badge badge-green">Active</span></div>
+      <div class="pc-actions">
+        <button class="btn btn-ghost btn-sm">Edit</button>
+        <button class="btn btn-ghost btn-sm">Switch</button>
+      </div>
+    </div>
+    <div class="profile-card">
+      <div class="pc-avatar" style="background:linear-gradient(135deg,#60a5fa,#2563eb)">W</div>
+      <div class="pc-name">Work</div>
+      <div class="pc-meta">2 addons · 5 watchlist</div>
+      <div class="pc-badge"><span class="badge badge-muted">PIN locked</span></div>
+      <div class="pc-actions">
+        <button class="btn btn-ghost btn-sm">Edit</button>
+        <button class="btn btn-ghost btn-sm">Switch</button>
+      </div>
+    </div>
+    <div class="profile-card pc-add">
+      <div class="pc-avatar">＋</div>
+      <div class="pc-name" style="color:var(--muted)">Add Profile</div>
+      <div class="pc-meta">5 slots · 2 used</div>
+    </div>
+  </div>
+
+  <!-- PROFILE DETAIL -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+    <div class="card card-pad">
+      <div class="card-header"><span class="card-title">Profile Settings — Zain</span></div>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:18px">
+        <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#a78bfa,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700">Z</div>
+        <div>
+          <div style="font-size:14px;font-weight:700">Zain</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px">Main profile · Admin account</div>
+          <button class="btn btn-ghost btn-sm" style="margin-top:8px">Change Avatar</button>
+        </div>
+      </div>
+      <div class="billing-info-row"><span class="billing-label">Display name</span><span class="billing-value">Zain</span></div>
+      <div class="billing-info-row"><span class="billing-label">PIN lock</span><span class="badge badge-muted">Disabled</span></div>
+      <div class="billing-info-row"><span class="billing-label">Language</span><span class="billing-value">English</span></div>
+      <div class="billing-info-row"><span class="billing-label">Default quality</span><span class="billing-value">4K HDR</span></div>
+      <div style="margin-top:14px">
+        <button class="btn btn-primary">Save Changes</button>
+      </div>
+    </div>
+
+    <div class="card card-pad">
+      <div class="card-header"><span class="card-title">Addons (Zain)</span><span class="card-action" onclick="showScreen('addons')">Manage →</span></div>
+      <div class="addon-card" style="margin-bottom:8px">
+        <div class="addon-logo" style="background:rgba(239,68,68,.15)">🎬</div>
+        <div><div class="addon-name">Torrentio</div><div class="addon-type">Streams · Catalogs</div></div>
+        <div class="toggle toggle-on"><div class="toggle-knob"></div></div>
+      </div>
+      <div class="addon-card" style="margin-bottom:8px">
+        <div class="addon-logo" style="background:rgba(167,139,250,.15)">📺</div>
+        <div><div class="addon-name">TMDB Addon</div><div class="addon-type">Catalogs · Meta</div></div>
+        <div class="toggle toggle-on"><div class="toggle-knob"></div></div>
+      </div>
+      <div class="addon-card">
+        <div class="addon-logo" style="background:rgba(52,211,153,.15)">🔤</div>
+        <div><div class="addon-name">OpenSubs</div><div class="addon-type">Subtitles</div></div>
+        <div class="toggle toggle-off"><div class="toggle-knob"></div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ── SCREEN 4: SUBSCRIPTION ── -->
+<div class="screen" id="screen-subscription">
+<div class="main">
+  <div class="page-head">
+    <div><div class="page-title">Subscription</div><div class="page-sub">Manage your plan and billing</div></div>
+  </div>
+
+  <div class="plan-grid">
+    <!-- PREMIUM (curated) -->
+    <div class="plan-card">
+      <div class="plan-icon">✨</div>
+      <div class="plan-name">Premium</div>
+      <div class="plan-tagline">Everything works from day one — no setup required</div>
+      <div class="plan-price">$4<span style="font-size:14px;color:var(--muted)">.99</span></div>
+      <div class="plan-period">/ month</div>
+      <ul class="plan-features">
+        <li><span class="check feat-yes">✓</span> Up to 3 profiles</li>
+        <li><span class="check feat-yes">✓</span> Pre-configured content</li>
+        <li><span class="check feat-yes">✓</span> All curated catalogs</li>
+        <li><span class="check feat-yes">✓</span> Full playback quality</li>
+        <li><span class="check feat-no">✗</span> Custom addons</li>
+      </ul>
+      <button class="plan-action plan-action-ghost">Select</button>
+    </div>
+
+    <!-- PREMIUM+ (self-managed) — CURRENT -->
+    <div class="plan-card current">
+      <div class="plan-current-tag"><span class="badge badge-admin" style="font-size:8.5px">CURRENT PLAN</span></div>
+      <div class="plan-icon">⚡</div>
+      <div class="plan-name">Premium+</div>
+      <div class="plan-tagline">Full control — install and manage your own sources</div>
+      <div class="plan-price">$9<span style="font-size:14px;color:var(--muted)">.99</span></div>
+      <div class="plan-period">/ month</div>
+      <ul class="plan-features">
+        <li><span class="check feat-yes">✓</span> Up to 5 profiles</li>
+        <li><span class="check feat-yes">✓</span> Manage own addons</li>
+        <li><span class="check feat-yes">✓</span> All curated catalogs</li>
+        <li><span class="check feat-yes">✓</span> Full playback quality</li>
+        <li><span class="check feat-yes">✓</span> Priority support</li>
+      </ul>
+      <button class="plan-action plan-action-current">Your current plan</button>
+    </div>
+
+    <!-- FAMILY -->
+    <div class="plan-card">
+      <div class="plan-icon">👨‍👩‍👧</div>
+      <div class="plan-name">Family</div>
+      <div class="plan-tagline">Share Luna with up to 7 people — invite-only access</div>
+      <div class="plan-price">$14<span style="font-size:14px;color:var(--muted)">.99</span></div>
+      <div class="plan-period">/ month</div>
+      <ul class="plan-features">
+        <li><span class="check feat-yes">✓</span> Unlimited profiles</li>
+        <li><span class="check feat-yes">✓</span> Up to 7 invited users</li>
+        <li><span class="check feat-yes">✓</span> Members inherit your addons</li>
+        <li><span class="check feat-yes">✓</span> All Premium+ features</li>
+        <li><span class="check feat-yes">✓</span> Per-profile PIN</li>
+      </ul>
+      <button class="plan-action plan-action-primary">Upgrade</button>
+    </div>
+
+    <!-- ADMIN (invite only) -->
+    <div class="plan-card" style="border-color:rgba(167,139,250,.15)">
+      <div class="plan-icon">👑</div>
+      <div class="plan-name">Admin</div>
+      <div class="plan-tagline">For platform operators — full CMS, analytics, and user management</div>
+      <div class="plan-price" style="font-size:18px;margin-bottom:2px">By invite</div>
+      <div class="plan-period">only</div>
+      <ul class="plan-features">
+        <li><span class="check feat-yes">✓</span> All Family features</li>
+        <li><span class="check feat-yes">✓</span> Catalog CMS</li>
+        <li><span class="check feat-yes">✓</span> User management</li>
+        <li><span class="check feat-yes">✓</span> Analytics dashboard</li>
+        <li><span class="check feat-yes">✓</span> Create invite codes</li>
+      </ul>
+      <button class="plan-action plan-action-ghost" style="opacity:.5;cursor:default">Admin only</button>
+    </div>
+  </div>
+
+  <!-- BILLING DETAILS -->
+  <div class="billing-grid">
+    <div class="card card-pad">
+      <div class="card-header"><span class="card-title">Billing Details</span><span class="card-action">Update</span></div>
+      <div class="billing-info-row"><span class="billing-label">Plan</span><span class="billing-value">Premium+</span></div>
+      <div class="billing-info-row"><span class="billing-label">Status</span><span class="badge badge-green">Active</span></div>
+      <div class="billing-info-row"><span class="billing-label">Next billing</span><span class="billing-value">July 9, 2026</span></div>
+      <div class="billing-info-row"><span class="billing-label">Amount</span><span class="billing-value">$9.99 / month</span></div>
+      <div class="billing-info-row"><span class="billing-label">Payment method</span><span class="billing-value">Visa ••••4242</span></div>
+      <div style="margin-top:14px;display:flex;gap:8px">
+        <button class="btn btn-ghost btn-sm">Update card</button>
+        <button class="btn btn-danger btn-sm">Cancel plan</button>
+      </div>
+    </div>
+    <div class="card card-pad">
+      <div class="card-header"><span class="card-title">Invoice History</span><span class="card-action">Download all</span></div>
+      <div class="invoice-row"><span class="invoice-date">Jun 9 2026</span><span class="invoice-desc">Premium+ Monthly</span><span class="badge badge-green" style="font-size:9px">Paid</span><span class="invoice-amount">$9.99</span></div>
+      <div class="invoice-row"><span class="invoice-date">May 9 2026</span><span class="invoice-desc">Premium+ Monthly</span><span class="badge badge-green" style="font-size:9px">Paid</span><span class="invoice-amount">$9.99</span></div>
+      <div class="invoice-row"><span class="invoice-date">Apr 9 2026</span><span class="invoice-desc">Premium+ Monthly</span><span class="badge badge-green" style="font-size:9px">Paid</span><span class="invoice-amount">$9.99</span></div>
+      <div class="invoice-row"><span class="invoice-date">Mar 9 2026</span><span class="invoice-desc">Premium Monthly</span><span class="badge badge-green" style="font-size:9px">Paid</span><span class="invoice-amount">$4.99</span></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ── SCREEN 5: ADDONS ── -->
+<div class="screen" id="screen-addons">
+<div class="main">
+  <div class="page-head">
+    <div><div class="page-title">Addons</div><div class="page-sub">Manage content sources for your profiles</div></div>
+    <div class="btn-row">
+      <button class="btn btn-ghost">Refresh all</button>
+      <button class="btn btn-primary">+ Add Addon</button>
+    </div>
+  </div>
+
+  <!-- PROFILE SELECTOR -->
+  <div class="tab-bar">
+    <div class="tab active">Zain (Main)</div>
+    <div class="tab">Work</div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+    <div>
+      <div class="card-header" style="margin-bottom:12px"><span class="card-title">Active Addons</span><span style="font-size:11px;color:var(--muted)">9 installed</span></div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="addon-card">
+          <div class="addon-logo" style="background:rgba(239,68,68,.15)">🎬</div>
+          <div style="flex:1"><div class="addon-name">Torrentio</div><div class="addon-type">Streams · Catalogs</div><div class="addon-meta">Updated 2h ago</div></div>
+          <div class="toggle toggle-on"><div class="toggle-knob"></div></div>
+        </div>
+        <div class="addon-card">
+          <div class="addon-logo" style="background:rgba(167,139,250,.15)">📺</div>
+          <div style="flex:1"><div class="addon-name">TMDB Addon</div><div class="addon-type">Catalogs · Meta</div><div class="addon-meta">Updated 1d ago</div></div>
+          <div class="toggle toggle-on"><div class="toggle-knob"></div></div>
+        </div>
+        <div class="addon-card">
+          <div class="addon-logo" style="background:rgba(52,211,153,.15)">🔤</div>
+          <div style="flex:1"><div class="addon-name">OpenSubtitles</div><div class="addon-type">Subtitles</div><div class="addon-meta">Updated 3d ago</div></div>
+          <div class="toggle toggle-on"><div class="toggle-knob"></div></div>
+        </div>
+        <div class="addon-card">
+          <div class="addon-logo" style="background:rgba(251,191,36,.15)">⭐</div>
+          <div style="flex:1"><div class="addon-name">Cinemeta</div><div class="addon-type">Meta · Catalogs</div><div class="addon-meta">Updated 1h ago</div></div>
+          <div class="toggle toggle-off"><div class="toggle-knob"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card-header" style="margin-bottom:12px"><span class="card-title">Inherited from Admin</span><span class="badge badge-family" style="font-size:9px">F&F only</span></div>
+      <div style="background:rgba(52,211,153,.05);border:1px solid rgba(52,211,153,.15);border-radius:12px;padding:14px;margin-bottom:12px;font-size:11.5px;color:rgba(255,255,255,.5)">
+        Friends & Family users automatically use your addons. They cannot add or remove their own.
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="addon-card addon-inherited">
+          <div class="addon-logo" style="background:rgba(239,68,68,.15)">🎬</div>
+          <div style="flex:1"><div class="addon-name">Torrentio</div><div class="addon-type">Streams · Catalogs</div></div>
+          <span style="font-size:16px;color:var(--muted)">🔒</span>
+        </div>
+        <div class="addon-card addon-inherited">
+          <div class="addon-logo" style="background:rgba(167,139,250,.15)">📺</div>
+          <div style="flex:1"><div class="addon-name">TMDB Addon</div><div class="addon-type">Catalogs · Meta</div></div>
+          <span style="font-size:16px;color:var(--muted)">🔒</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ── SCREEN 6: CATALOGS CMS ── -->
+<div class="screen" id="screen-catalogs">
+<div class="main">
+  <div class="page-head">
+    <div><div class="page-title">Catalogs</div><div class="page-sub">Build and manage your content collections</div></div>
+    <button class="btn btn-primary">+ New Catalog</button>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px">
+    <div class="catalog-card">
+      <div class="catalog-cover" style="background:linear-gradient(135deg,#1e1b4b,#312e81)">🎬
+        <div class="catalog-overlay">
+          <button class="btn btn-ghost btn-sm">Edit</button>
+          <button class="btn btn-danger btn-sm">Delete</button>
+        </div>
+      </div>
+      <div class="catalog-body">
+        <div class="catalog-title">Best of 2025</div>
+        <div class="catalog-meta">42 items · 3 sources · Published</div>
+        <div class="source-chips">
+          <span class="source-chip">TMDB</span>
+          <span class="source-chip">Community</span>
+          <span class="source-chip">Manual</span>
+        </div>
+      </div>
+    </div>
+    <div class="catalog-card">
+      <div class="catalog-cover" style="background:linear-gradient(135deg,#1a2e1a,#14532d)">🌿
+        <div class="catalog-overlay">
+          <button class="btn btn-ghost btn-sm">Edit</button>
+          <button class="btn btn-danger btn-sm">Delete</button>
+        </div>
+      </div>
+      <div class="catalog-body">
+        <div class="catalog-title">Documentaries</div>
+        <div class="catalog-meta">28 items · 2 sources · Published</div>
+        <div class="source-chips">
+          <span class="source-chip">TMDB</span>
+          <span class="source-chip">Manual</span>
+        </div>
+      </div>
+    </div>
+    <div class="catalog-card catalog-add">
+      <div class="catalog-cover">＋</div>
+      <div class="catalog-body">
+        <div class="catalog-title" style="color:var(--muted)">New Collection</div>
+        <div class="catalog-meta">Click to create</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CMS EDITOR -->
+  <div style="background:rgba(167,139,250,.05);border:1px solid rgba(167,139,250,.15);border-radius:14px;padding:20px 24px">
+    <div style="font-size:13px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:10px">
+      Editing: Best of 2025
+      <span class="badge badge-green">Published</span>
+    </div>
+    <div class="cms-layout">
+      <div>
+        <div class="cms-field">
+          <div class="cms-label">Title</div>
+          <input class="cms-input" value="Best of 2025">
+        </div>
+        <div class="cms-field">
+          <div class="cms-label">Description</div>
+          <input class="cms-input" value="Curated picks from the best of 2025">
+        </div>
+        <div class="cms-field">
+          <div class="cms-label">Sources</div>
+          <div class="cms-source-row">
+            <div class="cms-source-icon" style="background:rgba(239,68,68,.15)">🎬</div>
+            <div style="flex:1"><div class="cms-source-name">TMDB Popular Movies</div><div class="cms-source-type">TMDB · sort: popularity</div></div>
+            <button class="btn btn-ghost btn-sm">Edit</button>
+            <button class="btn btn-danger btn-sm">✕</button>
+          </div>
+          <div class="cms-source-row">
+            <div class="cms-source-icon" style="background:rgba(167,139,250,.15)">📦</div>
+            <div style="flex:1"><div class="cms-source-name">Community Pack — Sci-Fi</div><div class="cms-source-type">Community · manual list</div></div>
+            <button class="btn btn-ghost btn-sm">Edit</button>
+            <button class="btn btn-danger btn-sm">✕</button>
+          </div>
+          <button class="btn btn-ghost btn-sm" style="margin-top:10px">+ Add Source</button>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary">Save Changes</button>
+          <button class="btn btn-ghost">Unpublish</button>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div>
+          <div class="cms-label" style="margin-bottom:8px">Cover Image</div>
+          <div class="img-upload-zone">
+            <div class="img-upload-icon">🖼</div>
+            <div class="img-upload-text">Drop image or click to upload</div>
+            <div style="font-size:10px;color:var(--muted)">PNG, JPG up to 4MB</div>
+          </div>
+        </div>
+        <div>
+          <div class="cms-label" style="margin-bottom:8px">Visibility</div>
+          <div class="tab-bar" style="margin-bottom:0">
+            <div class="tab active">All users</div>
+            <div class="tab">Premium+</div>
+            <div class="tab">Admin</div>
+          </div>
+        </div>
+        <div>
+          <div class="cms-label" style="margin-bottom:8px">Sort order</div>
+          <input class="cms-input" value="1" style="width:80px">
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ── SCREEN 7: INVITE CODES ── -->
+<div class="screen" id="screen-invites">
+<div class="main">
+  <div class="page-head">
+    <div><div class="page-title">Invite Codes</div><div class="page-sub">Control who can join Luna</div></div>
+    <button class="btn btn-primary">+ Generate Code</button>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+    <div class="card card-pad">
+      <div class="card-header"><span class="card-title">Active Codes</span></div>
+      <div class="invite-row">
+        <div><div class="invite-code-chip">LUNA-X9KP</div><div class="invite-uses" style="margin-top:5px">Friends & Family · 2/7 used · expires Jun 30</div></div>
+        <div class="btn-row"><button class="btn btn-ghost btn-sm">Copy</button><button class="btn btn-danger btn-sm">Revoke</button></div>
+      </div>
+      <div class="invite-row">
+        <div><div class="invite-code-chip">LUNA-M4RZ</div><div class="invite-uses" style="margin-top:5px">Premium · 0/3 used · expires Jul 15</div></div>
+        <div class="btn-row"><button class="btn btn-ghost btn-sm">Copy</button><button class="btn btn-danger btn-sm">Revoke</button></div>
+      </div>
+      <div class="invite-row">
+        <div><div class="invite-code-chip">LUNA-9QPW</div><div class="invite-uses" style="margin-top:5px">Premium+ · 1/1 used · expired</div></div>
+        <div class="btn-row"><button class="btn btn-ghost btn-sm" style="opacity:.4">Copy</button><span class="badge badge-muted">Used</span></div>
+      </div>
+    </div>
+
+    <div class="card card-pad">
+      <div class="card-header"><span class="card-title">Generate New Code</span></div>
+      <div class="cms-field">
+        <div class="cms-label">Tier to grant</div>
+        <div class="tab-bar" style="margin-bottom:0;width:100%">
+          <div class="tab active">F&F</div>
+          <div class="tab">Premium</div>
+          <div class="tab">Premium+</div>
+        </div>
+      </div>
+      <div class="cms-field">
+        <div class="cms-label">Max uses</div>
+        <input class="cms-input" value="5" style="width:100px">
+      </div>
+      <div class="cms-field">
+        <div class="cms-label">Expiry (days)</div>
+        <input class="cms-input" value="30" style="width:100px">
+      </div>
+      <button class="btn btn-primary">Generate Code</button>
+    </div>
+  </div>
+
+</div>
+</div>
+
+</div><!-- end screens -->
+</div><!-- end app -->
+
+<script>
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  document.querySelectorAll('.snav-btn').forEach(b => b.classList.remove('active'));
+  const map = {overview:'①',users:'②',profiles:'③',subscription:'④',addons:'⑤',catalogs:'⑥',invites:'⑦'};
+  const labels = {overview:'① Overview',users:'② Users & Roles',profiles:'③ My Profiles',subscription:'④ Subscription',addons:'⑤ Addons',catalogs:'⑥ Catalogs CMS',invites:'⑦ Invite Codes'};
+  document.querySelectorAll('.snav-btn').forEach(b => {
+    if(b.textContent.trim() === labels[name]) b.classList.add('active');
+  });
+  document.querySelectorAll('.sb-item').forEach(s => s.classList.remove('active'));
+}
+</script>
+</body>
+</html>

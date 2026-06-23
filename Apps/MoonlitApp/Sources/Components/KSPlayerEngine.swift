@@ -1,15 +1,24 @@
 import SwiftUI
-import UIKit
 import Combine
 import QuartzCore
 import MoonlitCore
 import KSPlayer
 import AVFoundation
 
+#if os(iOS)
+import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
+
 @MainActor
 public class KSPlayerEngine: ObservableObject {
     private let coordinator = KSVideoPlayer.Coordinator()
+    #if os(iOS)
     @Published private var playerView: UIView?
+    #elseif os(macOS)
+    @Published private var playerView: NSView?
+    #endif
     private var progressTimer: Timer?
     #if DEBUG
     private var diagnosticsTimer: Timer?
@@ -48,15 +57,21 @@ public class KSPlayerEngine: ObservableObject {
 
     public init() {}
 
+    #if os(iOS)
     public var displayView: UIView? { playerView }
+    #elseif os(macOS)
+    public var displayView: NSView? { playerView }
+    #endif
 
     public func launch(_ launch: PlayerLaunch) {
         cleanup()
         guard let url = URL(string: launch.sourceUrl) else { isLoading = false; return }
+        #if os(iOS)
         PlayerPerformanceDiagnostics.shared.event(
             "ks.launch host=\(url.host ?? "nil") hls=\(isLikelyHLS(launch)) subtitles=\(launch.subtitles?.count ?? 0)"
         )
         StreamPlaybackDiagnostics.logLaunch(launch)
+        #endif
         currentLaunch = launch
         pendingInitialSeekSeconds = launch.initialPositionMs.map { $0 / 1000 }.flatMap { $0 > 0 ? $0 : nil }
         didApplyInitialSeek = false
@@ -69,12 +84,14 @@ public class KSPlayerEngine: ObservableObject {
             headers.merge(sourceHeaders) { _, new in new }
         }
 
-        let options = MoonlitKSOptions()
+        let options = KSOptions()
         options.appendHeader(headers)
-        // Keep startup snappy; higher values can delay the first playable frame.
         options.preferredForwardBufferDuration = 2
         options.isSecondOpen = true
-        options.hardwareDecode = true
+        // Disable FFmpeg fallback — AVPlayer handles HLS/MP4 reliably.
+        // MKV from ElfHosted fails immediately with "Cannot Open" error
+        // instead of hanging forever. Retry overlay lets user pick next source.
+        KSOptions.secondPlayerType = nil
         if isLikelyHLS(launch) {
             options.maxBufferDuration = 12
         }
@@ -100,7 +117,9 @@ public class KSPlayerEngine: ObservableObject {
         }
         coordinator.onPlay = { [weak self] current, total in
             guard let self else { return }
+            #if os(iOS)
             PlayerPerformanceDiagnostics.shared.mark("ks.onPlay")
+            #endif
             self.logAVSyncIfNeeded()
             // Delay revealing the video layer to give the video decoder time to render
             // its first frame. Without this, audio starts (triggering onPlay) before the
@@ -115,7 +134,14 @@ public class KSPlayerEngine: ObservableObject {
                     self.isLoading = false
                     self.refreshAudioTracks()
                     // Reveal the player layer now that a real frame has had time to decode.
+                    #if os(iOS)
                     UIView.animate(withDuration: 0.2) { self.playerView?.alpha = 1 }
+                    #elseif os(macOS)
+                    NSAnimationContext.beginGrouping()
+                    NSAnimationContext.current.duration = 0.2
+                    self.playerView?.animator().alphaValue = 1
+                    NSAnimationContext.endGrouping()
+                    #endif
                 }
             }
             // Only publish position changes that are meaningfully different (>0.25s)
@@ -148,7 +174,9 @@ public class KSPlayerEngine: ObservableObject {
         }
         coordinator.onBufferChanged = { [weak self] _, _ in
             guard let self else { return }
+            #if os(iOS)
             PlayerPerformanceDiagnostics.shared.mark("ks.buffer")
+            #endif
             self.setBufferedPosition(self.duration)
         }
 
@@ -171,10 +199,16 @@ public class KSPlayerEngine: ObservableObject {
             view.translatesAutoresizingMaskIntoConstraints = false
             // Hide until the first real frame is decoded so stale frames from a previous
             // stream cannot bleed through the loading overlay.
+            #if os(iOS)
             view.alpha = 0
+            #elseif os(macOS)
+            view.alphaValue = 0
+            #endif
             self.playerView = view
             self.startProgressTimer()
+            #if DEBUG
             self.startDiagnosticsTimer()
+            #endif
         }
     }
 
@@ -270,7 +304,9 @@ public class KSPlayerEngine: ObservableObject {
     }
 
     private func cleanup() {
+        #if os(iOS)
         PlayerPerformanceDiagnostics.shared.event("ks.cleanup position=\(String(format: "%.2f", currentPosition)) duration=\(String(format: "%.2f", duration))")
+        #endif
         progressTimer?.invalidate(); progressTimer = nil
         #if DEBUG
         diagnosticsTimer?.invalidate(); diagnosticsTimer = nil
@@ -335,7 +371,7 @@ public class KSPlayerEngine: ObservableObject {
     }
 
     private func startDiagnosticsTimer() {
-        #if DEBUG
+        #if DEBUG && os(iOS)
         diagnosticsTimer?.invalidate()
         let timer = Timer(timeInterval: 1, repeats: true) { [weak self] _ in
             Task { @MainActor [weak self] in
@@ -372,6 +408,7 @@ public class KSPlayerEngine: ObservableObject {
         lastDroppedVideoFrameCount = dynamicInfo.droppedVideoFrameCount
         lastDroppedVideoPacketCount = dynamicInfo.droppedVideoPacketCount
 
+        #if os(iOS)
         PlayerPerformanceDiagnostics.shared.logAVSync(
             backend: activeBackendName(),
             displayFPS: dynamicInfo.displayFPS,
@@ -383,6 +420,7 @@ public class KSPlayerEngine: ObservableObject {
             videoBitrate: dynamicInfo.videoBitrate,
             audioBitrate: dynamicInfo.audioBitrate
         )
+        #endif
 
         // Option B: stall detection. If audio is flowing but video bitrate stays near-zero
         // in the first 10s, the proxy wasn't ready when the pre-flight ping returned.
@@ -394,9 +432,11 @@ public class KSPlayerEngine: ObservableObject {
             if videoStallTicks >= 3, let launch = currentLaunch, launch.sourceUrl != lastRetriedUrl {
                 lastRetriedUrl = launch.sourceUrl
                 videoStallTicks = 0
+                #if os(iOS)
                 PlayerPerformanceDiagnostics.shared.event(
                     "stall.retry host=\(URL(string: launch.sourceUrl)?.host ?? "nil") vbr=\(dynamicInfo.videoBitrate) audio=\(dynamicInfo.audioBitrate)"
                 )
+                #endif
                 self.launch(launch)
             }
         } else {
@@ -410,7 +450,9 @@ public class KSPlayerEngine: ObservableObject {
         request.setValue("bytes=0-1", forHTTPHeaderField: "Range")
         headers.forEach { request.setValue($1, forHTTPHeaderField: $0) }
         _ = try? await URLSession.shared.data(for: request)
+        #if os(iOS)
         PlayerPerformanceDiagnostics.shared.event("preflight.done host=\(url.host ?? "nil")")
+        #endif
     }
 
     /// The KSPlayer backend actually driving playback: `KSAVPlayer` (Apple AVPlayer) or
@@ -450,11 +492,13 @@ public class KSPlayerEngine: ObservableObject {
             }
         }
 
+        #if os(iOS)
         PlayerPerformanceDiagnostics.shared.event(
             "player.engine backend=\(backend) reason=\(reason) " +
             "codec=\(codec) subType=\(subType) dims=\(dims) bitDepth=\(bitDepth) " +
             "fps=\(fps) rotation=\(rotation)"
         )
+        #endif
     }
 
     private func fourCharCodeString(_ code: FourCharCode) -> String {
@@ -563,125 +607,5 @@ private final class MoonlitKSOptions: KSOptions {
             syncDelayCount = 0
             return (diff, .next)
         }
-    }
-}
-
-// MARK: - SubtitleCue
-
-public struct SubtitleCue: Sendable {
-    public let start: TimeInterval
-    public let end: TimeInterval
-    public let text: String
-
-    public static func parse(_ content: String) -> [SubtitleCue] {
-        var cues: [SubtitleCue] = []
-        let lines = content.components(separatedBy: "\n")
-        var i = 0
-        while i < lines.count {
-            let line = lines[i].trimmingCharacters(in: .whitespacesAndNewlines)
-            if line.contains("-->") {
-                let arrowParts = line.components(separatedBy: "-->")
-                if arrowParts.count >= 2,
-                   let start = parseVTTTime(arrowParts[0].trimmingCharacters(in: .whitespaces)),
-                   let end = parseVTTTime(arrowParts[1].trimmingCharacters(in: .whitespaces).components(separatedBy: " ").first ?? "") {
-                    i += 1
-                    var textLines: [String] = []
-                    while i < lines.count {
-                        let t = lines[i].trimmingCharacters(in: .whitespacesAndNewlines)
-                        if t.isEmpty || t.contains("-->") { break }
-                        // Skip pure-number SRT sequence lines
-                        if t.allSatisfy({ $0.isNumber }) { i += 1; continue }
-                        textLines.append(stripTags(t))
-                        i += 1
-                    }
-                    let text = textLines.filter { !$0.isEmpty }.joined(separator: "\n")
-                    if !text.isEmpty { cues.append(SubtitleCue(start: start, end: end, text: text)) }
-                    continue
-                }
-            }
-            i += 1
-        }
-        return cues
-    }
-
-    private static func parseVTTTime(_ s: String) -> TimeInterval? {
-        let normalized = s.replacingOccurrences(of: ",", with: ".")
-        let parts = normalized.components(separatedBy: ":")
-        switch parts.count {
-        case 3:
-            guard let h = Double(parts[0]), let m = Double(parts[1]), let sec = Double(parts[2]) else { return nil }
-            return h * 3600 + m * 60 + sec
-        case 2:
-            guard let m = Double(parts[0]), let sec = Double(parts[1]) else { return nil }
-            return m * 60 + sec
-        default: return nil
-        }
-    }
-
-    private static func stripTags(_ text: String) -> String {
-        text.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
-    }
-}
-
-public struct SubtitleCueIndex: Sendable {
-    private struct IndexedCue: Sendable {
-        let cue: SubtitleCue
-        let originalIndex: Int
-    }
-
-    private let cuesByStart: [IndexedCue]
-    private let maxEndThroughIndex: [TimeInterval]
-
-    public init(cues: [SubtitleCue]) {
-        let sorted = cues.enumerated()
-            .map { IndexedCue(cue: $0.element, originalIndex: $0.offset) }
-            .sorted {
-                if $0.cue.start == $1.cue.start {
-                    return $0.originalIndex < $1.originalIndex
-                }
-                return $0.cue.start < $1.cue.start
-            }
-        self.cuesByStart = sorted
-
-        var runningMax: TimeInterval = 0
-        self.maxEndThroughIndex = sorted.map { item in
-            runningMax = max(runningMax, item.cue.end)
-            return runningMax
-        }
-    }
-
-    public func activeCues(at position: TimeInterval) -> [SubtitleCue] {
-        guard !cuesByStart.isEmpty else { return [] }
-
-        var low = 0
-        var high = cuesByStart.count
-        while low < high {
-            let mid = (low + high) / 2
-            if cuesByStart[mid].cue.start <= position {
-                low = mid + 1
-            } else {
-                high = mid
-            }
-        }
-
-        var active: [IndexedCue] = []
-        var index = low - 1
-        while index >= 0 {
-            guard maxEndThroughIndex[index] > position else { break }
-            let item = cuesByStart[index]
-            if position < item.cue.end {
-                active.append(item)
-            }
-            index -= 1
-        }
-
-        return active
-            .sorted {
-                if $0.cue.start == $1.cue.start {
-                    return $0.originalIndex < $1.originalIndex
-                }
-                return $0.cue.start < $1.cue.start
-            }
-            .map(\.cue)
     }
 }

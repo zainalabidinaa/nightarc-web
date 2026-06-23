@@ -27,3 +27,60 @@ final class SubtitleCueIndexTests: XCTestCase {
         XCTAssertEqual(index.activeCues(at: 3.0).map(\.text), ["long", "short"])
     }
 }
+
+final class KSPlayerStartupStallTests: XCTestCase {
+    func testStartupStallWindowUsesElapsedLaunchTimeNotAbsolutePlaybackPosition() {
+        XCTAssertTrue(KSPlayerEngine.shouldCountStartupStall(
+            isPlaying: true,
+            isLoading: false,
+            hasRenderedFrame: true,
+            launchElapsedSeconds: 4,
+            currentPosition: 965.54,
+            videoBitrate: 0,
+            audioBitrate: 0
+        ))
+    }
+
+    func testZeroDecodeStartupStallFailsFastInsteadOfRelaunchingSameUrl() {
+        XCTAssertEqual(KSPlayerEngine.startupStallRetryThreshold(audioBitrate: 0), 1)
+        XCTAssertFalse(KSPlayerEngine.shouldRetryStartupStall(audioBitrate: 0))
+    }
+
+    func testAudioFlowingVideoStallRetriesSameUrlAfterSeveralTicks() {
+        XCTAssertEqual(KSPlayerEngine.startupStallRetryThreshold(audioBitrate: 75_000), 3)
+        XCTAssertTrue(KSPlayerEngine.shouldRetryStartupStall(audioBitrate: 75_000))
+    }
+
+    func testStartupStallWindowExpiresAfterLaunchSettles() {
+        XCTAssertFalse(KSPlayerEngine.shouldCountStartupStall(
+            isPlaying: true,
+            isLoading: true,
+            hasRenderedFrame: true,
+            launchElapsedSeconds: 12,
+            currentPosition: 965.54,
+            videoBitrate: 0,
+            audioBitrate: 0
+        ))
+    }
+
+    func testNonHLSOpenTimeoutAppliesBeforeReadyToPlay() {
+        XCTAssertTrue(KSPlayerEngine.shouldTimeoutOpening(
+            isHLS: false,
+            didReachReadyToPlay: false,
+            launchElapsedSeconds: 12
+        ))
+    }
+
+    func testOpenTimeoutDoesNotApplyToHLSOrReadyPlayback() {
+        XCTAssertFalse(KSPlayerEngine.shouldTimeoutOpening(
+            isHLS: true,
+            didReachReadyToPlay: false,
+            launchElapsedSeconds: 12
+        ))
+        XCTAssertFalse(KSPlayerEngine.shouldTimeoutOpening(
+            isHLS: false,
+            didReachReadyToPlay: true,
+            launchElapsedSeconds: 12
+        ))
+    }
+}

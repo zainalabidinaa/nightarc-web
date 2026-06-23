@@ -1,5 +1,6 @@
 import SwiftUI
 import MoonlitCore
+import AppKit
 
 struct MacHomeView: View {
     let onSelectMedia: (MetaPreview) -> Void
@@ -18,11 +19,15 @@ struct MacHomeView: View {
 
     @State private var heroIndex = 0
     @State private var isResumingItemId: String?
+    @State private var ambientColor: Color = .clear
+    @State private var ambientColor2: Color = .clear
     @AppStorage("moonlit.cinematicModeEnabled") private var cinematicModeEnabled = true
 
     private let mainRowNames: Set<String> = [
         "Popular Movies", "Popular TV Shows",
-        "Trending Movies", "Trending TV Shows"
+        "Trending Movies", "Trending TV Shows",
+        "Popular Shows", "Trending Shows",
+        "Latest", "Top Rated"
     ]
 
     private var featuredItems: [MetaPreview] {
@@ -59,9 +64,25 @@ struct MacHomeView: View {
         return candidates
     }
 
+    private var currentHeroBackdropURL: URL? {
+        guard featuredItems.indices.contains(heroIndex) else { return nil }
+        let item = featuredItems[heroIndex]
+        return MacHeroArtworkProvider.shared.heroArtURL(for: item)
+            ?? (item.banner ?? item.poster).flatMap(URL.init)
+    }
+
     var body: some View {
         ZStack(alignment: .top) {
-            ambientBackground
+            FusionAmbientBackground(
+                ambientColor: ambientColor,
+                ambientColor2: ambientColor2,
+                heroBackdropURL: currentHeroBackdropURL,
+                isEnabled: cinematicModeEnabled
+            )
+            .animation(.easeInOut(duration: 0.9), value: ambientColor)
+            .animation(.easeInOut(duration: 0.9), value: ambientColor2)
+            .animation(.easeInOut(duration: 0.6), value: currentHeroBackdropURL)
+            .animation(.easeInOut(duration: 0.35), value: cinematicModeEnabled)
 
             ScrollView {
                 VStack(spacing: 0) {
@@ -69,9 +90,7 @@ struct MacHomeView: View {
                         HomeHero(
                             items: featuredItems,
                             currentIndex: $heroIndex,
-                            onWatchNow: { item in
-                                route(item: item)
-                            },
+                            onWatchNow: { item in route(item: item) },
                             onToggleLibrary: { item in
                                 Task {
                                     guard let profile = profileManager.currentProfile else { return }
@@ -85,6 +104,12 @@ struct MacHomeView: View {
                                 }
                             }
                         )
+                        .task(id: "\(heroIndex)-\(cinematicModeEnabled)") {
+                            await updateAmbientColorIfNeeded()
+                        }
+                        .onChange(of: heroIndex) { _, _ in
+                            Task { await updateAmbientColorIfNeeded() }
+                        }
                     }
 
                     if !homeRepo.continueWatchingItems.isEmpty {
@@ -113,8 +138,7 @@ struct MacHomeView: View {
                         }
                         .padding(.top, featuredItems.isEmpty ? 96 : 24)
                     } else if catalogRepo.isLoading || addonRepo.isLoading {
-                        loadingState
-                            .padding(.top, 180)
+                        loadingState.padding(.top, 180)
                     }
 
                     Spacer().frame(height: 48)
@@ -143,40 +167,10 @@ struct MacHomeView: View {
         }
     }
 
-    private var ambientBackground: some View {
-        ZStack(alignment: .top) {
-            MoonlitTheme.background
-            if cinematicModeEnabled,
-               featuredItems.indices.contains(heroIndex),
-               let url = MacHeroArtworkProvider.shared.heroArtURL(for: featuredItems[heroIndex]) {
-                CachedAsyncImage(url: url) { image in
-                    image.resizable().scaledToFill()
-                } placeholder: {
-                    Color.clear
-                }
-                .frame(maxWidth: .infinity)
-                .frame(height: 520)
-                .scaleEffect(1.08)
-                .blur(radius: 32)
-                .saturation(0.18)
-                .brightness(0.10)
-                .opacity(0.70)
-                .mask(
-                    LinearGradient(
-                        colors: [.black, .black.opacity(0.62), .clear],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
-                .ignoresSafeArea()
-            }
-        }
-    }
-
     private var continueWatchingRow: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Continue Watching")
-                .font(.system(size: 21, weight: .bold, design: .rounded))
+                .font(.system(size: 21, weight: .bold))
                 .foregroundColor(.white)
                 .padding(.horizontal, 28)
 
@@ -210,9 +204,7 @@ struct MacHomeView: View {
     private func route(item: MetaPreview) {
         if item.id.hasPrefix("folder_") {
             let fallback = CatalogRow(
-                id: item.id,
-                title: item.name,
-                items: [],
+                id: item.id, title: item.name, items: [],
                 tileShape: item.posterShape?.rawValue ?? "poster",
                 coverImage: item.poster ?? item.banner
             )
@@ -240,8 +232,7 @@ struct MacHomeView: View {
                     title: item.name,
                     sourceUrl: cachedSource.sourceUrl,
                     sourceHeaders: cachedSource.sourceHeaders,
-                    logo: item.logo,
-                    poster: item.poster,
+                    logo: item.logo, poster: item.poster,
                     episodeThumbnail: item.thumbnail,
                     seasonNumber: item.seasonNumber,
                     episodeNumber: item.episodeNumber,
@@ -258,17 +249,14 @@ struct MacHomeView: View {
             }
 
             guard let stream = await StreamRepository.shared.bestStream(
-                for: item.mediaType,
-                id: item.mediaId,
+                for: item.mediaType, id: item.mediaId,
                 from: addonRepo.enabledAddons
             ), let url = stream.url else { return }
 
             openWindow(id: "player", value: PlayerLaunch(
-                title: item.name,
-                sourceUrl: url,
+                title: item.name, sourceUrl: url,
                 sourceHeaders: stream.behaviorHints?.proxyHeaders?.request,
-                logo: item.logo,
-                poster: item.poster,
+                logo: item.logo, poster: item.poster,
                 episodeThumbnail: item.thumbnail,
                 seasonNumber: item.seasonNumber,
                 episodeNumber: item.episodeNumber,
@@ -297,7 +285,6 @@ struct MacHomeView: View {
     private func reloadCatalogRows(mode: CatalogReloadMode = .preserveCacheOnEmpty) async {
         let collectionsChanged = await loadGlobalOrganizer()
         guard collectionsChanged || catalogRepo.catalogRows.isEmpty else { return }
-
         if collectionRepo.collections.isEmpty {
             await catalogRepo.loadAllCatalogs(addons: addonRepo.enabledAddons)
         } else {
@@ -321,7 +308,7 @@ struct MacHomeView: View {
             guard let refreshed = await CollectionOrganizerStore.shared.refresh(
                 remoteURL: MoonlitConfig.homeOrganizerRemoteURL.flatMap(URL.init)
             ) else { return }
-            collectionRepo.apply(refreshed)
+            collectionRepo.apply(CollectionRepository.mergeByName(base: organized, overlay: refreshed))
             guard !collectionRepo.collections.isEmpty else { return }
             await catalogRepo.loadFromCollections(
                 collectionRepo: collectionRepo,
@@ -329,5 +316,179 @@ struct MacHomeView: View {
             )
         }
         return collectionRepo.collections.count != before || !collectionRepo.collections.isEmpty
+    }
+
+    // MARK: - Color Extraction
+
+    private func updateAmbientColorIfNeeded() async {
+        guard cinematicModeEnabled,
+              featuredItems.indices.contains(heroIndex) else {
+            ambientColor = .clear
+            ambientColor2 = .clear
+            return
+        }
+        let item = featuredItems[heroIndex]
+        guard let url = MacHeroArtworkProvider.shared.heroArtURL(for: item)
+                ?? (item.banner ?? item.poster).flatMap(URL.init) else {
+            ambientColor = .clear
+            ambientColor2 = .clear
+            return
+        }
+
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            guard let image = NSImage(data: data),
+                  let (c1, c2) = image.moonlitAmbientColors() else { return }
+            ambientColor = c1.moonlitBoostedForAmbient
+            ambientColor2 = c2.moonlitBoostedForAmbient
+        } catch {
+            ambientColor = .clear
+            ambientColor2 = .clear
+        }
+    }
+}
+
+// MARK: - FusionAmbientBackground
+
+private struct FusionAmbientBackground: View {
+    let ambientColor: Color
+    let ambientColor2: Color
+    let heroBackdropURL: URL?
+    let isEnabled: Bool
+
+    var body: some View {
+        GeometryReader { geo in
+            ZStack(alignment: .top) {
+                MoonlitTheme.background
+
+                if isEnabled, let url = heroBackdropURL {
+                    CachedAsyncImage(url: url) { image in
+                        image.resizable().scaledToFill()
+                    } placeholder: {
+                        Color.clear
+                    }
+                    .frame(width: geo.size.width, height: geo.size.height * 0.72)
+                    .clipped()
+                    .scaleEffect(1.1)
+                    .blur(radius: 30)
+                    .saturation(0.28)
+                    .brightness(0.14)
+                    .opacity(0.90)
+                    .mask(
+                        LinearGradient(
+                            stops: [
+                                .init(color: .black, location: 0.0),
+                                .init(color: .black, location: 0.50),
+                                .init(color: .black.opacity(0.5), location: 0.72),
+                                .init(color: .clear, location: 1.0),
+                            ],
+                            startPoint: .top, endPoint: .bottom
+                        )
+                    )
+                    .id(url)
+                    .transition(.opacity)
+                }
+
+                if isEnabled {
+                    RadialGradient(
+                        stops: [
+                            .init(color: ambientColor.opacity(0.75), location: 0.0),
+                            .init(color: ambientColor.opacity(0.45), location: 0.30),
+                            .init(color: ambientColor.opacity(0.18), location: 0.60),
+                            .init(color: .clear, location: 1.0),
+                        ],
+                        center: .top,
+                        startRadius: 0,
+                        endRadius: geo.size.height * 0.80
+                    )
+                    .blur(radius: 28)
+
+                    RadialGradient(
+                        colors: [ambientColor2.opacity(0.45), .clear],
+                        center: UnitPoint(x: 0.80, y: 0.05),
+                        startRadius: 0,
+                        endRadius: geo.size.height * 0.50
+                    )
+
+                    LinearGradient(
+                        stops: [
+                            .init(color: .black.opacity(0.0), location: 0.00),
+                            .init(color: .black.opacity(0.10), location: 0.30),
+                            .init(color: MoonlitTheme.background.opacity(0.60), location: 0.65),
+                            .init(color: MoonlitTheme.background, location: 1.00)
+                        ],
+                        startPoint: .top, endPoint: .bottom
+                    )
+                }
+            }
+        }
+        .ignoresSafeArea()
+    }
+}
+
+// MARK: - Color Extraction Extensions
+
+private extension NSImage {
+    func moonlitAmbientColors() -> (Color, Color)? {
+        guard let tiffData = tiffRepresentation,
+              let bitmap = NSBitmapImageRep(data: tiffData),
+              let ci = CIImage(bitmapImageRep: bitmap) else { return nil }
+        let e = ci.extent
+        let topH = e.height * 0.6
+
+        func avgColor(in rect: CGRect) -> Color? {
+            guard let filter = CIFilter(name: "CIAreaAverage", parameters: [
+                kCIInputImageKey: ci,
+                kCIInputExtentKey: CIVector(cgRect: rect)
+            ]), let out = filter.outputImage else { return nil }
+            var px = [UInt8](repeating: 0, count: 4)
+            let ctx = CIContext(options: [.workingColorSpace: kCFNull as Any])
+            ctx.render(out, toBitmap: &px, rowBytes: 4,
+                       bounds: CGRect(x: 0, y: 0, width: 1, height: 1),
+                       format: .RGBA8, colorSpace: nil)
+            return Color(red: Double(px[0]) / 255, green: Double(px[1]) / 255, blue: Double(px[2]) / 255)
+        }
+
+        let leftRect  = CGRect(x: e.minX,                    y: e.minY, width: e.width * 0.45, height: topH)
+        let rightRect = CGRect(x: e.minX + e.width * 0.55,   y: e.minY, width: e.width * 0.45, height: topH)
+
+        guard let c1 = avgColor(in: leftRect), let c2 = avgColor(in: rightRect) else { return nil }
+        return (c1, c2)
+    }
+}
+
+private extension Color {
+    var moonlitBoostedForAmbient: Color {
+        guard let rgb = NSColor(self).usingColorSpace(.deviceRGB) else { return self }
+        let r = rgb.redComponent
+        let g = rgb.greenComponent
+        let b = rgb.blueComponent
+
+        let maxC = max(r, g, b)
+        let minC = min(r, g, b)
+        let delta = maxC - minC
+
+        var hue: CGFloat = 0
+        var saturation: CGFloat = 0
+        let brightness = maxC
+
+        if delta > 0.001 {
+            saturation = delta / maxC
+            if r == maxC {
+                hue = ((g - b) / delta).truncatingRemainder(dividingBy: 6)
+            } else if g == maxC {
+                hue = (b - r) / delta + 2
+            } else {
+                hue = (r - g) / delta + 4
+            }
+            hue /= 6
+            if hue < 0 { hue += 1 }
+        }
+
+        return Color(
+            hue: Double(hue),
+            saturation: Double(min(max(saturation * 2.2, 0.60), 1.0)),
+            brightness: Double(min(max(brightness * 1.3, 0.40), 0.75))
+        )
     }
 }

@@ -9,15 +9,16 @@ struct PlayerScreen: View {
     let onDismiss: () -> Void
 
     private let engine = PlayerEngine.shared
-    @StateObject private var ksEngine = KSPlayerEngine()
+    @StateObject private var mpvEngine = MPVPlayerEngine()
     @State private var timeline = PlayerTimelineModel()
     @State private var activeLaunch: PlayerLaunch
     @StateObject private var streamRepo = StreamRepository.shared
     @StateObject private var addonRepo = AddonRepository.shared
     @StateObject private var metaRepo = MetaRepository.shared
     @State private var showControls = true
-    @State private var logoPulse = false
     @State private var resolvedLogo: String?
+    @State private var resolvedBackground: String?
+    @State private var resolvedPoster: String?
     @State private var gestureState = PlayerGestureState()
     @State private var isLocked = false
     @State private var showUnlockHint = false
@@ -42,6 +43,15 @@ struct PlayerScreen: View {
     @State private var audioMenuSnapshot: [String] = []
     @State private var audioMenuSelectedSnapshot: String? = nil
     @State private var isSubtitleMenuOpen = false
+    @State private var cachedSourceFallbackTask: Task<Void, Never>?
+    @State private var isResolvingStream = true
+    @State private var autoPlayCandidates: [StreamItem] = []
+
+    // Branded pre-roll loading card visibility + minimum-visible window so a
+    // fast cached source doesn't flash the card out before it's perceptible.
+    @State private var loadingCardVisible = true
+    @State private var minLoadingElapsed = false
+    private let minLoadingDuration: TimeInterval = 0.8
 
     // Volume
     @State private var systemVolume: Float = AVAudioSession.sharedInstance().outputVolume
@@ -55,7 +65,7 @@ struct PlayerScreen: View {
     }
 
     private var videoReady: Bool {
-        (engine.customDisplayView ?? ksEngine.displayView) != nil && ksEngine.hasRenderedFrame
+        (engine.customDisplayView ?? mpvEngine.displayView) != nil && mpvEngine.hasRenderedFrame
     }
 
     var body: some View {
@@ -63,50 +73,34 @@ struct PlayerScreen: View {
         ZStack {
             Color.black.ignoresSafeArea()
 
-            // ── PRE-ROLL BACKDROP ─────────────────────────────────────────
-            if !videoReady {
-                let backdropURL = (activeLaunch.episodeThumbnail ?? activeLaunch.poster).flatMap(URL.init)
-                let logoURL = loadingLogoURL
-                ZStack {
-                    if let url = backdropURL {
-                        CachedAsyncImage(url: url) { phase in
-                            if case .success(let img) = phase {
-                                img.resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .ignoresSafeArea()
-                            }
-                        }
-                        .blur(radius: 24, opaque: true)
-                        .ignoresSafeArea()
-                    }
-                    Color.black.opacity(backdropURL == nil ? 1 : 0.55).ignoresSafeArea()
-
-                    Group {
-                        if let logoURL {
-                            CachedAsyncImage(url: logoURL) { phase in
-                                if case .success(let img) = phase {
-                                    img.resizable()
-                                        .scaledToFit()
-                                        .frame(maxWidth: 220)
-                                        .shadow(color: .black.opacity(0.6), radius: 12, x: 0, y: 4)
-                                }
-                                // .loading / .failure → show nothing, no title text flash
-                            }
-                        }
-                        // logoURL nil → show nothing while logo resolves
-                    }
-                    .opacity(logoPulse ? 1.0 : 0.35)
-                    .animation(
-                        .easeInOut(duration: 1.15)
-                        .repeatForever(autoreverses: true),
-                        value: logoPulse
-                    )
-                }
+            // ── PRE-ROLL BRANDED LOADING CARD ─────────────────────────────
+            // Nuvio-style: full-bleed backdrop + original logo + animated
+            // "Loading" dots. Held until the first video frame renders, with a
+            // minimum-visible window so a fast cached source doesn't just flash.
+            if loadingCardVisible, !mpvEngine.didEncounterError {
+                PlaybackLoadingView(
+                    backgroundURL: loadingBackdropURL,
+                    logoURL: loadingLogoURL,
+                    title: activeLaunch.title
+                )
+                .allowsHitTesting(false)
                 .transition(.opacity)
+                .zIndex(50)
+                .overlay(alignment: .topLeading) {
+                    cancelButton {
+                        engine.stop()
+                        onDismiss()
+                    }
+                }
+                .overlay(alignment: .topTrailing) {
+                    retryButton()
+                }
             }
 
-            if let ksView = engine.customDisplayView ?? ksEngine.displayView {
-                KSPlayerViewRepresentable(playerView: ksView)
+            if !isSwitchingStream, !mpvEngine.didEncounterError,
+               let ksView = engine.customDisplayView ?? mpvEngine.displayView {
+                MPVPlayerViewRepresentable(playerView: ksView)
+                    .id(mpvEngine.launchToken)
                     .ignoresSafeArea()
                     .playerGestures(
                         engine: engine,
@@ -119,7 +113,7 @@ struct PlayerScreen: View {
                             .onEnded { scale in
                                 let fill = scale > 1.05
                                 isFillingVideo = fill
-                                ksEngine.setVideoFill(fill)
+                                mpvEngine.setVideoFill(fill)
                                 revealControls(scheduleAutoHide: true)
                             }
                     )
@@ -146,9 +140,9 @@ struct PlayerScreen: View {
                 }
 
             // Subtitle text overlay — always visible while a subtitle is loaded
-            if !ksEngine.loadedCues.isEmpty {
+            if !mpvEngine.loadedCues.isEmpty {
                 TimelineSubtitleOverlay(
-                    index: SubtitleCueIndex(cues: ksEngine.loadedCues),
+                    index: SubtitleCueIndex(cues: mpvEngine.loadedCues),
                     timeline: timeline
                 )
                     .allowsHitTesting(false)
@@ -168,31 +162,136 @@ struct PlayerScreen: View {
                 .allowsHitTesting(true)
             }
 
+            // ── ERROR OVERLAY ──────────────────────────────────────────────
+            if mpvEngine.didEncounterError {
+                ZStack {
+                    Color.black.opacity(0.75).ignoresSafeArea()
+                    VStack(spacing: 20) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .font(.system(size: 36))
+                            .foregroundColor(.white.opacity(0.6))
+                        Text("Stream Unavailable")
+                            .font(.system(size: 17, weight: .semibold))
+                            .foregroundColor(.white)
+                        Text("The current source could not be played.")
+                            .font(.system(size: 13))
+                            .foregroundColor(.white.opacity(0.5))
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 40)
+                        Button {
+                            engine.stop()
+                            mpvEngine.stop()
+                            onDismiss()
+                        } label: {
+                            Label("Dismiss", systemImage: "xmark")
+                                .font(.system(size: 15, weight: .medium))
+                                .foregroundColor(.white.opacity(0.7))
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 10)
+                        }
+                    }
+                }
+                .transition(.opacity)
+                .allowsHitTesting(true)
+            }
+
             PlayerLockMode(isLocked: $isLocked, showHint: $showUnlockHint)
 
-            if showControls && !isLocked {
+            if showControls && !isLocked && !mpvEngine.didEncounterError {
                 playerControlsLayer
             }
         }
         .preferredColorScheme(.dark)
         .onAppear {
+            MainHangDiagnostics.start()
+            MainHangDiagnostics.mark("player.onAppear")
             OrientationManager.shared.currentMask = .allButUpsideDown
-            logoPulse = false
-            Task { @MainActor in logoPulse = true }
-            Task { await resolveMissingLogoIfNeeded() }
+            // Keep the branded loading card up for a minimum window so it's
+            // always perceptible, even when a cached source renders instantly.
+            DispatchQueue.main.asyncAfter(deadline: .now() + minLoadingDuration) {
+                minLoadingElapsed = true
+                maybeHideLoadingCard()
+            }
+            Task { await resolveMissingArtworkIfNeeded() }
             revealControls(scheduleAutoHide: !activeLaunch.sourceUrl.isEmpty)
             if activeLaunch.sourceUrl.isEmpty {
+                MainHangDiagnostics.mark("player.fetchAndAutoLaunch.start")
                 Task { await fetchAndAutoLaunch() }
             } else {
-                timeline.reset(position: max((activeLaunch.initialPositionMs ?? 0) / 1000, 0))
-                ksEngine.launch(activeLaunch)
-                engine.launch(activeLaunch)
-                wireCustomEngine()
-                engine.play()
-                refreshSourceControlState()
-                Task {
-                    await ensureStreamsLoadedForActiveLaunch()
-                    await loadSubtitlesForActiveLaunchIfNeeded()
+                // Cached source — check TTL before using
+                let cachedIsExpired: Bool = {
+                    guard let profile = ProfileManager.shared.currentProfile else { return false }
+                    guard let source = LastPlaybackSourceStore.shared.source(
+                        profileId: profile.id, mediaId: activeLaunch.videoId
+                    ) else { return false }
+                    return source.isExpired
+                }()
+                if cachedIsExpired {
+                    print("[Moonlit] cached source expired (maxAge=\(Int(LastPlaybackSource.maxAge))s), fetching fresh")
+                    MainHangDiagnostics.mark("player.cachedLaunch.expired")
+                    activeLaunch = PlayerLaunch(
+                        title: activeLaunch.title, sourceUrl: "",
+                        logo: activeLaunch.logo, poster: activeLaunch.poster,
+                        episodeThumbnail: activeLaunch.episodeThumbnail,
+                        background: activeLaunch.background ?? resolvedBackground,
+                        seasonNumber: activeLaunch.seasonNumber,
+                        episodeNumber: activeLaunch.episodeNumber,
+                        streamTitle: activeLaunch.streamTitle,
+                        providerName: activeLaunch.providerName,
+                        contentType: activeLaunch.contentType,
+                        videoId: activeLaunch.videoId,
+                        parentMetaId: activeLaunch.parentMetaId,
+                        parentMetaType: activeLaunch.parentMetaType,
+                        initialPositionMs: activeLaunch.initialPositionMs
+                    )
+                    Task { await fetchAndAutoLaunch() }
+                } else {
+                    MainHangDiagnostics.mark("player.cachedLaunch")
+                    Task {
+                        let cachedUrl = activeLaunch.sourceUrl
+                        let cachedHeaders = activeLaunch.sourceHeaders ?? [:]
+                        if await preflightReachable(url: cachedUrl, headers: cachedHeaders) {
+                            MainHangDiagnostics.mark("player.cachedLaunch.direct")
+                            timeline.reset(position: max((activeLaunch.initialPositionMs ?? 0) / 1000, 0))
+                            mpvEngine.launch(activeLaunch)
+                            engine.launch(activeLaunch)
+                            wireCustomEngine()
+                            engine.play()
+                            refreshSourceControlState()
+                            Task {
+                                await ensureStreamsLoadedForActiveLaunch()
+                                if let matching = streamRepo.streams.first(where: { $0.url == cachedUrl }),
+                                   StreamSourceSelector.isPendingDebrid(matching) {
+                                    print("[Moonlit] cached source is pending-debrid, falling back to auto-launch")
+                                    cachedSourceFallbackTask?.cancel()
+                                    mpvEngine.stop()
+                                    engine.resetState()
+                                    await fetchAndAutoLaunch()
+                                    return
+                                }
+                                await loadSubtitlesForActiveLaunchIfNeeded()
+                            }
+                            // 5s fallback: if the cached source hasn't rendered a frame,
+                            // assume it's stale and fetch fresh streams
+                            cachedSourceFallbackTask?.cancel()
+                            let capturedUrl = cachedUrl
+                            cachedSourceFallbackTask = Task { @MainActor in
+                                try? await Task.sleep(for: .seconds(5))
+                                guard !Task.isCancelled else { return }
+                                if !mpvEngine.hasRenderedFrame,
+                                   activeLaunch.sourceUrl == capturedUrl {
+                                    print("[Moonlit] cached source stalled, falling back to auto-launch")
+                                    mpvEngine.stop()
+                                    engine.resetState()
+                                    await fetchAndAutoLaunch()
+                                }
+                            }
+                        } else {
+                            print("[Moonlit] cached source unreachable, falling back to auto-launch")
+                            MainHangDiagnostics.mark("player.cachedLaunch.fallback")
+                            await fetchAndAutoLaunch()
+                        }
+                    }
                 }
             }
             // Request landscape after the fullScreenCover slide-up animation finishes
@@ -205,13 +304,13 @@ struct PlayerScreen: View {
         }
         .onDisappear {
             hideControlsTask?.cancel()
-            logoPulse = false
+            cachedSourceFallbackTask?.cancel()
             OrientationManager.shared.currentMask = .portrait
             if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
                 scene.requestGeometryUpdate(.iOS(interfaceOrientations: .portrait)) { _ in }
             }
             engine.stop()
-            ksEngine.stop()
+            mpvEngine.stop()
         }
         .onChange(of: showControls) { _, visible in
             guard visible else {
@@ -225,12 +324,16 @@ struct PlayerScreen: View {
         .onChange(of: engine.isPlaying) { _, _ in
             scheduleControlsAutoHide()
         }
-        .onChange(of: ksEngine.hasRenderedFrame) { _, hasFrame in
-            if hasFrame { isSwitchingStream = false }
+        .onChange(of: mpvEngine.hasRenderedFrame) { _, hasFrame in
+            if hasFrame {
+                isSwitchingStream = false
+                isResolvingStream = false
+                maybeHideLoadingCard()
+            }
         }
         .onChange(of: streamRepo.streams) { _, _ in refreshSourceControlState() }
         .onChange(of: activeLaunch.sourceUrl) { _, _ in refreshSourceControlState() }
-        .onChange(of: ksEngine.availableSubtitles) { _, subs in
+        .onChange(of: mpvEngine.availableSubtitles) { _, subs in
             guard !isSubtitleMenuOpen else { return }
             let grouped = Dictionary(grouping: subs, by: { $0.lang })
             subtitleMenuSnapshot = grouped.keys.sorted().map { k in
@@ -250,7 +353,7 @@ struct PlayerScreen: View {
         .overlay(alignment: .trailing) {
             SourcesPanel(engine: engine, isShowing: $showSources) { stream in
                 showSources = false
-                switchToSource(stream, persist4KPreference: false)
+                Task { await switchToSource(stream, persist4KPreference: false) }
             }
             .padding(.trailing, 16)
             .padding(.vertical, 20)
@@ -270,7 +373,7 @@ struct PlayerScreen: View {
         .confirmationDialog("4K Playback", isPresented: $show4KChoice, titleVisibility: .visible) {
             Button("Use 4K This Time") {
                 if let stream = available4KStream {
-                    switchToSource(stream, persist4KPreference: false)
+                    Task { await switchToSource(stream, persist4KPreference: false) }
                 }
             }
             Button("Always Prefer 4K") {
@@ -278,7 +381,7 @@ struct PlayerScreen: View {
                     PlaybackQualityPreferenceStore.shared.setPrefers4K(true, profileId: profile.id)
                 }
                 if let stream = available4KStream {
-                    switchToSource(stream, persist4KPreference: true)
+                    Task { await switchToSource(stream, persist4KPreference: true) }
                 }
             }
             Button("Cancel", role: .cancel) {}
@@ -497,8 +600,8 @@ struct PlayerScreen: View {
     }
 
     @ViewBuilder private var audioMenu: some View {
-        let tracks = engine.availableAudioTracks.isEmpty ? ksEngine.availableAudioTracks : engine.availableAudioTracks
-        let selected = engine.selectedAudioTrack ?? ksEngine.selectedAudioTrack
+        let tracks = engine.availableAudioTracks.isEmpty ? mpvEngine.availableAudioTracks : engine.availableAudioTracks
+        let selected = engine.selectedAudioTrack ?? mpvEngine.selectedAudioTrack
         let isActive = !tracks.isEmpty && selected != nil
         Menu {
             // Show live tracks — no snapshot needed; Menu re-renders on open.
@@ -520,7 +623,7 @@ struct PlayerScreen: View {
             Color.clear.frame(width: 0, height: 0)
                 .onAppear {
                     hideControlsTask?.cancel()
-                    ksEngine.refreshAudioTracks()
+                    mpvEngine.refreshAudioTracks()
                 }
                 .onDisappear { scheduleControlsAutoHide() }
         } label: {
@@ -604,12 +707,107 @@ struct PlayerScreen: View {
         (resolvedLogo ?? activeLaunch.logo).flatMap(URL.init)
     }
 
+    /// Best available landscape image for the loading card, in order of
+    /// preference: wide fanart → fetched fanart → episode still → poster →
+    /// fetched poster. The card always renders crisp — no blur fallback.
+    private var loadingBackdropURL: String? {
+        activeLaunch.background ?? resolvedBackground ?? activeLaunch.episodeThumbnail ?? activeLaunch.poster ?? resolvedPoster
+    }
+
+    /// Crossfades the branded loading card out once the first frame has
+    /// rendered AND the minimum-visible window has elapsed.
+    private func maybeHideLoadingCard() {
+        guard loadingCardVisible, videoReady, minLoadingElapsed else { return }
+        withAnimation(.easeInOut(duration: 0.4)) {
+            loadingCardVisible = false
+        }
+    }
+
     private var loadingTitle: some View {
         Text(activeLaunch.title)
             .font(.system(size: 18, weight: .bold))
             .foregroundColor(.white)
             .multilineTextAlignment(.center)
             .padding(.horizontal, 32)
+    }
+
+    private func cancelButton(action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: "xmark")
+                .font(.system(size: 19, weight: .semibold))
+                .foregroundColor(.white)
+                .frame(width: 50, height: 50)
+        }
+        .glassCircle(clear: true)
+        .buttonStyle(.plain)
+        .padding(.horizontal, 16)
+        .padding(.top, 12)
+    }
+
+    private func retryButton() -> some View {
+        Button {
+            Task { await retryStream() }
+        } label: {
+            Image(systemName: "arrow.triangle.2.circlepath")
+                .font(.system(size: 17, weight: .semibold))
+                .foregroundColor(.white)
+                .frame(width: 50, height: 50)
+        }
+        .glassCircle(clear: true)
+        .buttonStyle(.plain)
+        .padding(.horizontal, 16)
+        .padding(.top, 12)
+    }
+
+    private func retryStream() async {
+        if let profile = ProfileManager.shared.currentProfile,
+           let cached = (activeLaunch.parentMetaId.flatMap { pid in
+               LastPlaybackSourceStore.shared.source(profileId: profile.id, mediaId: pid)
+           }) ?? LastPlaybackSourceStore.shared.source(
+               profileId: profile.id, mediaId: activeLaunch.videoId
+           ),
+           !cached.sourceUrl.isEmpty,
+           cached.sourceUrl != activeLaunch.sourceUrl,
+           await preflightReachable(url: cached.sourceUrl, headers: cached.sourceHeaders ?? [:]) {
+            let stream = StreamItem(
+                url: cached.sourceUrl,
+                sourceName: cached.providerName,
+                addonName: cached.providerName,
+                behaviorHints: StreamBehaviorHints(
+                    proxyHeaders: StreamProxyHeaders(request: cached.sourceHeaders)
+                )
+            )
+            await switchToSource(stream, persist4KPreference: false)
+            return
+        }
+
+        if hasMultiplePlayableSources {
+            let candidates = StreamSourceSelector.cachedCandidates(
+                currentUrl: activeLaunch.sourceUrl,
+                from: streamRepo.streams
+            )
+            if let stream = StreamSourceSelector.nextStream(
+                after: currentStream,
+                currentSourceUrl: activeLaunch.sourceUrl,
+                from: candidates,
+                prefer4K: prefers4K
+            ) {
+                await switchToSource(stream, persist4KPreference: false)
+            } else {
+                mpvEngine.stop()
+                engine.resetState()
+                await fetchAndAutoLaunch()
+            }
+        } else {
+            if mpvEngine.displayView != nil {
+                mpvEngine.loadURL(activeLaunch.sourceUrl, headers: activeLaunch.sourceHeaders ?? [:])
+                engine.play()
+            } else {
+                mpvEngine.stop()
+                engine.resetState()
+                await fetchAndAutoLaunch()
+            }
+        }
     }
 
     private var available4KStream: StreamItem? {
@@ -627,7 +825,20 @@ struct PlayerScreen: View {
             from: candidates,
             prefer4K: prefers4K
         ) else { return }
-        switchToSource(stream, persist4KPreference: false)
+        Task { await switchToSource(stream, persist4KPreference: false) }
+    }
+
+    /// Nuvio-style silent candidate cycling during stream resolution.
+    /// Removes the current (failed) stream from the queue and tries the next
+    /// auto-playable candidate. If none remain, shows the error overlay.
+    private func tryNextAutoPlayCandidate() {
+        autoPlayCandidates.removeAll { $0.id == currentStream?.id || $0.url == activeLaunch.sourceUrl }
+        guard let next = autoPlayCandidates.first else {
+            isSwitchingStream = false
+            mpvEngine.didEncounterError = true
+            return
+        }
+        Task { await switchToSource(next, persist4KPreference: false) }
     }
 
     private var prefers4K: Bool {
@@ -675,11 +886,11 @@ struct PlayerScreen: View {
         )
         let subtitles = await resolvedSubtitles(for: currentStream ?? fallbackStream)
         guard let subtitles, !subtitles.isEmpty else { return }
-        ksEngine.loadSubtitles(from: subtitles)
+        mpvEngine.loadSubtitles(from: subtitles)
         engine.availableSubtitles = subtitles
     }
 
-    private func switchToSource(_ stream: StreamItem, persist4KPreference: Bool) {
+    private func switchToSource(_ stream: StreamItem, persist4KPreference: Bool) async {
         guard let url = stream.url else { return }
         StreamPlaybackDiagnostics.logSelectedStream(stream, reason: "source-switch")
         if persist4KPreference,
@@ -699,7 +910,7 @@ struct PlayerScreen: View {
             logo: activeLaunch.logo ?? resolvedLogo,
             poster: activeLaunch.poster,
             episodeThumbnail: activeLaunch.episodeThumbnail,
-            background: activeLaunch.background,
+            background: activeLaunch.background ?? resolvedBackground,
             seasonNumber: activeLaunch.seasonNumber,
             episodeNumber: activeLaunch.episodeNumber,
             streamTitle: activeLaunch.streamTitle ?? stream.displayName,
@@ -715,18 +926,22 @@ struct PlayerScreen: View {
         savePlaybackSource(for: stream, url: url, launch: nextLaunch)
         isSwitchingStream = true
         engine.pause()
-        ksEngine.stop()
-        engine.resetState()
+        // Preflight: skip this candidate if the debrid server returns an error page
+        // instead of media. On failure, tryNextAutoPlayCandidate() moves to the next.
+        if await preflightReachable(url: url, headers: hints.requestHeaders ?? [:]) {
+            mpvEngine.loadURL(url, headers: hints.requestHeaders ?? [:])
+            engine.launch(nextLaunch)
+            wireCustomEngine()
+            engine.play()
+        } else {
+            // URL rejected by preflight — try next candidate without showing error
+            tryNextAutoPlayCandidate()
+            return
+        }
         showControls = true
         activeLaunch = nextLaunch
         resolvedLogo = nextLaunch.logo ?? resolvedLogo
         timeline.reset(position: max((nextLaunch.initialPositionMs ?? 0) / 1000, 0))
-        ksEngine.launch(nextLaunch)
-        engine.launch(nextLaunch)
-        wireCustomEngine()
-        engine.play()
-        logoPulse = false
-        Task { @MainActor in logoPulse = true }
         pauseControlsAutoHide()
     }
 
@@ -786,20 +1001,33 @@ struct PlayerScreen: View {
         }
     }
 
-    private func resolveMissingLogoIfNeeded() async {
-        guard loadingLogoURL == nil else { return }
+    private func resolveMissingArtworkIfNeeded() async {
+        // Fetch the meta only if we're missing the logo or a wide backdrop —
+        // e.g. Continue Watching items carry neither.
+        let needsLogo = loadingLogoURL == nil
+        let needsBackdrop = (activeLaunch.background ?? resolvedBackground) == nil
+        let needsPoster = activeLaunch.poster == nil
+        NSLog("[Moonlit][Loading] resolveMissingArtwork needsLogo=\(needsLogo) needsBackdrop=\(needsBackdrop) needsPoster=\(needsPoster) bg=\(activeLaunch.background ?? "nil") resBg=\(resolvedBackground ?? "nil") poster=\(activeLaunch.poster ?? "nil")")
+        guard needsLogo || needsBackdrop || needsPoster else { return }
         if addonRepo.enabledAddons.isEmpty,
            let profile = ProfileManager.shared.currentProfile {
             await addonRepo.loadAddons(profileId: profile.id)
         }
         let metaId = activeLaunch.parentMetaId ?? activeLaunch.videoId
         let metaType = activeLaunch.parentMetaType ?? activeLaunch.contentType.rawValue
+        NSLog("[Moonlit][Loading] fetchDetail metaId=\(metaId) metaType=\(metaType) addons=\(addonRepo.enabledAddons.count)")
         guard let detail = await metaRepo.fetchDetail(
             type: metaType,
             id: metaId,
             addons: addonRepo.enabledAddons
-        ) else { return }
-        resolvedLogo = detail.logo
+        ) else {
+            NSLog("[Moonlit][Loading] fetchDetail returned nil")
+            return
+        }
+        NSLog("[Moonlit][Loading] fetchDetail OK background=\(detail.background ?? "nil") poster=\(detail.poster ?? "nil") logo=\(detail.logo ?? "nil")")
+        if needsLogo { resolvedLogo = detail.logo }
+        if needsBackdrop { resolvedBackground = detail.background }
+        if needsPoster { resolvedPoster = detail.poster }
     }
 
     /// Called when the player launches with a cached (last-used) source URL.
@@ -808,6 +1036,7 @@ struct PlayerScreen: View {
         guard !isFetchingStream else { return }
         isFetchingStream = true
         defer { isFetchingStream = false }
+        MainHangDiagnostics.mark("player.fetchAddons")
 
         if addonRepo.enabledAddons.isEmpty,
            let profile = ProfileManager.shared.currentProfile {
@@ -821,6 +1050,7 @@ struct PlayerScreen: View {
             guard let profile = ProfileManager.shared.currentProfile else { return false }
             return PlaybackQualityPreferenceStore.shared.prefers4K(profileId: profile.id)
         }()
+        let installOrder = addonRepo.enabledAddons.map(\.name)
 
         // Use pre-fetched streams from DetailScreen warmup if fresh (< 5 min).
         // This makes playback start instantly — no extra network round-trip needed.
@@ -829,6 +1059,7 @@ struct PlayerScreen: View {
             streamRepo.streams = cached
         } else {
             streamRepo.clearStreams()
+            MainHangDiagnostics.mark("player.fetchStreams")
             let bg = Task { await streamRepo.fetchStreams(type: type, id: id, addons: addonRepo.enabledAddons, title: activeLaunch.title) }
             // React instantly when the first viable stream lands — no fixed poll interval.
             // Uses a Combine sink so we resume the moment @Published streams updates.
@@ -847,25 +1078,63 @@ struct PlayerScreen: View {
                     streamRepo.$streams.map { _ in () },
                     streamRepo.$isLoading.map { _ in () }
                 ).sink { _ in
-                    if StreamSourceSelector.initialStream(from: streamRepo.streams, prefer4K: prefer4K) != nil { finish() }
+                    if StreamSourceSelector.initialStream(from: streamRepo.streams, prefer4K: prefer4K, installOrder: installOrder) != nil { finish() }
                     if !streamRepo.isLoading { finish() }
                 }
                 // 15-second hard timeout
                 Task { try? await Task.sleep(for: .seconds(15)); finish() }
             }
             if Task.isCancelled { bg.cancel(); return }
-            if StreamSourceSelector.initialStream(from: streamRepo.streams, prefer4K: prefer4K) == nil {
+            if StreamSourceSelector.initialStream(from: streamRepo.streams, prefer4K: prefer4K, installOrder: installOrder) == nil {
                 await bg.value
             }
         }
 
-        guard let stream = StreamSourceSelector.initialStream(from: streamRepo.streams, prefer4K: prefer4K),
+        // Populate auto-play candidate queue for silent cycling (Nuvio-style).
+        // If the first candidate fails, tryNextAutoPlayCandidate() picks the next.
+        autoPlayCandidates = StreamSourceSelector.candidatesForAutoPlay(
+            from: streamRepo.streams, prefer4K: prefer4K, installOrder: installOrder
+        )
+
+        let selected = autoPlayCandidates.first
+        guard var stream = selected,
               StreamSourceSelector.isPlaybackCandidate(stream),
-              let url = stream.url else { return }
-        StreamPlaybackDiagnostics.logSelectedStream(stream, reason: "player-ranked-auto")
+              var url = stream.url else { return }
+
+        // Remove selected from candidate queue so it won't be retried
+        autoPlayCandidates.removeFirst()
+
+        // Preflight: verify host is reachable before mpv connects.
+        // A dead proxy causes mpv_terminate_destroy to block main indefinitely.
+        var hints = StreamPlaybackHints(stream: stream)
+        MainHangDiagnostics.mark("player.preflight")
+        if !(await preflightReachable(url: url, headers: hints.requestHeaders ?? [:])) {
+            // Auto-fallback: try candidates from the auto-play queue (Nuvio-style).
+            var found = false
+            while let candidate = autoPlayCandidates.first {
+                autoPlayCandidates.removeFirst()
+                guard let candidateUrl = candidate.url,
+                      candidateUrl != url,
+                      StreamSourceSelector.isAutoPlayable(candidate) else { continue }
+                let candidateHints = StreamPlaybackHints(stream: candidate)
+                if await preflightReachable(url: candidateUrl, headers: candidateHints.requestHeaders ?? [:]) {
+                    stream = candidate
+                    url = candidateUrl
+                    hints = candidateHints
+                    found = true
+                    break
+                }
+            }
+            guard found else {
+                print("[Moonlit] preflight all candidates unreachable")
+                return
+            }
+            StreamPlaybackDiagnostics.logSelectedStream(stream, reason: "player-ranked-auto-fallback")
+        } else {
+            StreamPlaybackDiagnostics.logSelectedStream(stream, reason: "player-ranked-auto")
+        }
 
         // Start playback immediately — don't block on warmup or subtitle fetch
-        let hints = StreamPlaybackHints(stream: stream)
         let launch = PlayerLaunch(
             title: activeLaunch.title,
             sourceUrl: url,
@@ -876,7 +1145,7 @@ struct PlayerScreen: View {
             logo: activeLaunch.logo ?? resolvedLogo,
             poster: activeLaunch.poster,
             episodeThumbnail: activeLaunch.episodeThumbnail,
-            background: activeLaunch.background,
+            background: activeLaunch.background ?? resolvedBackground,
             seasonNumber: activeLaunch.seasonNumber,
             episodeNumber: activeLaunch.episodeNumber,
             streamTitle: activeLaunch.streamTitle ?? stream.displayName,
@@ -904,9 +1173,11 @@ struct PlayerScreen: View {
 
         activeLaunch = launch
         timeline.reset(position: max((launch.initialPositionMs ?? 0) / 1000, 0))
-        ksEngine.launch(launch)
+        MainHangDiagnostics.mark("player.mpvLaunch")
+        mpvEngine.launch(launch)
         engine.launch(launch)
         wireCustomEngine()
+        MainHangDiagnostics.mark("player.enginePlay")
         engine.play()
         refreshSourceControlState()
 
@@ -915,7 +1186,7 @@ struct PlayerScreen: View {
         Task { @MainActor in
             let subtitles = await resolvedSubtitles(for: capturedStream)
             guard let subtitles, !subtitles.isEmpty else { return }
-            ksEngine.loadSubtitles(from: subtitles)
+            mpvEngine.loadSubtitles(from: subtitles)
             engine.availableSubtitles = subtitles
         }
     }
@@ -934,6 +1205,90 @@ struct PlayerScreen: View {
         return merged.isEmpty ? nil : merged
     }
 
+    private func preflightReachable(url: String, headers: [String: String]) async -> Bool {
+        guard let requestUrl = URL(string: url) else { return false }
+        var request = URLRequest(url: requestUrl, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 3)
+        request.httpMethod = "GET"
+        request.setValue("bytes=0-4095", forHTTPHeaderField: "Range")
+        for (key, value) in headers {
+            request.setValue(value, forHTTPHeaderField: key)
+        }
+        guard let (data, response) = try? await URLSession.shared.data(for: request),
+              let httpResponse = response as? HTTPURLResponse else { return false }
+        let statusOk = (200...208).contains(httpResponse.statusCode) || httpResponse.statusCode == 416
+        guard statusOk else {
+            print("[Moonlit] preflight \(requestUrl.host ?? "nil") → \(httpResponse.statusCode)")
+            return false
+        }
+        // Reject debrid auth errors: 401/403 = invalid subscription, 429 = rate limited
+        let code = httpResponse.statusCode
+        if code == 401 || code == 403 || code == 429 {
+            print("[Moonlit] preflight \(requestUrl.host ?? "nil") → rejected \(code)")
+            return false
+        }
+        let contentType = (httpResponse.allHeaderFields["Content-Type"] as? String)?.lowercased() ?? ""
+        if contentType.contains("text/html") {
+            print("[Moonlit] preflight \(requestUrl.host ?? "nil") → HTML error page, source expired")
+            return false
+        }
+        // Read first 4KB of body — debrid/JSON errors come in HTTP 200
+        if !data.isEmpty {
+            let chunk = data.prefix(4096)
+            let body = String(data: chunk, encoding: .utf8)
+                ?? String(data: chunk, encoding: .isoLatin1)
+                ?? ""
+            let lower = body.lowercased()
+
+            // Try to parse as JSON — debrid services often return structured errors
+            var jsonFields = ""
+            if let json = try? JSONSerialization.jsonObject(with: chunk) as? [String: Any] {
+                jsonFields = json.compactMap { "\($0.key): \($0.value)" }.joined(separator: " ").lowercased()
+            }
+
+            let combined = lower + " " + jsonFields
+            let errorMarkers: [(String, label: String)] = [
+                ("media_not_cached_yet", "not cached yet"),
+                ("not cached on your debrid", "not cached on debrid"),
+                ("not downloaded", "not downloaded"),
+                ("not cached", "not cached"),
+                ("not yet cached", "not yet cached"),
+                ("downloading", "downloading"),
+                ("caching", "caching"),
+                ("queued", "queued"),
+                ("try again shortly", "try again shortly"),
+                ("being prepared", "being prepared"),
+                ("wait a short while", "wait a short while"),
+                ("something went wrong", "addon error"),
+                ("elfhosted", "addon error"),
+                ("unexpected error resolving", "addon error"),
+                ("access denied", "access denied"),
+                ("valid debrid subscription", "invalid subscription"),
+                ("not downloaded yet", "not downloaded"),
+                ("torrent not downloaded", "not downloaded"),
+                ("invalid token", "invalid token"),
+                ("subscription", "subscription"),
+                ("internal provider issue", "internal provider"),
+                ("please retry later", "retry later"),
+            ]
+            for (term, label) in errorMarkers {
+                if combined.contains(term) {
+                    let preview = lower.prefix(150).replacingOccurrences(of: "\n", with: " ")
+                    print("[Moonlit] preflight \(requestUrl.host ?? "nil") → \(label): \(preview)")
+                    return false
+                }
+            }
+
+            // Generic JSON error: non-empty error field + empty/absent stream data
+            if let json = try? JSONSerialization.jsonObject(with: chunk) as? [String: Any],
+               let errorValue = json["error"] as? String, !errorValue.isEmpty,
+               json["streams"] == nil, json["url"] == nil, json["data"] == nil {
+                print("[Moonlit] preflight \(requestUrl.host ?? "nil") → json error: \(errorValue.prefix(100))")
+                return false
+            }
+        }
+        return true
+    }
+
     private var feedbackText: String {
         switch gestureState.mode {
         case .brightness: return "\(Int(gestureState.value * 100))%"
@@ -942,37 +1297,37 @@ struct PlayerScreen: View {
     }
 
     private func wireCustomEngine() {
-        engine.customDisplayView = ksEngine.displayView
-        engine.onCustomPlay = { [weak ksEngine] in ksEngine?.play() }
-        engine.onCustomPause = { [weak ksEngine] in ksEngine?.pause() }
-        engine.onCustomSeek = { [weak ksEngine] in ksEngine?.seek(to: $0) }
-        engine.onCustomSetSpeed = { [weak ksEngine] in ksEngine?.setPlaybackSpeed($0) }
-        engine.onCustomSkipForward = { [weak ksEngine] in ksEngine?.skipForward() }
-        engine.onCustomSkipBack = { [weak ksEngine] in ksEngine?.skipBack() }
-        engine.onCustomSkipForward15 = { [weak ksEngine] in ksEngine?.skipForward15() }
-        engine.onCustomSkipBack15 = { [weak ksEngine] in ksEngine?.skipBack15() }
-        engine.onCustomToggleMute = { [weak ksEngine] in ksEngine?.toggleMute() }
-        engine.onCustomCycleSubtitle = { [weak ksEngine] in ksEngine?.cycleSubtitle() }
-        engine.onCustomSetSubtitle = { [weak ksEngine] in ksEngine?.setSubtitle($0) }
-        engine.onCustomSetAudioTrack = { [weak ksEngine] in ksEngine?.selectAudioTrack(named: $0) }
-        engine.onCustomStop = { [weak ksEngine] in ksEngine?.stop() }
+        engine.customDisplayView = mpvEngine.displayView
+        engine.onCustomPlay = { [weak mpvEngine] in mpvEngine?.play() }
+        engine.onCustomPause = { [weak mpvEngine] in mpvEngine?.pause() }
+        engine.onCustomSeek = { [weak mpvEngine] in mpvEngine?.seek(to: $0) }
+        engine.onCustomSetSpeed = { [weak mpvEngine] in mpvEngine?.setPlaybackSpeed($0) }
+        engine.onCustomSkipForward = { [weak mpvEngine] in mpvEngine?.skipForward() }
+        engine.onCustomSkipBack = { [weak mpvEngine] in mpvEngine?.skipBack() }
+        engine.onCustomSkipForward15 = { [weak mpvEngine] in mpvEngine?.skipForward15() }
+        engine.onCustomSkipBack15 = { [weak mpvEngine] in mpvEngine?.skipBack15() }
+        engine.onCustomToggleMute = { [weak mpvEngine] in mpvEngine?.toggleMute() }
+        engine.onCustomCycleSubtitle = { [weak mpvEngine] in mpvEngine?.cycleSubtitle() }
+        engine.onCustomSetSubtitle = { [weak mpvEngine] in mpvEngine?.setSubtitle($0) }
+        engine.onCustomSetAudioTrack = { [weak mpvEngine] in mpvEngine?.selectAudioTrack(named: $0) }
+        engine.onCustomStop = { [weak mpvEngine] in mpvEngine?.stop() }
 
         guard !didWireCustomEngine else { return }
         didWireCustomEngine = true
 
-        ksEngine.$isPlaying
+        mpvEngine.$isPlaying
             .removeDuplicates()
             .sink { engine.isPlaying = $0 }
             .store(in: &engineBindings)
-        ksEngine.$isLoading
+        mpvEngine.$isLoading
             .removeDuplicates()
             .sink { engine.isLoading = $0 }
             .store(in: &engineBindings)
-        ksEngine.$isEnded
+        mpvEngine.$isEnded
             .removeDuplicates()
             .sink { engine.isEnded = $0 }
             .store(in: &engineBindings)
-        ksEngine.positionPublisher
+        mpvEngine.positionPublisher
             .throttle(for: .milliseconds(250), scheduler: RunLoop.main, latest: true)
             .sink { position in
                 PlayerPerformanceDiagnostics.shared.mark("timeline.bridge")
@@ -984,49 +1339,56 @@ struct PlayerScreen: View {
                 engine.seek(to: ts.introEnd)
             }
             .store(in: &engineBindings)
-        ksEngine.bufferedPositionPublisher
+        mpvEngine.bufferedPositionPublisher
             .throttle(for: .milliseconds(250), scheduler: RunLoop.main, latest: true)
             .sink { bufferedPosition in
                 PlayerPerformanceDiagnostics.shared.mark("buffer.bridge")
                 timeline.update(bufferedPosition: bufferedPosition)
             }
             .store(in: &engineBindings)
-        ksEngine.$duration
+        mpvEngine.$duration
             .removeDuplicates()
             .sink {
                 engine.duration = $0
                 timeline.update(duration: $0)
             }
             .store(in: &engineBindings)
-        ksEngine.$playbackSpeed
+        mpvEngine.$playbackSpeed
             .removeDuplicates()
             .sink { engine.playbackSpeed = $0 }
             .store(in: &engineBindings)
-        ksEngine.$availableSubtitles
+        mpvEngine.$availableSubtitles
             .removeDuplicates()
             .sink { engine.availableSubtitles = $0 }
             .store(in: &engineBindings)
-        ksEngine.$selectedSubtitle
+        mpvEngine.$selectedSubtitle
             .removeDuplicates()
             .sink { engine.selectedSubtitle = $0 }
             .store(in: &engineBindings)
-        ksEngine.$availableAudioTracks
+        mpvEngine.$availableAudioTracks
             .removeDuplicates()
             .sink { engine.availableAudioTracks = $0 }
             .store(in: &engineBindings)
-        ksEngine.$selectedAudioTrack
+        mpvEngine.$selectedAudioTrack
             .removeDuplicates()
             .sink { engine.selectedAudioTrack = $0 }
             .store(in: &engineBindings)
-        ksEngine.$isMuted
+        mpvEngine.$isMuted
             .removeDuplicates()
             .sink { engine.isMuted = $0 }
             .store(in: &engineBindings)
-        ksEngine.$didEncounterError
+        mpvEngine.$didEncounterError
             .filter { $0 }
             .sink { _ in
-                guard self.hasMultiplePlayableSources else { return }
-                self.switchToNextSource()
+                // During stream resolution: silently try next candidate (Nuvio-style).
+                // Only show error when all auto-playable candidates are exhausted.
+                if self.isResolvingStream {
+                    self.tryNextAutoPlayCandidate()
+                } else {
+                    // Mid-playback error: auto-switch if multiple sources available
+                    guard self.hasMultiplePlayableSources else { return }
+                    self.switchToNextSource()
+                }
             }
             .store(in: &engineBindings)
     }

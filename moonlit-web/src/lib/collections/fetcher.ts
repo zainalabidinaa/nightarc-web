@@ -47,21 +47,18 @@ function setCache(query: StremioCatalogQuery, items: MetaPreview[]) {
   } catch {}
 }
 
-function buildCatalogUrl(query: StremioCatalogQuery): string {
-  const extrasStr = query.extras
-    ? Object.entries(query.extras).sort(([a], [b]) => a.localeCompare(b)).map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&')
-    : '';
-  const path = `${query.baseURL}/catalog/${query.type}/${query.id}.json`;
-  return extrasStr ? `${path}?${extrasStr}` : path;
-}
-
 export async function fetchCatalog(query: StremioCatalogQuery): Promise<MetaPreview[]> {
   const cached = getFromCache(query);
   if (cached) return cached;
 
-  const url = buildCatalogUrl(query);
+  // The /api/stremio/catalog proxy (dev + Vercel) expects separate
+  // url(base) / type / id / extras(JSON) params — NOT a single full URL.
+  const params = new URLSearchParams({ url: query.baseURL, type: query.type, id: query.id });
+  if (query.extras && Object.keys(query.extras).length > 0) {
+    params.set('extras', JSON.stringify(query.extras));
+  }
   try {
-    const res = await fetch(`/api/stremio/catalog?url=${encodeURIComponent(url)}`);
+    const res = await fetch(`/api/stremio/catalog?${params.toString()}`);
     if (!res.ok) return [];
     const data = await res.json();
     const items: MetaPreview[] = (data.metas || []).map((m: any) => ({

@@ -6,6 +6,12 @@
       "runtimeExecutable": "npx",
       "runtimeArgs": ["serve", "-l", "4321", "/Users/zain/projects/Moonlit"],
       "port": 4321
+    },
+    {
+      "name": "cover-gen",
+      "runtimeExecutable": "/opt/homebrew/bin/python3.14",
+      "runtimeArgs": ["/Users/zain/projects/Moonlit/moonlit-portal/card_generator/server.py"],
+      "port": 5050
     }
   ]
 }

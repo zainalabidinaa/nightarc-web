@@ -174,7 +174,7 @@ export default function SearchPage() {
             {trending.length > 0 && (
               <section>
                 <p className="text-xs font-bold text-white/40 uppercase tracking-wider mb-4">Trending Now</p>
-                <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))' }}>
+                <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(155px, 1fr))' }}>
                   {trending.map(item => (
                     <Link key={item.id} to="/browse/$type/$id" params={{ type: item.type, id: item.id }} className="group cursor-pointer">
                       <div className="relative aspect-[2/3] rounded-xl overflow-hidden bg-moonlit-elevated mb-2">
@@ -214,19 +214,22 @@ export default function SearchPage() {
               <span className="text-xs text-white/30 ml-auto">{filtered.length} results</span>
             </div>
             {filtered.length > 0 ? (
-              <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))' }}>
+              <div className="flex flex-col gap-1.5 max-w-2xl">
                 {filtered.map(item => (
-                  <Link key={item.id} to="/browse/$type/$id" params={{ type: item.type, id: item.id }} className="group cursor-pointer">
-                    <div className="relative aspect-[2/3] rounded-xl overflow-hidden bg-moonlit-elevated mb-2">
-                      {item.poster ? <img src={item.poster} alt={item.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" /> : <div className="absolute inset-0 flex items-center justify-center text-white/20 text-xs text-center px-2">{item.name}</div>}
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                          <svg viewBox="0 0 24 24" fill="white" className="w-4 h-4 ml-0.5"><polygon points="6,4 20,12 6,20"/></svg>
-                        </div>
+                  <Link key={item.id} to="/browse/$type/$id" params={{ type: item.type, id: item.id }}
+                    className="group flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 transition-colors">
+                    {item.poster
+                      ? <img src={item.poster} alt={item.name} loading="lazy" className="w-[52px] h-[78px] object-cover rounded-lg shrink-0 bg-moonlit-elevated" />
+                      : <div className="w-[52px] h-[78px] rounded-lg bg-moonlit-elevated shrink-0 flex items-center justify-center text-white/20 text-[10px] text-center px-1">{item.name}</div>}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-white truncate">{item.name}</p>
+                      <div className="flex items-center gap-2 mt-1 text-[11px] text-white/45">
+                        <span className="px-1.5 py-0.5 rounded bg-white/8 font-medium text-white/60">{item.type === 'series' ? 'Series' : 'Movie'}</span>
+                        {item.imdbRating && <span className="text-yellow-400/80 font-semibold">★ {item.imdbRating}</span>}
+                        {item.releaseInfo && <span>{item.releaseInfo}</span>}
                       </div>
                     </div>
-                    <p className="text-xs font-medium text-white/80 truncate">{item.name}</p>
-                    {item.releaseInfo && <p className="text-[10px] text-white/35 mt-0.5">{item.releaseInfo}</p>}
+                    <svg className="w-4 h-4 text-white/20 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
                   </Link>
                 ))}
               </div>

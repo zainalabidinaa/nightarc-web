@@ -1,0 +1,1717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Moonlit Portal — Concept</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#f2f6fc;--bg2:#e8f0f9;--surface:#ffffff;--surface2:#f8fafd;
+  --border:#e2e8f0;--border2:#cbd5e1;--text:#0f172a;--text2:#475569;--text3:#94a3b8;
+  --accent:#6d28d9;--accent-light:#ede9fe;--accent-mid:#7c3aed;
+  --grn:#059669;--grn-bg:#ecfdf5;--grn-border:#a7f3d0;
+  --pnk:#be185d;--pnk-bg:#fdf2f8;--pnk-border:#fbcfe8;
+  --amb:#b45309;--amb-bg:#fffbeb;--amb-border:#fde68a;
+  --red:#dc2626;--red-bg:#fef2f2;--red-border:#fecaca;
+  --blu:#1d4ed8;--blu-bg:#eff6ff;--blu-border:#bfdbfe;
+}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;min-height:100vh;font-size:14px}
+.topnav{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:rgba(242,246,252,0.88);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;backdrop-filter:blur(16px)}
+.logo{display:flex;align-items:center;gap:9px;text-decoration:none;cursor:pointer}
+.logo-mark{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,#7c3aed,#4f46e5);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff}
+.logo-name{font-size:15px;font-weight:700;letter-spacing:-.3px;color:var(--text)}
+.nav-links{display:flex;gap:2px}
+.navbtn{padding:5px 14px;border-radius:20px;font-size:13px;color:var(--text2);cursor:pointer;background:none;border:none;transition:all .15s;font-weight:500}
+.navbtn:hover{color:var(--text);background:rgba(0,0,0,0.05)}
+.navbtn.active{background:var(--text);color:#fff}
+.nav-right{display:flex;align-items:center;gap:10px}
+.user-chip{display:flex;align-items:center;gap:7px;padding:4px 12px 4px 4px;background:var(--surface);border:1px solid var(--border);border-radius:20px;cursor:pointer}
+.user-av{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#4f46e5);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff}
+.tier-pill{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.4px;background:var(--accent-light);color:var(--accent)}
+.app{display:flex;min-height:calc(100vh - 52px)}
+.sidebar{width:210px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);padding:16px 10px;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto}
+.sb-user{padding:8px 10px 14px;border-bottom:1px solid var(--border);margin-bottom:10px}
+.sb-email{font-size:11px;color:var(--text3)}
+.sb-profile{display:flex;align-items:center;gap:6px;margin-top:5px;cursor:pointer}
+.sb-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0}
+.sb-pname{font-size:12px;font-weight:600;color:var(--text)}
+.sb-chevron{margin-left:auto;font-size:10px;color:var(--text3)}
+.sb-section{font-size:9px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:var(--text3);padding:12px 10px 5px}
+.sb-item{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:8px;font-size:13px;color:var(--text2);cursor:pointer;transition:all .15s;margin-bottom:1px}
+.sb-item:hover{color:var(--text);background:rgba(0,0,0,0.04)}
+.sb-item.active{color:var(--accent);background:var(--accent-light);font-weight:600}
+.sb-count{margin-left:auto;font-size:10px;background:rgba(0,0,0,0.07);color:var(--text3);padding:1px 7px;border-radius:10px}
+.main{flex:1;padding:28px 32px;display:flex;flex-direction:column;gap:24px;overflow-x:hidden;max-width:1100px}
+.screen{display:none}.screen.active{display:contents}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px}
+.card-pad{padding:18px 20px}
+.card-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.card-title{font-size:14px;font-weight:600;color:var(--text)}
+.card-action{font-size:12px;color:var(--accent);cursor:pointer;font-weight:500}
+.row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.row:last-child{border-bottom:none}
+.btn{padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.btn-p{background:var(--text);color:#fff}.btn-p:hover{opacity:.85}
+.btn-g{background:var(--surface);color:var(--text2);border:1px solid var(--border)}.btn-g:hover{background:var(--surface2)}
+.btn-d{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
+.btn-accent{background:var(--accent);color:#fff}.btn-accent:hover{opacity:.9}
+.btn-sm{padding:4px 10px;font-size:11px;border-radius:7px}
+.badge{display:inline-flex;align-items:center;gap:3px;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.3px;white-space:nowrap}
+.b-pur{background:var(--accent-light);color:var(--accent)}
+.b-grn{background:var(--grn-bg);color:var(--grn);border:1px solid var(--grn-border)}
+.b-pnk{background:var(--pnk-bg);color:var(--pnk);border:1px solid var(--pnk-border)}
+.b-amb{background:var(--amb-bg);color:var(--amb);border:1px solid var(--amb-border)}
+.b-blu{background:var(--blu-bg);color:var(--blu);border:1px solid var(--blu-border)}
+.b-gray{background:var(--surface2);color:var(--text3);border:1px solid var(--border)}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.g6{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center}
+.stat-v{font-size:24px;font-weight:700;letter-spacing:-1px;color:var(--text)}
+.stat-l{font-size:11px;color:var(--text3);margin-top:2px}
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;flex-shrink:0}
+.toggle{width:32px;height:18px;border-radius:10px;position:relative;cursor:pointer;flex-shrink:0}
+.t-on{background:var(--accent)}.t-off{background:var(--border2)}
+.t-knob{position:absolute;top:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:left .15s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.t-on .t-knob{left:16px}.t-off .t-knob{left:2px}
+.page-h{display:flex;align-items:flex-start;justify-content:space-between}
+.page-title{font-size:22px;font-weight:700;letter-spacing:-.4px;color:var(--text)}
+.page-sub{font-size:13px;color:var(--text2);margin-top:4px}
+.label{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin-bottom:5px}
+.input{width:100%;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:13px;outline:none}
+.input:focus{border-color:var(--accent)}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:3px 9px 3px 5px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;font-size:11px;color:var(--text2);cursor:pointer}
+.chip:hover{border-color:var(--accent)}
+.chip-av{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600}
+.tabs{display:flex;gap:2px;background:rgba(0,0,0,0.05);border-radius:9px;padding:3px;width:fit-content;margin-bottom:16px}
+.tab{padding:5px 14px;border-radius:7px;font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;transition:all .15s}
+.tab.on{background:var(--surface);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.hero{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.pc{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 14px;text-align:center;cursor:pointer;transition:all .2s}
+.pc:hover,.pc.sel{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}
+.pc-av{width:50px;height:50px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:600}
+.plan{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px 18px;transition:all .2s;cursor:pointer;position:relative;overflow:hidden}
+.plan:hover{box-shadow:0 4px 20px rgba(0,0,0,.08);transform:translateY(-2px)}
+.plan.cur{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}
+.plan-top-bar{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#7c3aed,#4f46e5)}
+.addon{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px;display:flex;align-items:center;gap:11px;transition:all .15s}
+.addon:hover{border-color:var(--accent)}
+.addon-logo{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:17px}
+.coll-row{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:6px;overflow:hidden;transition:border-color .15s,box-shadow .15s}
+.coll-row:hover{border-color:var(--border2)}
+.coll-row.open{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}
+.coll-row.dragging{opacity:.35;border-style:dashed}
+.coll-row.drag-over{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}
+.coll-main{display:flex;align-items:center;cursor:pointer;user-select:none}
+.coll-handle{width:36px;display:flex;align-items:center;justify-content:center;color:var(--text3);cursor:grab;flex-shrink:0;padding:14px 4px 14px 10px;font-size:15px;letter-spacing:-1px}
+.coll-handle:active{cursor:grabbing}
+.coll-thumb{width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.coll-info{flex:1;padding:11px 10px;min-width:0}
+.coll-name{font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.coll-name-input{font-size:13px;font-weight:600;color:var(--text);border:1px solid var(--accent);border-radius:6px;padding:2px 7px;outline:none;background:var(--accent-light);width:200px}
+.coll-meta{font-size:11px;color:var(--text3);margin-top:2px}
+.coll-actions{display:flex;align-items:center;gap:6px;padding-right:12px;flex-shrink:0}
+.coll-chevron{font-size:10px;color:var(--text3);transition:transform .2s;flex-shrink:0;margin-right:4px}
+.coll-row.open .coll-chevron{transform:rotate(180deg)}
+.coll-editor{border-top:1px solid var(--border);padding:20px 20px 20px 20px;background:var(--surface2);display:none}
+.coll-row.open .coll-editor{display:block}
+.src-list{background:var(--surface);border:1px solid var(--border);border-radius:11px;overflow:hidden;margin-bottom:10px}
+.src-item{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid var(--border);transition:background .1s}
+.src-item:last-child{border-bottom:none}
+.src-item:hover{background:var(--surface2)}
+.src-item.dragging{opacity:.3}
+.src-item.drag-over{background:var(--accent-light)}
+.src-handle{color:var(--text3);cursor:grab;font-size:13px;flex-shrink:0;letter-spacing:-1px}
+.src-handle:active{cursor:grabbing}
+.col-grid{display:grid;grid-template-columns:1fr 240px;gap:24px}
+
+/* ── COLLECTION EDIT MODAL ── */
+.modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:200;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-backdrop.hidden{display:none}
+.modal{background:var(--surface);border-radius:18px;width:920px;max-width:96vw;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.18);overflow:hidden}
+.modal-head{padding:20px 24px 0;flex-shrink:0}
+.modal-title{font-size:18px;font-weight:700;letter-spacing:-.3px;color:var(--text);margin-bottom:14px}
+.modal-meta{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:0}
+.modal-meta-name{font-size:14px;font-weight:600;color:var(--text)}
+.modal-meta-desc{font-size:11px;color:var(--text3);margin-top:2px}
+.modal-meta-pills{display:flex;gap:6px;flex-shrink:0}
+.modal-meta-pill{padding:4px 10px;background:var(--surface);border:1px solid var(--border);border-radius:20px;font-size:11px;color:var(--text2);font-weight:500}
+.modal-steps{display:flex;gap:2px;padding:16px 24px 0;border-bottom:1px solid var(--border);flex-shrink:0}
+.mstep{padding:8px 16px;font-size:12px;font-weight:600;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;display:flex;align-items:center;gap:6px}
+.mstep:hover{color:var(--text2)}
+.mstep.active{color:var(--accent);border-bottom-color:var(--accent)}
+.mstep.done{color:var(--grn)}
+.mstep-num{width:18px;height:18px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.mstep.active .mstep-num{background:var(--accent);border-color:var(--accent);color:#fff}
+.mstep.done .mstep-num{background:var(--grn-bg);border-color:var(--grn-border);color:var(--grn)}
+.modal-body{display:flex;flex:1;overflow:hidden}
+.modal-content{flex:1;overflow-y:auto;padding:20px 24px}
+.modal-sidebar{width:220px;flex-shrink:0;border-left:1px solid var(--border);padding:16px;overflow-y:auto;background:var(--surface2)}
+.modal-foot{padding:14px 24px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(--surface)}
+.modal-foot-note{font-size:11px;color:var(--text3)}
+.mfield{margin-bottom:14px}
+.mfield-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mcheckrow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.mcheck{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:9px;cursor:pointer}
+.mcheck input[type=checkbox]{margin-top:1px;accent-color:var(--accent);flex-shrink:0}
+.mcheck-label{font-size:12px;font-weight:600;color:var(--text)}
+.mcheck-desc{font-size:10px;color:var(--text3);margin-top:1px;line-height:1.4}
+/* folder outline sidebar */
+.outline-sidebar{width:200px;flex-shrink:0;border-right:1px solid var(--border);padding:12px 0;overflow-y:auto}
+.outline-item{padding:8px 14px;font-size:12px;cursor:pointer;transition:background .1s;border-left:2px solid transparent}
+.outline-item:hover{background:rgba(0,0,0,.03)}
+.outline-item.active{background:var(--accent-light);border-left-color:var(--accent);font-weight:600;color:var(--accent)}
+.outline-item-name{font-weight:600;color:var(--text);font-size:12px}
+.outline-item.active .outline-item-name{color:var(--accent)}
+.outline-item-sub{font-size:10px;color:var(--text3);margin-top:1px}
+.outline-add{padding:8px 14px;font-size:11px;color:var(--accent);cursor:pointer;font-weight:600}
+.outline-add:hover{background:var(--accent-light)}
+/* folder editor three-panel */
+.modal-body-3col{display:flex;flex:1;overflow:hidden}
+.folder-editor{flex:1;overflow-y:auto;padding:20px}
+.review-sidebar{width:200px;flex-shrink:0;border-left:1px solid var(--border);padding:16px;overflow-y:auto;background:var(--surface2)}
+/* tile shape select */
+.tile-select{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:4px}
+.tile-opt{padding:8px 4px;border:1px solid var(--border);border-radius:8px;text-align:center;font-size:11px;font-weight:600;cursor:pointer;color:var(--text2);transition:all .15s}
+.tile-opt:hover{border-color:var(--accent)}
+.tile-opt.active{border-color:var(--accent);background:var(--accent-light);color:var(--accent)}
+.tile-preview{font-size:18px;display:block;margin-bottom:3px}
+/* source type badges in modal */
+.src-type{font-size:9px;font-weight:700;padding:1px 6px;border-radius:10px;background:var(--blu-bg);color:var(--blu);border:1px solid var(--blu-border)}
+/* review step */
+.review-stat-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px}
+.review-stat{background:var(--surface);padding:14px;text-align:center}
+.review-stat-v{font-size:22px;font-weight:800;letter-spacing:-1px;color:var(--text)}
+.review-stat-l{font-size:10px;color:var(--text3);margin-top:1px;text-transform:uppercase;letter-spacing:.5px}
+.review-folder{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:10px}
+.review-src-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
+.review-src-row:last-child{border-bottom:none}
+.validation-box{padding:10px 14px;border-radius:8px;font-size:12px;font-weight:600}
+.validation-ok{background:var(--grn-bg);color:var(--grn);border:1px solid var(--grn-border)}
+.validation-warn{background:var(--amb-bg);color:var(--amb);border:1px solid var(--amb-border)}
+.src-chip{display:inline-block;padding:2px 8px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;font-size:10px;color:var(--text3);margin:3px 3px 0 0}
+.upload-zone{border:1.5px dashed var(--border2);border-radius:12px;padding:20px;text-align:center;cursor:pointer;color:var(--text3);font-size:12px;transition:border-color .15s;background:var(--surface2)}
+.upload-zone:hover{border-color:var(--accent);background:var(--accent-light)}
+.inv-code{font-family:monospace;font-size:14px;font-weight:700;letter-spacing:3px;color:var(--accent);background:var(--accent-light);padding:6px 13px;border-radius:8px;border:1px solid rgba(109,40,217,.2)}
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);padding:9px 16px;text-align:left;border-bottom:1px solid var(--border)}
+.tbl td{padding:11px 16px;border-bottom:1px solid var(--border);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--surface2)}
+.bill-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
+.bill-row:last-child{border-bottom:none}
+.src-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.src-row:last-child{border-bottom:none}
+.u-row{padding:12px 0;border-bottom:1px solid var(--border)}
+.u-row:last-child{border-bottom:none}
+.u-main{display:flex;align-items:center;gap:12px}
+.u-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;padding-left:42px}
+.tier-sm{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:16px;text-align:center}
+.tier-count{font-size:26px;font-weight:700;letter-spacing:-1px;margin:6px 0 3px;color:var(--text)}
+
+/* PURCHASE / CONSUMER FLOW */
+.purchase-hero{text-align:center;padding:48px 24px 32px;background:var(--surface);border:1px solid var(--border);border-radius:16px}
+.ph-eyebrow{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.ph-title{font-size:32px;font-weight:800;letter-spacing:-.8px;color:var(--text);line-height:1.2}
+.ph-sub{font-size:16px;color:var(--text2);margin-top:10px;line-height:1.6}
+.toggle-billing{display:flex;align-items:center;gap:10px;background:rgba(0,0,0,0.05);border-radius:20px;padding:4px;margin:20px auto 0;width:fit-content}
+.tb-opt{padding:6px 18px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text2);transition:all .15s}
+.tb-opt.on{background:var(--text);color:#fff}
+.save-pill{background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:4px}
+.plan-featured-wrap{position:relative;padding-top:14px}
+.plan-most-pop{position:absolute;top:0;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;font-size:10px;font-weight:700;padding:3px 12px;border-radius:20px;white-space:nowrap;z-index:1}
+.plan-big{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:28px 22px;transition:all .2s;cursor:pointer;position:relative;overflow:hidden}
+.plan-big:hover{box-shadow:0 8px 30px rgba(0,0,0,.1);transform:translateY(-3px)}
+.plan-big.featured{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}
+.plan-big-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:14px}
+.plan-big-name{font-size:18px;font-weight:700;color:var(--text)}
+.plan-big-desc{font-size:13px;color:var(--text2);margin:5px 0 18px;line-height:1.5}
+.plan-big-price-wrap{display:flex;align-items:baseline;gap:1px;margin-bottom:2px}
+.plan-big-dollar{font-size:36px;font-weight:800;letter-spacing:-1.5px;color:var(--text)}
+.plan-big-cents{font-size:18px;font-weight:500;color:var(--text3)}
+.plan-big-per{font-size:12px;color:var(--text3);margin-bottom:20px}
+.pf-big{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text2);margin-bottom:9px}
+.fy-big{width:18px;height:18px;border-radius:50%;background:var(--accent-light);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px}
+.fn-big{width:18px;height:18px;border-radius:50%;background:var(--surface2);color:var(--text3);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-top:1px}
+.cta-btn{width:100%;padding:12px;border-radius:10px;font-size:14px;font-weight:700;border:none;cursor:pointer;margin-top:20px;transition:all .15s}
+.cta-primary{background:var(--text);color:#fff}.cta-primary:hover{opacity:.85}
+.cta-ghost{background:var(--surface2);color:var(--text2);border:1px solid var(--border)}.cta-ghost:hover{background:var(--border)}
+.cta-accent{background:var(--accent);color:#fff}.cta-accent:hover{opacity:.9}
+.invite-input-row{display:flex;gap:8px;margin-top:12px}
+.invite-input{flex:1;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;font-size:14px;color:var(--text);outline:none;font-family:monospace;letter-spacing:1px;text-transform:uppercase}
+.invite-input:focus{border-color:var(--accent)}
+.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.feat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px}
+.feat-icon{font-size:20px;margin-bottom:8px}
+.feat-title{font-size:13px;font-weight:600;color:var(--text)}
+.feat-desc{font-size:12px;color:var(--text2);margin-top:3px;line-height:1.5}
+.faq-item{border-bottom:1px solid var(--border);padding:14px 0}
+.faq-item:last-child{border-bottom:none}
+.faq-q{font-size:13px;font-weight:600;color:var(--text)}
+.faq-a{font-size:12px;color:var(--text2);margin-top:5px;line-height:1.6}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="logo" onclick="goScreen('purchase')">
+    <div class="logo-mark">L</div>
+    <span class="logo-name">Moonlit</span>
+  </div>
+  <div class="nav-links">
+    <button class="navbtn active" id="nav-purchase" onclick="goScreen('purchase')">Home</button>
+    <button class="navbtn" id="nav-account" onclick="goScreen('overview')">Account</button>
+    <button class="navbtn" id="nav-catalogs" onclick="goScreen('catalogs')">Catalogs</button>
+    <button class="navbtn" id="nav-admin" onclick="goScreen('users')">Admin</button>
+  </div>
+  <div class="nav-right">
+    <span class="tier-pill">ADMIN</span>
+    <div class="user-chip">
+      <div class="user-av">Z</div>
+      <span style="font-size:12px;font-weight:600;color:var(--text)">Zain</span>
+    </div>
+  </div>
+</nav>
+
+<div class="app">
+<aside class="sidebar">
+  <div class="sb-user">
+    <div class="sb-email">zainalkafaji19@gmail.com</div>
+    <div class="sb-profile">
+      <div class="sb-dot"></div>
+      <span class="sb-pname">Zain (main)</span>
+      <span class="sb-chevron">▾</span>
+    </div>
+  </div>
+  <div class="sb-section">Account</div>
+  <div class="sb-item active" id="sb-purchase" onclick="goScreen('purchase')">🏠 Home</div>
+  <div class="sb-item" id="sb-overview" onclick="goScreen('overview')">⊞ Overview</div>
+  <div class="sb-item" id="sb-profiles" onclick="goScreen('profiles')">◉ My profiles</div>
+  <div class="sb-item" id="sb-sub" onclick="goScreen('sub')">💳 Subscription</div>
+  <div class="sb-item" id="sb-invites" onclick="goScreen('invites')">🎟 Invite codes <span class="sb-count">3</span></div>
+  <div class="sb-section">Content</div>
+  <div class="sb-item" id="sb-addons" onclick="goScreen('addons')">🧩 Addons <span class="sb-count">9</span></div>
+  <div class="sb-item" id="sb-catalogs" onclick="goScreen('catalogs')">📁 Catalogs <span class="sb-count">24</span></div>
+  <div class="sb-item">📊 Watch history</div>
+  <div class="sb-item">🔖 Library</div>
+  <div class="sb-section">Admin</div>
+  <div class="sb-item" id="sb-users" onclick="goScreen('users')">👥 Users</div>
+  <div class="sb-item">📈 Analytics</div>
+  <div class="sb-item">⚙️ Settings</div>
+</aside>
+
+<main class="main">
+
+<!-- ═══════════════════════════════════
+     SCREEN: CONSUMER / PURCHASE FLOW
+═══════════════════════════════════ -->
+<section class="screen active" id="sc-purchase">
+
+  <div class="purchase-hero">
+    <div class="ph-eyebrow">Moonlit Streaming</div>
+    <h1 class="ph-title">Your content, your way.</h1>
+    <p class="ph-sub">Choose a plan and start watching in minutes.<br>No ads. No lock-in. Cancel any time.</p>
+    <div class="toggle-billing">
+      <div class="tb-opt on" onclick="setBilling('monthly',this)">Monthly</div>
+      <div class="tb-opt" onclick="setBilling('yearly',this)">Yearly <span class="save-pill">Save 20%</span></div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr 1.05fr 1fr;gap:14px;align-items:start">
+
+    <!-- PREMIUM -->
+    <div class="plan-big">
+      <div class="plan-top-bar" style="background:linear-gradient(90deg,#f472b6,#ec4899)"></div>
+      <div class="plan-big-icon" style="background:#fdf2f8">✨</div>
+      <div class="plan-big-name">Premium</div>
+      <div class="plan-big-desc">Works instantly — everything pre-configured for you</div>
+      <div class="plan-big-price-wrap">
+        <span class="plan-big-dollar" id="price-premium-dollar">$4</span><span class="plan-big-cents" id="price-premium-cents">.99</span>
+      </div>
+      <div class="plan-big-per" id="per-premium">per month</div>
+      <div class="pf-big"><div class="fy-big">✓</div>Up to 3 profiles</div>
+      <div class="pf-big"><div class="fy-big">✓</div>Content ready on sign-in</div>
+      <div class="pf-big"><div class="fy-big">✓</div>Curated catalogs included</div>
+      <div class="pf-big"><div class="fy-big">✓</div>Full playback quality</div>
+      <div class="pf-big"><div class="fn-big">✕</div>Custom addon management</div>
+      <button class="cta-btn cta-ghost">Get started</button>
+    </div>
+
+    <!-- PREMIUM+ (featured) -->
+    <div class="plan-featured-wrap">
+      <div class="plan-most-pop">Most popular</div>
+      <div class="plan-big featured">
+        <div class="plan-top-bar"></div>
+        <div class="plan-big-icon" style="background:var(--accent-light)">⚡</div>
+        <div class="plan-big-name">Premium+</div>
+        <div class="plan-big-desc">Full control — install and manage your own sources</div>
+        <div class="plan-big-price-wrap">
+          <span class="plan-big-dollar" id="price-powerplus-dollar">$9</span><span class="plan-big-cents" id="price-powerplus-cents">.99</span>
+        </div>
+        <div class="plan-big-per" id="per-powerplus">per month</div>
+        <div class="pf-big"><div class="fy-big">✓</div>Up to 5 profiles</div>
+        <div class="pf-big"><div class="fy-big">✓</div>Manage own addons and sources</div>
+        <div class="pf-big"><div class="fy-big">✓</div>All curated catalogs</div>
+        <div class="pf-big"><div class="fy-big">✓</div>Full playback quality</div>
+        <div class="pf-big"><div class="fy-big">✓</div>Priority support</div>
+        <button class="cta-btn cta-accent">Get started</button>
+      </div>
+    </div>
+
+    <!-- FAMILY -->
+    <div class="plan-big">
+      <div class="plan-top-bar" style="background:linear-gradient(90deg,#34d399,#059669)"></div>
+      <div class="plan-big-icon" style="background:#ecfdf5">👨‍👩‍👧</div>
+      <div class="plan-big-name">Family</div>
+      <div class="plan-big-desc">Share Moonlit with up to 7 people — they inherit your setup</div>
+      <div class="plan-big-price-wrap">
+        <span class="plan-big-dollar" id="price-family-dollar">$14</span><span class="plan-big-cents" id="price-family-cents">.99</span>
+      </div>
+      <div class="plan-big-per" id="per-family">per month</div>
+      <div class="pf-big"><div class="fy-big">✓</div>Unlimited profiles</div>
+      <div class="pf-big"><div class="fy-big">✓</div>Invite up to 7 family members</div>
+      <div class="pf-big"><div class="fy-big">✓</div>Members use your addons</div>
+      <div class="pf-big"><div class="fy-big">✓</div>All Premium+ features</div>
+      <div class="pf-big"><div class="fy-big">✓</div>Per-profile PIN lock</div>
+      <button class="cta-btn cta-primary">Get started</button>
+    </div>
+
+    <!-- INVITE CODE -->
+    <div class="plan-big" style="background:var(--surface2);border-style:dashed">
+      <div class="plan-big-icon" style="background:var(--accent-light);font-size:18px">🎟</div>
+      <div class="plan-big-name">Have an invite?</div>
+      <div class="plan-big-desc">A friend shared Moonlit with you — enter your code to get access</div>
+      <div style="margin-top:8px">
+        <div class="label">Invite code</div>
+        <div class="invite-input-row">
+          <input class="invite-input" placeholder="LUNA-XXXX">
+          <button class="btn btn-p" style="white-space:nowrap">Redeem</button>
+        </div>
+        <div style="font-size:11px;color:var(--text3);margin-top:8px">Your friend's plan access will be applied to your account.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FEATURES -->
+  <div>
+    <div style="font-size:16px;font-weight:700;margin-bottom:14px;color:var(--text)">What's included in every plan</div>
+    <div class="feature-grid">
+      <div class="feat-card"><div class="feat-icon">📱</div><div class="feat-title">All your devices</div><div class="feat-desc">iPhone, iPad, Mac, Apple TV — one subscription, everywhere.</div></div>
+      <div class="feat-card"><div class="feat-icon">📁</div><div class="feat-title">Curated catalogs</div><div class="feat-desc">Hand-picked collections built by the Moonlit team, updated regularly.</div></div>
+      <div class="feat-card"><div class="feat-icon">🔤</div><div class="feat-title">Subtitles and sync</div><div class="feat-desc">Subtitle support across all content, synced to your profile.</div></div>
+      <div class="feat-card"><div class="feat-icon">🔖</div><div class="feat-title">Watchlist and progress</div><div class="feat-desc">Save shows, track what you've watched, pick up right where you left off.</div></div>
+      <div class="feat-card"><div class="feat-icon">👤</div><div class="feat-title">Multiple profiles</div><div class="feat-desc">Each person gets their own watchlist, addons, and avatar.</div></div>
+      <div class="feat-card"><div class="feat-icon">🔒</div><div class="feat-title">PIN-protected profiles</div><div class="feat-desc">Lock any profile with a PIN to keep your watch history private.</div></div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="card card-pad">
+    <div class="card-h"><span class="card-title">Common questions</span></div>
+    <div class="faq-item"><div class="faq-q">What's the difference between Premium and Premium+?</div><div class="faq-a">Premium is pre-configured — content is ready the moment you sign in, no setup needed. Premium+ gives you full control to install and manage your own addons and content sources.</div></div>
+    <div class="faq-item"><div class="faq-q">How do invite codes work?</div><div class="faq-a">If a Family plan subscriber invites you, you'll receive a code granting Friends and Family access — which means you get access to their configured content without paying separately.</div></div>
+    <div class="faq-item"><div class="faq-q">Can I switch plans later?</div><div class="faq-a">Yes. You can upgrade or downgrade any time from the Subscription page. Changes take effect at the start of your next billing cycle.</div></div>
+    <div class="faq-item" style="border:none"><div class="faq-q">Is there a free trial?</div><div class="faq-a">New accounts get a 7-day free trial on any paid plan. No credit card required to start.</div></div>
+  </div>
+
+</section>
+
+<!-- ═══════════════════════
+     SCREEN: OVERVIEW
+═══════════════════════ -->
+<section class="screen" id="sc-overview">
+  <div class="hero">
+    <div>
+      <div style="font-size:20px;font-weight:700;color:var(--text)">Good evening, Zain 👋</div>
+      <div style="font-size:13px;color:var(--text2);margin-top:4px">Admin · Premium+ plan · 3 profiles · 9 addons</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-g" onclick="goScreen('profiles')">Manage profiles</button>
+      <button class="btn btn-p" onclick="goScreen('invites')">+ Invite user</button>
+    </div>
+  </div>
+  <div class="g6">
+    <div class="stat"><div class="stat-v" style="color:var(--accent)">12</div><div class="stat-l">Users</div></div>
+    <div class="stat"><div class="stat-v">31</div><div class="stat-l">Profiles</div></div>
+    <div class="stat"><div class="stat-v" style="color:var(--grn)">847</div><div class="stat-l">Watched</div></div>
+    <div class="stat"><div class="stat-v" style="color:var(--amb)">9</div><div class="stat-l">Addons</div></div>
+    <div class="stat"><div class="stat-v">24</div><div class="stat-l">Catalogs</div></div>
+    <div class="stat"><div class="stat-v" style="color:var(--pnk)">3</div><div class="stat-l">Invites</div></div>
+  </div>
+  <div class="g2">
+    <div class="card card-pad">
+      <div class="card-h"><span class="card-title">Users</span><span class="card-action" onclick="goScreen('users')">Manage all →</span></div>
+      <div class="u-row">
+        <div class="u-main">
+          <div class="av" style="width:32px;height:32px;font-size:13px;background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff">Z</div>
+          <div style="flex:1"><div style="font-size:13px;font-weight:600">Zain</div><div style="font-size:10px;color:var(--text3)">zainalkafaji19@gmail.com</div></div>
+          <span class="badge b-pur">ADMIN</span>
+        </div>
+        <div class="u-chips">
+          <span class="chip"><span class="chip-av" style="background:var(--accent-light);color:var(--accent)">Z</span>Zain</span>
+          <span class="chip"><span class="chip-av" style="background:var(--blu-bg);color:var(--blu)">W</span>Work</span>
+        </div>
+      </div>
+      <div class="u-row">
+        <div class="u-main">
+          <div class="av" style="width:32px;height:32px;font-size:13px;background:linear-gradient(135deg,#34d399,#059669);color:#fff">S</div>
+          <div style="flex:1"><div style="font-size:13px;font-weight:600">Sara</div><div style="font-size:10px;color:var(--text3)">sara@example.com</div></div>
+          <span class="badge b-grn">F&F</span>
+        </div>
+        <div class="u-chips">
+          <span class="chip"><span class="chip-av" style="background:var(--grn-bg);color:var(--grn)">S</span>Sara</span>
+          <span class="chip"><span class="chip-av" style="background:var(--pnk-bg);color:var(--pnk)">K</span>Kids</span>
+        </div>
+      </div>
+      <div class="u-row">
+        <div class="u-main">
+          <div class="av" style="width:32px;height:32px;font-size:13px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff">A</div>
+          <div style="flex:1"><div style="font-size:13px;font-weight:600">Ahmed</div><div style="font-size:10px;color:var(--text3)">ahmed@example.com</div></div>
+          <span class="badge b-amb">PREMIUM+</span>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="card card-pad">
+        <div class="card-h"><span class="card-title">Recent activity</span></div>
+        <div class="row"><div style="width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0"></div><div style="font-size:12px;color:var(--text2);flex:1">Sara watched <b style="color:var(--text)">Dune: Part Two</b></div><div style="font-size:10px;color:var(--text3)">2m</div></div>
+        <div class="row"><div style="width:7px;height:7px;border-radius:50%;background:var(--amb);flex-shrink:0"></div><div style="font-size:12px;color:var(--text2);flex:1">Ahmed added <b style="color:var(--text)">Torrentio</b></div><div style="font-size:10px;color:var(--text3)">1h</div></div>
+        <div class="row"><div style="width:7px;height:7px;border-radius:50%;background:var(--grn);flex-shrink:0"></div><div style="font-size:12px;color:var(--text2);flex:1">Catalog <b style="color:var(--text)">Best of 2025</b> published</div><div style="font-size:10px;color:var(--text3)">3h</div></div>
+        <div class="row"><div style="width:7px;height:7px;border-radius:50%;background:var(--blu);flex-shrink:0"></div><div style="font-size:12px;color:var(--text2);flex:1">Lara joined via <b style="color:var(--text)">LUNA-X9KP</b></div><div style="font-size:10px;color:var(--text3)">2d</div></div>
+      </div>
+      <div style="background:var(--grn-bg);border:1px solid var(--grn-border);border-radius:14px;padding:16px">
+        <div style="font-size:13px;font-weight:600;color:#064e3b">Family invite</div>
+        <div style="font-size:11px;color:var(--grn);margin-bottom:10px;margin-top:2px">3 of 7 slots used · expires Jun 30</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="inv-code">LUNA-X9KP</span>
+          <button class="btn btn-g btn-sm">Copy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════
+     SCREEN: USERS
+═══════════════════════ -->
+<section class="screen" id="sc-users">
+  <div class="page-h" style="margin-bottom:20px">
+    <div><div class="page-title">Users</div><div class="page-sub">Manage accounts, roles, and access</div></div>
+    <button class="btn btn-p">+ Invite user</button>
+  </div>
+  <div class="g4" style="margin-bottom:20px">
+    <div class="tier-sm" style="border-color:rgba(109,40,217,.2)"><span class="badge b-pur" style="margin-bottom:6px">ADMIN</span><div class="tier-count" style="color:var(--accent)">1</div><div style="font-size:11px;color:var(--text3)">Full platform control</div></div>
+    <div class="tier-sm" style="border-color:var(--grn-border)"><span class="badge b-grn" style="margin-bottom:6px">FRIENDS &amp; FAMILY</span><div class="tier-count" style="color:var(--grn)">4</div><div style="font-size:11px;color:var(--text3)">Inherits admin addons</div></div>
+    <div class="tier-sm" style="border-color:var(--pnk-border)"><span class="badge b-pnk" style="margin-bottom:6px">PREMIUM</span><div class="tier-count" style="color:var(--pnk)">5</div><div style="font-size:11px;color:var(--text3)">Ready out of the box</div></div>
+    <div class="tier-sm" style="border-color:var(--amb-border)"><span class="badge b-amb" style="margin-bottom:6px">PREMIUM+</span><div class="tier-count" style="color:var(--amb)">2</div><div style="font-size:11px;color:var(--text3)">Self-managed setup</div></div>
+  </div>
+  <div class="card">
+    <table class="tbl">
+      <thead><tr><th>User</th><th>Tier</th><th>Profiles</th><th>Addons</th><th>Joined</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        <tr><td><div style="display:flex;align-items:center;gap:9px"><div class="av" style="width:28px;height:28px;font-size:11px;background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff">Z</div><div><div style="font-size:13px;font-weight:600">Zain</div><div style="font-size:10px;color:var(--text3)">zainalkafaji19@gmail.com</div></div></div></td><td><span class="badge b-pur">ADMIN</span></td><td style="font-size:13px">2</td><td style="font-size:13px">9</td><td style="font-size:12px;color:var(--text3)">Jan 2025</td><td><span class="badge b-grn">Active</span></td><td><button class="btn btn-g btn-sm">Manage</button></td></tr>
+        <tr><td><div style="display:flex;align-items:center;gap:9px"><div class="av" style="width:28px;height:28px;font-size:11px;background:linear-gradient(135deg,#34d399,#059669);color:#fff">S</div><div><div style="font-size:13px;font-weight:600">Sara</div><div style="font-size:10px;color:var(--text3)">sara@example.com</div></div></div></td><td><span class="badge b-grn">F&amp;F</span></td><td style="font-size:13px">2</td><td style="font-size:12px;color:var(--text3)">inherited</td><td style="font-size:12px;color:var(--text3)">Mar 2025</td><td><span class="badge b-grn">Active</span></td><td><button class="btn btn-g btn-sm">Manage</button></td></tr>
+        <tr><td><div style="display:flex;align-items:center;gap:9px"><div class="av" style="width:28px;height:28px;font-size:11px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff">A</div><div><div style="font-size:13px;font-weight:600">Ahmed</div><div style="font-size:10px;color:var(--text3)">ahmed@example.com</div></div></div></td><td><span class="badge b-amb">PREMIUM+</span></td><td style="font-size:13px">1</td><td style="font-size:13px">6</td><td style="font-size:12px;color:var(--text3)">Apr 2025</td><td><span class="badge b-grn">Active</span></td><td><button class="btn btn-g btn-sm">Manage</button></td></tr>
+        <tr><td><div style="display:flex;align-items:center;gap:9px"><div class="av" style="width:28px;height:28px;font-size:11px;background:linear-gradient(135deg,#f472b6,#db2777);color:#fff">L</div><div><div style="font-size:13px;font-weight:600">Lara</div><div style="font-size:10px;color:var(--text3)">lara@example.com</div></div></div></td><td><span class="badge b-pnk">PREMIUM</span></td><td style="font-size:13px">1</td><td style="font-size:12px;color:var(--text3)">managed</td><td style="font-size:12px;color:var(--text3)">May 2025</td><td><span class="badge b-grn">Active</span></td><td><button class="btn btn-g btn-sm">Manage</button></td></tr>
+        <tr><td><div style="display:flex;align-items:center;gap:9px"><div class="av" style="width:28px;height:28px;font-size:11px;background:#e2e8f0;color:var(--text3)">M</div><div><div style="font-size:13px;font-weight:600">Mia</div><div style="font-size:10px;color:var(--text3)">mia@example.com</div></div></div></td><td><span class="badge b-grn">F&amp;F</span></td><td style="font-size:13px">0</td><td style="font-size:12px;color:var(--text3)">inherited</td><td style="font-size:12px;color:var(--text3)">Invited</td><td><span class="badge b-gray">Pending</span></td><td><button class="btn btn-g btn-sm">Manage</button></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════════════
+     SCREEN: PROFILES
+═══════════════════════ -->
+<section class="screen" id="sc-profiles">
+  <div class="page-h" style="margin-bottom:20px">
+    <div><div class="page-title">My profiles</div><div class="page-sub">Sub-profiles within your account</div></div>
+    <button class="btn btn-p">+ New profile</button>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:24px">
+    <div class="pc sel">
+      <div class="pc-av" style="background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff">Z</div>
+      <div style="font-size:13px;font-weight:600">Zain</div><div style="font-size:11px;color:var(--text3);margin-top:3px">Main profile</div>
+      <div style="margin-top:8px"><span class="badge b-grn" style="font-size:9px">Active</span></div>
+    </div>
+    <div class="pc">
+      <div class="pc-av" style="background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff">W</div>
+      <div style="font-size:13px;font-weight:600">Work</div><div style="font-size:11px;color:var(--text3);margin-top:3px">2 addons · PIN locked</div>
+      <div style="margin-top:8px"><span class="badge b-gray" style="font-size:9px">🔒 Locked</span></div>
+    </div>
+    <div class="pc" style="border-style:dashed">
+      <div class="pc-av" style="background:var(--surface2);color:var(--text3);font-size:24px">+</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text3)">Add profile</div><div style="font-size:11px;color:var(--text3);margin-top:3px">5 slots · 2 used</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card card-pad">
+      <div class="card-h"><span class="card-title">Settings — Zain</span></div>
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px">
+        <div class="av" style="width:54px;height:54px;font-size:21px;background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff">Z</div>
+        <div><div style="font-size:15px;font-weight:700">Zain</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Main · Admin account</div><button class="btn btn-g btn-sm" style="margin-top:8px">Change avatar</button></div>
+      </div>
+      <div class="bill-row"><span style="color:var(--text2)">Display name</span><span style="font-weight:600">Zain</span></div>
+      <div class="bill-row"><span style="color:var(--text2)">PIN lock</span><span class="badge b-gray">Disabled</span></div>
+      <div class="bill-row"><span style="color:var(--text2)">Language</span><span style="font-weight:600">English</span></div>
+      <div class="bill-row"><span style="color:var(--text2)">Default quality</span><span style="font-weight:600">4K HDR</span></div>
+      <div style="margin-top:14px"><button class="btn btn-p">Save changes</button></div>
+    </div>
+    <div class="card card-pad">
+      <div class="card-h"><span class="card-title">Addons — Zain</span><span class="card-action" onclick="goScreen('addons')">Manage →</span></div>
+      <div class="row"><div class="addon-logo" style="background:#fee2e2">🎬</div><div style="flex:1"><div style="font-size:13px;font-weight:600">Torrentio</div><div style="font-size:11px;color:var(--text3)">Streams · Catalogs</div></div><div class="toggle t-on"><div class="t-knob"></div></div></div>
+      <div class="row"><div class="addon-logo" style="background:var(--accent-light)">📺</div><div style="flex:1"><div style="font-size:13px;font-weight:600">TMDB Addon</div><div style="font-size:11px;color:var(--text3)">Catalogs · Meta</div></div><div class="toggle t-on"><div class="t-knob"></div></div></div>
+      <div class="row"><div class="addon-logo" style="background:var(--grn-bg)">🔤</div><div style="flex:1"><div style="font-size:13px;font-weight:600">OpenSubtitles</div><div style="font-size:11px;color:var(--text3)">Subtitles</div></div><div class="toggle t-off"><div class="t-knob"></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════
+     SCREEN: SUBSCRIPTION
+═══════════════════════ -->
+<section class="screen" id="sc-sub">
+  <div class="page-h" style="margin-bottom:20px">
+    <div><div class="page-title">Subscription</div><div class="page-sub">Manage your plan and billing</div></div>
+  </div>
+  <div class="g4">
+    <div class="plan"><div style="font-size:22px;margin-bottom:8px">✨</div><div style="font-size:15px;font-weight:700">Premium</div><div style="font-size:12px;color:var(--text2);margin:4px 0 12px">Pre-configured, ready instantly</div><div style="font-size:26px;font-weight:800">$4.99</div><div style="font-size:11px;color:var(--text3);margin-bottom:14px">/ month</div><div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);margin-bottom:6px"><span style="color:var(--accent);font-weight:700">✓</span>Up to 3 profiles</div><div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);margin-bottom:6px"><span style="color:var(--accent);font-weight:700">✓</span>Pre-configured content</div><div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text3);margin-bottom:6px"><span style="color:var(--border2)">✗</span>Custom addons</div><button class="btn btn-g" style="width:100%;margin-top:12px">Select</button></div>
+    <div class="plan cur"><div class="plan-top-bar"></div><div style="margin-bottom:8px"><span class="badge b-pur" style="font-size:9px">CURRENT PLAN</span></div><div style="font-size:22px;margin-bottom:8px">⚡</div><div style="font-size:15px;font-weight:700">Premium+</div><div style="font-size:12px;color:var(--text2);margin:4px 0 12px">Full control — manage your own sources</div><div style="font-size:26px;font-weight:800">$9.99</div><div style="font-size:11px;color:var(--text3);margin-bottom:14px">/ month</div><div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);margin-bottom:6px"><span style="color:var(--accent);font-weight:700">✓</span>Up to 5 profiles</div><div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);margin-bottom:6px"><span style="color:var(--accent);font-weight:700">✓</span>Manage own addons</div><div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);margin-bottom:6px"><span style="color:var(--accent);font-weight:700">✓</span>Priority support</div><button style="width:100%;margin-top:12px;background:var(--accent-light);color:var(--accent);border:1px solid rgba(109,40,217,.2);padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:default">Your current plan</button></div>
+    <div class="plan"><div style="font-size:22px;margin-bottom:8px">👨‍👩‍👧</div><div style="font-size:15px;font-weight:700">Family</div><div style="font-size:12px;color:var(--text2);margin:4px 0 12px">Share with up to 7 invited users</div><div style="font-size:26px;font-weight:800">$14.99</div><div style="font-size:11px;color:var(--text3);margin-bottom:14px">/ month</div><div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);margin-bottom:6px"><span style="color:var(--accent);font-weight:700">✓</span>Unlimited profiles</div><div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);margin-bottom:6px"><span style="color:var(--accent);font-weight:700">✓</span>7 invited users</div><div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);margin-bottom:6px"><span style="color:var(--accent);font-weight:700">✓</span>Members inherit addons</div><button class="btn btn-p" style="width:100%;margin-top:12px">Upgrade</button></div>
+    <div class="plan" style="opacity:.65"><div style="font-size:22px;margin-bottom:8px">👑</div><div style="font-size:15px;font-weight:700">Admin</div><div style="font-size:12px;color:var(--text2);margin:4px 0 12px">Platform operators only</div><div style="font-size:17px;font-weight:800">By invite</div><div style="font-size:11px;color:var(--text3);margin-bottom:14px">only</div><div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);margin-bottom:6px"><span style="color:var(--accent);font-weight:700">✓</span>All Family features</div><div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);margin-bottom:6px"><span style="color:var(--accent);font-weight:700">✓</span>Catalog CMS</div><div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);margin-bottom:6px"><span style="color:var(--accent);font-weight:700">✓</span>Analytics + user mgmt</div><button class="btn btn-g" style="width:100%;margin-top:12px;opacity:.5;cursor:default">Admin only</button></div>
+  </div>
+  <div class="g2">
+    <div class="card card-pad">
+      <div class="card-h"><span class="card-title">Billing details</span><span class="card-action">Update</span></div>
+      <div class="bill-row"><span style="color:var(--text2)">Plan</span><span style="font-weight:600">Premium+</span></div>
+      <div class="bill-row"><span style="color:var(--text2)">Status</span><span class="badge b-grn">Active</span></div>
+      <div class="bill-row"><span style="color:var(--text2)">Next billing</span><span style="font-weight:600">Jul 9, 2026</span></div>
+      <div class="bill-row"><span style="color:var(--text2)">Amount</span><span style="font-weight:600">$9.99 / month</span></div>
+      <div class="bill-row"><span style="color:var(--text2)">Payment</span><span style="font-weight:600">Visa ••••4242</span></div>
+      <div style="display:flex;gap:8px;margin-top:14px"><button class="btn btn-g btn-sm">Update card</button><button class="btn btn-d btn-sm">Cancel plan</button></div>
+    </div>
+    <div class="card card-pad">
+      <div class="card-h"><span class="card-title">Invoice history</span><span class="card-action">Download all</span></div>
+      <div class="row"><span style="font-size:11px;color:var(--text3);width:80px">Jun 9, 2026</span><span style="font-size:12px;flex:1">Premium+ monthly</span><span class="badge b-grn" style="font-size:9px;margin-right:8px">Paid</span><span style="font-size:13px;font-weight:600">$9.99</span></div>
+      <div class="row"><span style="font-size:11px;color:var(--text3);width:80px">May 9, 2026</span><span style="font-size:12px;flex:1">Premium+ monthly</span><span class="badge b-grn" style="font-size:9px;margin-right:8px">Paid</span><span style="font-size:13px;font-weight:600">$9.99</span></div>
+      <div class="row"><span style="font-size:11px;color:var(--text3);width:80px">Apr 9, 2026</span><span style="font-size:12px;flex:1">Premium+ monthly</span><span class="badge b-grn" style="font-size:9px;margin-right:8px">Paid</span><span style="font-size:13px;font-weight:600">$9.99</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════
+     SCREEN: ADDONS
+═══════════════════════ -->
+<section class="screen" id="sc-addons">
+  <div class="page-h" style="margin-bottom:20px">
+    <div><div class="page-title">Addons</div><div class="page-sub">Content sources for your profiles</div></div>
+    <div style="display:flex;gap:8px"><button class="btn btn-g">Refresh all</button><button class="btn btn-p">+ Add addon</button></div>
+  </div>
+  <div class="tabs">
+    <div class="tab on" onclick="swTab(this)">Zain (main)</div>
+    <div class="tab" onclick="swTab(this)">Work</div>
+  </div>
+  <div class="g2">
+    <div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><span style="font-size:14px;font-weight:600">Active addons</span><span style="font-size:11px;color:var(--text3)">9 installed</span></div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="addon"><div class="addon-logo" style="background:#fee2e2">🎬</div><div style="flex:1"><div style="font-size:13px;font-weight:600">Torrentio</div><div style="font-size:10px;color:var(--text3)">Streams · Catalogs · updated 2h ago</div></div><div class="toggle t-on"><div class="t-knob"></div></div></div>
+        <div class="addon"><div class="addon-logo" style="background:var(--accent-light)">📺</div><div style="flex:1"><div style="font-size:13px;font-weight:600">TMDB Addon</div><div style="font-size:10px;color:var(--text3)">Catalogs · Meta · updated 1d ago</div></div><div class="toggle t-on"><div class="t-knob"></div></div></div>
+        <div class="addon"><div class="addon-logo" style="background:var(--grn-bg)">🔤</div><div style="flex:1"><div style="font-size:13px;font-weight:600">OpenSubtitles</div><div style="font-size:10px;color:var(--text3)">Subtitles · updated 3d ago</div></div><div class="toggle t-on"><div class="t-knob"></div></div></div>
+        <div class="addon"><div class="addon-logo" style="background:var(--amb-bg)">⭐</div><div style="flex:1"><div style="font-size:13px;font-weight:600">Cinemeta</div><div style="font-size:10px;color:var(--text3)">Meta · Catalogs</div></div><div class="toggle t-off"><div class="t-knob"></div></div></div>
+        <div class="addon" style="border-style:dashed;justify-content:center;flex-direction:column;text-align:center;gap:4px;padding:16px;background:var(--surface2)"><div style="font-size:20px;color:var(--text3)">+</div><div style="font-size:12px;color:var(--text3)">Add addon</div></div>
+      </div>
+    </div>
+    <div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><span style="font-size:14px;font-weight:600">Inherited by friends &amp; family</span><span class="badge b-grn" style="font-size:9px">F&amp;F</span></div>
+      <div style="background:var(--grn-bg);border:1px solid var(--grn-border);border-radius:10px;padding:11px 13px;margin-bottom:12px;font-size:12px;color:#065f46">Friends and family users automatically use your addons — they cannot add or remove their own.</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="addon" style="opacity:0.5"><div class="addon-logo" style="background:#fee2e2">🎬</div><div style="flex:1"><div style="font-size:13px;font-weight:600">Torrentio</div><div style="font-size:10px;color:var(--text3)">Streams · Catalogs</div></div><span style="color:var(--text3);font-size:15px">🔒</span></div>
+        <div class="addon" style="opacity:0.5"><div class="addon-logo" style="background:var(--accent-light)">📺</div><div style="flex:1"><div style="font-size:13px;font-weight:600">TMDB Addon</div><div style="font-size:10px;color:var(--text3)">Catalogs · Meta</div></div><span style="color:var(--text3);font-size:15px">🔒</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════
+     SCREEN: CATALOGS
+═══════════════════════ -->
+<section class="screen" id="sc-catalogs">
+  <div class="page-h" style="margin-bottom:20px">
+    <div>
+      <div class="page-title">Catalogs</div>
+      <div class="page-sub">Drag to reorder · click to expand and edit</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div class="tabs" style="margin-bottom:0">
+        <div class="tab on" onclick="swTab(this);setCatView('list')">≡ List</div>
+        <div class="tab" onclick="swTab(this);setCatView('grid')">⊞ Grid</div>
+      </div>
+      <button class="btn btn-p" onclick="addCatalog()">+ New catalog</button>
+    </div>
+  </div>
+
+  <!-- LIST VIEW -->
+  <div id="cat-list-view">
+    <div id="coll-list"></div>
+  </div>
+
+  <!-- GRID VIEW (hidden by default) -->
+  <div id="cat-grid-view" style="display:none">
+    <div id="coll-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px"></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════
+     SCREEN: INVITES
+═══════════════════════ -->
+<section class="screen" id="sc-invites">
+  <div class="page-h" style="margin-bottom:20px">
+    <div><div class="page-title">Invite codes</div><div class="page-sub">Control who joins Moonlit and at what tier</div></div>
+    <button class="btn btn-p">+ Generate code</button>
+  </div>
+  <div class="g2">
+    <div class="card card-pad">
+      <div class="card-h"><span class="card-title">Active codes</span></div>
+      <div class="row" style="flex-wrap:wrap;gap:10px"><div><span class="inv-code">LUNA-X9KP</span><div style="font-size:11px;color:var(--text3);margin-top:6px"><span class="badge b-grn" style="font-size:9px">F&amp;F</span> · 2/7 used · expires Jun 30</div></div><div style="display:flex;gap:6px;margin-left:auto"><button class="btn btn-g btn-sm">Copy</button><button class="btn btn-d btn-sm">Revoke</button></div></div>
+      <div class="row" style="flex-wrap:wrap;gap:10px"><div><span class="inv-code">LUNA-M4RZ</span><div style="font-size:11px;color:var(--text3);margin-top:6px"><span class="badge b-pnk" style="font-size:9px">PREMIUM</span> · 0/3 used · expires Jul 15</div></div><div style="display:flex;gap:6px;margin-left:auto"><button class="btn btn-g btn-sm">Copy</button><button class="btn btn-d btn-sm">Revoke</button></div></div>
+      <div class="row" style="opacity:0.5;flex-wrap:wrap;gap:10px"><div><span class="inv-code" style="text-decoration:line-through;opacity:.6">LUNA-9QPW</span><div style="font-size:11px;color:var(--text3);margin-top:6px"><span class="badge b-amb" style="font-size:9px">PREMIUM+</span> · 1/1 used · expired</div></div><span class="badge b-gray" style="margin-left:auto">Expired</span></div>
+    </div>
+    <div class="card card-pad">
+      <div class="card-h"><span class="card-title">Generate new code</span></div>
+      <div style="margin-bottom:12px"><div class="label">Tier to grant</div><div class="tabs" style="margin-bottom:0"><div class="tab on" onclick="swTab(this)">F&amp;F</div><div class="tab" onclick="swTab(this)">Premium</div><div class="tab" onclick="swTab(this)">Premium+</div></div></div>
+      <div style="margin-bottom:12px"><div class="label">Max uses</div><input class="input" value="5" style="width:100px"></div>
+      <div style="margin-bottom:16px"><div class="label">Expiry (days)</div><input class="input" value="30" style="width:100px"></div>
+      <button class="btn btn-p">Generate code</button>
+    </div>
+  </div>
+</section>
+
+</main>
+</div>
+
+<!-- ═══════════════════════════════════
+     COLLECTION EDIT MODAL
+═══════════════════════════════════ -->
+<div class="modal-backdrop hidden" id="collModal">
+  <div class="modal">
+    <!-- header -->
+    <div class="modal-head">
+      <div class="modal-title">Edit Collection</div>
+      <div class="modal-meta">
+        <div>
+          <div class="modal-meta-name" id="mModalName"></div>
+          <div class="modal-meta-desc">Edit folders, sources, artwork, and validation from one focused workspace.</div>
+        </div>
+        <div class="modal-meta-pills" id="mModalPills"></div>
+      </div>
+    </div>
+    <!-- steps -->
+    <div class="modal-steps">
+      <div class="mstep active" id="mstep-0" onclick="gotoStep(0)"><span class="mstep-num">1</span>Basics</div>
+      <div class="mstep" id="mstep-1" onclick="gotoStep(1)"><span class="mstep-num">2</span><span id="mstep1-label">Sources</span></div>
+      <div class="mstep" id="mstep-2" onclick="gotoStep(2)"><span class="mstep-num">3</span>Artwork</div>
+      <div class="mstep" id="mstep-3" onclick="gotoStep(3)"><span class="mstep-num">4</span>Review</div>
+    </div>
+    <!-- body (swapped per step) -->
+    <div id="mBody" style="flex:1;overflow:hidden;display:flex;flex-direction:column"></div>
+    <!-- footer -->
+    <div class="modal-foot">
+      <span class="modal-foot-note">Collection IDs stay fixed after creation. You can keep refining later.</span>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-g" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-g" id="mBtnBack" onclick="stepBack()" style="display:none">Back</button>
+        <button class="btn btn-p" id="mBtnNext" onclick="stepNext()">Continue</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const screens = ['purchase','overview','users','profiles','sub','addons','catalogs','invites'];
+
+function goScreen(id) {
+  screens.forEach(function(s) {
+    var el = document.getElementById('sc-' + s);
+    if (el) el.classList.toggle('active', s === id);
+    var sb = document.getElementById('sb-' + s);
+    if (sb) sb.classList.toggle('active', s === id);
+  });
+  var navMap = {purchase:'nav-purchase',overview:'nav-account',profiles:'nav-account',sub:'nav-account',invites:'nav-account',addons:'nav-account',catalogs:'nav-catalogs',users:'nav-admin'};
+  document.querySelectorAll('.navbtn').forEach(function(b) { b.classList.remove('active'); });
+  var navId = navMap[id];
+  if (navId) { var btn = document.getElementById(navId); if (btn) btn.classList.add('active'); }
+  window.scrollTo(0, 0);
+}
+
+function swTab(el) {
+  el.closest('.tabs').querySelectorAll('.tab').forEach(function(t) { t.classList.remove('on'); });
+  el.classList.add('on');
+}
+
+document.querySelectorAll('.toggle').forEach(function(t) {
+  t.addEventListener('click', function() {
+    this.classList.toggle('t-on');
+    this.classList.toggle('t-off');
+  });
+});
+
+var prices = {
+  monthly: { premium: ['$4', '.99'], powerplus: ['$9', '.99'], family: ['$14', '.99'] },
+  yearly:  { premium: ['$3', '.99'], powerplus: ['$7', '.99'], family: ['$11', '.99'] }
+};
+
+function setBilling(type, btn) {
+  document.querySelectorAll('.tb-opt').forEach(function(b) { b.classList.remove('on'); });
+  btn.classList.add('on');
+  var p = prices[type];
+  var perText = type === 'yearly' ? 'per month, billed yearly' : 'per month';
+  Object.keys(p).forEach(function(k) {
+    var d = document.getElementById('price-' + k + '-dollar');
+    var c = document.getElementById('price-' + k + '-cents');
+    var per = document.getElementById('per-' + k);
+    if (d) d.textContent = p[k][0];
+    if (c) c.textContent = p[k][1];
+    if (per) per.textContent = perText;
+  });
+}
+
+/* ═══════════════════════════════
+   CATALOG MANAGEMENT
+═══════════════════════════════ */
+
+var catalogs = [
+  {
+    id: 1, name: 'Best of 2025', emoji: '🎬',
+    color: 'linear-gradient(135deg,#ddd6fe,#c4b5fd)',
+    desc: 'Curated picks from the best of 2025',
+    items: 42, status: 'published', visible: true,
+    visibility: 'all',
+    sources: [
+      { id: 1, icon: '🎬', bg: '#fee2e2', name: 'TMDB popular movies', type: 'TMDB · sort: popularity' },
+      { id: 2, icon: '📦', bg: '#ede9fe', name: 'Community pack — Sci-Fi', type: 'Community · manual list' },
+      { id: 3, icon: '✏️', bg: '#ecfdf5', name: 'Manual picks', type: 'Manual · 8 items' }
+    ]
+  },
+  {
+    id: 2, name: 'Documentaries', emoji: '🌿',
+    color: 'linear-gradient(135deg,#bbf7d0,#86efac)',
+    desc: 'The best documentary films and series',
+    items: 28, status: 'published', visible: true,
+    visibility: 'all',
+    sources: [
+      { id: 1, icon: '🎬', bg: '#fee2e2', name: 'TMDB documentaries', type: 'TMDB · genre: documentary' },
+      { id: 2, icon: '✏️', bg: '#ecfdf5', name: 'Staff picks', type: 'Manual · 5 items' }
+    ]
+  },
+  {
+    id: 3, name: 'Sci-Fi Universe', emoji: '🚀',
+    color: 'linear-gradient(135deg,#bae6fd,#7dd3fc)',
+    desc: 'Space operas, hard sci-fi, and everything in between',
+    items: 61, status: 'published', visible: true,
+    visibility: 'premium',
+    sources: [
+      { id: 1, icon: '🎬', bg: '#fee2e2', name: 'TMDB sci-fi', type: 'TMDB · genre: science fiction' }
+    ]
+  },
+  {
+    id: 4, name: 'New Releases', emoji: '⭐',
+    color: 'linear-gradient(135deg,#fde68a,#fbbf24)',
+    desc: 'Fresh out this week',
+    items: 14, status: 'draft', visible: false,
+    visibility: 'all',
+    sources: [
+      { id: 1, icon: '🎬', bg: '#fee2e2', name: 'TMDB now playing', type: 'TMDB · sort: release_date' }
+    ]
+  },
+  {
+    id: 5, name: 'Hidden Gems', emoji: '💎',
+    color: 'linear-gradient(135deg,#fbcfe8,#f9a8d4)',
+    desc: 'Underrated films worth your time',
+    items: 33, status: 'published', visible: true,
+    visibility: 'all',
+    sources: [
+      { id: 1, icon: '✏️', bg: '#ecfdf5', name: 'Curated manual list', type: 'Manual · 33 items' }
+    ]
+  }
+];
+
+var nextCatId = 6;
+var dragSrcIdx = null;
+var catView = 'list';
+
+function setCatView(v) {
+  catView = v;
+  document.getElementById('cat-list-view').style.display = v === 'list' ? '' : 'none';
+  document.getElementById('cat-grid-view').style.display = v === 'grid' ? '' : 'none';
+  if (v === 'grid') renderGrid();
+}
+
+function statusBadge(cat) {
+  if (!cat.visible) return '<span class="badge b-gray">Hidden</span>';
+  if (cat.status === 'draft') return '<span class="badge b-amb">Draft</span>';
+  return '<span class="badge b-grn">Published</span>';
+}
+
+function visLabel(v) {
+  return v === 'premium' ? 'Premium+' : v === 'admin' ? 'Admin only' : 'All users';
+}
+
+function renderList() {
+  var list = document.getElementById('coll-list');
+  list.innerHTML = '';
+  catalogs.forEach(function(cat, idx) {
+    var row = document.createElement('div');
+    row.className = 'coll-row';
+    row.dataset.idx = idx;
+    row.draggable = true;
+
+    var sourceTags = cat.sources.map(function(s) {
+      return '<span class="src-chip">' + s.name.split(' ')[0] + '</span>';
+    }).join('');
+
+    row.innerHTML =
+      '<div class="coll-main" onclick="toggleEditor(event,' + idx + ')">' +
+        '<div class="coll-handle" draggable="false" onclick="event.stopPropagation()">⠿</div>' +
+        '<div class="coll-thumb" style="background:' + cat.color + '">' + cat.emoji + '</div>' +
+        '<div class="coll-info">' +
+          '<div class="coll-name" id="cname-' + idx + '">' +
+            '<span class="cname-text">' + cat.name + '</span>' +
+            statusBadge(cat) +
+          '</div>' +
+          '<div class="coll-meta">' + cat.items + ' items · ' + cat.sources.length + ' sources · ' + visLabel(cat.visibility) + '</div>' +
+        '</div>' +
+        '<div class="coll-actions" onclick="event.stopPropagation()">' +
+          '<div class="toggle ' + (cat.visible ? 't-on' : 't-off') + '" title="Visible in app" onclick="toggleVisible(' + idx + ')"><div class="t-knob"></div></div>' +
+          '<button class="btn btn-p btn-sm" onclick="openCollModal(' + idx + ')">Edit</button>' +
+          '<button class="btn btn-g btn-sm" onclick="renameCat(' + idx + ')">Rename</button>' +
+          '<button class="btn btn-g btn-sm" onclick="dupCat(' + idx + ')">Duplicate</button>' +
+          '<button class="btn btn-d btn-sm" onclick="delCat(' + idx + ')">Delete</button>' +
+          '<span class="coll-chevron">▼</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="coll-editor">' + buildEditor(cat, idx) + '</div>';
+
+    /* drag events */
+    row.addEventListener('dragstart', function(e) {
+      dragSrcIdx = idx;
+      setTimeout(function() { row.classList.add('dragging'); }, 0);
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    row.addEventListener('dragend', function() {
+      row.classList.remove('dragging');
+      document.querySelectorAll('.coll-row').forEach(function(r) { r.classList.remove('drag-over'); });
+    });
+    row.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      document.querySelectorAll('.coll-row').forEach(function(r) { r.classList.remove('drag-over'); });
+      if (dragSrcIdx !== idx) row.classList.add('drag-over');
+    });
+    row.addEventListener('drop', function(e) {
+      e.preventDefault();
+      if (dragSrcIdx !== null && dragSrcIdx !== idx) {
+        var moved = catalogs.splice(dragSrcIdx, 1)[0];
+        catalogs.splice(idx, 0, moved);
+        dragSrcIdx = null;
+        renderList();
+      }
+    });
+
+    list.appendChild(row);
+  });
+
+  /* add-new button row */
+  var addRow = document.createElement('div');
+  addRow.style.cssText = 'border:1.5px dashed var(--border2);border-radius:12px;padding:14px 20px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;color:var(--text3);font-size:13px;font-weight:600;transition:all .15s;margin-bottom:6px';
+  addRow.innerHTML = '<span style="font-size:18px">+</span> New collection';
+  addRow.addEventListener('mouseenter', function() { addRow.style.borderColor = 'var(--accent)'; addRow.style.color = 'var(--accent)'; addRow.style.background = 'var(--accent-light)'; });
+  addRow.addEventListener('mouseleave', function() { addRow.style.borderColor = 'var(--border2)'; addRow.style.color = 'var(--text3)'; addRow.style.background = ''; });
+  addRow.addEventListener('click', addCatalog);
+  list.appendChild(addRow);
+}
+
+function buildEditor(cat, idx) {
+  var srcRows = cat.sources.map(function(src, si) {
+    return '<div class="src-item" draggable="true" data-si="' + si + '" data-cidx="' + idx + '">' +
+      '<span class="src-handle">⠿</span>' +
+      '<div style="width:28px;height:28px;border-radius:7px;background:' + src.bg + ';display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">' + src.icon + '</div>' +
+      '<div style="flex:1;margin-left:2px"><div style="font-size:12px;font-weight:600">' + src.name + '</div><div style="font-size:10px;color:var(--text3)">' + src.type + '</div></div>' +
+      '<button class="btn btn-g btn-sm">Edit</button>' +
+      '<button class="btn btn-d btn-sm" style="margin-left:4px" onclick="delSource(' + idx + ',' + si + ')">✕</button>' +
+    '</div>';
+  }).join('');
+
+  var visOpts = ['all','premium','admin'].map(function(v) {
+    return '<div class="tab' + (cat.visibility === v ? ' on' : '') + '" onclick="setCatVis(' + idx + ',\'' + v + '\',this)">' + visLabel(v) + '</div>';
+  }).join('');
+
+  return '<div class="col-grid">' +
+    '<div>' +
+      '<div style="margin-bottom:12px"><div class="label">Title</div>' +
+        '<input class="input" value="' + cat.name + '" onchange="updateCatField(' + idx + ',\'name\',this.value)"></div>' +
+      '<div style="margin-bottom:12px"><div class="label">Description</div>' +
+        '<input class="input" value="' + cat.desc + '" onchange="updateCatField(' + idx + ',\'desc\',this.value)"></div>' +
+      '<div style="margin-bottom:4px"><div class="label">Sources</div>' +
+        '<div class="src-list" id="src-list-' + idx + '">' + srcRows + '</div>' +
+        '<button class="btn btn-g btn-sm" onclick="addSource(' + idx + ')">+ Add source</button>' +
+      '</div>' +
+    '</div>' +
+    '<div>' +
+      '<div style="margin-bottom:14px"><div class="label">Cover</div>' +
+        '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px">' +
+          buildSwatches(idx) +
+        '</div>' +
+        '<div class="upload-zone" style="padding:14px"><div style="font-size:20px;margin-bottom:4px">🖼</div><div style="font-size:11px">Upload cover image</div></div>' +
+      '</div>' +
+      '<div style="margin-bottom:14px"><div class="label">Visibility</div>' +
+        '<div class="tabs" style="margin-bottom:0">' + visOpts + '</div>' +
+      '</div>' +
+      '<div style="display:flex;gap:8px;margin-top:16px">' +
+        '<button class="btn btn-p btn-sm" onclick="saveCat(' + idx + ')">Save</button>' +
+        '<button class="btn btn-g btn-sm" onclick="toggleStatus(' + idx + ')">' + (cat.status === 'published' ? 'Unpublish' : 'Publish') + '</button>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+var swatchOptions = [
+  'linear-gradient(135deg,#ddd6fe,#c4b5fd)',
+  'linear-gradient(135deg,#bbf7d0,#86efac)',
+  'linear-gradient(135deg,#bae6fd,#7dd3fc)',
+  'linear-gradient(135deg,#fde68a,#fbbf24)',
+  'linear-gradient(135deg,#fbcfe8,#f9a8d4)',
+  'linear-gradient(135deg,#fed7aa,#fb923c)',
+  'linear-gradient(135deg,#e0e7ff,#818cf8)',
+  'linear-gradient(135deg,#cffafe,#67e8f9)'
+];
+
+function buildSwatches(idx) {
+  return swatchOptions.map(function(sw) {
+    var active = catalogs[idx].color === sw ? 'box-shadow:0 0 0 2px var(--accent);' : '';
+    return '<div style="height:32px;border-radius:8px;background:' + sw + ';cursor:pointer;' + active + 'border:1px solid rgba(0,0,0,.06)" onclick="setCatColor(' + idx + ',\'' + sw.replace(/'/g,'"') + '\')"></div>';
+  }).join('');
+}
+
+function toggleEditor(e, idx) {
+  if (e.target.closest('.coll-actions')) return;
+  var rows = document.querySelectorAll('.coll-row');
+  rows.forEach(function(r, i) {
+    if (i !== idx) r.classList.remove('open');
+  });
+  rows[idx].classList.toggle('open');
+}
+
+function toggleVisible(idx) {
+  catalogs[idx].visible = !catalogs[idx].visible;
+  renderList();
+}
+
+function toggleStatus(idx) {
+  catalogs[idx].status = catalogs[idx].status === 'published' ? 'draft' : 'published';
+  renderList();
+}
+
+function renameCat(idx) {
+  var nameDiv = document.getElementById('cname-' + idx);
+  if (!nameDiv) return;
+  var current = catalogs[idx].name;
+  var inp = document.createElement('input');
+  inp.className = 'coll-name-input';
+  inp.value = current;
+  nameDiv.innerHTML = '';
+  nameDiv.appendChild(inp);
+  inp.focus();
+  inp.select();
+  function commit() {
+    var v = inp.value.trim();
+    if (v) catalogs[idx].name = v;
+    renderList();
+  }
+  inp.addEventListener('blur', commit);
+  inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') { inp.blur(); } if (e.key === 'Escape') { renderList(); } });
+}
+
+function updateCatField(idx, field, val) {
+  catalogs[idx][field] = val;
+}
+
+function setCatColor(idx, color) {
+  catalogs[idx].color = color;
+  renderList();
+  /* re-open the editor */
+  setTimeout(function() {
+    var rows = document.querySelectorAll('.coll-row');
+    if (rows[idx]) rows[idx].classList.add('open');
+  }, 10);
+}
+
+function setCatVis(idx, v, btn) {
+  catalogs[idx].visibility = v;
+  btn.closest('.tabs').querySelectorAll('.tab').forEach(function(t) { t.classList.remove('on'); });
+  btn.classList.add('on');
+}
+
+function saveCat(idx) {
+  renderList();
+  setTimeout(function() {
+    var rows = document.querySelectorAll('.coll-row');
+    if (rows[idx]) rows[idx].classList.add('open');
+  }, 10);
+}
+
+function dupCat(idx) {
+  var copy = JSON.parse(JSON.stringify(catalogs[idx]));
+  copy.id = nextCatId++;
+  copy.name = copy.name + ' (copy)';
+  copy.status = 'draft';
+  catalogs.splice(idx + 1, 0, copy);
+  renderList();
+}
+
+function delCat(idx) {
+  catalogs.splice(idx, 1);
+  renderList();
+}
+
+function addCatalog() {
+  catalogs.push({
+    id: nextCatId++,
+    name: 'New Collection',
+    emoji: '📁',
+    color: swatchOptions[Math.floor(Math.random() * swatchOptions.length)],
+    desc: '',
+    items: 0,
+    status: 'draft',
+    visible: false,
+    visibility: 'all',
+    sources: []
+  });
+  renderList();
+  /* auto-open new row */
+  setTimeout(function() {
+    var rows = document.querySelectorAll('.coll-row');
+    var last = rows[rows.length - 2]; /* last before the add button */
+    if (last) { last.classList.add('open'); last.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+    /* auto-trigger rename */
+    renameCat(catalogs.length - 1);
+  }, 30);
+}
+
+function addSource(idx) {
+  catalogs[idx].sources.push({
+    id: Date.now(),
+    icon: '📦',
+    bg: '#ede9fe',
+    name: 'New source',
+    type: 'Manual'
+  });
+  renderList();
+  setTimeout(function() {
+    var rows = document.querySelectorAll('.coll-row');
+    if (rows[idx]) rows[idx].classList.add('open');
+  }, 10);
+}
+
+function delSource(cidx, si) {
+  catalogs[cidx].sources.splice(si, 1);
+  renderList();
+  setTimeout(function() {
+    var rows = document.querySelectorAll('.coll-row');
+    if (rows[cidx]) rows[cidx].classList.add('open');
+  }, 10);
+}
+
+/* source drag-and-drop within editor */
+var srcDragCidx = null, srcDragSi = null;
+document.addEventListener('dragstart', function(e) {
+  var item = e.target.closest('.src-item');
+  if (!item) return;
+  srcDragCidx = parseInt(item.dataset.cidx);
+  srcDragSi   = parseInt(item.dataset.si);
+  setTimeout(function() { item.classList.add('dragging'); }, 0);
+  e.stopPropagation();
+});
+document.addEventListener('dragover', function(e) {
+  var item = e.target.closest('.src-item');
+  if (!item) return;
+  e.preventDefault();
+  document.querySelectorAll('.src-item').forEach(function(s) { s.classList.remove('drag-over'); });
+  item.classList.add('drag-over');
+  e.stopPropagation();
+});
+document.addEventListener('drop', function(e) {
+  var item = e.target.closest('.src-item');
+  if (!item || srcDragSi === null) return;
+  var targetSi = parseInt(item.dataset.si);
+  var targetCidx = parseInt(item.dataset.cidx);
+  if (srcDragCidx === targetCidx && srcDragSi !== targetSi) {
+    var moved = catalogs[srcDragCidx].sources.splice(srcDragSi, 1)[0];
+    catalogs[targetCidx].sources.splice(targetSi, 0, moved);
+    var openIdx = srcDragCidx;
+    srcDragSi = null;
+    renderList();
+    setTimeout(function() {
+      var rows = document.querySelectorAll('.coll-row');
+      if (rows[openIdx]) rows[openIdx].classList.add('open');
+    }, 10);
+  }
+  e.stopPropagation();
+});
+
+/* grid view */
+function renderGrid() {
+  var grid = document.getElementById('coll-grid');
+  grid.innerHTML = '';
+  catalogs.forEach(function(cat, idx) {
+    var card = document.createElement('div');
+    card.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;transition:all .2s';
+    card.addEventListener('mouseenter', function() { card.style.borderColor = 'var(--accent)'; card.style.transform = 'translateY(-2px)'; card.style.boxShadow = '0 4px 16px rgba(0,0,0,.08)'; });
+    card.addEventListener('mouseleave', function() { card.style.borderColor = 'var(--border)'; card.style.transform = ''; card.style.boxShadow = ''; });
+    card.innerHTML =
+      '<div style="height:88px;background:' + cat.color + ';display:flex;align-items:center;justify-content:center;font-size:28px">' + cat.emoji + '</div>' +
+      '<div style="padding:11px">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">' +
+          '<div style="font-size:13px;font-weight:600">' + cat.name + '</div>' +
+          statusBadge(cat) +
+        '</div>' +
+        '<div style="font-size:10px;color:var(--text3)">' + cat.items + ' items · ' + cat.sources.length + ' sources</div>' +
+        '<div style="margin-top:6px">' +
+          cat.sources.slice(0,2).map(function(s) { return '<span class="src-chip">' + s.name.split(' ')[0] + '</span>'; }).join('') +
+        '</div>' +
+        '<div style="display:flex;gap:6px;margin-top:10px">' +
+          '<button class="btn btn-g btn-sm" onclick="setCatView(\'list\')">Edit</button>' +
+          '<button class="btn btn-d btn-sm" onclick="delCat(' + idx + ');renderGrid()">Delete</button>' +
+        '</div>' +
+      '</div>';
+    grid.appendChild(card);
+  });
+  /* add card */
+  var addCard = document.createElement('div');
+  addCard.style.cssText = 'border:1.5px dashed var(--border2);border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:160px;cursor:pointer;color:var(--text3);font-size:13px;font-weight:600;gap:6px;transition:all .15s';
+  addCard.innerHTML = '<span style="font-size:24px">+</span>New collection';
+  addCard.addEventListener('mouseenter', function() { addCard.style.borderColor = 'var(--accent)'; addCard.style.color = 'var(--accent)'; addCard.style.background = 'var(--accent-light)'; });
+  addCard.addEventListener('mouseleave', function() { addCard.style.borderColor = 'var(--border2)'; addCard.style.color = 'var(--text3)'; addCard.style.background = ''; });
+  addCard.addEventListener('click', function() { addCatalog(); setCatView('list'); });
+  grid.appendChild(addCard);
+}
+
+/* initial render */
+renderList();
+
+/* ═══════════════════════════════════
+   COLLECTION EDIT MODAL — 4-STEP WIZARD
+═══════════════════════════════════ */
+
+/* Extend catalog data with modal fields */
+catalogs.forEach(function(c, i) {
+  if (!c.collId)      c.collId      = 'collection-' + Math.random().toString(36).slice(2,10);
+  if (!c.viewMode)    c.viewMode    = 'FOLLOW_LAYOUT';
+  if (!c.backdropUrl) c.backdropUrl = '';
+  if (c.pinToTop   === undefined) c.pinToTop   = false;
+  if (c.showAllTab  === undefined) c.showAllTab  = false;
+  if (c.focusGlow   === undefined) c.focusGlow   = false;
+  /* groups: catalogs[0,2,3] have groups; others are flat */
+  if (c.hasGroups === undefined) c.hasGroups = (i === 0 || i === 2);
+  if (!c.groups) {
+    c.groups = c.hasGroups ? [
+      { id: 'grp-'+i+'-0', name: c.name, tileShape: 'POSTER',
+        coverImageUrl:'', coverEmoji: c.emoji, titleLogoUrl:'', heroBackdropUrl:'', heroVideoUrl:'', focusGifUrl:'',
+        hideFolderTitle: false, enableFocusGif: false,
+        sources: c.sources.slice(0,2) }
+    ] : [];
+  }
+});
+
+var modalIdx   = 0;
+var modalStep  = 0;
+var activeGrp  = 0;
+
+function openCollModal(idx) {
+  modalIdx  = idx;
+  modalStep = 0;
+  activeGrp = 0;
+  document.getElementById('collModal').classList.remove('hidden');
+  renderModalStep();
+}
+function closeModal() {
+  document.getElementById('collModal').classList.add('hidden');
+}
+document.getElementById('collModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+function gotoStep(s) {
+  modalStep = s;
+  renderModalStep();
+}
+function stepNext() {
+  if (modalStep < 3) { modalStep++; renderModalStep(); }
+  else { closeModal(); renderList(); }
+}
+function stepBack() {
+  if (modalStep > 0) { modalStep--; renderModalStep(); }
+}
+
+function renderModalStep() {
+  var cat = catalogs[modalIdx];
+  /* update header meta */
+  document.getElementById('mModalName').textContent = cat.name;
+  var srcCount = cat.hasGroups
+    ? cat.groups.reduce(function(a,g){return a+g.sources.length;},0)
+    : cat.sources.length;
+  var grpCount = cat.hasGroups ? cat.groups.length : 0;
+  var pills = document.getElementById('mModalPills');
+  pills.innerHTML = '';
+  function makePill(t) { var p=document.createElement('span'); p.className='modal-meta-pill'; p.textContent=t; pills.appendChild(p); }
+  if (cat.hasGroups) makePill(grpCount + ' group' + (grpCount!==1?'s':''));
+  makePill(srcCount + ' source' + (srcCount!==1?'s':''));
+  makePill(cat.viewMode);
+  /* step 2 label */
+  document.getElementById('mstep1-label').textContent = cat.hasGroups ? 'Groups' : 'Sources';
+  /* step indicators */
+  for (var s=0;s<4;s++) {
+    var el = document.getElementById('mstep-'+s);
+    el.classList.toggle('active', s===modalStep);
+    el.classList.toggle('done',   s<modalStep);
+  }
+  /* back/next buttons */
+  document.getElementById('mBtnBack').style.display = modalStep>0?'':'none';
+  document.getElementById('mBtnNext').textContent   = modalStep===3 ? 'Save Collection' : 'Continue';
+  /* render body */
+  var body = document.getElementById('mBody');
+  body.innerHTML = '';
+  if      (modalStep===0) renderStepBasics(cat, body);
+  else if (modalStep===1) renderStepFolders(cat, body);
+  else if (modalStep===2) renderStepArtwork(cat, body);
+  else                    renderStepReview(cat, body);
+}
+
+/* ── STEP 1: BASICS ── */
+function renderStepBasics(cat, body) {
+  var wrap = document.createElement('div');
+  wrap.style.cssText = 'display:flex;flex:1;overflow:hidden';
+
+  var content = document.createElement('div');
+  content.className = 'modal-content';
+
+  var viewOpts = ['FOLLOW_LAYOUT','GRID','CATALOG','BOARD'].map(function(v){
+    return '<option value="'+v+'"'+(cat.viewMode===v?' selected':'')+'>'+v+'</option>';
+  }).join('');
+
+  content.innerHTML =
+    '<div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px">Collection identity</div>' +
+    '<div style="font-size:12px;color:var(--text3);margin-bottom:18px">Name the collection and choose the top-level behavior users see in the app.</div>' +
+    '<div class="mfield-row" style="margin-bottom:14px">' +
+      '<div class="mfield">' +
+        '<div class="label">Collection ID</div>' +
+        '<input class="input" value="'+cat.collId+'" readonly style="opacity:.5;cursor:not-allowed;font-family:monospace;font-size:12px">' +
+        '<div style="font-size:10px;color:var(--text3);margin-top:4px">Collection IDs cannot be changed after creation.</div>' +
+      '</div>' +
+      '<div class="mfield">' +
+        '<div class="label">Title</div>' +
+        '<input class="input" id="mf-title" value="'+cat.name+'" placeholder="e.g. Trending Shows">' +
+        '<div style="font-size:10px;color:var(--text3);margin-top:4px">This is what users will see in the app.</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="mfield-row" style="margin-bottom:14px">' +
+      '<div class="mfield">' +
+        '<div class="label">View mode</div>' +
+        '<select class="input" id="mf-viewmode" style="cursor:pointer">'+viewOpts+'</select>' +
+        '<div style="font-size:10px;color:var(--text3);margin-top:4px">Controls how folders are presented.</div>' +
+      '</div>' +
+      '<div class="mfield">' +
+        '<div class="label">Backdrop image or GIF URL</div>' +
+        '<input class="input" id="mf-backdrop" value="'+cat.backdropUrl+'" placeholder="https://cdn.example.com/backdrops/...">' +
+        '<div style="font-size:10px;color:var(--text3);margin-top:4px">Optional wide artwork for the collection.</div>' +
+      '</div>' +
+    '</div>' +
+    (function(){
+      var flatSel  = cat.hasGroups ? '' : ';border-color:var(--accent);background:var(--accent-light)';
+      var grpSel   = cat.hasGroups ? ';border-color:var(--accent);background:var(--accent-light)' : '';
+      var baseCard = 'flex:1;padding:14px;border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s';
+      return '<div style="margin-bottom:14px">' +
+        '<div class="label" style="margin-bottom:6px">Collection type</div>' +
+        '<div style="display:flex;gap:10px">' +
+          '<div id="type-flat" onclick="setHasGroups(false)" style="' + baseCard + flatSel + '">' +
+            '<div style="font-size:14px;margin-bottom:6px">&#x1F4CB;</div>' +
+            '<div style="font-size:12px;font-weight:700;color:var(--text)">Flat</div>' +
+            '<div style="font-size:11px;color:var(--text3);margin-top:3px">One level of sources — simple and quick.</div>' +
+          '</div>' +
+          '<div id="type-groups" onclick="setHasGroups(true)" style="' + baseCard + grpSel + '">' +
+            '<div style="font-size:14px;margin-bottom:6px">&#x1F4C2;</div>' +
+            '<div style="font-size:12px;font-weight:700;color:var(--text)">With groups</div>' +
+            '<div style="font-size:11px;color:var(--text3);margin-top:3px">Multiple folders, each with its own sources and artwork.</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    })()+
+    '<div class="mcheckrow">' +
+      '<label class="mcheck"><input type="checkbox" id="mf-pin"'+(cat.pinToTop?' checked':'')+'><div><div class="mcheck-label">Pin to top</div><div class="mcheck-desc">Moves this collection ahead of the rest.</div></div></label>' +
+      '<label class="mcheck"><input type="checkbox" id="mf-showall"'+(cat.showAllTab?' checked':'')+'><div><div class="mcheck-label">Show All tab</div><div class="mcheck-desc">Adds an aggregate tab for every folder.</div></div></label>' +
+      '<label class="mcheck"><input type="checkbox" id="mf-glow"'+(cat.focusGlow?' checked':'')+'><div><div class="mcheck-label">Enable focus glow</div><div class="mcheck-desc">Turns on the focused item highlight effect.</div></div></label>' +
+    '</div>';
+
+  var sidebar = document.createElement('div');
+  sidebar.className = 'modal-sidebar';
+  sidebar.innerHTML =
+    '<div style="font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin-bottom:12px">Preview</div>' +
+    '<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:12px">' +
+      '<div style="height:60px;background:'+cat.color+';display:flex;align-items:center;justify-content:center;font-size:24px">'+cat.emoji+'</div>' +
+      '<div style="padding:10px;font-size:12px;font-weight:600">'+cat.name+'</div>' +
+    '</div>' +
+    '<div style="font-size:11px;color:var(--text3)">' +
+      '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>Folders</span><b style="color:var(--text)">'+(cat.hasGroups?cat.groups.length:0)+'</b></div>' +
+      '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>Sources</span><b style="color:var(--text)">'+(cat.hasGroups?cat.groups.reduce(function(a,g){return a+g.sources.length;},0):cat.sources.length)+'</b></div>' +
+      '<div style="display:flex;justify-content:space-between;padding:4px 0"><span>Mode</span><b style="color:var(--text);font-size:10px">'+cat.viewMode+'</b></div>' +
+    '</div>';
+
+  wrap.appendChild(content);
+  wrap.appendChild(sidebar);
+  body.appendChild(wrap);
+
+  /* save on change */
+  content.querySelector('#mf-title').addEventListener('input', function() { catalogs[modalIdx].name = this.value; document.getElementById('mModalName').textContent = this.value; });
+  content.querySelector('#mf-viewmode').addEventListener('change', function() { catalogs[modalIdx].viewMode = this.value; });
+  content.querySelector('#mf-backdrop').addEventListener('input', function() { catalogs[modalIdx].backdropUrl = this.value; });
+  content.querySelector('#mf-pin').addEventListener('change', function() { catalogs[modalIdx].pinToTop = this.checked; });
+  content.querySelector('#mf-showall').addEventListener('change', function() { catalogs[modalIdx].showAllTab = this.checked; });
+  content.querySelector('#mf-glow').addEventListener('change', function() { catalogs[modalIdx].focusGlow = this.checked; });
+}
+
+function setHasGroups(v) {
+  catalogs[modalIdx].hasGroups = v;
+  if (v && catalogs[modalIdx].groups.length===0) {
+    catalogs[modalIdx].groups = [{
+      id:'grp-new-0', name: catalogs[modalIdx].name, tileShape:'POSTER',
+      coverImageUrl:'', coverEmoji: catalogs[modalIdx].emoji,
+      titleLogoUrl:'', heroBackdropUrl:'', heroVideoUrl:'', focusGifUrl:'',
+      hideFolderTitle:false, enableFocusGif:false,
+      sources: catalogs[modalIdx].sources.slice()
+    }];
+  }
+  /* re-render basics step to update selection styling */
+  var flat  = document.getElementById('type-flat');
+  var grps  = document.getElementById('type-groups');
+  if (!flat || !grps) return;
+  flat.style.borderColor = v ? 'var(--border)' : 'var(--accent)';
+  flat.style.background  = v ? '' : 'var(--accent-light)';
+  grps.style.borderColor = v ? 'var(--accent)' : 'var(--border)';
+  grps.style.background  = v ? 'var(--accent-light)' : '';
+  document.getElementById('mstep1-label').textContent = v ? 'Groups' : 'Sources';
+}
+
+/* ── STEP 2: FOLDERS / SOURCES ── */
+function renderStepFolders(cat, body) {
+  if (!cat.hasGroups) {
+    renderStepFlatSources(cat, body);
+    return;
+  }
+  /* 3-column layout: outline | editor | review */
+  var wrap = document.createElement('div');
+  wrap.className = 'modal-body-3col';
+
+  /* outline */
+  var outline = document.createElement('div');
+  outline.className = 'outline-sidebar';
+  outline.innerHTML = '<div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);padding:0 14px 8px">OUTLINE</div>';
+  function renderOutline() {
+    var existing = outline.querySelectorAll('.outline-item, .outline-add');
+    existing.forEach(function(e){e.remove();});
+    cat.groups.forEach(function(g,gi){
+      var item = document.createElement('div');
+      item.className = 'outline-item' + (gi===activeGrp?' active':'');
+      item.innerHTML = '<div class="outline-item-name">'+g.name+'</div><div class="outline-item-sub">'+g.sources.length+' sources · '+g.tileShape+'</div>';
+      item.addEventListener('click', function(){ activeGrp=gi; renderStepFolders(cat, body); });
+      outline.appendChild(item);
+    });
+    var addBtn = document.createElement('div');
+    addBtn.className = 'outline-add';
+    addBtn.textContent = '+ Add group';
+    addBtn.addEventListener('click', function(){
+      cat.groups.push({id:'grp-new-'+Date.now(),name:'New Group',tileShape:'POSTER',coverImageUrl:'',coverEmoji:'📁',titleLogoUrl:'',heroBackdropUrl:'',heroVideoUrl:'',focusGifUrl:'',hideFolderTitle:false,enableFocusGif:false,sources:[]});
+      activeGrp = cat.groups.length-1;
+      renderStepFolders(cat, body);
+    });
+    outline.appendChild(addBtn);
+  }
+  renderOutline();
+
+  /* folder editor */
+  var editor = document.createElement('div');
+  editor.className = 'folder-editor';
+  var grp = cat.groups[activeGrp] || cat.groups[0];
+  if (!grp) { editor.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:20px">No groups yet. Add one.</div>'; }
+  else {
+    var tileShapes = ['POSTER','LANDSCAPE','SQUARE'].map(function(s){
+      var icons = {POSTER:'▯',LANDSCAPE:'▭',SQUARE:'□'};
+      return '<div class="tile-opt'+(grp.tileShape===s?' active':'')+'" onclick="setGrpTile(\''+s+'\')"><span class="tile-preview">'+icons[s]+'</span>'+s+'</div>';
+    }).join('');
+
+    var srcRows = grp.sources.map(function(src,si){
+      return '<div class="src-item" data-si="'+si+'" data-cidx="'+modalIdx+'">' +
+        '<span class="src-handle">⠿</span>' +
+        '<div style="width:26px;height:26px;border-radius:6px;background:'+src.bg+';display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0">'+src.icon+'</div>' +
+        '<div style="flex:1;margin-left:4px"><div style="font-size:12px;font-weight:600">'+src.name+'</div><div style="font-size:10px;color:var(--text3)">'+src.type+'</div></div>' +
+        '<span class="src-type">CATALOG</span>' +
+        '<button class="btn btn-d btn-sm" style="margin-left:6px" onclick="delGrpSource('+activeGrp+','+si+')">✕</button>' +
+      '</div>';
+    }).join('');
+
+    editor.innerHTML =
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">' +
+        '<div><div style="font-size:13px;font-weight:700">Selected group</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Keep the group name short, then attach one or more sources.</div></div>' +
+        '<button class="btn btn-d btn-sm" onclick="delGroup('+activeGrp+')">Remove group</button>' +
+      '</div>' +
+      '<div class="mfield-row" style="margin-bottom:14px">' +
+        '<div class="mfield"><div class="label">Group ID</div><input class="input" value="'+grp.id+'" readonly style="opacity:.5;cursor:not-allowed;font-family:monospace;font-size:11px"><div style="font-size:10px;color:var(--text3);margin-top:3px">Existing group IDs are locked.</div></div>' +
+        '<div class="mfield"><div class="label">Group title</div><input class="input" id="mf-grpname" value="'+grp.name+'"><div style="font-size:10px;color:var(--text3);margin-top:3px">Visible label for this row or tab.</div></div>' +
+      '</div>' +
+      '<div class="mfield" style="margin-bottom:14px"><div class="label">Tile shape</div><div class="tile-select">'+tileShapes+'</div><div style="font-size:10px;color:var(--text3);margin-top:4px">Card format users browse.</div></div>' +
+      '<div class="mfield">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><span class="label" style="margin-bottom:0">Sources</span>' +
+          '<div style="display:flex;gap:6px"><button class="btn btn-g btn-sm" onclick="addGrpSource('+activeGrp+',\'catalog\')">+ Catalog</button><button class="btn btn-g btn-sm" onclick="addGrpSource('+activeGrp+',\'tmdb\')">+ TMDB</button><button class="btn btn-g btn-sm" onclick="addGrpSource('+activeGrp+',\'trakt\')">+ Trakt</button></div>' +
+        '</div>' +
+        '<div class="src-list">' + (srcRows || '<div style="padding:14px;text-align:center;font-size:12px;color:var(--text3)">No sources yet. Add one above.</div>') + '</div>' +
+      '</div>';
+
+    editor.querySelector('#mf-grpname').addEventListener('input', function(){
+      cat.groups[activeGrp].name = this.value;
+      renderOutline();
+    });
+  }
+
+  /* right review panel */
+  var review = document.createElement('div');
+  review.className = 'review-sidebar';
+  var totalSrc = cat.groups.reduce(function(a,g){return a+g.sources.length;},0);
+  review.innerHTML =
+    '<div style="font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin-bottom:8px">REVIEW</div>' +
+    '<div style="font-size:12px;font-weight:600;color:var(--grn);margin-bottom:10px">Ready to save</div>' +
+    '<div class="review-stat-row">' +
+      '<div class="review-stat"><div class="review-stat-v">'+cat.groups.length+'</div><div class="review-stat-l">Groups</div></div>' +
+      '<div class="review-stat"><div class="review-stat-v">'+totalSrc+'</div><div class="review-stat-l">Sources</div></div>' +
+      '<div class="review-stat"><div class="review-stat-v">0</div><div class="review-stat-l">Notes</div></div>' +
+    '</div>' +
+    cat.groups.map(function(g){
+      return '<div class="review-folder"><div style="font-size:12px;font-weight:600;margin-bottom:4px">'+g.name+'</div><div style="font-size:10px;color:var(--text3)">'+g.sources.length+' sources attached</div></div>';
+    }).join('');
+
+  wrap.appendChild(outline);
+  wrap.appendChild(editor);
+  wrap.appendChild(review);
+  body.appendChild(wrap);
+}
+
+function renderStepFlatSources(cat, body) {
+  var wrap = document.createElement('div');
+  wrap.style.cssText = 'display:flex;flex:1;overflow:hidden';
+  var content = document.createElement('div');
+  content.className = 'modal-content';
+
+  var srcRows = cat.sources.map(function(src,si){
+    return '<div class="src-item">' +
+      '<span class="src-handle">⠿</span>' +
+      '<div style="width:26px;height:26px;border-radius:6px;background:'+src.bg+';display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0">'+src.icon+'</div>' +
+      '<div style="flex:1;margin-left:4px"><div style="font-size:12px;font-weight:600">'+src.name+'</div><div style="font-size:10px;color:var(--text3)">'+src.type+'</div></div>' +
+      '<span class="src-type">CATALOG</span>' +
+      '<button class="btn btn-d btn-sm" style="margin-left:6px" onclick="delModalSource('+si+')">✕</button>' +
+    '</div>';
+  }).join('');
+
+  content.innerHTML =
+    '<div style="font-size:13px;font-weight:700;margin-bottom:4px">Sources</div>' +
+    '<div style="font-size:12px;color:var(--text3);margin-bottom:16px">Choose what content feeds this collection.</div>' +
+    '<div style="display:flex;gap:6px;margin-bottom:10px"><button class="btn btn-g btn-sm" onclick="addFlatSource(\'catalog\')">+ Add catalog</button><button class="btn btn-g btn-sm" onclick="addFlatSource(\'tmdb\')">+ TMDB</button><button class="btn btn-g btn-sm" onclick="addFlatSource(\'trakt\')">+ Trakt</button></div>' +
+    '<div class="src-list">'+(srcRows||'<div style="padding:14px;text-align:center;font-size:12px;color:var(--text3)">No sources yet.</div>')+'</div>';
+
+  var sidebar = document.createElement('div');
+  sidebar.className = 'modal-sidebar';
+  sidebar.innerHTML =
+    '<div style="font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin-bottom:10px">REVIEW</div>' +
+    '<div class="review-stat-row"><div class="review-stat"><div class="review-stat-v">'+cat.sources.length+'</div><div class="review-stat-l">Sources</div></div></div>' +
+    cat.sources.map(function(s){ return '<div class="review-src-row"><span>'+s.name+'</span><span class="src-type">'+s.type.split(' ')[0]+'</span></div>'; }).join('');
+
+  wrap.appendChild(content);
+  wrap.appendChild(sidebar);
+  body.appendChild(wrap);
+}
+
+function setGrpTile(shape) {
+  catalogs[modalIdx].groups[activeGrp].tileShape = shape;
+  renderModalStep();
+}
+function delGroup(gi) {
+  catalogs[modalIdx].groups.splice(gi,1);
+  activeGrp = Math.max(0, gi-1);
+  renderModalStep();
+}
+function addGrpSource(gi, type) {
+  var icons = {catalog:{icon:'📦',bg:'#ede9fe',name:'New catalog source',type:'Manual'},tmdb:{icon:'🎬',bg:'#fee2e2',name:'TMDB source',type:'TMDB · popularity'},trakt:{icon:'📊',bg:'#ecfdf5',name:'Trakt list',type:'Trakt · trending'}};
+  var s = icons[type] || icons.catalog;
+  catalogs[modalIdx].groups[gi].sources.push({id:Date.now(),icon:s.icon,bg:s.bg,name:s.name,type:s.type});
+  renderModalStep();
+}
+function delGrpSource(gi, si) {
+  catalogs[modalIdx].groups[gi].sources.splice(si,1);
+  renderModalStep();
+}
+function addFlatSource(type) {
+  var icons = {catalog:{icon:'📦',bg:'#ede9fe',name:'New catalog source',type:'Manual'},tmdb:{icon:'🎬',bg:'#fee2e2',name:'TMDB source',type:'TMDB · popularity'},trakt:{icon:'📊',bg:'#ecfdf5',name:'Trakt list',type:'Trakt · trending'}};
+  var s = icons[type] || icons.catalog;
+  catalogs[modalIdx].sources.push({id:Date.now(),icon:s.icon,bg:s.bg,name:s.name,type:s.type});
+  renderModalStep();
+}
+function delModalSource(si) {
+  catalogs[modalIdx].sources.splice(si,1);
+  renderModalStep();
+}
+
+/* ── STEP 3: ARTWORK ── */
+function renderStepArtwork(cat, body) {
+  var wrap = document.createElement('div');
+  wrap.className = 'modal-body-3col';
+
+  var targets = cat.hasGroups ? cat.groups : [cat];
+
+  /* outline (groups or single) */
+  var outline = document.createElement('div');
+  outline.className = 'outline-sidebar';
+  outline.innerHTML = '<div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);padding:0 14px 8px">OUTLINE</div>';
+  targets.forEach(function(g,gi){
+    var item = document.createElement('div');
+    item.className = 'outline-item' + (gi===activeGrp?' active':'');
+    var sub = cat.hasGroups ? (g.sources.length+' sources · '+g.tileShape) : 'Collection level';
+    item.innerHTML = '<div class="outline-item-name">'+g.name+'</div><div class="outline-item-sub">'+sub+'</div>';
+    item.addEventListener('click', function(){ activeGrp=gi; renderModalStep(); });
+    outline.appendChild(item);
+  });
+
+  /* artwork editor */
+  var editor = document.createElement('div');
+  editor.className = 'folder-editor';
+  var target = targets[activeGrp] || targets[0];
+  if (target) {
+    var previewImg = target.coverImageUrl
+      ? '<img src="'+target.coverImageUrl+'" style="width:100%;height:100%;object-fit:cover;border-radius:8px" onerror="this.style.display=\'none\'">'
+      : '<div style="text-align:center;color:var(--text3);font-size:11px;padding:10px">No cover image<br><span style="font-size:9px">Source autofill can populate cover artwork when metadata is available.</span></div>';
+
+    editor.innerHTML =
+      '<div style="font-size:13px;font-weight:700;margin-bottom:4px">Artwork and folder behavior</div>' +
+      '<div style="font-size:12px;color:var(--text3);margin-bottom:18px">Polish the selected '+(cat.hasGroups?'group':'collection')+' without digging through source settings.</div>' +
+      '<div class="mfield-row" style="margin-bottom:14px">' +
+        '<div class="mfield"><div class="label">Cover image URL</div><input class="input" id="mf-art-cover" value="'+(target.coverImageUrl||'')+'" placeholder="https://cdn.example.com/covers/..."><div style="font-size:10px;color:var(--text3);margin-top:3px">Optional poster or landscape image.</div></div>' +
+        '<div class="mfield"><div class="label">Cover emoji</div><input class="input" id="mf-art-emoji" value="'+(target.coverEmoji||'')+'" placeholder="🎬" style="font-size:18px"><div style="font-size:10px;color:var(--text3);margin-top:3px">Optional fallback marker.</div></div>' +
+      '</div>' +
+      '<div class="mfield-row" style="margin-bottom:14px">' +
+        '<div class="mfield"><div class="label">Title logo URL</div><input class="input" id="mf-art-logo" value="'+(target.titleLogoUrl||'')+'" placeholder="https://cdn.example.com/logos/..."><div style="font-size:10px;color:var(--text3);margin-top:3px">Optional transparent logo for branded rows.</div></div>' +
+        '<div class="mfield"><div class="label">Hero backdrop URL</div><input class="input" id="mf-art-hero" value="'+(target.heroBackdropUrl||'')+'" placeholder="https://cdn.example.com/backdrops/..."><div style="font-size:10px;color:var(--text3);margin-top:3px">Optional wide hero image for focused states.</div></div>' +
+      '</div>' +
+      '<div class="mfield-row" style="margin-bottom:14px">' +
+        '<div class="mfield"><div class="label">Hero video URL</div><input class="input" id="mf-art-video" value="'+(target.heroVideoUrl||'')+'" placeholder="https://cdn.example.com/heroes/..."><div style="font-size:10px;color:var(--text3);margin-top:3px">Optional video URL for TV hero playback.</div></div>' +
+        '<div class="mfield"><div class="label">Focus GIF URL</div><input class="input" id="mf-art-gif" value="'+(target.focusGifUrl||'')+'" placeholder="https://cdn.example.com/focus/..."><div style="font-size:10px;color:var(--text3);margin-top:3px">Optional animated asset shown on focus.</div></div>' +
+      '</div>' +
+      '<div style="display:flex;gap:10px">' +
+        '<label class="mcheck" style="flex:1"><input type="checkbox" id="mf-art-focusgif"'+(target.enableFocusGif?' checked':'')+'><div><div class="mcheck-label">Enable focus GIF</div><div class="mcheck-desc">Only works when a focus GIF URL is set.</div></div></label>' +
+        '<label class="mcheck" style="flex:1"><input type="checkbox" id="mf-art-hidetitle"'+(target.hideFolderTitle?' checked':'')+'><div><div class="mcheck-label">Hide folder title</div><div class="mcheck-desc">Use when artwork already communicates the folder clearly.</div></div></label>' +
+      '</div>';
+
+    /* live-save artwork fields */
+    function wireArt(id, field) {
+      var el = editor.querySelector('#'+id);
+      if (el) el.addEventListener('input', function(){ target[field] = this.value; });
+    }
+    function wireCheck(id, field) {
+      var el = editor.querySelector('#'+id);
+      if (el) el.addEventListener('change', function(){ target[field] = this.checked; });
+    }
+    wireArt('mf-art-cover','coverImageUrl');
+    wireArt('mf-art-emoji','coverEmoji');
+    wireArt('mf-art-logo','titleLogoUrl');
+    wireArt('mf-art-hero','heroBackdropUrl');
+    wireArt('mf-art-video','heroVideoUrl');
+    wireArt('mf-art-gif','focusGifUrl');
+    wireCheck('mf-art-focusgif','enableFocusGif');
+    wireCheck('mf-art-hidetitle','hideFolderTitle');
+  }
+
+  /* right preview */
+  var preview = document.createElement('div');
+  preview.className = 'modal-sidebar';
+  var hasImg = target && target.coverImageUrl;
+  preview.innerHTML =
+    '<div style="font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin-bottom:10px">COVER PREVIEW</div>' +
+    '<div style="height:110px;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:10px;background:'+cat.color+';display:flex;align-items:center;justify-content:center">' +
+      (hasImg ? '<img src="'+target.coverImageUrl+'" style="width:100%;height:100%;object-fit:cover">' : '<span style="font-size:32px">'+(target?target.coverEmoji||cat.emoji:cat.emoji)+'</span>') +
+    '</div>' +
+    '<div style="font-size:11px;color:var(--text3);line-height:1.6">Source autofill can populate cover artwork when metadata is available.</div>';
+
+  wrap.appendChild(outline);
+  wrap.appendChild(editor);
+  wrap.appendChild(preview);
+  body.appendChild(wrap);
+}
+
+/* ── STEP 4: REVIEW ── */
+function renderStepReview(cat, body) {
+  var wrap = document.createElement('div');
+  wrap.style.cssText = 'display:flex;flex:1;overflow:hidden';
+  var content = document.createElement('div');
+  content.className = 'modal-content';
+
+  var srcCount = cat.hasGroups
+    ? cat.groups.reduce(function(a,g){return a+g.sources.length;},0)
+    : cat.sources.length;
+  var grpCount = cat.hasGroups ? cat.groups.length : 0;
+  var isValid  = srcCount > 0;
+
+  var folderBlock = '';
+  if (cat.hasGroups) {
+    folderBlock = cat.groups.map(function(g){
+      var srcs = g.sources.map(function(s){
+        return '<div class="review-src-row"><span style="color:var(--text2)">'+s.name+'</span><span class="src-type">CATALOG</span></div>';
+      }).join('');
+      return '<div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:8px">'+
+        '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border)">'+
+          '<div><div style="font-size:12px;font-weight:700">'+g.name+'</div><div style="font-size:10px;color:var(--text3)">'+g.tileShape+(g.coverEmoji?' · '+g.coverEmoji:'')+' · '+g.sources.length+' sources</div></div>'+
+          '<span style="font-size:10px;color:var(--text3)">'+g.sources.length+' sources</span>'+
+        '</div>'+
+        '<div style="padding:2px 14px">'+(srcs||'<div style="padding:8px 0;font-size:11px;color:var(--text3)">No sources</div>')+'</div>'+
+      '</div>';
+    }).join('');
+  } else {
+    var flatSrcs = cat.sources.map(function(s){
+      return '<div class="review-src-row"><span style="color:var(--text2)">'+s.name+'</span><span class="src-type">CATALOG</span></div>';
+    }).join('');
+    folderBlock = '<div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:8px">'+
+      '<div style="padding:10px 14px;border-bottom:1px solid var(--border)"><div style="font-size:12px;font-weight:700">'+cat.name+'</div><div style="font-size:10px;color:var(--text3)">'+srcCount+' sources</div></div>'+
+      '<div style="padding:2px 14px">'+(flatSrcs||'<div style="padding:8px 0;font-size:11px;color:var(--text3)">No sources</div>')+'</div>'+
+    '</div>';
+  }
+
+  content.innerHTML =
+    '<div style="font-size:13px;font-weight:700;margin-bottom:4px">Final check</div>' +
+    '<div style="font-size:12px;color:var(--text3);margin-bottom:16px">Review the structure exactly as it will be saved.</div>' +
+    '<div class="review-stat-row" style="margin-bottom:16px">' +
+      (cat.hasGroups ? '<div class="review-stat"><div class="review-stat-v">'+grpCount+'</div><div class="review-stat-l">Groups</div></div>' : '') +
+      '<div class="review-stat"><div class="review-stat-v">'+srcCount+'</div><div class="review-stat-l">Sources</div></div>' +
+      '<div class="review-stat"><div class="review-stat-v" style="font-size:14px;letter-spacing:0">'+cat.viewMode+'</div><div class="review-stat-l">View mode</div></div>' +
+    '</div>' +
+    folderBlock;
+
+  var sidebar = document.createElement('div');
+  sidebar.className = 'modal-sidebar';
+  sidebar.innerHTML =
+    '<div style="font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin-bottom:10px">VALIDATION</div>' +
+    '<div class="validation-box '+(isValid?'validation-ok':'validation-warn')+'">' +
+      (isValid ? 'Everything required is present.' : 'Add at least one source before saving.') +
+    '</div>';
+
+  wrap.appendChild(content);
+  wrap.appendChild(sidebar);
+  body.appendChild(wrap);
+}
+</script>
+</body>
+</html>

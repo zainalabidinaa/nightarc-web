@@ -86,28 +86,30 @@ export default function HomePage() {
     staleTime: 5 * 60 * 1000,
   });
 
-  // Derive featured items from collection rows
-  const mainRows = collectionRows.filter(r => !r.isGroupTile);
-  const groupRows = collectionRows.filter(r => r.isGroupTile);
-
-  // ── Featured items: use original pickFeaturedItems from home-data ─────
+  // ── Featured items: derive from the content rows (group-tile rows excluded).
+  // Depend on the stable `collectionRows` reference (from react-query), NOT a
+  // freshly-filtered array — otherwise this effect re-runs every render and
+  // setFeaturedItems triggers an infinite render/refetch loop. ──
   useEffect(() => {
-    const homeCatalogRows = mainRows.map(r => ({
-      id: r.id,
-      title: r.title,
-      type: r.items[0]?.type || 'movie',
-      catalogId: r.id,
-      items: r.items,
-      isMainRow: r.title ? ['Popular Movies','Popular TV Shows','Trending Movies','Trending TV Shows'].some(
-        n => n.toLowerCase() === r.title.toLowerCase()
-      ) : false,
-    }));
+    const homeCatalogRows = collectionRows
+      .filter(r => !r.isGroupTile)
+      .map(r => ({
+        id: r.id,
+        title: r.title,
+        type: r.items[0]?.type || 'movie',
+        catalogId: r.id,
+        items: r.items,
+        isMainRow: r.title ? [
+          'Popular Movies','Popular TV Shows','Trending Movies','Trending TV Shows',
+          'Popular Shows','Trending Shows','Latest','Top Rated',
+        ].some(n => n.toLowerCase() === r.title.toLowerCase()) : false,
+      }));
     const next = pickFeaturedItems(homeCatalogRows);
     if (next.length > 0) {
       setFeaturedItems(next);
       setFeaturedIndex(0);
     }
-  }, [mainRows]);
+  }, [collectionRows]);
 
   // ── Featured TMDB backdrop prefetch — fast path before addon meta arrives ──
   useEffect(() => {
@@ -318,9 +320,6 @@ export default function HomePage() {
             </div>
             <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
               {continueWatching.map(item => {
-                const pct = item.duration_seconds > 0
-                  ? Math.round((item.position_seconds / item.duration_seconds) * 100)
-                  : 0;
                 const fallback = cwMetas?.[item.media_id];
                 // For series episodes prefer fetched still over stored show portrait
                 const poster = (item.media_type === 'series' && item.media_id.includes(':'))
@@ -332,9 +331,9 @@ export default function HomePage() {
                   <button
                     key={item.id}
                     onClick={() => handleCwPlay(item)}
-                    className="flex-shrink-0 w-64 group cursor-pointer text-left"
+                    className="flex-shrink-0 w-80 group cursor-pointer text-left"
                   >
-                    <div className="relative h-36 bg-moonlit-elevated rounded-xl overflow-hidden mb-2 transition-shadow duration-300 group-hover:shadow-lg group-hover:shadow-black/30 group-hover:ring-1 group-hover:ring-white/10">
+                    <div className="relative h-44 bg-moonlit-elevated rounded-[20px] overflow-hidden mb-2 transition-shadow duration-300 group-hover:shadow-lg group-hover:shadow-black/30 group-hover:ring-1 group-hover:ring-white/10">
                       {poster ? (
                         <img src={poster} alt={name || item.media_id}
                           className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.025]" loading="lazy" />
@@ -345,17 +344,19 @@ export default function HomePage() {
                           </svg>
                         </div>
                       )}
-                      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white/10">
-                        <div className="h-full bg-moonlit-accent" style={{ width: `${pct}%` }} />
+                      {/* Frosted scrim + metadata overlay (matches iOS ContinueWatchingCard) */}
+                      <div className="absolute inset-x-0 bottom-0 h-12 backdrop-blur-[3px] [mask-image:linear-gradient(to_top,black_35%,transparent)]" />
+                      <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/75 via-black/15 to-transparent" />
+                      <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 px-3 pb-2.5">
+                        <span className="text-[11px] font-bold text-white drop-shadow-md">
+                          {item.media_type === 'series' && parts.length >= 3 ? `S${parts[1]} E${parts[2]}` : ''}
+                        </span>
+                        <span className="text-[11px] font-medium text-white/75 drop-shadow-md whitespace-nowrap">
+                          {formatTimeRemaining(item.position_seconds, item.duration_seconds)}
+                        </span>
                       </div>
                     </div>
-                    <p className="text-xs text-white font-medium truncate">
-                      {formatContinueWatchingTitle({ mediaId: item.media_id, mediaType: item.media_type, name })}
-                    </p>
-                    <p className="text-xs text-moonlit-muted mt-0.5">
-                      {item.media_type === 'series' && parts.length >= 3 ? `S${parts[1]} E${parts[2]} · ` : ''}
-                      {formatTimeRemaining(item.position_seconds, item.duration_seconds)}
-                    </p>
+                    <p className="text-[13px] text-white font-medium truncate">{name || item.media_id}</p>
                   </button>
                 );
               })}
@@ -370,31 +371,37 @@ export default function HomePage() {
           </div>
         ) : null}
 
-        {mainRows.map(row => <MediaRow key={row.id} title={row.title} titleLogo={row.titleLogo} items={row.items} />)}
-        {groupRows.map(row => (
-          <CollectionRow
-            key={row.id}
-            titleLogo={row.titleLogo}
-            collection={{
-              id: row.id,
-              name: row.title,
-              sort_order: 0,
-              focus_glow_enabled: row.focusGlowEnabled,
-              created_at: '',
-              folders: row.items.map((item, i) => ({
-                id: item.id,
-                name: item.name,
-                collection_id: row.id,
-                sort_order: i,
-                cover_image: item.poster || '',
-                focus_gif: null,
-                focus_gif_enabled: row.focusGifEnabled,
-                tile_shape: (row.tileShape?.toUpperCase() as 'LANDSCAPE' | 'PORTRAIT' | null) || null,
+        {/* Render every collection row in its original (iOS) order — group-tile
+            rows as CollectionRow, content rows as MediaRow. Empty content rows
+            (e.g. unfetched supplementary addon catalogs) are dropped. */}
+        {collectionRows
+          .filter(row => row.isGroupTile || row.items.length > 0)
+          .map(row => row.isGroupTile ? (
+            <CollectionRow
+              key={row.id}
+              titleLogo={row.titleLogo}
+              collection={{
+                id: row.id,
+                name: row.title,
+                sort_order: 0,
+                focus_glow_enabled: row.focusGlowEnabled,
                 created_at: '',
-              })),
-            }}
-          />
-        ))}
+                folders: row.items.map((item, i) => ({
+                  id: item.id,
+                  name: item.name,
+                  collection_id: row.id,
+                  sort_order: i,
+                  cover_image: item.poster || '',
+                  focus_gif: null,
+                  focus_gif_enabled: row.focusGifEnabled,
+                  tile_shape: ((item.tileShape ?? row.tileShape)?.toUpperCase() as 'LANDSCAPE' | 'PORTRAIT' | null) || null,
+                  created_at: '',
+                })),
+              }}
+            />
+          ) : (
+            <MediaRow key={row.id} title={row.title} titleLogo={row.titleLogo} items={row.items} />
+          ))}
       </div>
     </Sidebar>
   );

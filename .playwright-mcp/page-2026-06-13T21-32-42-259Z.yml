@@ -1,0 +1,304 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]:
+      - link "VOLT." [ref=e4] [cursor=pointer]:
+        - /url: "#"
+      - generic [ref=e5]:
+        - link "ENERGY" [ref=e6] [cursor=pointer]:
+          - /url: "#energy"
+        - link "FLAVORS" [ref=e7] [cursor=pointer]:
+          - /url: "#flavors"
+        - link "PRICING" [ref=e8] [cursor=pointer]:
+          - /url: "#pricing"
+        - link "SCIENCE" [ref=e9] [cursor=pointer]:
+          - /url: "#science"
+      - link "Get VOLT" [ref=e10] [cursor=pointer]:
+        - /url: "#pricing"
+  - main [ref=e11]:
+    - generic [ref=e12]:
+      - generic [ref=e13]:
+        - generic [ref=e14]:
+          - generic [ref=e17]: Premium Energy
+          - heading "PURE ENERGY" [level=1] [ref=e19]
+          - heading "UNLEASHED" [level=1] [ref=e20]
+          - paragraph [ref=e21]: An elevated energy experience crafted with natural caffeine, vibrant tropical flavor, and zero compromise.
+          - generic [ref=e22]:
+            - link "Get VOLT" [ref=e23] [cursor=pointer]:
+              - /url: "#pricing"
+              - text: Get VOLT
+              - img [ref=e24]
+            - link "Explore Flavors" [ref=e26] [cursor=pointer]:
+              - /url: "#flavors"
+        - img [ref=e29]:
+          - generic [ref=e38]: VOLT
+          - generic [ref=e39]: TROPICAL THUNDER
+          - generic [ref=e40]: PREMIUM ENERGY
+      - generic [ref=e41]:
+        - generic [ref=e42]: Scroll
+        - img [ref=e43]
+    - generic [ref=e46]:
+      - generic [ref=e47]:
+        - text: ENERGY
+        - generic [ref=e48]: ✦
+      - generic [ref=e49]:
+        - text: FOCUS
+        - generic [ref=e50]: ✦
+      - generic [ref=e51]:
+        - text: ENDURANCE
+        - generic [ref=e52]: ✦
+      - generic [ref=e53]:
+        - text: POWER
+        - generic [ref=e54]: ✦
+      - generic [ref=e55]:
+        - text: VITALITY
+        - generic [ref=e56]: ✦
+      - generic [ref=e57]:
+        - text: STRENGTH
+        - generic [ref=e58]: ✦
+      - generic [ref=e59]:
+        - text: PREMIUM
+        - generic [ref=e60]: ✦
+      - generic [ref=e61]:
+        - text: NATURAL
+        - generic [ref=e62]: ✦
+      - generic [ref=e63]:
+        - text: ENERGY
+        - generic [ref=e64]: ✦
+      - generic [ref=e65]:
+        - text: FOCUS
+        - generic [ref=e66]: ✦
+      - generic [ref=e67]:
+        - text: ENDURANCE
+        - generic [ref=e68]: ✦
+      - generic [ref=e69]:
+        - text: POWER
+        - generic [ref=e70]: ✦
+      - generic [ref=e71]:
+        - text: VITALITY
+        - generic [ref=e72]: ✦
+      - generic [ref=e73]:
+        - text: STRENGTH
+        - generic [ref=e74]: ✦
+      - generic [ref=e75]:
+        - text: PREMIUM
+        - generic [ref=e76]: ✦
+      - generic [ref=e77]:
+        - text: NATURAL
+        - generic [ref=e78]: ✦
+    - generic [ref=e80]:
+      - img [ref=e83]:
+        - generic [ref=e92]: VOLT
+        - generic [ref=e93]: TROPICAL THUNDER
+        - generic [ref=e94]: PREMIUM ENERGY
+      - generic [ref=e95]:
+        - img [ref=e97]
+        - paragraph [ref=e100]: Performance Blend
+        - heading "VOLT" [level=2] [ref=e101]
+        - paragraph [ref=e102]: Tropical Thunder
+        - paragraph [ref=e104]:
+          - text: Crafted with purely
+          - text: natural ingredients.
+    - generic:
+      - img
+    - generic [ref=e107]:
+      - generic [ref=e108]: Zero Sugar
+      - generic [ref=e109]: Natural Caffeine
+      - generic [ref=e110]: B-Vitamins
+      - generic [ref=e111]: Plant-Powered
+    - generic:
+      - img
+    - generic [ref=e113]:
+      - paragraph [ref=e114]: The Collection
+      - heading "THREE VIBES" [level=2] [ref=e115]
+      - paragraph [ref=e116]: Each flavor crafted to deliver a unique energy experience — bold, fresh, or wild.
+      - generic [ref=e117]:
+        - generic [ref=e118]:
+          - img [ref=e120]:
+            - generic [ref=e129]: VOLT
+            - generic [ref=e130]: TROPICAL THUNDER
+            - generic [ref=e131]: PREMIUM ENERGY
+          - generic [ref=e132]:
+            - paragraph [ref=e133]: Tropical Thunder
+            - paragraph [ref=e134]: Bold citrus & mango
+        - generic [ref=e135]:
+          - img [ref=e137]:
+            - generic [ref=e146]: VOLT
+            - generic [ref=e147]: ARCTIC MINT
+            - generic [ref=e148]: PREMIUM ENERGY
+          - generic [ref=e149]:
+            - paragraph [ref=e150]: Arctic Mint
+            - paragraph [ref=e151]: Cool mint & cucumber
+        - generic [ref=e152]:
+          - img [ref=e154]:
+            - generic [ref=e163]: VOLT
+            - generic [ref=e164]: BERRY BLAZE
+            - generic [ref=e165]: PREMIUM ENERGY
+          - generic [ref=e166]:
+            - paragraph [ref=e167]: Berry Blaze
+            - paragraph [ref=e168]: Wild berry & hibiscus
+    - generic [ref=e170]:
+      - generic [ref=e171]:
+        - text: ENERGY
+        - generic [ref=e172]: ✦
+      - generic [ref=e173]:
+        - text: FOCUS
+        - generic [ref=e174]: ✦
+      - generic [ref=e175]:
+        - text: ENDURANCE
+        - generic [ref=e176]: ✦
+      - generic [ref=e177]:
+        - text: POWER
+        - generic [ref=e178]: ✦
+      - generic [ref=e179]:
+        - text: VITALITY
+        - generic [ref=e180]: ✦
+      - generic [ref=e181]:
+        - text: STRENGTH
+        - generic [ref=e182]: ✦
+      - generic [ref=e183]:
+        - text: PREMIUM
+        - generic [ref=e184]: ✦
+      - generic [ref=e185]:
+        - text: NATURAL
+        - generic [ref=e186]: ✦
+      - generic [ref=e187]:
+        - text: ENERGY
+        - generic [ref=e188]: ✦
+      - generic [ref=e189]:
+        - text: FOCUS
+        - generic [ref=e190]: ✦
+      - generic [ref=e191]:
+        - text: ENDURANCE
+        - generic [ref=e192]: ✦
+      - generic [ref=e193]:
+        - text: POWER
+        - generic [ref=e194]: ✦
+      - generic [ref=e195]:
+        - text: VITALITY
+        - generic [ref=e196]: ✦
+      - generic [ref=e197]:
+        - text: STRENGTH
+        - generic [ref=e198]: ✦
+      - generic [ref=e199]:
+        - text: PREMIUM
+        - generic [ref=e200]: ✦
+      - generic [ref=e201]:
+        - text: NATURAL
+        - generic [ref=e202]: ✦
+    - generic [ref=e204]:
+      - paragraph [ref=e205]: The Standard
+      - heading "VOLT" [level=2] [ref=e206]
+      - heading "VOLT" [level=2] [ref=e207]
+      - paragraph [ref=e208]: An elevated energy experience, balancing vibrant tropical notes with the natural power of plant-based caffeine and the delicate precision of B-vitamin infusion.
+      - generic [ref=e209]:
+        - link "Explore Flavors" [ref=e210] [cursor=pointer]:
+          - /url: "#flavors"
+        - link "Read the Science" [ref=e211] [cursor=pointer]:
+          - /url: "#science"
+    - generic:
+      - img
+    - generic [ref=e213]:
+      - generic [ref=e214]:
+        - paragraph [ref=e215]: The Science
+        - heading "BY THE NUMBERS" [level=2] [ref=e216]
+      - generic [ref=e217]:
+        - generic [ref=e218]:
+          - paragraph [ref=e219]: 200mg
+          - paragraph [ref=e220]: Natural Caffeine
+        - generic [ref=e221]:
+          - paragraph [ref=e222]: 0g
+          - paragraph [ref=e223]: Added Sugars
+        - generic [ref=e224]:
+          - paragraph [ref=e225]: 80%
+          - paragraph [ref=e226]: Less Calories
+    - generic [ref=e228]:
+      - paragraph [ref=e229]: Get Yours
+      - heading "CHOOSE YOUR FUEL" [level=2] [ref=e230]
+      - paragraph [ref=e231]: Premium energy, delivered to your door. Pick the pack that matches your ambition.
+      - generic [ref=e232]:
+        - generic [ref=e233]:
+          - paragraph [ref=e234]: Starter
+          - paragraph [ref=e235]: $3.99
+          - paragraph [ref=e236]: per can
+          - generic [ref=e238]:
+            - generic [ref=e239]:
+              - img [ref=e240]
+              - generic [ref=e243]: 1 premium can
+            - generic [ref=e244]:
+              - img [ref=e245]
+              - generic [ref=e248]: Flavor of your choice
+            - generic [ref=e249]:
+              - img [ref=e250]
+              - generic [ref=e253]: Free shipping over $25
+          - button "Order Now" [ref=e254] [cursor=pointer]
+        - generic [ref=e255]:
+          - generic [ref=e257]: Most Popular
+          - paragraph [ref=e258]: Power Pack
+          - paragraph [ref=e259]: $19.99
+          - paragraph [ref=e260]: 6 cans
+          - paragraph [ref=e261]: Save 17%
+          - generic [ref=e263]:
+            - generic [ref=e264]:
+              - img [ref=e265]
+              - generic [ref=e268]: 6 premium cans
+            - generic [ref=e269]:
+              - img [ref=e270]
+              - generic [ref=e273]: Mix any flavors
+            - generic [ref=e274]:
+              - img [ref=e275]
+              - generic [ref=e278]: Free express shipping
+            - generic [ref=e279]:
+              - img [ref=e280]
+              - generic [ref=e283]: Exclusive sticker pack
+          - button "Order Now" [ref=e284] [cursor=pointer]
+        - generic [ref=e285]:
+          - paragraph [ref=e286]: Mega Case
+          - paragraph [ref=e287]: $69.99
+          - paragraph [ref=e288]: 24 cans
+          - paragraph [ref=e289]: Save 27%
+          - generic [ref=e291]:
+            - generic [ref=e292]:
+              - img [ref=e293]
+              - generic [ref=e296]: 24 premium cans
+            - generic [ref=e297]:
+              - img [ref=e298]
+              - generic [ref=e301]: Mix any flavors
+            - generic [ref=e302]:
+              - img [ref=e303]
+              - generic [ref=e306]: Free express shipping
+            - generic [ref=e307]:
+              - img [ref=e308]
+              - generic [ref=e311]: Limited edition box
+            - generic [ref=e312]:
+              - img [ref=e313]
+              - generic [ref=e316]: VOLT branded shaker
+          - button "Order Now" [ref=e317] [cursor=pointer]
+      - paragraph [ref=e318]: Free returns within 30 days · Satisfaction guaranteed
+    - generic:
+      - img
+    - generic [ref=e320]:
+      - generic [ref=e321]:
+        - generic [ref=e322]: Edition
+        - generic [ref=e323]: ENERGY
+        - generic [ref=e324]: FOCUS
+        - generic [ref=e325]: ENDURANCE
+      - generic [ref=e326]:
+        - paragraph [ref=e327]: Taste the Standard
+        - paragraph [ref=e328]: Elevate Your Energy
+  - contentinfo [ref=e330]:
+    - generic [ref=e331]:
+      - link "VOLT." [ref=e332] [cursor=pointer]:
+        - /url: "#"
+      - generic [ref=e334]:
+        - link "Energy" [ref=e335] [cursor=pointer]:
+          - /url: "#energy"
+        - link "Flavors" [ref=e336] [cursor=pointer]:
+          - /url: "#flavors"
+        - link "Pricing" [ref=e337] [cursor=pointer]:
+          - /url: "#pricing"
+        - link "Science" [ref=e338] [cursor=pointer]:
+          - /url: "#science"
+        - link "Story" [ref=e339] [cursor=pointer]:
+          - /url: "#story"
+      - paragraph [ref=e340]: © 2026 VOLT. All rights reserved.
+  - alert [ref=e341]

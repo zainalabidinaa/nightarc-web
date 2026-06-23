@@ -74,7 +74,7 @@ struct MacFolderView: View {
                     .padding(.top, 18)
 
                     Text(displayRow.title)
-                        .font(.system(size: 36, weight: .black, design: .rounded))
+                        .font(.system(size: 36, weight: .black))
                         .foregroundColor(.white)
                         .padding(.top, 16)
                 }

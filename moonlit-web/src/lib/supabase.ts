@@ -14,7 +14,7 @@ export const TMDB_API_KEY = '1e818317d3086727eceecf0571621527';
 
 export const DEFAULT_ADDONS = [
   'https://aiometadata.elfhosted.com/stremio/d67da46b-f48e-4efa-a9e2-21ac1a6c3a4a/manifest.json',
-  'https://aiostreams.elfhosted.com/stremio/4a17bbef-9114-4231-82fb-b6baac090c63/eyJpIjoiWEUxR1dGYjJ2OVJqSGJIMURnYlpYUT09IiwiZSI6Ik5mUXRjSWFPaW9CNlhQWW9kOGhYcFZmdU5QaDJVSVM5MnZHMS9uZG1reGc9IiwidCI6ImEifQ/manifest.json',
+  'https://aiostreams.elfhosted.com/stremio/136efc3f-5fc1-4959-abc0-0d55eec7ed28/eyJpIjoib09jY3VmNEFybENoTlRIRFNGVUI3Zz09IiwiZSI6ImdweEJoWklwbDZEc0kzdmxJVDlKZ3dNK2ZhUVdwRlhFYzBmbWpVcnFmT3M9IiwidCI6ImEifQ/manifest.json',
   'https://opensubtitlesv3-pro.dexter21767.com/eyJsYW5ncyI6WyJlbmdsaXNoIl0sInNvdXJjZSI6ImFsbCIsImFpVHJhbnNsYXRlZCI6ZmFsc2UsImF1dG9BZGp1c3RtZW50IjpmYWxzZX0=/manifest.json',
   'https://opensubtitles-v3.strem.io/manifest.json',
 ];

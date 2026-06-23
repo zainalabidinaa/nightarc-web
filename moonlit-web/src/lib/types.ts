@@ -11,6 +11,8 @@ export interface MetaPreview {
   imdbRating?: string;
   genres?: string[];
   popularity?: number;
+  /** For folder group-tiles: the folder's own tile shape (POSTER | LANDSCAPE). */
+  tileShape?: string;
 }
 
 export interface MetaLink {

@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nightarc Onboarding — v4</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background:#0e0e14;
+  display:flex; align-items:center; justify-content:center;
+  min-height:100vh;
+  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;
+  color:white; padding:24px 0;
+}
+.stage { display:flex; flex-direction:column; align-items:center; gap:28px; }
+.screen-lbl {
+  font-size:11px; color:rgba(255,255,255,0.3);
+  letter-spacing:2px; text-transform:uppercase; font-weight:500;
+}
+
+/* Phone */
+.phone {
+  width:320px; height:693px;
+  background:#050509;
+  border-radius:50px;
+  position:relative; overflow:hidden;
+  border:1.5px solid rgba(255,255,255,0.07);
+  box-shadow:0 0 0 6px #0a0a10,0 0 0 7px rgba(255,255,255,0.03),0 60px 120px rgba(0,0,0,0.9);
+  flex-shrink:0;
+}
+.di {
+  position:absolute; top:14px; left:50%; transform:translateX(-50%);
+  width:90px; height:28px; background:#000; border-radius:20px; z-index:100;
+}
+
+.screen {
+  position:absolute; inset:0; overflow:hidden;
+  opacity:0; pointer-events:none; transition:opacity 0.35s ease;
+}
+.screen.active { opacity:1; pointer-events:all; }
+
+/* Stars */
+.star-dot {
+  position:absolute; border-radius:50%; background:white;
+  animation:twinkle var(--dur,3s) ease-in-out infinite alternate;
+  animation-delay:var(--delay,0s);
+}
+@keyframes twinkle {
+  from{opacity:calc(var(--op)*0.2);} to{opacity:var(--op);}
+}
+
+/* ══════════════════════════════════
+   S1 — WELCOME
+══════════════════════════════════ */
+#s1 { background:radial-gradient(ellipse 80% 55% at 50% 22%,#17110a 0%,#050509 55%); }
+
+.arch {
+  position:absolute; top:52px; left:50%; transform:translateX(-50%);
+  width:186px; height:264px;
+}
+.arch-glow {
+  position:absolute; inset:-28px;
+  border-radius:124px 124px 0 0;
+  background:radial-gradient(ellipse 70% 52% at 50% 80%,rgba(200,148,26,0.14) 0%,transparent 65%);
+  animation:aBreath 4s ease-in-out infinite alternate;
+}
+@keyframes aBreath {
+  from{opacity:.6;transform:scale(.97);} to{opacity:1;transform:scale(1.03);}
+}
+.arch-border {
+  position:absolute; inset:0;
+  border:1.5px solid rgba(200,148,26,0.22);
+  border-radius:93px 93px 0 0;
+}
+.arch-border-i {
+  position:absolute; inset:14px;
+  border:1px solid rgba(200,148,26,0.09);
+  border-radius:80px 80px 0 0;
+}
+.arch-gal {
+  position:absolute; inset:16px;
+  border-radius:78px 78px 0 0; overflow:hidden;
+  background:
+    radial-gradient(ellipse 100% 80% at 50% 70%,rgba(60,30,120,.38) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 60% at 25% 40%,rgba(20,50,110,.25) 0%,transparent 55%),
+    radial-gradient(ellipse 50% 50% at 75% 28%,rgba(80,50,150,.2) 0%,transparent 50%);
+  animation:galDrift 7s ease-in-out infinite alternate;
+}
+@keyframes galDrift { from{transform:translateY(0) scale(1);} to{transform:translateY(-5px) scale(1.02);} }
+
+.s1-body {
+  position:absolute; bottom:0; left:0; right:0;
+  display:flex; flex-direction:column; align-items:center;
+  padding:294px 28px 52px;
+}
+.s1-brand { font-size:10px; font-weight:700; letter-spacing:5px; color:rgba(200,148,26,.65); text-transform:uppercase; margin-bottom:14px; }
+.s1-title { font-size:30px; font-weight:700; color:white; text-align:center; line-height:1.15; letter-spacing:-.5px; margin-bottom:10px; }
+.s1-sub   { font-size:14px; color:rgba(255,255,255,.4); text-align:center; line-height:1.55; max-width:220px; margin-bottom:32px; }
+.s1-cta   { width:100%; padding:17px; background:rgba(200,148,26,.12); border:1px solid rgba(200,148,26,.32); border-radius:18px; color:rgba(200,148,26,1); font-size:16px; font-weight:600; cursor:pointer; backdrop-filter:blur(12px); transition:background .2s; }
+.s1-cta:hover { background:rgba(200,148,26,.2); }
+
+/* ══════════════════════════════════
+   S2 — SCATTERED POSTERS
+══════════════════════════════════ */
+#s2 { background:#050509; }
+.s2-bg {
+  position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 35% 30%,rgba(70,35,130,.18) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 45% at 65% 65%,rgba(25,50,110,.14) 0%,transparent 60%);
+}
+
+.scatter { position:absolute; inset:0; }
+.sc {
+  position:absolute; border-radius:10px; overflow:hidden;
+  box-shadow:0 6px 24px rgba(0,0,0,.7);
+  border:1px solid rgba(255,255,255,.06);
+  cursor:pointer;
+  transition:transform .45s cubic-bezier(.34,1.56,.64,1),
+             opacity .35s ease, box-shadow .35s ease, filter .35s ease;
+}
+.sc .inn {
+  width:100%; height:100%;
+  display:flex; align-items:flex-end; padding:7px;
+  font-size:8px; font-weight:700; color:rgba(255,255,255,.8);
+  text-shadow:0 1px 4px rgba(0,0,0,.9); letter-spacing:.3px;
+}
+.df { opacity:.32; filter:blur(.5px); }
+.dm { opacity:.6; }
+.dn { opacity:.85; }
+.sc.sel { opacity:1!important; filter:none!important; box-shadow:0 16px 48px rgba(0,0,0,.85),0 0 0 1.5px rgba(255,255,255,.12)!important; z-index:30!important; }
+.scatter.has-sel .sc:not(.sel) { opacity:.15!important; filter:blur(1px)!important; }
+
+.g1{background:linear-gradient(155deg,#1a0a30,#2d1060,#0d1830);}
+.g2{background:linear-gradient(155deg,#2a0808,#1a0d2e,#0a1820);}
+.g3{background:linear-gradient(155deg,#0a1a0a,#1a1a0a,#0d2a16);}
+.g4{background:linear-gradient(155deg,#2a1806,#1a0a1a,#060a2a);}
+.g5{background:linear-gradient(155deg,#0a2830,#1a0a2e,#2a0a18);}
+.g6{background:linear-gradient(155deg,#1a2806,#081a2a,#280808);}
+.g7{background:linear-gradient(155deg,#200a18,#0a0a2a,#1a1808);}
+.g8{background:linear-gradient(155deg,#060a28,#2a1806,#0a2808);}
+.g9{background:linear-gradient(155deg,#180a28,#0a1820,#280a0a);}
+
+.qa-pill {
+  position:absolute;
+  background:rgba(16,16,26,.9); backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,.1); border-radius:50px;
+  padding:8px 12px; display:flex; gap:8px; align-items:center;
+  box-shadow:0 8px 32px rgba(0,0,0,.7); z-index:40;
+  opacity:0; transform:translateY(4px) scale(.92);
+  transition:opacity .28s ease .08s,transform .35s cubic-bezier(.34,1.56,.64,1) .08s;
+  pointer-events:none; white-space:nowrap;
+}
+.qa-pill.vis { opacity:1; transform:translateY(0) scale(1); }
+.qa-b { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; }
+.qa-add  { background:rgba(60,200,100,.18); }
+.qa-seen { background:rgba(80,150,255,.18); }
+.qa-like { background:rgba(255,60,90,.18); }
+
+.s2-bot {
+  position:absolute; bottom:0; left:0; right:0;
+  padding:0 24px 50px;
+  background:linear-gradient(to top,rgba(5,5,9,1) 0%,rgba(5,5,9,.7) 38%,transparent 100%);
+  pointer-events:none;
+}
+.s2-t { font-size:21px; font-weight:700; letter-spacing:-.3px; margin-bottom:5px; }
+.s2-s { font-size:13px; color:rgba(255,255,255,.4); line-height:1.5; }
+
+/* ══════════════════════════════════
+   S3 — HEART INTERACTION  (fixed)
+   Card upper-center, heart pill directly below card, same tight layout as Binge
+══════════════════════════════════ */
+#s3 { background:#050509; }
+
+.s3-amb {
+  position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse 65% 48% at 50% 37%,rgba(180,30,60,.11) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 40% at 30% 72%,rgba(70,35,130,.1) 0%,transparent 60%);
+  animation:ambP 3.5s ease-in-out infinite alternate;
+}
+@keyframes ambP { from{opacity:.7;} to{opacity:1;} }
+
+/* halo behind card — matches Binge's white radial adapted dark */
+.s3-halo {
+  position:absolute;
+  top:68px; left:50%; transform:translateX(-50%);
+  width:260px; height:310px;
+  border-radius:50%;
+  background:radial-gradient(ellipse 75% 65% at 50% 48%,rgba(170,25,55,.16) 0%,transparent 68%);
+  animation:haloB 3s ease-in-out infinite alternate;
+  pointer-events:none;
+}
+@keyframes haloB {
+  from{transform:translateX(-50%) scale(.96);opacity:.8;}
+  to  {transform:translateX(-50%) scale(1.04);opacity:1;}
+}
+
+/* Hero card — tight to top like Binge, centered */
+.s3-card {
+  position:absolute;
+  top:88px; left:50%; transform:translateX(-50%);
+  width:158px; height:232px;
+  border-radius:16px; overflow:hidden;
+  box-shadow:0 24px 60px rgba(0,0,0,.85),0 0 0 1px rgba(255,255,255,.07);
+  animation:cardF 5s ease-in-out infinite alternate;
+}
+@keyframes cardF {
+  from{transform:translateX(-50%) translateY(0);}
+  to  {transform:translateX(-50%) translateY(-6px);}
+}
+.s3-card-inner {
+  width:100%; height:100%;
+  background:linear-gradient(155deg,#1a0a30,#2d1060,#0d1830);
+  display:flex; align-items:flex-end; padding:14px;
+  position:relative; overflow:hidden;
+}
+.s3-card-inner::before {
+  content:''; position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse 90% 55% at 50% 22%,rgba(130,70,255,.3) 0%,transparent 55%),
+    radial-gradient(ellipse 60% 50% at 70% 70%,rgba(30,100,200,.2) 0%,transparent 50%);
+}
+.s3-card-title {
+  position:relative; font-size:14px; font-weight:800; color:white;
+  line-height:1.2; text-shadow:0 2px 8px rgba(0,0,0,.8);
+}
+
+/* Heart pill — directly below card, same concept as Binge stars pill */
+/* Card bottom: 88+232 = 320px. Pill starts 14px below = 334px */
+.s3-heart-pill {
+  position:absolute;
+  top:334px; left:50%; transform:translateX(-50%);
+  display:flex; align-items:center; gap:4px;
+  background:rgba(16,16,26,.85);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:40px; padding:10px 20px;
+  box-shadow:0 6px 24px rgba(0,0,0,.6);
+  backdrop-filter:blur(16px);
+  cursor:pointer;
+  animation:pillPop .4s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes pillPop {
+  from{opacity:0;transform:translateX(-50%) scale(.85);}
+  to  {opacity:1;transform:translateX(-50%) scale(1);}
+}
+.heart-icon {
+  font-size:26px;
+  animation:hPulse 2.2s ease-in-out infinite;
+  display:inline-block;
+}
+@keyframes hPulse {
+  0%,100%{transform:scale(1);}
+  12%    {transform:scale(1.18);}
+  24%    {transform:scale(1);}
+  36%    {transform:scale(1.10);}
+  48%    {transform:scale(1);}
+}
+.heart-tap-txt { font-size:13px; color:rgba(255,255,255,.55); margin-left:6px; font-weight:500; }
+
+/* Floating hearts — rise FROM pill position upward through card */
+.hp {
+  position:absolute;
+  left:var(--lx,50%); top:var(--ty,310px);
+  font-size:var(--sz,18px);
+  opacity:0; pointer-events:none;
+  animation:hRise var(--dur,2s) ease-out infinite;
+  animation-delay:var(--dl,0s);
+  transform:translateX(-50%);
+}
+@keyframes hRise {
+  0%  {opacity:0;transform:translateX(-50%) translateY(0) scale(.6);}
+  12% {opacity:.95;transform:translateX(-50%) translateY(-14px) scale(1.1);}
+  75% {opacity:.55;transform:translateX(-50%) translateY(-90px) scale(.9);}
+  100%{opacity:0;transform:translateX(-50%) translateY(-130px) scale(.5);}
+}
+
+/* Instruction text — below pill */
+/* Pill top:334, pill ~54px tall → bottom 388. Text at 404 */
+.s3-instruction {
+  position:absolute; top:404px; left:0; right:0;
+  text-align:center; padding:0 32px;
+}
+.s3-instr-main { font-size:21px; font-weight:700; letter-spacing:-.3px; margin-bottom:7px; }
+.s3-instr-sub  { font-size:13px; color:rgba(255,255,255,.38); line-height:1.55; }
+
+/* Liked tags — near bottom */
+.s3-liked {
+  position:absolute; bottom:56px; left:0; right:0;
+  display:flex; gap:8px; justify-content:center; flex-wrap:wrap; padding:0 24px;
+}
+.liked-t {
+  display:flex; align-items:center; gap:5px;
+  background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08);
+  border-radius:20px; padding:5px 12px;
+  font-size:12px; color:rgba(255,255,255,.45);
+}
+.liked-t.on { background:rgba(255,50,80,.1); border-color:rgba(255,60,90,.28); color:rgba(255,100,118,.9); }
+
+/* ══════════════════════════════════
+   S4 — LIBRARY PREVIEW
+══════════════════════════════════ */
+#s4 { background:#050509; display:flex; flex-direction:column; }
+.lib-head {
+  height:108px; flex-shrink:0;
+  background:linear-gradient(160deg,rgba(200,148,26,.06) 0%,transparent 100%);
+  display:flex; align-items:flex-end; padding:0 22px 14px;
+  border-bottom:1px solid rgba(255,255,255,.04);
+}
+.lib-ht { font-size:26px; font-weight:700; letter-spacing:-.5px; }
+.lib-tabs { display:flex; padding:10px 20px 0; gap:4px; flex-shrink:0; }
+.lib-tab { padding:6px 14px; border-radius:20px; font-size:12px; font-weight:600; color:rgba(255,255,255,.35); cursor:pointer; }
+.lib-tab.on { background:rgba(200,148,26,.14); color:rgba(200,148,26,.9); border:1px solid rgba(200,148,26,.2); }
+.lib-body { flex:1; padding:14px 20px; display:flex; flex-direction:column; gap:10px; overflow:hidden; }
+.lib-row { display:flex; gap:12px; align-items:center; }
+.lib-thumb { width:50px; height:72px; border-radius:8px; flex-shrink:0; }
+.lib-info { flex:1; }
+.lib-name { font-size:13px; font-weight:600; color:rgba(255,255,255,.85); margin-bottom:4px; }
+.lib-meta { font-size:11px; color:rgba(255,255,255,.32); }
+.lib-prog { height:2px; background:rgba(255,255,255,.07); border-radius:1px; margin-top:7px; overflow:hidden; }
+.lib-bar  { height:100%; background:rgba(200,148,26,.65); border-radius:1px; }
+.tc1{background:linear-gradient(155deg,#1a0a2e,#2d1060);}
+.tc2{background:linear-gradient(155deg,#0a1a28,#1a280a);}
+.tc3{background:linear-gradient(155deg,#280808,#08082a);}
+.tc4{background:linear-gradient(155deg,#0a2818,#180a2e);}
+
+/* ══════════════════════════════════
+   S5 — AUTH
+══════════════════════════════════ */
+#s5 { background:#050509; }
+.auth-bg {
+  position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse 80% 45% at 50% 18%,rgba(200,148,26,.07) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 45% at 20% 80%,rgba(70,35,130,.08) 0%,transparent 60%);
+}
+.auth-body {
+  position:relative; z-index:1;
+  display:flex; flex-direction:column; align-items:center;
+  padding:80px 28px 52px; width:100%; height:100%;
+}
+.auth-icon {
+  width:72px; height:72px; border-radius:50%;
+  border:1.5px solid rgba(200,148,26,.28);
+  box-shadow:0 0 24px rgba(200,148,26,.1);
+  display:flex; align-items:center; justify-content:center;
+  font-size:28px; margin-bottom:24px;
+}
+.auth-title { font-size:26px; font-weight:700; text-align:center; letter-spacing:-.4px; line-height:1.2; margin-bottom:10px; }
+.auth-sub   { font-size:13px; color:rgba(255,255,255,.38); text-align:center; line-height:1.6; margin-bottom:auto; max-width:220px; }
+.auth-acts  { display:flex; flex-direction:column; gap:12px; width:100%; }
+.btn-p { width:100%; padding:17px; background:rgba(200,148,26,.13); border:1px solid rgba(200,148,26,.32); border-radius:18px; color:rgba(200,148,26,1); font-size:16px; font-weight:600; cursor:pointer; backdrop-filter:blur(12px); transition:background .2s; }
+.btn-p:hover { background:rgba(200,148,26,.2); }
+.btn-s { width:100%; padding:17px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07); border-radius:18px; color:rgba(255,255,255,.45); font-size:15px; font-weight:500; cursor:pointer; transition:background .2s; }
+.btn-s:hover { background:rgba(255,255,255,.08); }
+
+/* ══════════════════════════════════
+   S6 — FIRST-TIME: CREATE PROFILE
+   (shown after sign-in, first run only)
+══════════════════════════════════ */
+#s6 { background:#050509; }
+.s6-bg {
+  position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse 70% 45% at 50% 20%,rgba(200,148,26,.06) 0%,transparent 55%),
+    radial-gradient(ellipse 50% 40% at 80% 75%,rgba(70,35,130,.08) 0%,transparent 60%);
+}
+.s6-body {
+  position:relative; z-index:1;
+  display:flex; flex-direction:column; align-items:center;
+  padding:60px 24px 40px; width:100%; height:100%;
+}
+.s6-eyebrow { font-size:11px; font-weight:700; letter-spacing:4px; color:rgba(200,148,26,.65); text-transform:uppercase; margin-bottom:10px; }
+.s6-title  { font-size:24px; font-weight:700; letter-spacing:-.4px; margin-bottom:4px; }
+.s6-sub    { font-size:13px; color:rgba(255,255,255,.38); margin-bottom:28px; }
+
+/* Profile icon picker */
+.s6-icon-wrap {
+  display:flex; flex-direction:column; align-items:center; margin-bottom:24px;
+}
+.s6-icon-ring {
+  width:88px; height:88px; border-radius:50%;
+  border:2px dashed rgba(200,148,26,.35);
+  display:flex; align-items:center; justify-content:center;
+  font-size:36px; margin-bottom:10px;
+  background:rgba(200,148,26,.06);
+  position:relative; cursor:pointer;
+  transition:border-color .2s;
+}
+.s6-icon-ring:hover { border-color:rgba(200,148,26,.6); }
+.s6-icon-ring .plus-badge {
+  position:absolute; bottom:2px; right:2px;
+  width:24px; height:24px; border-radius:50%;
+  background:rgba(200,148,26,.9);
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; color:#050509; font-weight:700;
+  border:2px solid #050509;
+}
+.s6-icon-hint { font-size:12px; color:rgba(200,148,26,.65); font-weight:500; }
+
+/* Emoji grid for icon picking */
+.s6-emoji-grid {
+  display:grid; grid-template-columns:repeat(5,1fr); gap:8px;
+  width:100%; margin-bottom:20px;
+}
+.s6-emoji {
+  aspect-ratio:1; border-radius:12px;
+  background:rgba(255,255,255,.05); border:1.5px solid rgba(255,255,255,.06);
+  display:flex; align-items:center; justify-content:center;
+  font-size:22px; cursor:pointer;
+  transition:all .15s;
+}
+.s6-emoji:hover { background:rgba(200,148,26,.12); border-color:rgba(200,148,26,.3); transform:scale(1.08); }
+.s6-emoji.picked { background:rgba(200,148,26,.18); border-color:rgba(200,148,26,.5); transform:scale(1.06); }
+
+/* Name input */
+.s6-input-wrap { width:100%; margin-bottom:16px; }
+.s6-input-lbl  { font-size:11px; font-weight:600; color:rgba(255,255,255,.35); letter-spacing:1px; text-transform:uppercase; margin-bottom:6px; }
+.s6-input {
+  width:100%; padding:14px 16px;
+  background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.09);
+  border-radius:14px; color:white; font-size:15px;
+  outline:none; transition:border-color .2s;
+  font-family:inherit;
+}
+.s6-input:focus { border-color:rgba(200,148,26,.4); background:rgba(200,148,26,.05); }
+.s6-input::placeholder { color:rgba(255,255,255,.25); }
+
+.s6-cta { width:100%; padding:16px; background:rgba(200,148,26,.13); border:1px solid rgba(200,148,26,.32); border-radius:18px; color:rgba(200,148,26,1); font-size:15px; font-weight:600; cursor:pointer; backdrop-filter:blur(12px); margin-top:auto; }
+.s6-cta:hover { background:rgba(200,148,26,.2); }
+
+/* ── NAV ── */
+.nav-row { display:flex; align-items:center; gap:20px; }
+.nav-arr {
+  width:36px; height:36px; border-radius:50%;
+  background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.09);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:14px; color:rgba(255,255,255,.38);
+  transition:all .2s; user-select:none;
+}
+.nav-arr:hover { background:rgba(255,255,255,.1); color:rgba(255,255,255,.7); }
+.nav-arr.off { opacity:.18; pointer-events:none; }
+.dots { display:flex; gap:7px; align-items:center; }
+.dot { width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.14); cursor:pointer; transition:all .3s; }
+.dot.on { width:22px; border-radius:3.5px; background:rgba(200,148,26,.8); }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="screen-lbl" id="lbl">Screen 1 of 6 — Welcome</div>
+
+  <div class="phone">
+    <div class="di"></div>
+
+    <!-- S1 WELCOME -->
+    <div class="screen active" id="s1">
+      <div id="st1"></div>
+      <div class="arch">
+        <div class="arch-glow"></div>
+        <div class="arch-gal"></div>
+        <div class="arch-border"></div>
+        <div class="arch-border-i"></div>
+      </div>
+      <div class="s1-body">
+        <div class="s1-brand">NIGHTARC</div>
+        <div class="s1-title">Your Universe<br>of Stories</div>
+        <div class="s1-sub">Track, discover, and stream everything — powered by your addons.</div>
+        <button class="s1-cta" onclick="goTo(2)">Get Started</button>
+      </div>
+    </div>
+
+    <!-- S2 SCATTERED POSTERS -->
+    <div class="screen" id="s2">
+      <div class="s2-bg"></div>
+      <div id="st2"></div>
+      <div class="scatter" id="scat">
+        <!-- far -->
+        <div class="sc df g4" style="width:66px;height:98px;top:66px;left:8px;transform:rotate(-9deg)" onclick="sel(this,'Sicario')"><div class="inn">Sicario</div></div>
+        <div class="sc df g9" style="width:60px;height:88px;top:56px;right:6px;transform:rotate(10deg)" onclick="sel(this,'1917')"><div class="inn">1917</div></div>
+        <div class="sc df g6" style="width:62px;height:92px;top:248px;left:4px;transform:rotate(-6deg)" onclick="sel(this,'Andor')"><div class="inn">Andor</div></div>
+        <div class="sc df g3" style="width:58px;height:86px;top:438px;right:4px;transform:rotate(7deg)" onclick="sel(this,'Shogun')"><div class="inn">Shogun</div></div>
+        <div class="sc df g8" style="width:64px;height:94px;top:488px;left:6px;transform:rotate(-5deg)" onclick="sel(this,'True Detective')"><div class="inn">True Detective</div></div>
+        <!-- mid -->
+        <div class="sc dm g2" style="width:80px;height:118px;top:60px;left:76px;transform:rotate(5deg)" onclick="sel(this,'Dune')"><div class="inn">Dune</div></div>
+        <div class="sc dm g5" style="width:76px;height:112px;top:53px;right:62px;transform:rotate(-4deg)" onclick="sel(this,'Oppenheimer')"><div class="inn">Oppenheimer</div></div>
+        <div class="sc dm g7" style="width:78px;height:114px;top:198px;right:14px;transform:rotate(8deg)" onclick="sel(this,'The Bear')"><div class="inn">The Bear</div></div>
+        <div class="sc dm g1" style="width:74px;height:108px;top:378px;left:46px;transform:rotate(-7deg)" onclick="sel(this,'Succession')"><div class="inn">Succession</div></div>
+        <!-- near / default selected -->
+        <div class="sc dn sel g1" id="c0" style="width:108px;height:158px;top:218px;left:96px;transform:rotate(2deg)" onclick="sel(this,'Inception')"><div class="inn">Inception</div></div>
+        <!-- pill -->
+        <div class="qa-pill vis" id="pill" style="top:204px;left:86px;">
+          <div class="qa-b qa-add">➕</div>
+          <div class="qa-b qa-seen">✓</div>
+          <div class="qa-b qa-like">❤️</div>
+        </div>
+      </div>
+      <div class="s2-bot">
+        <div class="s2-t">Track everything<br>you watch</div>
+        <div class="s2-s">Tap any title to add it to your library</div>
+      </div>
+    </div>
+
+    <!-- S3 HEART (fixed layout) -->
+    <div class="screen" id="s3">
+      <div id="st3"></div>
+      <div class="s3-amb"></div>
+      <div class="s3-halo"></div>
+
+      <!-- Hero card: top 88px, 158×232, bottom = 320px -->
+      <div class="s3-card"><div class="s3-card-inner"><div class="s3-card-title">Inception</div></div></div>
+
+      <!-- Floating hearts — rise from pill area (~334-388px), i.e. ty ≈ 350-360px -->
+      <div class="hp" style="--lx:38%;--ty:350px;--sz:18px;--dur:2.2s;--dl:0s">❤️</div>
+      <div class="hp" style="--lx:50%;--ty:344px;--sz:24px;--dur:2.5s;--dl:.5s">❤️</div>
+      <div class="hp" style="--lx:62%;--ty:354px;--sz:16px;--dur:2s;--dl:1s">❤️</div>
+      <div class="hp" style="--lx:44%;--ty:348px;--sz:14px;--dur:2.7s;--dl:1.5s">❤️</div>
+      <div class="hp" style="--lx:56%;--ty:342px;--sz:20px;--dur:2.1s;--dl:.9s">❤️</div>
+
+      <!-- Heart pill: top 334px (14px below card bottom 320) -->
+      <div class="s3-heart-pill">
+        <span class="heart-icon">❤️</span>
+        <span class="heart-tap-txt">Tap to like</span>
+      </div>
+
+      <!-- Instruction: top 404px -->
+      <div class="s3-instruction">
+        <div class="s3-instr-main">Like what you love</div>
+        <div class="s3-instr-sub">Nightarc learns your taste<br>and improves your recommendations</div>
+      </div>
+
+      <!-- Liked tags bottom -->
+      <div class="s3-liked">
+        <div class="liked-t on">❤️ Inception</div>
+        <div class="liked-t on">❤️ Severance</div>
+        <div class="liked-t">The Bear</div>
+      </div>
+    </div>
+
+    <!-- S4 LIBRARY -->
+    <div class="screen" id="s4">
+      <div class="lib-head"><div class="lib-ht">My Library</div></div>
+      <div class="lib-tabs">
+        <div class="lib-tab on">Watching</div>
+        <div class="lib-tab">Watched</div>
+        <div class="lib-tab">Watchlist</div>
+      </div>
+      <div class="lib-body">
+        <div class="lib-row"><div class="lib-thumb tc1"></div><div class="lib-info"><div class="lib-name">Severance</div><div class="lib-meta">S2 · E5 — The Grim Barbarity…</div><div class="lib-prog"><div class="lib-bar" style="width:62%"></div></div></div></div>
+        <div class="lib-row"><div class="lib-thumb tc2"></div><div class="lib-info"><div class="lib-name">The Bear</div><div class="lib-meta">S3 · E2 — Forks</div><div class="lib-prog"><div class="lib-bar" style="width:28%"></div></div></div></div>
+        <div class="lib-row"><div class="lib-thumb tc3"></div><div class="lib-info"><div class="lib-name">Andor</div><div class="lib-meta">S2 · E8 — Welcome Back</div><div class="lib-prog"><div class="lib-bar" style="width:45%"></div></div></div></div>
+        <div class="lib-row"><div class="lib-thumb tc4"></div><div class="lib-info"><div class="lib-name">Shogun</div><div class="lib-meta">S1 · E10 · Finale</div><div class="lib-prog"><div class="lib-bar" style="width:88%"></div></div></div></div>
+      </div>
+    </div>
+
+    <!-- S5 AUTH -->
+    <div class="screen" id="s5">
+      <div class="auth-bg"></div>
+      <div id="st5"></div>
+      <div class="auth-body">
+        <div class="auth-icon">🌙</div>
+        <div class="auth-title">Save Your<br>Universe</div>
+        <div class="auth-sub">Create an account to sync your library across all your devices.</div>
+        <div class="auth-acts">
+          <button class="btn-p" onclick="goTo(6)">Sign In / Create Account</button>
+          <button class="btn-s">Continue Without Account</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- S6 CREATE PROFILE (first run, after sign-in) -->
+    <div class="screen" id="s6">
+      <div class="s6-bg"></div>
+      <div id="st6"></div>
+      <div class="s6-body">
+        <div class="s6-eyebrow">Almost There</div>
+        <div class="s6-title">Create Your Profile</div>
+        <div class="s6-sub">Who's watching?</div>
+
+        <!-- Icon ring — tap to pick -->
+        <div class="s6-icon-wrap">
+          <div class="s6-icon-ring" id="s6ring" onclick="toggleEmojiGrid()">
+            <span id="s6picked">🌙</span>
+            <span class="plus-badge">+</span>
+          </div>
+          <div class="s6-icon-hint">Tap to choose an icon</div>
+        </div>
+
+        <!-- Emoji grid (initially visible — prompts user) -->
+        <div class="s6-emoji-grid" id="s6grid">
+          <div class="s6-emoji" onclick="pickEmoji(this,'🌙')">🌙</div>
+          <div class="s6-emoji" onclick="pickEmoji(this,'⭐')">⭐</div>
+          <div class="s6-emoji" onclick="pickEmoji(this,'🎬')">🎬</div>
+          <div class="s6-emoji" onclick="pickEmoji(this,'🍿')">🍿</div>
+          <div class="s6-emoji" onclick="pickEmoji(this,'🦊')">🦊</div>
+          <div class="s6-emoji" onclick="pickEmoji(this,'🐉')">🐉</div>
+          <div class="s6-emoji" onclick="pickEmoji(this,'👾')">👾</div>
+          <div class="s6-emoji" onclick="pickEmoji(this,'🌊')">🌊</div>
+          <div class="s6-emoji" onclick="pickEmoji(this,'🔮')">🔮</div>
+          <div class="s6-emoji" onclick="pickEmoji(this,'⚡')">⚡</div>
+        </div>
+
+        <!-- Name input -->
+        <div class="s6-input-wrap">
+          <div class="s6-input-lbl">Your Name</div>
+          <input class="s6-input" type="text" placeholder="e.g. Zain" maxlength="24" />
+        </div>
+
+        <button class="s6-cta">Create Profile →</button>
+      </div>
+    </div>
+
+  </div><!-- /phone -->
+
+  <div class="nav-row">
+    <div class="nav-arr off" id="bprev" onclick="goRel(-1)">←</div>
+    <div class="dots">
+      <div class="dot on" onclick="goTo(1)"></div>
+      <div class="dot"    onclick="goTo(2)"></div>
+      <div class="dot"    onclick="goTo(3)"></div>
+      <div class="dot"    onclick="goTo(4)"></div>
+      <div class="dot"    onclick="goTo(5)"></div>
+      <div class="dot"    onclick="goTo(6)"></div>
+    </div>
+    <div class="nav-arr" id="bnext" onclick="goRel(1)">→</div>
+  </div>
+</div>
+
+<script>
+// Stars
+function stars(id, n) {
+  const c = document.getElementById(id); if(!c)return;
+  for(let i=0;i<n;i++){
+    const d=document.createElement('div'); d.className='star-dot';
+    const sz=Math.random()*1.6+0.4,op=Math.random()*.4+.08;
+    d.style.cssText=`position:absolute;width:${sz}px;height:${sz}px;border-radius:50%;background:white;top:${Math.random()*100}%;left:${Math.random()*100}%;--op:${op};--dur:${Math.random()*3+2}s;--delay:${Math.random()*5}s;opacity:${op};animation:twinkle var(--dur) ease-in-out infinite alternate;animation-delay:var(--delay);`;
+    c.appendChild(d);
+  }
+}
+stars('st1',70); stars('st2',28); stars('st3',55); stars('st5',80); stars('st6',50);
+
+const LABELS = ['','Screen 1 of 6 — Welcome','Screen 2 of 6 — Discover','Screen 3 of 6 — Like','Screen 4 of 6 — Library','Screen 5 of 6 — Sign In','Screen 6 of 6 — Create Profile (first run)'];
+let cur=1;
+function goTo(n){
+  if(n<1||n>6)return;
+  document.querySelectorAll('.screen').forEach((s,i)=>s.classList.toggle('active',i+1===n));
+  document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('on',i+1===n));
+  document.getElementById('lbl').textContent=LABELS[n];
+  document.getElementById('bprev').classList.toggle('off',n===1);
+  document.getElementById('bnext').classList.toggle('off',n===6);
+  cur=n;
+}
+function goRel(d){goTo(cur+d);}
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown')goRel(1);
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp')goRel(-1);
+});
+
+// Scatter
+const scat=document.getElementById('scat'), pill=document.getElementById('pill');
+function sel(el,name){
+  document.querySelectorAll('.sc.sel').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel'); scat.classList.add('has-sel');
+  const pr=document.querySelector('.phone').getBoundingClientRect();
+  const cr=el.getBoundingClientRect();
+  const pt=cr.top-pr.top-54, pl=cr.left-pr.left-4;
+  pill.style.top=Math.max(48,pt)+'px';
+  pill.style.left=Math.max(4,pl)+'px';
+  pill.classList.add('vis');
+}
+
+// Profile emoji picker
+let gridVisible=true;
+function toggleEmojiGrid(){
+  gridVisible=!gridVisible;
+  document.getElementById('s6grid').style.display=gridVisible?'grid':'none';
+}
+function pickEmoji(el,em){
+  document.querySelectorAll('.s6-emoji').forEach(e=>e.classList.remove('picked'));
+  el.classList.add('picked');
+  document.getElementById('s6picked').textContent=em;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nightarc Onboarding — v2</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0e0e14;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    color: white;
+  }
+
+  .stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+  }
+
+  .label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 500;
+    height: 16px;
+  }
+
+  /* Phone shell */
+  .phone {
+    width: 320px;
+    height: 693px;
+    background: #050509;
+    border-radius: 50px;
+    position: relative;
+    overflow: hidden;
+    border: 1.5px solid rgba(255,255,255,0.08);
+    box-shadow:
+      0 0 0 6px #0a0a10,
+      0 0 0 7px rgba(255,255,255,0.04),
+      0 60px 120px rgba(0,0,0,0.9),
+      inset 0 1px 0 rgba(255,255,255,0.06);
+  }
+
+  /* Dynamic island */
+  .dynamic-island {
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90px;
+    height: 28px;
+    background: #000;
+    border-radius: 20px;
+    z-index: 100;
+  }
+
+  /* ── SCREEN BASE ── */
+  .screen {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .screen.active { display: flex; }
+
+  /* ════════════════════════════════
+     SCREEN 1 — WELCOME
+  ════════════════════════════════ */
+  #s1 {
+    background: radial-gradient(ellipse 80% 60% at 50% 30%, #1a1208 0%, #050509 55%),
+                radial-gradient(ellipse 50% 70% at 50% 50%, #0d0b04 0%, transparent 70%);
+  }
+
+  .stars-layer {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+  .star-dot {
+    position: absolute;
+    border-radius: 50%;
+    background: white;
+    animation: twinkle var(--dur, 3s) ease-in-out infinite alternate;
+    animation-delay: var(--delay, 0s);
+    opacity: var(--op, 0.4);
+  }
+  @keyframes twinkle {
+    from { opacity: calc(var(--op) * 0.3); }
+    to   { opacity: var(--op); }
+  }
+
+  /* Arch/portal glow */
+  .arch-glow {
+    position: absolute;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 280px;
+  }
+  .arch-outer {
+    position: absolute;
+    inset: 0;
+    border-radius: 100px 100px 0 0;
+    border: 1.5px solid rgba(200,148,26,0.18);
+    background: transparent;
+    box-shadow: 0 0 60px 20px rgba(200,148,26,0.04), inset 0 0 40px rgba(200,148,26,0.03);
+  }
+  .arch-inner {
+    position: absolute;
+    inset: 12px;
+    border-radius: 90px 90px 0 0;
+    border: 1px solid rgba(200,148,26,0.12);
+    background: radial-gradient(ellipse 80% 60% at 50% 60%, rgba(200,148,26,0.06) 0%, transparent 70%);
+  }
+  .arch-glow-pulse {
+    position: absolute;
+    inset: -20px;
+    border-radius: 120px 120px 0 0;
+    background: radial-gradient(ellipse 70% 50% at 50% 80%, rgba(200,148,26,0.1) 0%, transparent 60%);
+    animation: archPulse 4s ease-in-out infinite alternate;
+  }
+  @keyframes archPulse {
+    from { opacity: 0.5; transform: scale(0.98); }
+    to   { opacity: 1;   transform: scale(1.02); }
+  }
+  /* Galaxy inside arch */
+  .arch-galaxy {
+    position: absolute;
+    inset: 16px;
+    border-radius: 80px 80px 0 0;
+    overflow: hidden;
+  }
+  .galaxy-inner {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 120% 60% at 50% 70%, rgba(80,50,150,0.25) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 30% 40%, rgba(30,60,120,0.2) 0%, transparent 50%),
+      radial-gradient(ellipse 40% 50% at 70% 30%, rgba(100,70,180,0.15) 0%, transparent 40%);
+    animation: galaxyDrift 8s ease-in-out infinite alternate;
+  }
+  @keyframes galaxyDrift {
+    from { transform: translateY(0) scale(1); }
+    to   { transform: translateY(-4px) scale(1.02); }
+  }
+
+  .welcome-content {
+    position: absolute;
+    bottom: 0;
+    left: 0; right: 0;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 300px;
+    padding-bottom: 56px;
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+  .welcome-wordmark {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 5px;
+    color: rgba(200,148,26,0.7);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .welcome-headline {
+    font-size: 30px;
+    font-weight: 700;
+    color: white;
+    text-align: center;
+    line-height: 1.15;
+    letter-spacing: -0.5px;
+    margin-bottom: 12px;
+  }
+  .welcome-sub {
+    font-size: 14px;
+    color: rgba(255,255,255,0.45);
+    text-align: center;
+    line-height: 1.5;
+    max-width: 230px;
+    margin-bottom: auto;
+  }
+  .welcome-cta {
+    width: 100%;
+    padding: 17px;
+    background: rgba(200,148,26,0.15);
+    border: 1px solid rgba(200,148,26,0.35);
+    border-radius: 18px;
+    color: rgba(200,148,26,1);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.2px;
+    backdrop-filter: blur(10px);
+  }
+
+  /* ════════════════════════════════
+     SCREEN 2 — FLOATING POSTERS
+  ════════════════════════════════ */
+  #s2 {
+    background: #050509;
+  }
+
+  .posters-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 30% 25%, rgba(80,40,160,0.15) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 70% 70%, rgba(30,60,120,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 30% 30% at 50% 45%, rgba(200,148,26,0.04) 0%, transparent 50%);
+  }
+
+  .poster-grid {
+    position: absolute;
+    inset: 0;
+  }
+
+  .p-card {
+    position: absolute;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.7);
+    animation: float var(--fdur, 5s) ease-in-out infinite alternate;
+    animation-delay: var(--fdelay, 0s);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  @keyframes float {
+    from { transform: translateY(0) rotate(var(--rot, 0deg)); }
+    to   { transform: translateY(var(--fy, -8px)) rotate(var(--rot2, 0deg)); }
+  }
+
+  .p-card .p-img {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    padding: 8px;
+    font-size: 9px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.8);
+    text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+  }
+
+  /* poster colors */
+  .pc-1 { background: linear-gradient(160deg, #1a0a2e, #0d1a3a, #2d1060); }
+  .pc-2 { background: linear-gradient(160deg, #2a0a0a, #1a0d30, #0a1a20); }
+  .pc-3 { background: linear-gradient(160deg, #0a1a0a, #1a1a0d, #0d2a1a); }
+  .pc-4 { background: linear-gradient(160deg, #2a1a0a, #1a0a1a, #0a0a2a); }
+  .pc-5 { background: linear-gradient(160deg, #0a2a2a, #1a0a30, #2a0a20); }
+  .pc-6 { background: linear-gradient(160deg, #1a2a0a, #0a1a2a, #2a0a0a); }
+  .pc-7 { background: linear-gradient(160deg, #2a0a1a, #0d0a2a, #1a1a0a); }
+  .pc-8 { background: linear-gradient(160deg, #0a0a2a, #2a1a0a, #0a2a0a); }
+
+  .poster-prompt {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding-bottom: 52px;
+    background: linear-gradient(to top, rgba(5,5,9,0.95) 0%, rgba(5,5,9,0.4) 40%, transparent 70%);
+  }
+  .prompt-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 6px;
+    text-align: center;
+    letter-spacing: -0.3px;
+  }
+  .prompt-sub {
+    font-size: 13px;
+    color: rgba(255,255,255,0.45);
+    text-align: center;
+    padding: 0 32px;
+  }
+
+  /* Quick-action popup on a poster */
+  .quick-action-popup {
+    position: absolute;
+    bottom: 18px;
+    right: 14px;
+    background: rgba(20,20,30,0.88);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    padding: 10px;
+    display: flex;
+    gap: 8px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+  }
+  .qa-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+  .qa-add  { background: rgba(80,200,120,0.2); }
+  .qa-seen { background: rgba(100,160,255,0.2); }
+  .qa-like { background: rgba(255,80,100,0.2); }
+
+  /* ════════════════════════════════
+     SCREEN 3 — LIKE INTERACTION
+  ════════════════════════════════ */
+  #s3 {
+    background: #050509;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .like-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 70% 50% at 50% 40%, rgba(200,40,80,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 30% 70%, rgba(80,40,160,0.1) 0%, transparent 60%);
+  }
+
+  .like-hero {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 60px;
+    padding-bottom: 52px;
+    width: 100%;
+    height: 100%;
+  }
+
+  .like-poster-wrap {
+    position: relative;
+    margin-bottom: 32px;
+  }
+  .like-poster {
+    width: 160px;
+    height: 240px;
+    border-radius: 16px;
+    background: linear-gradient(160deg, #1a0a2e, #2d1060, #0d1a3a);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.06);
+    display: flex;
+    align-items: flex-end;
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .like-poster::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 30%, rgba(140,80,255,0.25) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 70% 70%, rgba(30,100,200,0.2) 0%, transparent 50%);
+  }
+  .like-poster-title {
+    position: relative;
+    font-size: 13px;
+    font-weight: 700;
+    color: white;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+  }
+
+  /* Floating hearts animation */
+  .heart-float {
+    position: absolute;
+    font-size: 18px;
+    animation: heartRise 1.4s ease-out forwards;
+    opacity: 0;
+  }
+  @keyframes heartRise {
+    0%   { opacity: 1; transform: translateY(0) scale(0.8); }
+    60%  { opacity: 0.8; transform: translateY(-60px) scale(1.1); }
+    100% { opacity: 0; transform: translateY(-100px) scale(0.6); }
+  }
+  .hf-1 { bottom: 140px; left: 60px; animation-delay: 0.1s; }
+  .hf-2 { bottom: 140px; left: 90px; animation-delay: 0.3s; font-size: 22px; }
+  .hf-3 { bottom: 140px; right: 55px; animation-delay: 0.5s; font-size: 14px; }
+  .hf-4 { bottom: 150px; left: 75px; animation-delay: 0.7s; font-size: 12px; }
+
+  .like-heart-btn {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(255,60,90,0.15);
+    border: 1.5px solid rgba(255,60,90,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 24px rgba(255,60,90,0.2);
+    animation: heartBeat 2.2s ease-in-out infinite;
+  }
+  @keyframes heartBeat {
+    0%,100% { transform: scale(1); }
+    10%      { transform: scale(1.12); }
+    20%      { transform: scale(1); }
+    30%      { transform: scale(1.08); }
+    40%      { transform: scale(1); }
+  }
+
+  .like-instruction {
+    font-size: 22px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 8px;
+    letter-spacing: -0.3px;
+  }
+  .like-sub {
+    font-size: 13px;
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+    max-width: 200px;
+    line-height: 1.5;
+  }
+
+  /* Likes row */
+  .likes-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .liked-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+  }
+  .liked-pill.active {
+    background: rgba(255,60,90,0.12);
+    border-color: rgba(255,60,90,0.3);
+    color: rgba(255,100,120,0.9);
+  }
+
+  /* ════════════════════════════════
+     SCREEN 4 — LIBRARY PREVIEW
+  ════════════════════════════════ */
+  #s4 {
+    background: #050509;
+  }
+
+  .lib-top {
+    height: 120px;
+    background: linear-gradient(160deg, rgba(200,148,26,0.08) 0%, transparent 100%);
+    display: flex;
+    align-items: flex-end;
+    padding: 0 20px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    flex-shrink: 0;
+  }
+  .lib-title { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
+
+  .lib-tabs {
+    display: flex;
+    padding: 12px 20px 0;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .lib-tab {
+    padding: 7px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.4);
+    cursor: pointer;
+  }
+  .lib-tab.active {
+    background: rgba(200,148,26,0.15);
+    color: rgba(200,148,26,0.9);
+    border: 1px solid rgba(200,148,26,0.2);
+  }
+
+  .lib-scroll {
+    flex: 1;
+    overflow: hidden;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .lib-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .lib-thumb {
+    width: 50px;
+    height: 72px;
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+  .lib-info { flex: 1; }
+  .lib-name { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.85); margin-bottom: 4px; }
+  .lib-meta { font-size: 11px; color: rgba(255,255,255,0.35); }
+  .lib-progress {
+    height: 2px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 1px;
+    margin-top: 6px;
+    overflow: hidden;
+  }
+  .lib-bar { height: 100%; background: rgba(200,148,26,0.7); border-radius: 1px; }
+
+  .lt-1 { background: linear-gradient(160deg, #1a0a2e, #2d1060); }
+  .lt-2 { background: linear-gradient(160deg, #0a1a2a, #1a2a0a); }
+  .lt-3 { background: linear-gradient(160deg, #2a0a0a, #0a0a2a); }
+  .lt-4 { background: linear-gradient(160deg, #0a2a1a, #1a0a30); }
+
+  /* ════════════════════════════════
+     SCREEN 5 — AUTH GATE
+  ════════════════════════════════ */
+  #s5 {
+    background: #050509;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .auth-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 20%, rgba(200,148,26,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 50% at 20% 80%, rgba(80,40,160,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 80% 70%, rgba(30,60,120,0.06) 0%, transparent 60%);
+  }
+
+  .auth-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 28px 56px;
+    width: 100%;
+    height: 100%;
+    padding-top: 80px;
+  }
+
+  .auth-arch {
+    width: 72px;
+    height: 72px;
+    margin-bottom: 24px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .auth-arch-ring {
+    position: absolute;
+    inset: 0;
+    border: 1.5px solid rgba(200,148,26,0.3);
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(200,148,26,0.12);
+  }
+  .auth-arch-icon { font-size: 28px; }
+
+  .auth-headline {
+    font-size: 26px;
+    font-weight: 700;
+    color: white;
+    text-align: center;
+    margin-bottom: 10px;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+  }
+  .auth-sub {
+    font-size: 13px;
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+    line-height: 1.6;
+    margin-bottom: auto;
+    max-width: 220px;
+  }
+
+  .auth-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+  }
+  .auth-btn-primary {
+    width: 100%;
+    padding: 17px;
+    background: rgba(200,148,26,0.15);
+    border: 1px solid rgba(200,148,26,0.35);
+    border-radius: 18px;
+    color: rgba(200,148,26,1);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+  }
+  .auth-btn-secondary {
+    width: 100%;
+    padding: 17px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 18px;
+    color: rgba(255,255,255,0.5);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .auth-note {
+    font-size: 11px;
+    color: rgba(255,255,255,0.2);
+    text-align: center;
+    margin-top: 12px;
+    line-height: 1.5;
+  }
+
+  /* ════════════════════════════════
+     NAVIGATION DOTS
+  ════════════════════════════════ */
+  .nav-dots {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .nav-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .nav-dot.active {
+    width: 22px;
+    border-radius: 3.5px;
+    background: rgba(200,148,26,0.8);
+  }
+
+  /* Tap-to-advance overlay */
+  .tap-next {
+    position: absolute;
+    inset: 0;
+    cursor: pointer;
+    z-index: 50;
+  }
+  /* Don't block the CTA buttons */
+  .tap-next.allow-buttons { pointer-events: none; }
+
+  /* Screen label */
+  .screen-label-overlay {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    color: rgba(255,255,255,0.2);
+    letter-spacing: 1.5px;
+    white-space: nowrap;
+    z-index: 200;
+    pointer-events: none;
+  }
+
+  /* Arrow hint */
+  .nav-arrows {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+  .nav-arrow {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    color: rgba(255,255,255,0.4);
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .nav-arrow:hover { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); }
+  .nav-arrow:disabled, .nav-arrow.disabled { opacity: 0.2; pointer-events: none; }
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="label" id="screen-label">Screen 1 of 5 — Welcome</div>
+
+  <div class="phone">
+    <div class="dynamic-island"></div>
+
+    <!-- ── SCREEN 1: WELCOME ── -->
+    <div class="screen active" id="s1">
+      <!-- Stars -->
+      <div class="stars-layer" id="stars1"></div>
+
+      <!-- Arch/Portal -->
+      <div class="arch-glow">
+        <div class="arch-glow-pulse"></div>
+        <div class="arch-outer"></div>
+        <div class="arch-galaxy"><div class="galaxy-inner"></div></div>
+        <div class="arch-inner"></div>
+      </div>
+
+      <div class="welcome-content">
+        <div class="welcome-wordmark">NIGHTARC</div>
+        <div class="welcome-headline">Your Universe<br>of Stories</div>
+        <div class="welcome-sub">Track, discover, and relive everything you watch — all in one place.</div>
+        <button class="welcome-cta" onclick="goTo(2)">Get Started</button>
+      </div>
+    </div>
+
+    <!-- ── SCREEN 2: FLOATING POSTERS ── -->
+    <div class="screen" id="s2">
+      <div class="posters-bg"></div>
+      <div class="stars-layer" id="stars2"></div>
+
+      <div class="poster-grid">
+        <!-- Poster positions -->
+        <div class="p-card pc-1" style="width:88px;height:128px;top:60px;left:18px;--rot:-6deg;--rot2:-8deg;--fdur:5.5s;--fdelay:0s;--fy:-10px">
+          <div class="p-img">Dune</div>
+        </div>
+        <div class="p-card pc-2" style="width:100px;height:148px;top:48px;left:110px;--rot:3deg;--rot2:5deg;--fdur:6s;--fdelay:0.4s;--fy:-8px">
+          <div class="p-img">Succession</div>
+        </div>
+        <div class="p-card pc-3" style="width:82px;height:120px;top:54px;right:12px;--rot:8deg;--rot2:6deg;--fdur:5s;--fdelay:0.8s;--fy:-12px">
+          <div class="p-img">Shogun</div>
+        </div>
+        <div class="p-card pc-4" style="width:90px;height:132px;top:196px;left:10px;--rot:-4deg;--rot2:-2deg;--fdur:6.5s;--fdelay:0.2s;--fy:-6px">
+          <div class="p-img">Oppenheimer</div>
+        </div>
+        <div class="p-card pc-5" style="width:92px;height:136px;top:208px;right:8px;--rot:5deg;--rot2:7deg;--fdur:5.8s;--fdelay:1s;--fy:-9px">
+          <div class="p-img">The Bear</div>
+        </div>
+        <div class="p-card pc-6" style="width:80px;height:116px;top:344px;left:24px;--rot:-7deg;--rot2:-5deg;--fdur:6.2s;--fdelay:0.6s;--fy:-11px">
+          <div class="p-img">Andor</div>
+        </div>
+        <div class="p-card pc-7" style="width:96px;height:140px;top:350px;left:112px;--rot:2deg;--rot2:4deg;--fdur:5.3s;--fdelay:0.9s;--fy:-7px">
+          <div class="p-img">Severance</div>
+        </div>
+        <div class="p-card pc-8" style="width:84px;height:122px;top:358px;right:10px;--rot:-3deg;--rot2:-5deg;--fdur:6.8s;--fdelay:0.3s;--fy:-10px">
+          <div class="p-img">True Detective</div>
+        </div>
+
+        <!-- Quick action popup on Severance poster -->
+        <div class="quick-action-popup" style="bottom:160px;left:110px;">
+          <div class="qa-btn qa-add">➕</div>
+          <div class="qa-btn qa-seen">✓</div>
+          <div class="qa-btn qa-like">❤️</div>
+        </div>
+      </div>
+
+      <div class="poster-prompt">
+        <div class="prompt-title">Everything you watch,<br>tracked beautifully</div>
+        <div class="prompt-sub">Add anything from any streaming service to your personal library</div>
+      </div>
+    </div>
+
+    <!-- ── SCREEN 3: LIKE ── -->
+    <div class="screen" id="s3">
+      <div class="like-bg"></div>
+      <div class="stars-layer" id="stars3"></div>
+
+      <div class="like-hero">
+        <div class="like-poster-wrap">
+          <div class="like-poster">
+            <div class="like-poster-title">Severance</div>
+          </div>
+          <!-- Floating hearts -->
+          <div class="heart-float hf-1" style="animation-iteration-count: infinite; animation-duration: 2.2s;">❤️</div>
+          <div class="heart-float hf-2" style="animation-iteration-count: infinite; animation-duration: 2.6s;">❤️</div>
+          <div class="heart-float hf-3" style="animation-iteration-count: infinite; animation-duration: 2s;">❤️</div>
+          <div class="heart-float hf-4" style="animation-iteration-count: infinite; animation-duration: 2.8s;">❤️</div>
+        </div>
+
+        <div class="like-heart-btn">❤️</div>
+
+        <div class="like-instruction">Like what you love</div>
+        <div class="like-sub">Heart your favorites and Nightarc learns what to suggest next</div>
+
+        <div class="likes-row">
+          <div class="liked-pill active">❤️ Severance</div>
+          <div class="liked-pill active">❤️ The Bear</div>
+          <div class="liked-pill">Succession</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SCREEN 4: LIBRARY ── -->
+    <div class="screen" id="s4">
+      <div class="lib-top">
+        <div class="lib-title">My Library</div>
+      </div>
+      <div class="lib-tabs">
+        <div class="lib-tab active">Watching</div>
+        <div class="lib-tab">Watched</div>
+        <div class="lib-tab">Watchlist</div>
+      </div>
+      <div class="lib-scroll">
+        <div class="lib-row">
+          <div class="lib-thumb lt-1"></div>
+          <div class="lib-info">
+            <div class="lib-name">Severance</div>
+            <div class="lib-meta">S2 · E5 — The Grim Barbarity…</div>
+            <div class="lib-progress"><div class="lib-bar" style="width:62%"></div></div>
+          </div>
+        </div>
+        <div class="lib-row">
+          <div class="lib-thumb lt-2"></div>
+          <div class="lib-info">
+            <div class="lib-name">The Bear</div>
+            <div class="lib-meta">S3 · E2 — Forks</div>
+            <div class="lib-progress"><div class="lib-bar" style="width:28%"></div></div>
+          </div>
+        </div>
+        <div class="lib-row">
+          <div class="lib-thumb lt-3"></div>
+          <div class="lib-info">
+            <div class="lib-name">Andor</div>
+            <div class="lib-meta">S2 · E8 — Welcome Back</div>
+            <div class="lib-progress"><div class="lib-bar" style="width:45%"></div></div>
+          </div>
+        </div>
+        <div class="lib-row">
+          <div class="lib-thumb lt-4"></div>
+          <div class="lib-info">
+            <div class="lib-name">Shogun</div>
+            <div class="lib-meta">S1 · E10 · Finale</div>
+            <div class="lib-progress"><div class="lib-bar" style="width:88%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SCREEN 5: AUTH ── -->
+    <div class="screen" id="s5">
+      <div class="auth-bg"></div>
+      <div class="stars-layer" id="stars5"></div>
+
+      <div class="auth-content">
+        <div class="auth-arch">
+          <div class="auth-arch-ring"></div>
+          <div class="auth-arch-icon">🌙</div>
+        </div>
+
+        <div class="auth-headline">Save Your<br>Universe</div>
+        <div class="auth-sub">Create an account to keep your library, likes, and history forever.</div>
+
+        <div class="auth-actions">
+          <button class="auth-btn-primary">Sign In / Create Account</button>
+          <button class="auth-btn-secondary">Continue Without Account</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /phone -->
+
+  <div style="display:flex;align-items:center;gap:24px;">
+    <div class="nav-arrows">
+      <div class="nav-arrow disabled" id="btn-prev" onclick="goRel(-1)">←</div>
+    </div>
+    <div class="nav-dots">
+      <div class="nav-dot active" onclick="goTo(1)"></div>
+      <div class="nav-dot" onclick="goTo(2)"></div>
+      <div class="nav-dot" onclick="goTo(3)"></div>
+      <div class="nav-dot" onclick="goTo(4)"></div>
+      <div class="nav-dot" onclick="goTo(5)"></div>
+    </div>
+    <div class="nav-arrows">
+      <div class="nav-arrow" id="btn-next" onclick="goRel(1)">→</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Generate stars
+function makeStars(containerId, count) {
+  const c = document.getElementById(containerId);
+  if (!c) return;
+  for (let i = 0; i < count; i++) {
+    const s = document.createElement('div');
+    s.className = 'star-dot';
+    const size = Math.random() * 1.8 + 0.4;
+    const op = Math.random() * 0.5 + 0.1;
+    const dur = Math.random() * 3 + 2;
+    const delay = Math.random() * 4;
+    s.style.cssText = `
+      width:${size}px;height:${size}px;
+      top:${Math.random()*100}%;left:${Math.random()*100}%;
+      --op:${op};--dur:${dur}s;--delay:${delay}s;
+    `;
+    c.appendChild(s);
+  }
+}
+makeStars('stars1', 80);
+makeStars('stars2', 40);
+makeStars('stars3', 60);
+makeStars('stars5', 90);
+
+const labels = [
+  '', // index 0 unused
+  'Screen 1 of 5 — Welcome',
+  'Screen 2 of 5 — Discover',
+  'Screen 3 of 5 — Like',
+  'Screen 4 of 5 — Library',
+  'Screen 5 of 5 — Sign In',
+];
+
+let cur = 1;
+
+function goTo(n) {
+  if (n < 1 || n > 5) return;
+  document.querySelectorAll('.screen').forEach((s, i) => {
+    s.classList.toggle('active', i + 1 === n);
+  });
+  document.querySelectorAll('.nav-dot').forEach((d, i) => {
+    d.classList.toggle('active', i + 1 === n);
+  });
+  document.getElementById('screen-label').textContent = labels[n];
+  document.getElementById('btn-prev').classList.toggle('disabled', n === 1);
+  document.getElementById('btn-next').classList.toggle('disabled', n === 5);
+  cur = n;
+}
+
+function goRel(d) { goTo(cur + d); }
+
+// Keyboard nav
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goRel(1);
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   goRel(-1);
+});
+</script>
+</body>
+</html>

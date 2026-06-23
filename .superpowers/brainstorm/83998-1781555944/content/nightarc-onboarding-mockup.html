@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nightarc Onboarding — Proposed Flow</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #111;
+    color: #f0f0f0;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    padding: 24px;
+    min-height: 100vh;
+  }
+  h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; color: white; }
+  .subtitle { font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 28px; }
+
+  .flow {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .screen-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .step-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+  }
+
+  .phone {
+    width: 200px;
+    height: 434px;
+    background: white;
+    border-radius: 28px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1.5px rgba(255,255,255,0.08);
+  }
+
+  .phone-notch {
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70px;
+    height: 18px;
+    background: black;
+    border-radius: 20px;
+    z-index: 10;
+  }
+
+  .skip-btn {
+    position: absolute;
+    top: 32px;
+    right: 10px;
+    background: rgba(0,0,0,0.07);
+    color: #333;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 20px;
+    z-index: 10;
+  }
+
+  /* ── SCREEN 1: Floating posters ── */
+  .s1 { background: #f5f5f7; }
+  .posters-field {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 290px;
+    overflow: hidden;
+  }
+  .poster {
+    position: absolute;
+    width: 56px;
+    height: 84px;
+    border-radius: 7px;
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.28);
+  }
+  .s1-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 12px 14px 14px;
+    background: #f5f5f7;
+  }
+  .s1-headline {
+    font-size: 15px;
+    font-weight: 800;
+    color: #1c1c1e;
+    line-height: 1.25;
+    margin-bottom: 10px;
+  }
+  .continue-btn {
+    width: 100%;
+    background: #007AFF;
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 11px;
+    border-radius: 14px;
+    text-align: center;
+  }
+  .pill-popup {
+    position: absolute;
+    background: #1c1c1e;
+    border-radius: 12px;
+    padding: 5px 8px;
+    display: flex;
+    gap: 8px;
+    font-size: 12px;
+    top: -28px;
+    left: 0px;
+    white-space: nowrap;
+    z-index: 5;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+
+  /* ── SCREEN 2: Single card + rating ── */
+  .s2 { background: #f5f5f7; }
+  .hero-poster {
+    position: absolute;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 130px;
+    height: 195px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #c62a2a 0%, #8b1a1a 40%, #3a1010 100%);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.08);
+    display: flex;
+    align-items: flex-end;
+    padding: 8px;
+    overflow: hidden;
+  }
+  .hero-poster-label {
+    font-size: 8px;
+    font-weight: 800;
+    color: white;
+    text-transform: uppercase;
+    line-height: 1.1;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  }
+  .stars-row {
+    position: absolute;
+    top: 280px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    background: white;
+    border-radius: 30px;
+    padding: 10px 18px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+  .star { font-size: 18px; color: #ccc; }
+  .star.lit { color: #FF9F0A; }
+  .mini-phone {
+    position: absolute;
+    bottom: 84px;
+    left: 8px;
+    width: 48px;
+    height: 86px;
+    background: #e8e8ea;
+    border-radius: 7px;
+    border: 1.5px solid rgba(0,0,0,0.1);
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  .mini-phone-inner {
+    width: 100%;
+    height: 100%;
+    background: #f5f5f7;
+    display: flex;
+    flex-direction: column;
+    padding: 4px;
+    gap: 2px;
+  }
+  .mini-dot { width: 100%; height: 10px; background: rgba(0,0,0,0.06); border-radius: 3px; }
+  .mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; flex: 1; }
+  .mini-cell { background: rgba(0,0,0,0.1); border-radius: 2px; }
+
+  /* ── SCREEN 3: Library preview ── */
+  .s3 { background: #f5f5f7; }
+  .lib-section { margin-top: 34px; padding: 0 10px; }
+  .lib-title { font-size: 11px; font-weight: 700; color: #1c1c1e; margin-bottom: 5px; }
+  .lib-title span { color: #8e8e93; font-weight: 400; }
+  .poster-fan {
+    background: white;
+    border-radius: 10px;
+    height: 52px;
+    padding: 5px 8px;
+    display: flex;
+    align-items: center;
+    gap: -8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    position: relative;
+  }
+  .fan-poster {
+    width: 32px;
+    height: 42px;
+    border-radius: 4px;
+    border: 1px solid rgba(0,0,0,0.08);
+    margin-right: -8px;
+    flex-shrink: 0;
+  }
+
+  /* ── SCREEN 4: Login / Skip ── */
+  .s4 { background: #f5f5f7; }
+  .logo-mark {
+    position: absolute;
+    top: 42px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  }
+  .login-area {
+    position: absolute;
+    bottom: 14px;
+    left: 14px;
+    right: 14px;
+  }
+  .sign-in-btn {
+    width: 100%;
+    background: #007AFF;
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 11px;
+    border-radius: 14px;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .skip-login-btn {
+    width: 100%;
+    background: rgba(0,0,0,0.06);
+    color: #1c1c1e;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 10px;
+    border-radius: 14px;
+    text-align: center;
+  }
+  .login-headline {
+    font-size: 16px;
+    font-weight: 800;
+    color: #1c1c1e;
+    line-height: 1.25;
+    margin-bottom: 5px;
+    position: absolute;
+    top: 120px;
+    left: 14px;
+    right: 14px;
+  }
+  .login-sub {
+    font-size: 9.5px;
+    color: #8e8e93;
+    line-height: 1.4;
+    position: absolute;
+    top: 185px;
+    left: 14px;
+    right: 14px;
+  }
+  .empty-state-preview {
+    position: absolute;
+    top: 240px;
+    left: 14px;
+    right: 14px;
+    background: rgba(0,0,0,0.04);
+    border-radius: 10px;
+    padding: 10px 12px;
+    border: 1px dashed rgba(0,0,0,0.12);
+    text-align: center;
+  }
+  .empty-icon { font-size: 20px; margin-bottom: 4px; }
+  .empty-text { font-size: 8.5px; color: #8e8e93; line-height: 1.3; }
+
+  .screen-desc {
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+    text-align: center;
+    line-height: 1.5;
+    max-width: 180px;
+  }
+  .screen-desc strong { color: white; display: block; font-size: 13px; margin-bottom: 4px; }
+
+  .arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255,255,255,0.2);
+    font-size: 24px;
+    padding-top: 100px;
+  }
+
+  /* poster colors (simulated art) */
+  .p-red { background: linear-gradient(135deg,#7f1d1d,#991b1b); }
+  .p-blue { background: linear-gradient(135deg,#1e3a5f,#1d4ed8); }
+  .p-dark { background: linear-gradient(135deg,#111,#333); }
+  .p-gold { background: linear-gradient(135deg,#78350f,#d97706); }
+  .p-teal { background: linear-gradient(135deg,#134e4a,#0d9488); }
+  .p-purple { background: linear-gradient(135deg,#3b0764,#7c3aed); }
+  .p-green { background: linear-gradient(135deg,#14532d,#16a34a); }
+  .p-orange { background: linear-gradient(135deg,#7c2d12,#ea580c); }
+</style>
+</head>
+<body>
+  <h1>Nightarc Onboarding — 4-Screen Flow</h1>
+  <p class="subtitle">Adapted from Binge app. White background, real poster energy, inline interaction demos. Tap Continue or press ← to advance.</p>
+
+  <div class="flow">
+
+    <!-- SCREEN 1 -->
+    <div class="screen-wrap">
+      <div class="step-label">Screen 1</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="skip-btn">Skip</div>
+        <div class="s1" style="position:absolute;inset:0;">
+          <!-- Scattered poster field -->
+          <div class="posters-field">
+            <div class="poster p-red" style="top:40px;left:20px;transform:rotate(-8deg)"></div>
+            <div class="poster p-blue" style="top:36px;left:88px;transform:rotate(4deg)"></div>
+            <div class="poster p-dark" style="top:38px;left:145px;transform:rotate(-3deg)"></div>
+            <div class="poster p-gold" style="top:128px;left:4px;transform:rotate(6deg)"></div>
+            <div class="poster p-teal" style="top:122px;left:70px;transform:rotate(-5deg)"></div>
+            <div class="poster p-purple" style="top:125px;left:138px;transform:rotate(7deg)"></div>
+            <!-- selected card with popup -->
+            <div class="poster p-orange" style="top:215px;left:14px;transform:rotate(-4deg);width:64px;height:96px;z-index:3;">
+              <div class="pill-popup">➕ ✓ 🔥</div>
+            </div>
+            <div class="poster p-dark" style="top:218px;left:90px;transform:rotate(3deg)"></div>
+            <div class="poster p-blue" style="top:220px;left:150px;transform:rotate(-6deg)"></div>
+          </div>
+          <div class="s1-footer">
+            <div class="s1-headline">Effortlessly track all your movies and shows.</div>
+            <div class="continue-btn">Continue</div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-desc">
+        <strong>Poster rain</strong>
+        Movie cards drift in from above, scattered at angles. One is "selected" showing the +/✓/🔥 quick-action popup. Animates with staggered spring entries.
+      </div>
+    </div>
+
+    <!-- SCREEN 2 -->
+    <div class="screen-wrap">
+      <div class="step-label">Screen 2</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="skip-btn">Skip</div>
+        <div class="s2" style="position:absolute;inset:0;">
+          <div class="hero-poster">
+            <div class="hero-poster-label">Sinners<br>2025</div>
+            <!-- dramatic red gradient simulates the Sinners poster -->
+            <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,0.7) 100%);border-radius:14px;"></div>
+          </div>
+          <div class="stars-row">
+            <span class="star lit">★</span>
+            <span class="star lit">★</span>
+            <span class="star lit">★</span>
+            <span class="star">★</span>
+            <span class="star">★</span>
+          </div>
+          <!-- mini phone reminder -->
+          <div class="mini-phone">
+            <div class="mini-phone-inner">
+              <div class="mini-dot"></div>
+              <div class="mini-grid">
+                <div class="mini-cell p-red" style="border-radius:2px;"></div>
+                <div class="mini-cell p-blue" style="border-radius:2px;"></div>
+                <div class="mini-cell p-gold" style="border-radius:2px;"></div>
+                <div class="mini-cell p-dark" style="border-radius:2px;"></div>
+              </div>
+              <div class="mini-dot" style="height:6px;"></div>
+            </div>
+          </div>
+          <div class="s1-footer">
+            <div class="s1-headline">Slide to rate what you've watched.</div>
+            <div class="continue-btn">Continue</div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-desc">
+        <strong>Rate interaction</strong>
+        Single poster zooms in from the scattered grid. Stars slide in below. Continue unlocks after dragging stars. Mini-phone in corner shows prev screen.
+      </div>
+    </div>
+
+    <!-- SCREEN 3 -->
+    <div class="screen-wrap">
+      <div class="step-label">Screen 3</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="skip-btn">Skip</div>
+        <div class="s3" style="position:absolute;inset:0;">
+          <div class="lib-section" style="margin-top:38px;">
+            <div class="lib-title">Watching <span>12</span></div>
+            <div class="poster-fan">
+              <div class="fan-poster p-red"></div>
+              <div class="fan-poster p-dark"></div>
+              <div class="fan-poster p-blue"></div>
+              <div class="fan-poster p-teal"></div>
+              <div class="fan-poster p-purple"></div>
+            </div>
+          </div>
+          <div class="lib-section" style="margin-top:10px;">
+            <div class="lib-title">Watched <span>56</span></div>
+            <div class="poster-fan">
+              <div class="fan-poster p-orange"></div>
+              <div class="fan-poster p-gold"></div>
+              <div class="fan-poster p-dark"></div>
+              <div class="fan-poster p-red"></div>
+              <div class="fan-poster p-blue"></div>
+            </div>
+          </div>
+          <div class="lib-section" style="margin-top:10px;">
+            <div class="lib-title">Watchlist <span>7</span></div>
+            <div class="poster-fan">
+              <div class="fan-poster p-teal"></div>
+              <div class="fan-poster p-purple"></div>
+              <div class="fan-poster p-green"></div>
+              <div class="fan-poster p-gold"></div>
+            </div>
+          </div>
+          <!-- mini phone -->
+          <div class="mini-phone" style="bottom:84px;left:8px;">
+            <div class="mini-phone-inner">
+              <div style="display:flex;align-items:center;gap:3px;margin-bottom:2px;">
+                <div style="width:18px;height:18px;background:linear-gradient(135deg,#c62a2a,#3a1010);border-radius:3px;"></div>
+              </div>
+              <div style="display:flex;gap:2px;">
+                <div style="flex:1;height:8px;background:rgba(0,0,0,0.08);border-radius:2px;"></div>
+                <div style="flex:1;height:8px;background:#FF9F0A;border-radius:2px;opacity:0.6;"></div>
+              </div>
+            </div>
+          </div>
+          <div class="s1-footer" style="bottom:0;left:0;right:0;">
+            <div class="s1-headline">All your entertainment in one place.</div>
+            <div class="continue-btn">Continue</div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-desc">
+        <strong>Library preview</strong>
+        Three sections (Watching / Watched / Watchlist) slide in as cards with overlapping poster fans. Numbers count up with animation.
+      </div>
+    </div>
+
+    <!-- SCREEN 4 -->
+    <div class="screen-wrap">
+      <div class="step-label">Screen 4 — Final</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="s4" style="position:absolute;inset:0;">
+          <div class="logo-mark">🌙</div>
+          <div class="login-headline">Sign in to save your lists across all your devices.</div>
+          <div class="login-sub">Your watchlist, ratings, and history stay in sync everywhere. Skip to browse — nothing is saved without an account.</div>
+          <div class="empty-state-preview">
+            <div class="empty-icon">📭</div>
+            <div class="empty-text">Skipping? Your library will be empty until you sign in.</div>
+          </div>
+          <div class="login-area">
+            <div class="sign-in-btn">Sign In / Create Account</div>
+            <div class="skip-login-btn">Skip for Now</div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-desc">
+        <strong>Auth gate</strong>
+        Clean choice: Sign In (primary, blue) or Skip (muted). Honest empty-state warning. No "paywall" friction — just clarity.
+      </div>
+    </div>
+
+  </div>
+
+  <div style="max-width:800px;margin:36px auto 0;background:rgba(255,255,255,0.05);border-radius:14px;padding:20px 24px;">
+    <div style="font-size:13px;font-weight:700;color:white;margin-bottom:12px;">Animation Blueprint</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;font-size:12px;color:rgba(255,255,255,0.6);line-height:1.6;">
+      <div>
+        <div style="color:rgba(255,255,255,0.9);font-weight:600;margin-bottom:4px;">Screen 1 → 2</div>
+        The selected poster scales up (matchedGeometryEffect) to fill the hero slot. Other cards scatter off-screen with staggered .smooth springs. Stars slide up from bottom.
+      </div>
+      <div>
+        <div style="color:rgba(255,255,255,0.9);font-weight:600;margin-bottom:4px;">Screen 2 → 3</div>
+        Hero poster shrinks into the mini-phone corner. Three library rows fly in from right, staggered at 40ms intervals using PhaseAnimator.
+      </div>
+      <div>
+        <div style="color:rgba(255,255,255,0.9);font-weight:600;margin-bottom:4px;">Screen 3 → 4</div>
+        Library fades and compresses upward. Logo mark scales in from 0.3. Login buttons slide up from below.
+      </div>
+      <div>
+        <div style="color:rgba(255,255,255,0.9);font-weight:600;margin-bottom:4px;">Skip → App</div>
+        Full-screen cross-dissolve into MainTabView. Empty Home/Library tabs shown immediately — no blank loading states.
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -18,9 +18,20 @@ import { AddonManifest, StreamItem } from '@/lib/types';
 import { SubtitleItem } from '@/lib/stremio';
 import { updateWatchProgress } from '@/lib/services/api';
 import { useAuth } from '@/app/AuthProvider';
-import { browserPlaybackScore, getFallbackSourceType, getInitialSourceType, getPlayableStreamUrl, sortStreamsForBrowserPlayback, streamMatchesUrl, VidstackSourceType } from '@/lib/player-utils';
+import { browserPlaybackScore, getFallbackSourceType, getInitialSourceType, getPlayableStreamUrl, getStreamCompatibility, sortStreamsForBrowserPlayback, streamMatchesUrl, VidstackSourceType } from '@/lib/player-utils';
 import { getStreamingServerUrl } from '@/lib/config';
 import { buildRemuxUrl } from '@/lib/streaming-server';
+import { PlaybackErrorScreen } from '@/components/player/PlaybackErrorScreen';
+import {
+  DEFAULT_SUBTITLE_PREFERENCES,
+  getSubtitlePreferenceStyle,
+  loadSubtitlePreferences,
+  saveSubtitlePreferences,
+  type SubtitleColor,
+  type SubtitlePreferences,
+  type SubtitlePosition,
+  type SubtitleSize,
+} from '@/lib/subtitle-preferences';
 
 interface PlayerProps {
   streamUrl: string;
@@ -234,9 +245,9 @@ function SourcesPanel({
 
                 return (
                   <button
-                    key={sUrl || `stream-${i}`}
+                    key={sUrl ? `${sUrl}-${i}` : `stream-${i}`}
                     onClick={() => onSwitchStream(s)}
-                    className={`w-full text-left p-4 rounded-3xl border transition-all duration-200 ${isActive ? 'border-moonlit-accent/80 bg-moonlit-accent/15 shadow-[0_0_30px_rgba(139,92,246,0.18)]' : 'border-white/10 bg-white/[0.045] hover:bg-white/[0.08] hover:border-white/20'}`}
+                    className={`w-full text-left p-4 rounded-3xl border transition-all duration-200 ${isActive ? 'border-moonlit-accent/80 bg-moonlit-accent/15 shadow-[0_0_30px_rgba(255,138,53,0.18)]' : 'border-white/10 bg-white/[0.045] hover:bg-white/[0.08] hover:border-white/20'}`}
                   >
                     <div className="flex items-center justify-between gap-3 mb-3">
                       <div className="flex items-center gap-1 flex-wrap">
@@ -299,8 +310,10 @@ function TracksPanel({
   selectedAudioIdx,
   subtitles,
   selectedSubtitleId,
+  subtitlePreferences,
   onSelectAudio,
   onSelectSubtitle,
+  onSubtitlePreferencesChange,
   onClose,
 }: {
   tab: TracksTab;
@@ -308,11 +321,34 @@ function TracksPanel({
   selectedAudioIdx: number | null;
   subtitles: SubtitleItem[];
   selectedSubtitleId: string;
+  subtitlePreferences: SubtitlePreferences;
   onSelectAudio: (idx: number) => void;
   onSelectSubtitle: (sub: SubtitleItem | null) => void;
+  onSubtitlePreferencesChange: (preferences: SubtitlePreferences) => void;
   onClose: () => void;
 }) {
   const [tab, setTab] = useState<TracksTab>(initialTab);
+  const subtitleSizes: { value: SubtitleSize; label: string }[] = [
+    { value: 'small', label: 'S' },
+    { value: 'medium', label: 'M' },
+    { value: 'large', label: 'L' },
+    { value: 'xlarge', label: 'XL' },
+  ];
+  const subtitleColors: { value: SubtitleColor; className: string; label: string }[] = [
+    { value: 'white', className: 'bg-white', label: 'White' },
+    { value: 'yellow', className: 'bg-yellow-200', label: 'Yellow' },
+    { value: 'cyan', className: 'bg-cyan-200', label: 'Cyan' },
+    { value: 'green', className: 'bg-green-200', label: 'Green' },
+  ];
+  const subtitlePositions: { value: SubtitlePosition; label: string }[] = [
+    { value: 'low', label: 'Low' },
+    { value: 'medium', label: 'Mid' },
+    { value: 'high', label: 'High' },
+  ];
+
+  const updateSubtitlePreferences = (patch: Partial<SubtitlePreferences>) => {
+    onSubtitlePreferencesChange({ ...subtitlePreferences, ...patch });
+  };
 
   return (
     <div className="absolute inset-0 z-40 flex items-end sm:items-center justify-center">
@@ -370,6 +406,80 @@ function TracksPanel({
             )
           ) : (
             <div className="space-y-0.5">
+              <div className="mx-2 mb-4 rounded-2xl border border-white/[0.08] bg-white/[0.035] p-4">
+                <div className="mb-4 flex items-center justify-between">
+                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-white/35">Style</p>
+                  <button
+                    onClick={() => onSubtitlePreferencesChange(DEFAULT_SUBTITLE_PREFERENCES)}
+                    className="rounded-full bg-white/[0.06] px-3 py-1.5 text-xs font-semibold text-white/45 hover:bg-white/[0.1] hover:text-white"
+                  >
+                    Reset
+                  </button>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="text-sm font-medium text-white/55">Size</span>
+                    <div className="flex rounded-xl bg-black/25 p-1">
+                      {subtitleSizes.map(size => (
+                        <button
+                          key={size.value}
+                          onClick={() => updateSubtitlePreferences({ size: size.value })}
+                          className={`min-w-10 rounded-lg px-3 py-1.5 text-sm font-bold transition-colors ${subtitlePreferences.size === size.value ? 'bg-white text-black' : 'text-white/45 hover:text-white'}`}
+                        >
+                          {size.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="text-sm font-medium text-white/55">Color</span>
+                    <div className="flex gap-2">
+                      {subtitleColors.map(color => (
+                        <button
+                          key={color.value}
+                          onClick={() => updateSubtitlePreferences({ color: color.value })}
+                          aria-label={color.label}
+                          className={`h-8 w-8 rounded-full border-2 ${color.className} ${subtitlePreferences.color === color.value ? 'border-white ring-2 ring-white/25' : 'border-white/15'}`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  <label className="block">
+                    <div className="mb-2 flex items-center justify-between gap-4">
+                      <span className="text-sm font-medium text-white/55">Background</span>
+                      <span className="text-xs font-bold text-white/35">{subtitlePreferences.backgroundOpacity}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min={0}
+                      max={100}
+                      step={5}
+                      value={subtitlePreferences.backgroundOpacity}
+                      onChange={event => updateSubtitlePreferences({ backgroundOpacity: Number(event.currentTarget.value) })}
+                      className="w-full accent-white"
+                    />
+                  </label>
+
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="text-sm font-medium text-white/55">Position</span>
+                    <div className="flex rounded-xl bg-black/25 p-1">
+                      {subtitlePositions.map(position => (
+                        <button
+                          key={position.value}
+                          onClick={() => updateSubtitlePreferences({ position: position.value })}
+                          className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors ${subtitlePreferences.position === position.value ? 'bg-white text-black' : 'text-white/45 hover:text-white'}`}
+                        >
+                          {position.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               {/* Off option */}
               <button
                 onClick={() => onSelectSubtitle(null)}
@@ -452,6 +562,7 @@ function PlayerUI({
   const [showSpeed, setShowSpeed] = useState(false);
   const [speed, setSpeed] = useState(1);
   const [selectedSubtitleId, setSelectedSubtitleId] = useState<string>('off');
+  const [subtitlePreferences, setSubtitlePreferences] = useState<SubtitlePreferences>(() => loadSubtitlePreferences());
   const hideTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const speeds = [0.5, 0.75, 1, 1.25, 1.5, 2];
 
@@ -473,6 +584,10 @@ function PlayerUI({
   useEffect(() => { if (openSources) setShowSources(true); }, [openSources]);
 
   useEffect(() => { if (showControlsRef) showControlsRef.current = resetHide; }, [showControlsRef, resetHide]);
+
+  useEffect(() => {
+    saveSubtitlePreferences(subtitlePreferences);
+  }, [subtitlePreferences]);
 
   useEffect(() => {
     if (!paused && playerRef.current?.muted) {
@@ -518,7 +633,7 @@ function PlayerUI({
   function selectAudioTrack(idx: number) {
     setSelectedAudioIdx(idx);
     suppressErrorRef.current = true;
-    setTimeout(() => { suppressErrorRef.current = false; }, 2000);
+    setTimeout(() => { suppressErrorRef.current = false; }, 500);
     try {
       const list = [...(playerRef.current?.audioTracks ?? [])];
       const t = list[idx];
@@ -541,7 +656,10 @@ function PlayerUI({
   return (
     <>
       {/* Subtitle captions overlay — z-30 so it sits above the controls (z-10) */}
-      <Captions className="absolute bottom-28 left-0 right-0 z-30 text-center pointer-events-none [&_*]:!text-white [&_*]:![text-shadow:0_2px_6px_rgba(0,0,0,1),0_0_2px_rgba(0,0,0,1)] [&_[data-media-cue]]:bg-black/70 [&_[data-media-cue]]:px-2 [&_[data-media-cue]]:py-0.5 [&_[data-media-cue]]:rounded" />
+      <Captions
+        className="moonlit-captions-custom absolute left-0 right-0 z-30 text-center pointer-events-none"
+        style={getSubtitlePreferenceStyle(subtitlePreferences)}
+      />
 
       {/* Buffering */}
       {(waiting || !canPlay) && (
@@ -723,8 +841,10 @@ function PlayerUI({
           selectedAudioIdx={selectedAudioIdx}
           subtitles={subtitles}
           selectedSubtitleId={selectedSubtitleId}
+          subtitlePreferences={subtitlePreferences}
           onSelectAudio={selectAudioTrack}
           onSelectSubtitle={selectSubtitle}
+          onSubtitlePreferencesChange={setSubtitlePreferences}
           onClose={() => setShowTracksTab(null)}
         />
       )}
@@ -742,6 +862,8 @@ export default function Player({
   const playerRef = useRef<MediaPlayerInstance>(null);
   const savedFailoverPosition = useRef(0);
   const suppressErrorRef = useRef(false);
+  const fallbackAttemptRef = useRef(0);
+  const lastErrorKeyRef = useRef('');
   const { currentProfile, addons } = useAuth();
 
   // Build a logo lookup keyed by both addonId and addonName for flexible matching
@@ -758,12 +880,14 @@ export default function Player({
 
   const [srcType, setSrcType] = useState<VidstackSourceType>(() => getInitialSourceType(streamUrl, currentStream));
   const [playbackError, setPlaybackError] = useState<string | null>(null);
+  const [playbackErrorDetail, setPlaybackErrorDetail] = useState('');
+  const [errorRetryCount, setErrorRetryCount] = useState(0);
   const [forceOpenSources, setForceOpenSources] = useState(false);
 
   const src = useMemo(() => ({ src: streamUrl, type: srcType }), [streamUrl, srcType]);
 
   useEffect(() => { setSrcType(getInitialSourceType(streamUrl, currentStream)); }, [currentStream, streamUrl]);
-  useEffect(() => { setPlaybackError(null); setForceOpenSources(false); }, [mediaId]);
+  useEffect(() => { setPlaybackError(null); setPlaybackErrorDetail(''); setErrorRetryCount(0); setForceOpenSources(false); fallbackAttemptRef.current = 0; lastErrorKeyRef.current = ''; }, [mediaId]);
 
   const onProviderChange = useCallback((provider: MediaProviderAdapter | null) => {
     console.log('[player] provider:', provider?.constructor?.name ?? 'null', '| src:', streamUrl, '| type:', srcType);
@@ -798,30 +922,79 @@ export default function Player({
 
   const onError = useCallback(() => {
     if (suppressErrorRef.current) return;
-    console.log('[player] error | srcType:', srcType, '| url:', streamUrl);
-    const fallback = getFallbackSourceType(srcType);
-    if (fallback) {
-      const p = playerRef.current;
-      if (p?.currentTime) savedFailoverPosition.current = p.currentTime;
-      setSrcType(fallback);
-      return;
-    }
 
+    // Debounce: Vidstack can fire multiple errors rapidly for the same source
+    const errorKey = `${streamUrl}|${srcType}`;
+    if (errorKey === lastErrorKeyRef.current) return;
+    lastErrorKeyRef.current = errorKey;
+
+    console.log('[player] error | srcType:', srcType, '| url:', streamUrl, '| attempt:', fallbackAttemptRef.current);
+
+    const MAX_FALLBACKS = 3;
     const serverUrl = getStreamingServerUrl();
     const rawUrl = currentStream.url || '';
-    if (serverUrl && rawUrl && !streamUrl.startsWith(serverUrl)) {
-      console.log('[player] direct play failed → retrying via remux server');
-      const p = playerRef.current;
-      if (p?.currentTime) savedFailoverPosition.current = p.currentTime;
-      onSwitchStream({
-        ...currentStream,
-        url: buildRemuxUrl(serverUrl, rawUrl, 'transcode'),
-        behaviorHints: { ...currentStream.behaviorHints, webPlayableType: 'application/x-mpegurl' },
-      });
-      return;
+    const p = playerRef.current;
+
+    // Step 1: Try source type fallback (HLS ↔ MP4)
+    if (fallbackAttemptRef.current < MAX_FALLBACKS) {
+      const fallback = getFallbackSourceType(srcType);
+      if (fallback) {
+        fallbackAttemptRef.current++;
+        console.log('[player] fallback attempt', fallbackAttemptRef.current, '→ switching srcType to', fallback);
+        if (p?.currentTime) savedFailoverPosition.current = p.currentTime;
+        setErrorRetryCount(fallbackAttemptRef.current);
+        setSrcType(fallback);
+        return;
+      }
     }
 
-    setPlaybackError('This stream failed to play.');
+    // Step 2: If we've exhausted source-type toggles, try remux/transcode server
+    if (fallbackAttemptRef.current < MAX_FALLBACKS) {
+      if (serverUrl && rawUrl && !streamUrl.startsWith(serverUrl)) {
+        fallbackAttemptRef.current++;
+        const tier = getStreamCompatibility(currentStream) === 'transcode' ? 'transcode' : 'remux';
+        console.log('[player] retrying via server', tier);
+        if (p?.currentTime) savedFailoverPosition.current = p.currentTime;
+        setErrorRetryCount(fallbackAttemptRef.current);
+        onSwitchStream({
+          ...currentStream,
+          url: buildRemuxUrl(serverUrl, rawUrl, tier),
+          behaviorHints: { ...currentStream.behaviorHints, webPlayableType: 'application/x-mpegurl' },
+        });
+        return;
+      }
+    }
+
+    // Step 3: If proxy URL failed (e.g. 502), try direct URL as last resort
+    if (fallbackAttemptRef.current < MAX_FALLBACKS) {
+      const isProxyUrl = streamUrl.startsWith('/api/media-proxy');
+      if (isProxyUrl && rawUrl) {
+        fallbackAttemptRef.current++;
+        console.log('[player] proxy failed → retrying direct URL');
+        if (p?.currentTime) savedFailoverPosition.current = p.currentTime;
+        setErrorRetryCount(fallbackAttemptRef.current);
+        onSwitchStream({
+          ...currentStream,
+          url: rawUrl,
+          behaviorHints: { ...currentStream.behaviorHints },
+        });
+        return;
+      }
+    }
+
+    // Step 4: All fallbacks exhausted — show error
+    const isProxy = streamUrl.startsWith('/api/media-proxy');
+    const isHttpErr = streamUrl.includes('502') || streamUrl.includes('500');
+    let message = 'This stream failed to play.';
+    if (isProxy && isHttpErr) {
+      message = 'The proxy server returned an error. The stream source may be temporarily unavailable.';
+    } else if (!serverUrl && fallbackAttemptRef.current > 0) {
+      message = 'This stream couldn\'t be played. Try another source — some formats need a remux server (configure in Settings).';
+    }
+
+    setPlaybackError(message);
+    setPlaybackErrorDetail(`URL: ${streamUrl}\nSource type: ${srcType}\nRetries: ${fallbackAttemptRef.current}/${MAX_FALLBACKS}\nStream: ${currentStream.title || currentStream.name || currentStream.addonName || 'unknown'}`);
+    setErrorRetryCount(fallbackAttemptRef.current);
   }, [onSwitchStream, srcType, streamUrl, currentStream]);
 
   useEffect(() => {
@@ -854,15 +1027,44 @@ export default function Player({
   return (
     <div className="fixed inset-0 bg-black z-50" onMouseMove={() => showControlsRef.current?.()}>
       {playbackError && (
-        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-black/90">
-          <p className="text-white text-lg font-semibold">Playback Error</p>
-          <p className="text-white/50 text-sm">{playbackError}</p>
-          <div className="flex gap-3 mt-2">
-            <button onClick={onBack} className="px-6 py-2.5 bg-white/10 hover:bg-white/15 border border-white/10 text-white rounded-full text-sm">Back</button>
-            <button onClick={() => { setPlaybackError(null); setSrcType(getInitialSourceType(streamUrl, currentStream)); }} className="px-6 py-2.5 bg-white/10 hover:bg-white/15 border border-white/10 text-white rounded-full text-sm">Retry</button>
-            <button onClick={() => { setPlaybackError(null); setForceOpenSources(true); }} className="px-6 py-2.5 bg-moonlit-accent hover:bg-moonlit-accent-dim text-white font-semibold rounded-full text-sm">Choose source</button>
-          </div>
-        </div>
+        <PlaybackErrorScreen
+          error={{
+            message: playbackError,
+            details: playbackErrorDetail,
+            streamTitle: currentStream.title || currentStream.name,
+            streamAddon: currentStream.addonName,
+            sourceType: srcType,
+            streamUrl,
+            retryCount: errorRetryCount,
+            maxRetries: 3,
+          }}
+          onBack={onBack}
+          onRetry={() => {
+            setPlaybackError(null);
+            setPlaybackErrorDetail('');
+            fallbackAttemptRef.current = 0;
+            lastErrorKeyRef.current = '';
+            setSrcType(getInitialSourceType(streamUrl, currentStream));
+            setErrorRetryCount(0);
+          }}
+          onChooseSource={() => {
+            setPlaybackError(null);
+            setPlaybackErrorDetail('');
+            fallbackAttemptRef.current = 0;
+            lastErrorKeyRef.current = '';
+            setErrorRetryCount(0);
+            setForceOpenSources(true);
+          }}
+          autoRetrySeconds={errorRetryCount < 3 ? 5 : 0}
+          onAutoRetry={() => {
+            setPlaybackError(null);
+            setPlaybackErrorDetail('');
+            fallbackAttemptRef.current = 0;
+            lastErrorKeyRef.current = '';
+            setSrcType(getInitialSourceType(streamUrl, currentStream));
+            setErrorRetryCount(0);
+          }}
+        />
       )}
 
       <MediaPlayer

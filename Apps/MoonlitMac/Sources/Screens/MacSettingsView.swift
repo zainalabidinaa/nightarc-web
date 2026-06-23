@@ -6,6 +6,7 @@ struct MacSettingsView: View {
     @EnvironmentObject var roleManager: RoleManager
     @StateObject private var addonRepo = AddonRepository.shared
     @StateObject private var metadataIntegrations = MetadataIntegrationStore.shared
+    @StateObject private var traktAuth = TraktAuthService.shared
     @State private var systemAddonName: String?
     @State private var systemAddonUrl: String?
     @State private var presentedSheet: SettingsSheet?
@@ -25,8 +26,51 @@ struct MacSettingsView: View {
                     )
                 }
 
+                if profileManager.isAuthenticated {
+                    settingsSection("Trakt") {
+                        if traktAuth.isConnected {
+                            settingsRow(
+                                icon: "t.circle.fill",
+                                title: "Trakt Connected",
+                                subtitle: "Watchlist syncing enabled",
+                                action: {}
+                            )
+                            MacSettingsDivider()
+                            Button {
+                                Task {
+                                    guard let profile = profileManager.currentProfile else { return }
+                                    await traktAuth.disconnect(profileId: profile.id)
+                                }
+                            } label: {
+                                Label("Disconnect Trakt", systemImage: "xmark.circle")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.red)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.horizontal, 18)
+                                    .padding(.vertical, 12)
+                                    .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.plain)
+                        } else {
+                            settingsRow(
+                                icon: "t.circle",
+                                title: "Trakt",
+                                subtitle: "Connect to sync watchlist and collections",
+                                action: { presentedSheet = .trakt }
+                            )
+                        }
+                    }
+                }
+
                 if roleManager.isAdmin {
                     settingsSection("Admin Content Management") {
+                        settingsRow(
+                            icon: "chart.bar.fill",
+                            title: "Admin Dashboard",
+                            subtitle: "Invite codes and user management",
+                            action: { presentedSheet = .adminDashboard }
+                        )
+                        MacSettingsDivider()
                         settingsRow(
                             icon: "puzzlepiece.extension.fill",
                             title: "Addons",
@@ -284,6 +328,10 @@ struct MacSettingsView: View {
             MacStreamAutoplaySettingsView().environmentObject(profileManager)
         case .collectionDesign:
             MacCollectionDesignView()
+        case .trakt:
+            MacTraktSettingsView()
+        case .adminDashboard:
+            MacAdminDashboardView()
         }
     }
 
@@ -298,9 +346,167 @@ struct MacSettingsView: View {
             VStack(spacing: 0) {
                 content()
             }
-            .macGlassCard(cornerRadius: 18)
+        .macGlassCard(cornerRadius: 18)
+    }
+}
+
+// MARK: - Trakt Settings
+
+private struct MacTraktSettingsView: View {
+    @StateObject private var traktAuth = TraktAuthService.shared
+    @StateObject private var metadataStore = MetadataIntegrationStore.shared
+    @EnvironmentObject var profileManager: ProfileManager
+    @State private var clientId = ""
+    @State private var clientSecret = ""
+    @State private var isConnecting = false
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 18) {
+                if traktAuth.isConnected {
+                    HStack(spacing: 12) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundColor(.green)
+                            .font(.title2)
+                        Text("Connected to Trakt")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                    }
+                    .padding(.top, 12)
+
+                    Button {
+                        Task {
+                            guard let profile = profileManager.currentProfile else { return }
+                            await traktAuth.disconnect(profileId: profile.id)
+                        }
+                    } label: {
+                        Text("Disconnect")
+                            .foregroundStyle(.red)
+                    }
+                } else {
+                    Text("Connect your Trakt account to sync watchlists and collections with Moonlit.")
+                        .font(.subheadline)
+                        .foregroundColor(MoonlitTheme.textSecondary)
+
+                    TextField("Client ID", text: $clientId)
+                        .textFieldStyle(.plain)
+                        .padding(10)
+                        .background(MoonlitTheme.surface)
+                        .cornerRadius(8)
+                        .foregroundColor(.white)
+
+                    TextField("Client Secret", text: $clientSecret)
+                        .textFieldStyle(.plain)
+                        .padding(10)
+                        .background(MoonlitTheme.surface)
+                        .cornerRadius(8)
+                        .foregroundColor(.white)
+
+                    Button {
+                        metadataStore.traktClientId = clientId
+                        metadataStore.traktClientSecret = clientSecret
+                        Task {
+                            guard let profile = profileManager.currentProfile else { return }
+                            await traktAuth.connect(profileId: profile.id)
+                        }
+                    } label: {
+                        Text("Connect Trakt")
+                            .fontWeight(.semibold)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                            .background(
+                                (!clientId.isEmpty && !clientSecret.isEmpty)
+                                    ? MoonlitTheme.accent : MoonlitTheme.surface
+                            )
+                            .foregroundColor(.white)
+                            .cornerRadius(12)
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(clientId.isEmpty || clientSecret.isEmpty)
+                }
+            }
+            .padding(24)
+            .frame(maxWidth: 520)
+        }
+        .background(MoonlitTheme.background)
+        .task {
+            if let profile = profileManager.currentProfile {
+                await traktAuth.loadToken(profileId: profile.id)
+            }
+                        clientId = metadataStore.traktClientId
+                        clientSecret = metadataStore.traktClientSecret
         }
     }
+}
+
+// MARK: - Admin Dashboard
+
+private struct MacAdminDashboardView: View {
+    @StateObject private var adminService = AdminService.shared
+    @State private var inviteMaxUses = 1
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 18) {
+                Text("Invite Codes")
+                    .font(.headline)
+                    .foregroundColor(.white)
+
+                HStack(spacing: 12) {
+                    Stepper("Max Uses: \(inviteMaxUses)", value: $inviteMaxUses, in: 1...100)
+                        .foregroundColor(.white)
+                    Button("Generate") {
+                        Task {
+                            _ = try? await adminService.generateInviteCode(maxUses: inviteMaxUses)
+                        }
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(MoonlitTheme.accent)
+                }
+
+                ForEach(adminService.inviteCodes) { code in
+                    HStack {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(code.code)
+                                .font(.system(.body, design: .monospaced))
+                                .foregroundColor(.white)
+                            HStack(spacing: 8) {
+                                Text("Max \(code.maxUses) use(s)")
+                                    .font(.caption)
+                                    .foregroundColor(MoonlitTheme.textSecondary)
+                                if !code.isActive {
+                                    Text("Revoked")
+                                        .font(.caption)
+                                        .foregroundColor(.red)
+                                }
+                                if code.usedBy != nil {
+                                    Text("Used")
+                                        .font(.caption)
+                                        .foregroundColor(.green)
+                                }
+                            }
+                        }
+                        Spacer()
+                        if code.isActive {
+                            Button("Revoke") {
+                                Task { try? await adminService.revokeInviteCode(code.code) }
+                            }
+                            .foregroundStyle(.red)
+                        }
+                    }
+                    .padding(14)
+                    .background(MoonlitTheme.surface, in: RoundedRectangle(cornerRadius: 12))
+                }
+            }
+            .padding(24)
+            .frame(maxWidth: 600)
+        }
+        .background(MoonlitTheme.background)
+        .task {
+            await adminService.loadInviteCodes()
+        }
+    }
+}
 
     private func settingsRow(icon: String, title: String, subtitle: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
@@ -352,6 +558,8 @@ private enum SettingsSheet: String, Identifiable {
     case subtitleAppearance
     case streamAutoplay
     case collectionDesign
+    case trakt
+    case adminDashboard
 
     var id: String { rawValue }
 }

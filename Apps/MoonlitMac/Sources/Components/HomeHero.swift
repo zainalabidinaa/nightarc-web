@@ -25,14 +25,10 @@ struct HomeHero: View {
 
     var body: some View {
         GeometryReader { geometry in
-            let minY = geometry.frame(in: .global).minY
-            let pullDown = max(minY, 0)
             ZStack(alignment: .bottomLeading) {
                 if let currentItem {
                     heroImage(for: currentItem, width: geometry.size.width)
                         .id(currentItem.id)
-                        .scaleEffect(1 + min(pullDown / 900, 0.08), anchor: .top)
-                        .offset(y: minY < 0 ? minY * 0.18 : -pullDown * 0.35)
                         .transition(.opacity)
                         .animation(.easeInOut(duration: 0.35), value: currentItem.id)
                 }
@@ -82,6 +78,7 @@ struct HomeHero: View {
                         } placeholder: {
                             heroTitle
                         }
+                        .id(currentItem?.id)
                     } else {
                         heroTitle
                     }
@@ -139,7 +136,7 @@ struct HomeHero: View {
 
     private var heroTitle: some View {
         Text(currentItem?.name ?? "")
-            .font(.system(size: 46, weight: .black, design: .rounded))
+            .font(.system(size: 46, weight: .black))
             .foregroundColor(.white)
             .lineLimit(2)
             .shadow(color: .black.opacity(0.55), radius: 8, x: 0, y: 3)

@@ -72,7 +72,7 @@ private struct MacHeroBannerRow: View {
 
                             VStack(alignment: .leading, spacing: 8) {
                                 Text(leadItem.name)
-                                    .font(.system(size: 30, weight: .black, design: .rounded))
+                                    .font(.system(size: 30, weight: .black))
                                     .foregroundStyle(.white)
                                     .lineLimit(2)
                                 if let release = leadItem.releaseInfo ?? leadItem.released {
@@ -279,7 +279,7 @@ private func rowHeader(title: String, onHeaderTap: (() -> Void)?) -> some View {
     Button(action: { onHeaderTap?() }) {
         HStack(spacing: 10) {
             Text(title)
-                .font(.system(size: 21, weight: .bold, design: .rounded))
+                .font(.system(size: 21, weight: .bold))
                 .foregroundColor(.white)
             Spacer()
             if onHeaderTap != nil {

@@ -1,0 +1,119 @@
+<h2>Per-Catalog Folder Expansion</h2>
+<p class="subtitle">Updated: each catalog/collection chooses whether its folders stay as tiles or become Home rows.</p>
+
+<div class="split">
+  <div class="mockup" data-choice="management-screen" onclick="toggleSelect(this)">
+    <div class="mockup-header">Catalog Management: Per Catalog Controls</div>
+    <div class="mockup-body">
+      <div style="background:#050505;border-radius:24px;padding:18px;color:white;font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:390px;margin:auto;min-height:680px;overflow:hidden;">
+        <div style="text-align:center;font-size:20px;font-weight:850;margin:8px 0 24px;">Catalog Management</div>
+        <div style="font-size:18px;font-weight:850;color:#aaa;margin:0 0 10px;">Folder Catalogs</div>
+        <div style="background:#1c1c1f;border-radius:22px;overflow:hidden;">
+          <div style="padding:16px 18px;border-bottom:1px solid rgba(255,255,255,.1);">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="width:54px;height:38px;border-radius:10px;background:linear-gradient(180deg,rgba(0,0,0,.1),rgba(0,0,0,.7)),url('https://i.postimg.cc/y8YxmZ70/00s.png');background-size:cover;background-position:center;"></div>
+              <div style="flex:1;">
+                <div style="font-size:20px;font-weight:850;">Decades</div>
+                <div style="font-size:13px;color:#aaa;margin-top:3px;">5 folders • AIOMetadata</div>
+              </div>
+              <div style="width:56px;height:31px;border-radius:18px;background:#65d66b;position:relative;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);">
+                <div style="width:26px;height:26px;border-radius:50%;background:white;position:absolute;right:3px;top:2.5px;"></div>
+              </div>
+            </div>
+            <div style="margin:12px 0 0 66px;font-size:12px;color:#bdbdbd;line-height:1.35;">Folders become rows: 1980s, 1990s, 2000s...</div>
+          </div>
+
+          <div style="padding:16px 18px;border-bottom:1px solid rgba(255,255,255,.1);">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="width:54px;height:38px;border-radius:10px;background:linear-gradient(180deg,rgba(0,0,0,.1),rgba(0,0,0,.7)),url('https://i.postimg.cc/vHK1D7bP/Star-Wars.jpg');background-size:cover;background-position:center;"></div>
+              <div style="flex:1;">
+                <div style="font-size:20px;font-weight:850;">Franchises</div>
+                <div style="font-size:13px;color:#aaa;margin-top:3px;">21 folders • AIOMetadata</div>
+              </div>
+              <div style="width:56px;height:31px;border-radius:18px;background:#333;position:relative;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);">
+                <div style="width:26px;height:26px;border-radius:50%;background:white;position:absolute;left:3px;top:2.5px;"></div>
+              </div>
+            </div>
+            <div style="margin:12px 0 0 66px;font-size:12px;color:#999;line-height:1.35;">Stays one folder row: Star Wars, Marvel, Rocky...</div>
+          </div>
+
+          <div style="padding:16px 18px;border-bottom:1px solid rgba(255,255,255,.1);">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="width:54px;height:38px;border-radius:10px;background:linear-gradient(180deg,rgba(0,0,0,.1),rgba(0,0,0,.7)),url('https://i.postimg.cc/FHrH9pYN/469fb054-cbec-46ca-bc91-6ed73a6d647b.png');background-size:cover;background-position:center;"></div>
+              <div style="flex:1;">
+                <div style="font-size:20px;font-weight:850;">Streaming</div>
+                <div style="font-size:13px;color:#aaa;margin-top:3px;">7 folders • AIOMetadata</div>
+              </div>
+              <div style="width:56px;height:31px;border-radius:18px;background:#65d66b;position:relative;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);">
+                <div style="width:26px;height:26px;border-radius:50%;background:white;position:absolute;right:3px;top:2.5px;"></div>
+              </div>
+            </div>
+            <div style="margin:12px 0 0 66px;font-size:12px;color:#bdbdbd;line-height:1.35;">Folders become rows: Netflix, Prime Video, Disney+...</div>
+          </div>
+
+          <div style="padding:16px 18px;">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="width:54px;height:38px;border-radius:10px;background:linear-gradient(180deg,rgba(0,0,0,.1),rgba(0,0,0,.7)),url('https://i.postimg.cc/W3s62B1j/Drama.png');background-size:cover;background-position:center;"></div>
+              <div style="flex:1;">
+                <div style="font-size:20px;font-weight:850;">Genres</div>
+                <div style="font-size:13px;color:#aaa;margin-top:3px;">21 folders • AIOMetadata</div>
+              </div>
+              <div style="width:56px;height:31px;border-radius:18px;background:#333;position:relative;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);">
+                <div style="width:26px;height:26px;border-radius:50%;background:white;position:absolute;left:3px;top:2.5px;"></div>
+              </div>
+            </div>
+            <div style="margin:12px 0 0 66px;font-size:12px;color:#999;line-height:1.35;">Stays one folder row: Action, Comedy, Drama...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mockup" data-choice="home-result" onclick="toggleSelect(this)">
+    <div class="mockup-header">Home Result From Those Choices</div>
+    <div class="mockup-body">
+      <div style="background:#050505;border-radius:24px;padding:18px;color:white;font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:390px;margin:auto;min-height:680px;overflow:hidden;">
+        <div style="font-size:30px;font-weight:900;margin:10px 0 18px;">Home</div>
+
+        <div style="font-size:22px;font-weight:850;margin:12px 0 10px;">1980s</div>
+        <div style="display:flex;gap:10px;overflow:hidden;margin-bottom:22px;">
+          <div style="min-width:108px;"><div style="height:160px;border-radius:13px;background:#222 url('https://image.tmdb.org/t/p/w342/A3ZbZsmsvNGdprRi2lKgGEeVLEH.jpg') center/cover;"></div><div style="font-size:12px;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Back to the Future</div></div>
+          <div style="min-width:108px;"><div style="height:160px;border-radius:13px;background:#222 url('https://image.tmdb.org/t/p/w342/dM2w364MScsjFf8pfMbaWUcWrR.jpg') center/cover;"></div><div style="font-size:12px;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">The Terminator</div></div>
+          <div style="min-width:108px;"><div style="height:160px;border-radius:13px;background:#222 url('https://image.tmdb.org/t/p/w342/7lyBcpYB0Qt8gYhXYaEZUNlNQAv.jpg') center/cover;"></div><div style="font-size:12px;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Aliens</div></div>
+        </div>
+
+        <div style="font-size:22px;font-weight:850;margin:12px 0 10px;">1990s</div>
+        <div style="display:flex;gap:10px;overflow:hidden;margin-bottom:22px;">
+          <div style="min-width:108px;"><div style="height:160px;border-radius:13px;background:#222 url('https://image.tmdb.org/t/p/w342/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg') center/cover;"></div><div style="font-size:12px;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">The Matrix</div></div>
+          <div style="min-width:108px;"><div style="height:160px;border-radius:13px;background:#222 url('https://image.tmdb.org/t/p/w342/s2IG9qXfhJYxIttKyroYFBsHwzQ.jpg') center/cover;"></div><div style="font-size:12px;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Jurassic Park</div></div>
+          <div style="min-width:108px;"><div style="height:160px;border-radius:13px;background:#222 url('https://image.tmdb.org/t/p/w342/6FfCtAuVAW8XJjZ7eWeLibRLWTw.jpg') center/cover;"></div><div style="font-size:12px;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Star Wars</div></div>
+        </div>
+
+        <div style="font-size:22px;font-weight:850;margin:12px 0 10px;">Streaming</div>
+        <div style="font-size:13px;color:#aaa;margin:-6px 0 10px;">Expanded from Streaming</div>
+        <div style="font-size:20px;font-weight:850;margin:10px 0 8px;">Netflix</div>
+        <div style="display:flex;gap:10px;overflow:hidden;margin-bottom:18px;">
+          <div style="min-width:108px;"><div style="height:160px;border-radius:13px;background:#222 url('https://image.tmdb.org/t/p/w342/6WxhEvFsauuACfv8HyoVX6mZKFj.jpg') center/cover;"></div><div style="font-size:12px;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Netflix Movie</div></div>
+          <div style="min-width:108px;"><div style="height:160px;border-radius:13px;background:#222 url('https://image.tmdb.org/t/p/w342/rktDFPbfHfUbArZ6OOOKsXcv0Bm.jpg') center/cover;"></div><div style="font-size:12px;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Top Show</div></div>
+        </div>
+
+        <div style="font-size:22px;font-weight:850;margin:12px 0 10px;">Franchises</div>
+        <div style="display:flex;gap:10px;overflow:hidden;">
+          <div style="min-width:150px;height:90px;border-radius:14px;background:linear-gradient(180deg,rgba(0,0,0,.1),rgba(0,0,0,.75)),url('https://i.postimg.cc/vHK1D7bP/Star-Wars.jpg');background-size:cover;background-position:center;display:flex;align-items:end;padding:9px;font-weight:850;">Star Wars</div>
+          <div style="min-width:150px;height:90px;border-radius:14px;background:linear-gradient(180deg,rgba(0,0,0,.1),rgba(0,0,0,.75)),url('https://i.postimg.cc/TYKW4WdV/Marvel-Tile.png');background-size:cover;background-position:center;display:flex;align-items:end;padding:9px;font-weight:850;">Marvel</div>
+        </div>
+        <div style="font-size:12px;color:#aaa;margin-top:10px;line-height:1.35;">Franchises stayed as a folder row because its toggle is off.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="approve-per-catalog" onclick="toggleSelect(this)">
+    <div class="letter">✓</div>
+    <div class="content">
+      <h3>Use per-catalog expansion toggles</h3>
+      <p>Each collection/catalog row with folders gets its own switch in Catalog Management. ON expands that collection's folders into rows; OFF keeps it as folder tiles.</p>
+    </div>
+  </div>
+</div>

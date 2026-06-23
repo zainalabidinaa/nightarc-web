@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luna Portal — Users vs Profiles</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #07070f; color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif; }
+
+  .topnav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px; height: 56px;
+    background: rgba(10,10,22,0.95); border-bottom: 1px solid rgba(255,255,255,0.06);
+    position: sticky; top: 0; z-index: 100; backdrop-filter: blur(20px);
+  }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-mark { width: 28px; height: 28px; background: linear-gradient(135deg,#a78bfa,#7c3aed); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; }
+  .logo-text { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
+  .nav-links { display: flex; gap: 4px; }
+  .nav-link { padding: 6px 14px; border-radius: 8px; font-size: 13px; color: rgba(255,255,255,0.5); cursor: pointer; }
+  .nav-link.active { background: rgba(167,139,250,0.12); color: #a78bfa; }
+  .badge-pill { padding: 3px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; background: linear-gradient(135deg,#a78bfa22,#7c3aed22); color: #a78bfa; border: 1px solid rgba(167,139,250,0.3); }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg,#a78bfa,#7c3aed); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
+  .nav-right { display: flex; align-items: center; gap: 12px; }
+
+  .layout { display: flex; min-height: calc(100vh - 56px); }
+  .sidebar {
+    width: 220px; flex-shrink: 0;
+    background: rgba(10,10,22,0.7); border-right: 1px solid rgba(255,255,255,0.05);
+    padding: 20px 12px;
+  }
+  .sidebar-section { font-size: 9px; font-weight: 700; letter-spacing: 1.2px; color: rgba(255,255,255,0.25); padding: 14px 10px 6px; text-transform: uppercase; }
+  .sidebar-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 9px; font-size: 13px; color: rgba(255,255,255,0.5); cursor: pointer; margin-bottom: 2px; }
+  .sidebar-item.active { background: rgba(167,139,250,0.15); color: #a78bfa; }
+
+  .main { flex: 1; padding: 28px 32px; display: flex; flex-direction: column; gap: 28px; }
+
+  /* DIAGRAM */
+  .diagram-box { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.07); border-radius: 16px; padding: 24px 28px; }
+  .diagram-title { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 20px; }
+
+  .hierarchy { display: flex; flex-direction: column; gap: 0; }
+
+  /* ADMIN ROW */
+  .h-row { display: flex; align-items: stretch; gap: 0; }
+  .h-node {
+    padding: 14px 18px; border-radius: 12px; display: flex; align-items: center; gap: 12px;
+  }
+  .h-avatar { width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; }
+  .h-name { font-size: 14px; font-weight: 600; }
+  .h-email { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 1px; }
+  .role-tag { padding: 3px 10px; border-radius: 20px; font-size: 9px; font-weight: 700; letter-spacing: 0.5px; white-space: nowrap; }
+  .role-admin { background: rgba(167,139,250,0.2); color: #a78bfa; }
+  .role-family { background: rgba(52,211,153,0.15); color: #34d399; }
+  .role-premium { background: rgba(251,191,36,0.15); color: #fbbf24; }
+  .role-basic { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.4); }
+
+  /* PROFILE CHIPS under each user */
+  .profiles-row { display: flex; gap: 8px; flex-wrap: wrap; margin-left: 58px; margin-bottom: 8px; }
+  .profile-chip {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 30px; padding: 5px 12px 5px 6px;
+    font-size: 12px; color: rgba(255,255,255,0.6);
+  }
+  .chip-avatar { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; }
+  .chip-label { font-size: 11px; }
+
+  /* CONNECTOR */
+  .connector { width: 2px; background: rgba(255,255,255,0.06); margin: 0 28px; height: 12px; }
+
+  /* USER LIST TABLE */
+  .user-table { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; overflow: hidden; }
+  .table-header { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; padding: 10px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .table-header span { font-size: 9px; font-weight: 700; letter-spacing: 1px; color: rgba(255,255,255,0.25); text-transform: uppercase; }
+  .table-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.04); align-items: center; }
+  .table-row:last-child { border-bottom: none; }
+  .table-row:hover { background: rgba(255,255,255,0.02); }
+  .user-cell { display: flex; align-items: center; gap: 10px; }
+  .user-avatar-sm { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+  .user-name-sm { font-size: 13px; font-weight: 600; }
+  .user-email-sm { font-size: 10px; color: rgba(255,255,255,0.35); }
+  .cell-text { font-size: 12px; color: rgba(255,255,255,0.5); }
+
+  /* PROFILE PICKER - shown when you click on a user */
+  .profile-picker {
+    background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 20px;
+  }
+  .pp-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .pp-title { font-size: 14px; font-weight: 700; }
+  .pp-subtitle { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 2px; }
+  .pp-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+  .pp-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 14px 10px; text-align: center; cursor: pointer; }
+  .pp-card:hover { border-color: rgba(167,139,250,0.3); }
+  .pp-avatar { width: 44px; height: 44px; border-radius: 50%; margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 700; }
+  .pp-name { font-size: 12px; font-weight: 600; }
+  .pp-meta { font-size: 10px; color: rgba(255,255,255,0.3); margin-top: 3px; }
+  .pp-add { border-style: dashed; border-color: rgba(255,255,255,0.08); }
+  .pp-add .pp-avatar { background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.2); }
+
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .section-title { font-size: 15px; font-weight: 700; }
+  .section-action { font-size: 12px; color: #a78bfa; cursor: pointer; }
+  .btn { padding: 7px 16px; border-radius: 9px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; }
+  .btn-primary { background: linear-gradient(135deg,#a78bfa,#7c3aed); color: #fff; }
+  .btn-ghost { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.5); }
+
+  /* CALLOUT */
+  .callout { display: flex; gap: 14px; background: rgba(167,139,250,0.07); border: 1px solid rgba(167,139,250,0.18); border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; }
+  .callout-icon { font-size: 18px; flex-shrink: 0; }
+  .callout-text { font-size: 12px; color: rgba(255,255,255,0.6); line-height: 1.6; }
+  .callout-text b { color: rgba(255,255,255,0.9); }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="logo">
+    <div class="logo-mark">L</div>
+    <span class="logo-text">Luna</span>
+  </div>
+  <div class="nav-links">
+    <div class="nav-link">Overview</div>
+    <div class="nav-link active">Users</div>
+    <div class="nav-link">Subscription</div>
+    <div class="nav-link">Addons</div>
+    <div class="nav-link">Catalogs</div>
+  </div>
+  <div class="nav-right">
+    <span class="badge-pill">ADMIN</span>
+    <div class="avatar">Z</div>
+  </div>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-section">Portal</div>
+    <div class="sidebar-item">⊞ Overview</div>
+    <div class="sidebar-item">💳 My Subscription</div>
+    <div class="sidebar-item">👤 My Profiles</div>
+
+    <div class="sidebar-section">Admin</div>
+    <div class="sidebar-item active">👥 Users</div>
+    <div class="sidebar-item">🧩 Addons</div>
+    <div class="sidebar-item">📁 Catalogs</div>
+    <div class="sidebar-item">🎟 Invite Codes</div>
+    <div class="sidebar-item">📊 Analytics</div>
+  </aside>
+
+  <main class="main">
+
+    <!-- CONCEPT EXPLAINER -->
+    <div class="callout">
+      <div class="callout-icon">💡</div>
+      <div class="callout-text">
+        <b>Users vs Profiles</b> — A <b>user</b> is an account with a subscription tier (Admin, Friends & Family, Premium, Basic). Each user can create multiple <b>profiles</b> inside their account — like Netflix — each with its own watchlist, addons, avatar, and PIN. The role lives on the <b>user</b>, not the profile.
+      </div>
+    </div>
+
+    <!-- HIERARCHY DIAGRAM -->
+    <div>
+      <div class="section-header">
+        <div class="section-title">Account Hierarchy</div>
+      </div>
+      <div class="diagram-box">
+
+        <!-- USER 1: Admin -->
+        <div style="display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.05)">
+          <div class="h-avatar" style="background:linear-gradient(135deg,#a78bfa,#7c3aed)">Z</div>
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span class="h-name">Zain</span>
+              <span class="role-tag role-admin">ADMIN</span>
+              <span style="font-size:10px;color:rgba(255,255,255,0.25)">zainalkafaji19@gmail.com</span>
+            </div>
+            <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+              <div class="profile-chip"><div class="chip-avatar" style="background:linear-gradient(135deg,#a78bfa,#7c3aed)">Z</div><span class="chip-label">Zain</span></div>
+              <div class="profile-chip"><div class="chip-avatar" style="background:linear-gradient(135deg,#60a5fa,#2563eb)">W</div><span class="chip-label">Work</span></div>
+              <div class="profile-chip" style="border-style:dashed;border-color:rgba(255,255,255,0.08);color:rgba(255,255,255,0.25)"><div class="chip-avatar" style="background:rgba(255,255,255,0.04)">+</div><span class="chip-label">Add</span></div>
+            </div>
+          </div>
+          <button class="btn btn-ghost" style="font-size:11px">Manage</button>
+        </div>
+
+        <!-- USER 2: Family -->
+        <div style="display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.05)">
+          <div class="h-avatar" style="background:linear-gradient(135deg,#34d399,#059669)">S</div>
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span class="h-name">Sara</span>
+              <span class="role-tag role-family">FRIENDS & FAMILY</span>
+              <span style="font-size:10px;color:rgba(255,255,255,0.25)">sara@example.com</span>
+            </div>
+            <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+              <div class="profile-chip"><div class="chip-avatar" style="background:linear-gradient(135deg,#34d399,#059669)">S</div><span class="chip-label">Sara</span></div>
+              <div class="profile-chip"><div class="chip-avatar" style="background:linear-gradient(135deg,#f472b6,#db2777)">K</div><span class="chip-label">Kids</span></div>
+              <div class="profile-chip" style="border-style:dashed;border-color:rgba(255,255,255,0.08);color:rgba(255,255,255,0.25)"><div class="chip-avatar" style="background:rgba(255,255,255,0.04)">+</div><span class="chip-label">Add</span></div>
+            </div>
+          </div>
+          <button class="btn btn-ghost" style="font-size:11px">Manage</button>
+        </div>
+
+        <!-- USER 3: Premium -->
+        <div style="display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.05)">
+          <div class="h-avatar" style="background:linear-gradient(135deg,#fbbf24,#d97706)">A</div>
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span class="h-name">Ahmed</span>
+              <span class="role-tag role-premium">PREMIUM</span>
+              <span style="font-size:10px;color:rgba(255,255,255,0.25)">ahmed@example.com</span>
+            </div>
+            <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+              <div class="profile-chip"><div class="chip-avatar" style="background:linear-gradient(135deg,#fbbf24,#d97706)">A</div><span class="chip-label">Ahmed</span></div>
+              <div class="profile-chip" style="border-style:dashed;border-color:rgba(255,255,255,0.08);color:rgba(255,255,255,0.25)"><div class="chip-avatar" style="background:rgba(255,255,255,0.04)">+</div><span class="chip-label">Add</span></div>
+            </div>
+          </div>
+          <button class="btn btn-ghost" style="font-size:11px">Manage</button>
+        </div>
+
+        <!-- USER 4: Basic -->
+        <div style="display:flex;align-items:center;gap:14px;padding:12px 0">
+          <div class="h-avatar" style="background:rgba(255,255,255,0.1)">L</div>
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span class="h-name">Lara</span>
+              <span class="role-tag role-basic">BASIC</span>
+              <span style="font-size:10px;color:rgba(255,255,255,0.25)">lara@example.com</span>
+            </div>
+            <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+              <div class="profile-chip"><div class="chip-avatar" style="background:rgba(255,255,255,0.15)">L</div><span class="chip-label">Lara</span></div>
+            </div>
+          </div>
+          <button class="btn btn-ghost" style="font-size:11px">Manage</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- WHAT ROLE CONTROLS -->
+    <div>
+      <div class="section-header">
+        <div class="section-title">What Each User Tier Can Do</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+
+        <div style="background:rgba(167,139,250,0.07);border:1px solid rgba(167,139,250,0.2);border-radius:14px;padding:18px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+            <span style="font-size:18px">👑</span>
+            <span class="role-tag role-admin" style="font-size:11px">ADMIN</span>
+          </div>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:7px;font-size:11px;color:rgba(255,255,255,0.6)">
+            <li>✓ Manage all users</li>
+            <li>✓ Manage all profiles</li>
+            <li>✓ Edit catalogs & CMS</li>
+            <li>✓ Create invite codes</li>
+            <li>✓ Configure addons globally</li>
+            <li>✓ Unlimited profiles</li>
+            <li>✓ View analytics</li>
+          </ul>
+        </div>
+
+        <div style="background:rgba(52,211,153,0.06);border:1px solid rgba(52,211,153,0.18);border-radius:14px;padding:18px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+            <span style="font-size:18px">👨‍👩‍👧</span>
+            <span class="role-tag role-family" style="font-size:11px">FRIENDS & FAMILY</span>
+          </div>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:7px;font-size:11px;color:rgba(255,255,255,0.6)">
+            <li>✓ Up to 5 own profiles</li>
+            <li>✓ Install own addons</li>
+            <li>✓ Access all catalogs</li>
+            <li>✓ 4K streaming</li>
+            <li>✗ No admin access</li>
+            <li>✗ No catalog editing</li>
+          </ul>
+        </div>
+
+        <div style="background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.18);border-radius:14px;padding:18px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+            <span style="font-size:18px">⭐</span>
+            <span class="role-tag role-premium" style="font-size:11px">PREMIUM</span>
+          </div>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:7px;font-size:11px;color:rgba(255,255,255,0.6)">
+            <li>✓ Up to 3 own profiles</li>
+            <li>✓ Install own addons</li>
+            <li>✓ Access all catalogs</li>
+            <li>✓ 1080p streaming</li>
+            <li>✗ No family sharing</li>
+            <li>✗ No admin access</li>
+          </ul>
+        </div>
+
+        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:18px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+            <span style="font-size:18px">🔓</span>
+            <span class="role-tag role-basic" style="font-size:11px">BASIC</span>
+          </div>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:7px;font-size:11px;color:rgba(255,255,255,0.6)">
+            <li>✓ 1 profile</li>
+            <li>✓ Default addons only</li>
+            <li>✓ Public catalogs</li>
+            <li>✗ No addon customization</li>
+            <li>✗ No family sharing</li>
+            <li>✗ 720p max</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PROFILE DETAIL (inside a user account) -->
+    <div>
+      <div class="section-header">
+        <div class="section-title">Inside Sara's Account — Her Profiles</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.3)">Friends & Family tier · 5 profile slots</div>
+      </div>
+      <div class="profile-picker">
+        <div class="pp-grid">
+          <div class="pp-card">
+            <div class="pp-avatar" style="background:linear-gradient(135deg,#34d399,#059669)">S</div>
+            <div class="pp-name">Sara</div>
+            <div class="pp-meta">4 addons · 32 watchlist</div>
+          </div>
+          <div class="pp-card">
+            <div class="pp-avatar" style="background:linear-gradient(135deg,#f472b6,#db2777)">K</div>
+            <div class="pp-name">Kids</div>
+            <div class="pp-meta">PIN locked · 2 addons</div>
+          </div>
+          <div class="pp-card pp-add" style="border-style:dashed;border-color:rgba(255,255,255,0.08)">
+            <div class="pp-avatar" style="background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.2);font-size:22px">+</div>
+            <div class="pp-name" style="color:rgba(255,255,255,0.25)">Add Profile</div>
+            <div class="pp-meta">3 slots remaining</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="height:40px"></div>
+  </main>
+</div>
+</body>
+</html>

@@ -86,9 +86,12 @@ struct MacCreateProfile: View {
     @State private var name = ""
     @State private var isLoading = false
     @State private var errorMessage: String?
+    @State private var selectedEmojiIndex = 0
+
+    private let emojis = ["🌙", "⭐", "🎬", "🍿", "🦊", "🐉", "👾", "🌊", "🔮", "⚡"]
 
     var body: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: 20) {
             Spacer()
 
             AppIconView()
@@ -98,6 +101,30 @@ struct MacCreateProfile: View {
             Text("Create Profile")
                 .font(.system(size: 20, weight: .semibold))
                 .foregroundColor(.white)
+
+            VStack(spacing: 8) {
+                Text(emojis[selectedEmojiIndex])
+                    .font(.system(size: 48))
+            }
+
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 5), spacing: 10) {
+                ForEach(Array(emojis.enumerated()), id: \.offset) { index, emoji in
+                    Button {
+                        selectedEmojiIndex = index
+                    } label: {
+                        Text(emoji)
+                            .font(.system(size: 32))
+                            .frame(width: 48, height: 48)
+                            .background(
+                                selectedEmojiIndex == index
+                                    ? Circle().fill(Color.white.opacity(0.15))
+                                    : Circle().fill(Color.clear)
+                            )
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .frame(width: 320)
 
             TextField("Profile Name", text: $name)
                 .textFieldStyle(.plain)
@@ -139,7 +166,7 @@ struct MacCreateProfile: View {
 
             Spacer()
         }
-        .frame(width: 400, height: 350)
+        .frame(width: 420, height: 500)
         .background(MoonlitTheme.background)
     }
 

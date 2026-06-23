@@ -1,0 +1,162 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5] [cursor=pointer]: LUNA
+      - navigation [ref=e7]:
+        - button "Home" [ref=e8] [cursor=pointer]
+        - button "Pricing" [ref=e9] [cursor=pointer]
+        - button "Sign in" [ref=e10] [cursor=pointer]
+        - button "Profiles" [ref=e11] [cursor=pointer]
+        - button "Addons" [ref=e12] [cursor=pointer]
+        - button "Billing" [ref=e13] [cursor=pointer]
+        - button "Collections" [ref=e155] [cursor=pointer]
+        - button "Users" [ref=e156] [cursor=pointer]
+        - button "Invites" [ref=e157] [cursor=pointer]
+      - generic [ref=e14]:
+        - button "Admin" [active] [ref=e158] [cursor=pointer]:
+          - generic [ref=e17]: Admin
+        - button "Get Luna" [ref=e18] [cursor=pointer]
+  - generic [ref=e19]:
+    - generic [ref=e21]:
+      - generic [ref=e22]:
+        - generic [ref=e23]: Your own private streaming universe
+        - heading "Every screen. One Luna." [level=1] [ref=e24]:
+          - text: Every screen.
+          - text: One Luna.
+        - paragraph [ref=e25]: A members-only streaming platform built on the Stremio engine — curated collections, gorgeous artwork, and your whole household on every device.
+        - generic [ref=e26]:
+          - button "Get Luna →" [ref=e27] [cursor=pointer]
+          - button "Explore the catalog" [ref=e28] [cursor=pointer]
+        - generic [ref=e29]:
+          - generic [ref=e30]: 4K • HDR
+          - generic [ref=e31]: Multi-profile
+          - generic [ref=e32]: Curated collections
+          - generic [ref=e33]: iOS · Mac · Web
+      - generic [ref=e38]:
+        - generic [ref=e39]: Tonight on Luna
+        - generic [ref=e40]: 12 collections · 480 titles synced
+    - generic [ref=e42]:
+      - generic [ref=e43]:
+        - text: STREAMING
+        - generic [ref=e44]: ●
+        - text: COLLECTIONS
+        - generic [ref=e45]: ●
+        - text: 4K HDR
+        - generic [ref=e46]: ●
+        - text: MULTI-PROFILE
+        - generic [ref=e47]: ●
+        - text: NO ADS
+        - generic [ref=e48]: ●
+        - text: CROSS-DEVICE
+        - generic [ref=e49]: ●
+      - generic [ref=e50]:
+        - text: STREAMING
+        - generic [ref=e51]: ●
+        - text: COLLECTIONS
+        - generic [ref=e52]: ●
+        - text: 4K HDR
+        - generic [ref=e53]: ●
+        - text: MULTI-PROFILE
+        - generic [ref=e54]: ●
+        - text: NO ADS
+        - generic [ref=e55]: ●
+        - text: CROSS-DEVICE
+        - generic [ref=e56]: ●
+    - generic [ref=e57]:
+      - generic [ref=e58]:
+        - generic [ref=e59]: The collection
+        - heading "Three ways to watch" [level=2] [ref=e60]
+      - generic [ref=e61]:
+        - generic [ref=e65]:
+          - heading "Cinema" [level=3] [ref=e66]
+          - paragraph [ref=e67]: Hand-picked films, franchise stacks & 4K showcases.
+        - generic [ref=e71]:
+          - heading "Series" [level=3] [ref=e72]
+          - paragraph [ref=e73]: Trending shows, bingeable seasons, continue-watching that follows you.
+        - generic [ref=e77]:
+          - heading "Live & UK TV" [level=3] [ref=e78]
+          - paragraph [ref=e79]: Channels, sports and curated live rows built by your admin.
+    - generic [ref=e81]: L U N A
+    - generic [ref=e82]:
+      - generic [ref=e83]:
+        - generic [ref=e84]: By the numbers
+        - heading "Built for households" [level=2] [ref=e85]
+      - generic [ref=e86]:
+        - generic [ref=e87]:
+          - generic [ref=e88]: ∞
+          - generic [ref=e89]: Collections per account
+        - generic [ref=e90]:
+          - generic [ref=e91]: "6"
+          - generic [ref=e92]: Profiles included
+        - generic [ref=e93]:
+          - generic [ref=e94]: "0"
+          - generic [ref=e95]: Ads, ever
+    - generic [ref=e97]:
+      - generic [ref=e98]:
+        - text: MOON SO BRIGHT
+        - generic [ref=e99]: ●
+        - text: WATCH ANYTHING
+        - generic [ref=e100]: ●
+        - text: INVITE YOUR PEOPLE
+        - generic [ref=e101]: ●
+        - text: MOON SO BRIGHT
+        - generic [ref=e102]: ●
+        - text: WATCH ANYTHING
+        - generic [ref=e103]: ●
+        - text: INVITE YOUR PEOPLE
+        - generic [ref=e104]: ●
+      - generic [ref=e105]:
+        - text: MOON SO BRIGHT
+        - generic [ref=e106]: ●
+        - text: WATCH ANYTHING
+        - generic [ref=e107]: ●
+        - text: INVITE YOUR PEOPLE
+        - generic [ref=e108]: ●
+        - text: MOON SO BRIGHT
+        - generic [ref=e109]: ●
+        - text: WATCH ANYTHING
+        - generic [ref=e110]: ●
+        - text: INVITE YOUR PEOPLE
+        - generic [ref=e111]: ●
+    - generic [ref=e112]:
+      - generic [ref=e113]: Choose your moon
+      - heading "Pick your plan" [level=2] [ref=e114]
+      - generic [ref=e115]:
+        - generic [ref=e116]:
+          - generic [ref=e117]: Premium
+          - generic [ref=e118]: $5.99/mo
+          - list [ref=e119]:
+            - listitem [ref=e120]: 2 simultaneous streams
+            - listitem [ref=e121]: Up to 6 profiles
+            - listitem [ref=e122]: Full curated catalog
+            - listitem [ref=e123]: iOS · Mac · Web
+          - button "Choose Premium" [ref=e124] [cursor=pointer]
+        - generic [ref=e125]:
+          - generic [ref=e126]: Most popular
+          - generic [ref=e127]: Premium Plus
+          - generic [ref=e128]: $9.99/mo
+          - list [ref=e129]:
+            - listitem [ref=e130]: 4 simultaneous streams in 4K HDR
+            - listitem [ref=e131]: Unlimited profiles
+            - listitem [ref=e132]: Personal addon slots
+            - listitem [ref=e133]: Priority stream warm-up
+            - listitem [ref=e134]: Early access features
+          - button "Choose Plus" [ref=e135] [cursor=pointer]
+        - generic [ref=e136]:
+          - generic [ref=e137]: Friends & Family
+          - generic [ref=e138]: Inviteonly
+          - list [ref=e139]:
+            - listitem [ref=e140]: Granted by an admin
+            - listitem [ref=e141]: Shared household catalog
+            - listitem [ref=e142]: Personal profile & library
+            - listitem [ref=e143]: No billing
+          - button "Have a code?" [ref=e144] [cursor=pointer]
+    - generic [ref=e145]:
+      - generic [ref=e146]: LUNA
+      - generic [ref=e147]:
+        - generic [ref=e148]: About
+        - generic [ref=e149]: Catalog
+        - generic [ref=e150]: Pricing
+        - generic [ref=e151]: Support
+        - generic [ref=e152]: Status
+      - paragraph [ref=e153]: © 2026 Luna · A private Stremio-powered platform

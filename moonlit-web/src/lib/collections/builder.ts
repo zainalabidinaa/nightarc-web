@@ -17,12 +17,9 @@ export async function buildCollectionRows(options: BuilderOptions): Promise<Cata
   const { organized, prefs, addons, tmdbApiKey } = options;
   const rows: CatalogRow[] = [];
 
-  // Sort collections: pinToTop first, then sortOrder
-  const sortedCollections = [...organized.collections].sort((a, b) => {
-    if (a.pinToTop && !b.pinToTop) return -1;
-    if (!a.pinToTop && b.pinToTop) return 1;
-    return a.sortOrder - b.sortOrder;
-  });
+  // Render in the organizer's own order (matches native, which renders
+  // catalogRows in repository order without hoisting pinToTop).
+  const sortedCollections = [...organized.collections].sort((a, b) => a.sortOrder - b.sortOrder);
 
   for (const collection of sortedCollections) {
     // Skip disabled collections
@@ -38,12 +35,14 @@ export async function buildCollectionRows(options: BuilderOptions): Promise<Cata
     const shouldGroup = collectionFolders.length > 1 && !isExpanded;
 
     if (shouldGroup) {
-      // Group tile row — folder cover images as tiles
+      // Group tile row — folder cover images as tiles. Each tile carries its
+      // folder's own shape so portrait/landscape folders render correctly.
       const tileItems: MetaPreview[] = collectionFolders.map(f => ({
         id: f.id,
         type: 'folder',
         name: f.name,
         poster: f.coverImage,
+        tileShape: f.tileShape,
       }));
       rows.push({
         id: `collection-group-${collection.id}`,
@@ -51,7 +50,9 @@ export async function buildCollectionRows(options: BuilderOptions): Promise<Cata
         items: tileItems,
         page: 0,
         hasMore: false,
-        tileShape: 'landscape',
+        // Row-level default shape (used when a tile lacks its own); derived
+        // from the folders rather than hardcoded to landscape.
+        tileShape: collectionFolders[0].tileShape || 'poster',
         focusGlowEnabled: collection.focusGlowEnabled,
         viewMode: collection.viewMode,
         showAllTab: collection.showAllTab,
@@ -69,10 +70,15 @@ export async function buildCollectionRows(options: BuilderOptions): Promise<Cata
 
         let allItems: MetaPreview[] = [];
 
-        // Fetch addon catalog sources
+        // Fetch addon catalog sources. Prefer an addon that lists this catalog
+        // in its manifest, but fall back to any catalog-capable addon — addons
+        // (e.g. AIOMetadata) serve catalogs like trakt.* that they don't
+        // enumerate in their manifest.
         for (const cat of folderCatalogs) {
           const addon = addons.find(a =>
             a.transportUrl && a.catalogs?.some(ac => ac.id === cat.catalogId || ac.type === cat.catalogId)
+          ) ?? addons.find(a =>
+            a.transportUrl && a.resources?.some(r => (typeof r === 'string' ? r : r.name) === 'catalog')
           );
           const baseURL = addon?.transportUrl;
           if (!baseURL) continue;

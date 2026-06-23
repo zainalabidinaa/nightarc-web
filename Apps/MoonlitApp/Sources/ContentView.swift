@@ -327,13 +327,27 @@ private struct RestrictedAccessView: View {
                     .font(.system(size: 26, weight: .semibold, design: .default))
                     .foregroundStyle(.white)
 
-                Text("Your account is set to Free. Access to Moonlit has been limited.\nVisit the Moonlit website to manage your account.")
+                Text("Your account has been restricted. Access to Moonlit has been limited.\nVisit the Moonlit website to manage your account.")
                     .font(.system(size: 15, weight: .regular, design: .default))
                     .foregroundStyle(.white.opacity(0.56))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 40)
 
                 Spacer()
+
+                Button(action: {
+                    if let url = URL(string: "https://trymoonlit.app") {
+                        UIApplication.shared.open(url)
+                    }
+                }) {
+                    Text("Open Website")
+                        .font(.system(size: 15, weight: .semibold, design: .default))
+                        .foregroundStyle(.black)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(.white, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+                }
+                .padding(.horizontal, 40)
 
                 Button(action: {
                     guestMode = false

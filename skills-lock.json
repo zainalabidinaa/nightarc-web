@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "skills": {
+    "ios-animations": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "github",
+      "skillPath": "skills/.experimental/ios-animations/SKILL.md",
+      "computedHash": "e9db3de6263a9f0aaeae248c89b1081d70e778e40fc1105e9af9ccb4398f04e3"
+    },
+    "mobile-ios-design": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "skillPath": "plugins/ui-design/skills/mobile-ios-design/SKILL.md",
+      "computedHash": "3902f919488d8ddc983e157bbcd5f16b739b84eeaab57002bf52b7f9601ed6ad"
+    },
+    "responsive-design": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "skillPath": "plugins/ui-design/skills/responsive-design/SKILL.md",
+      "computedHash": "794cc7f1b2f79d398135d19ef3fe32c406dde926b9bdf86ee3fe7b939a0be906"
+    },
+    "swiftui-expert-skill": {
+      "source": "avdlee/swiftui-agent-skill",
+      "sourceType": "github",
+      "skillPath": "swiftui-expert-skill/SKILL.md",
+      "computedHash": "ffe7adc4c442d2e75985b61ab281e3e303fe201c077ed05d82c0198a18fb1a25"
+    },
+    "swiftui-pro": {
+      "source": "twostraws/swiftui-agent-skill",
+      "sourceType": "github",
+      "skillPath": "swiftui-pro/SKILL.md",
+      "computedHash": "07033426e384295a4b49cf0b2ffdefd4098cae4af53fef16bc1f2d9281118c41"
+    }
+  }
+}

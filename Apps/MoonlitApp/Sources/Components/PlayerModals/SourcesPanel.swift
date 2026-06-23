@@ -7,6 +7,7 @@ struct SourcesPanel: View {
     let onSelect: (StreamItem) -> Void
 
     @StateObject private var streamRepo = StreamRepository.shared
+    @State private var playableStreams: [StreamItem] = []
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -67,6 +68,12 @@ struct SourcesPanel: View {
         }
         .frame(width: 250)
         .playerGlassPanel(cornerRadius: 16)
+        .onAppear {
+            playableStreams = StreamSourceSelector.rankedCandidates(from: streamRepo.streams)
+        }
+        .onChange(of: streamRepo.streams) { _, streams in
+            playableStreams = StreamSourceSelector.rankedCandidates(from: streams)
+        }
     }
 
     private var panelHeader: some View {
@@ -91,9 +98,5 @@ struct SourcesPanel: View {
         .padding(.horizontal, 14)
         .padding(.top, 10)
         .padding(.bottom, 8)
-    }
-
-    private var playableStreams: [StreamItem] {
-        StreamSourceSelector.cachedCandidates(currentUrl: engine.currentLaunch?.sourceUrl, from: streamRepo.streams)
     }
 }

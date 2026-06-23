@@ -198,21 +198,22 @@ async function fetchSubtitles(baseURL: string, type: string, id: string): Promis
 
 // Community OpenSubtitles Stremio addon — public, no auth, always available
 const OPENSUBTITLES_ADDON_URL = 'https://opensubtitles-v3.strem.io';
-const OPENSUBTITLES_PRO_ADDON_URL = 'https://opensubtitlesv3-pro.dexter21767.com/eyJsYW5ncyI6WyJlbmdsaXNoIl0sInNvdXJjZSI6ImFsbCIsImFpVHJhbnNsYXRlZCI6ZmFsc2UsImF1dG9BZGp1c3RtZW50IjpmYWxzZX0=';
+
+export function selectSubtitleAddonUrls(type: string, addons: AddonManifest[]): string[] {
+  return [
+    ...addons
+      .filter(a => a.transportUrl && addonSupportsType(a, 'subtitles', type))
+      .map(a => a.transportUrl!),
+    OPENSUBTITLES_ADDON_URL,
+  ].filter((url, index, all) => all.indexOf(url) === index);
+}
 
 export async function fetchSubtitlesFromAll(
   type: string,
   id: string,
   addons: AddonManifest[]
 ): Promise<SubtitleItem[]> {
-  // Collect all addon URLs + always append OpenSubtitles as a guaranteed fallback.
-  // Many addons also support subtitles without declaring it in their manifest, so
-  // we try all of them rather than filtering by resource declaration.
-  const urls = [
-    ...addons.filter(a => !!a.transportUrl).map(a => a.transportUrl!),
-    OPENSUBTITLES_PRO_ADDON_URL,
-    OPENSUBTITLES_ADDON_URL,
-  ].filter((url, index, all) => all.indexOf(url) === index);
+  const urls = selectSubtitleAddonUrls(type, addons);
   const results = await Promise.allSettled(
     urls.map(url => fetchSubtitles(url, type, id))
   );

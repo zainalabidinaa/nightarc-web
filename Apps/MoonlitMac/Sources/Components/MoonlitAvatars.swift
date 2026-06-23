@@ -59,14 +59,20 @@ struct MacProfileAvatarView: View {
 
     var body: some View {
         if let url {
-            CachedAsyncImage(url: url) { image in
-                image
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
+            if url.absoluteString.lowercased().hasSuffix(".gif") {
+                AnimatedRemoteImage(url: url, contentMode: .resizeAspectFill)
                     .frame(width: size, height: size)
                     .clipShape(Circle())
-            } placeholder: {
-                fallback
+            } else {
+                CachedAsyncImage(url: url) { image in
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: size, height: size)
+                        .clipShape(Circle())
+                } placeholder: {
+                    fallback
+                }
             }
         } else {
             fallback

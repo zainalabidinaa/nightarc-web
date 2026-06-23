@@ -1,0 +1,98 @@
+<h2>Folder Row → Catalog Rows</h2>
+<p class="subtitle">Corrected behavior: a collection like Decades can either show its folders as tiles, or expand each folder into its own Home row.</p>
+
+<div class="split">
+  <div class="mockup" data-choice="mode-folder-row" onclick="toggleSelect(this)">
+    <div class="mockup-header">OFF: Collection Shows Folder Tiles</div>
+    <div class="mockup-body">
+      <div style="background:#050505;border-radius:24px;padding:18px;color:white;font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:390px;margin:auto;min-height:620px;overflow:hidden;">
+        <div style="font-size:28px;font-weight:850;margin:12px 0 8px;">Catalogs</div>
+        <div style="color:#aaa;font-size:14px;margin-bottom:18px;">Folder navigation mode</div>
+
+        <div style="background:#1c1c1f;border-radius:20px;padding:14px;margin-bottom:22px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+            <div>
+              <div style="font-size:17px;font-weight:800;">Expand folders into rows</div>
+              <div style="font-size:12px;color:#aaa;margin-top:4px;line-height:1.35;">Off: collections stay as folder tiles.</div>
+            </div>
+            <div style="width:58px;height:32px;border-radius:18px;background:#333;position:relative;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);">
+              <div style="width:27px;height:27px;border-radius:50%;background:white;position:absolute;left:3px;top:2.5px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="font-size:22px;font-weight:850;margin:10px 0 12px;">Decades</div>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
+          <div style="height:112px;border-radius:16px;background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.75)),url('https://i.postimg.cc/CxP1mxKd/80s.png');background-size:cover;background-position:center;display:flex;align-items:end;padding:10px;font-size:17px;font-weight:850;">1980s</div>
+          <div style="height:112px;border-radius:16px;background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.75)),url('https://i.postimg.cc/x1xCt1dy/90s.png');background-size:cover;background-position:center;display:flex;align-items:end;padding:10px;font-size:17px;font-weight:850;">1990s</div>
+          <div style="height:112px;border-radius:16px;background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.75)),url('https://i.postimg.cc/y8YxmZ70/00s.png');background-size:cover;background-position:center;display:flex;align-items:end;padding:10px;font-size:17px;font-weight:850;">2000s</div>
+          <div style="height:112px;border-radius:16px;background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.75)),url('https://i.postimg.cc/mg2kYHTF/10s.png');background-size:cover;background-position:center;display:flex;align-items:end;padding:10px;font-size:17px;font-weight:850;">2010s</div>
+          <div style="height:112px;border-radius:16px;background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.75)),url('https://i.postimg.cc/0y2jYw9p/20s.png');background-size:cover;background-position:center;display:flex;align-items:end;padding:10px;font-size:17px;font-weight:850;">2020s</div>
+        </div>
+        <div style="font-size:13px;color:#999;margin-top:14px;line-height:1.4;">Tap 1980s to open a folder page containing 1980s movies.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mockup" data-choice="mode-expanded-rows" onclick="toggleSelect(this)">
+    <div class="mockup-header">ON: Folders Become Their Own Rows</div>
+    <div class="mockup-body">
+      <div style="background:#050505;border-radius:24px;padding:18px;color:white;font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:390px;margin:auto;min-height:620px;overflow:hidden;">
+        <div style="font-size:28px;font-weight:850;margin:12px 0 8px;">Home</div>
+        <div style="color:#aaa;font-size:14px;margin-bottom:18px;">Expanded catalog row mode</div>
+
+        <div style="background:#1c1c1f;border-radius:20px;padding:14px;margin-bottom:22px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+            <div>
+              <div style="font-size:17px;font-weight:800;">Expand folders into rows</div>
+              <div style="font-size:12px;color:#aaa;margin-top:4px;line-height:1.35;">On: each folder becomes a content row.</div>
+            </div>
+            <div style="width:58px;height:32px;border-radius:18px;background:#65d66b;position:relative;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);">
+              <div style="width:27px;height:27px;border-radius:50%;background:white;position:absolute;right:3px;top:2.5px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="font-size:22px;font-weight:850;margin:12px 0 10px;">1980s</div>
+        <div style="display:flex;gap:10px;overflow:hidden;margin-bottom:22px;">
+          <div style="min-width:112px;"><div style="height:165px;border-radius:13px;background:linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.5)),url('https://image.tmdb.org/t/p/w342/A3ZbZsmsvNGdprRi2lKgGEeVLEH.jpg');background-size:cover;background-position:center;"></div><div style="font-size:12px;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Back to the Future</div></div>
+          <div style="min-width:112px;"><div style="height:165px;border-radius:13px;background:linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.5)),url('https://image.tmdb.org/t/p/w342/dM2w364MScsjFf8pfMbaWUcWrR.jpg');background-size:cover;background-position:center;"></div><div style="font-size:12px;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">The Terminator</div></div>
+          <div style="min-width:112px;"><div style="height:165px;border-radius:13px;background:linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.5)),url('https://image.tmdb.org/t/p/w342/7lyBcpYB0Qt8gYhXYaEZUNlNQAv.jpg');background-size:cover;background-position:center;"></div><div style="font-size:12px;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Aliens</div></div>
+        </div>
+
+        <div style="font-size:22px;font-weight:850;margin:12px 0 10px;">1990s</div>
+        <div style="display:flex;gap:10px;overflow:hidden;margin-bottom:22px;">
+          <div style="min-width:112px;"><div style="height:165px;border-radius:13px;background:linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.5)),url('https://image.tmdb.org/t/p/w342/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg');background-size:cover;background-position:center;"></div><div style="font-size:12px;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">The Matrix</div></div>
+          <div style="min-width:112px;"><div style="height:165px;border-radius:13px;background:linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.5)),url('https://image.tmdb.org/t/p/w342/s2IG9qXfhJYxIttKyroYFBsHwzQ.jpg');background-size:cover;background-position:center;"></div><div style="font-size:12px;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Jurassic Park</div></div>
+          <div style="min-width:112px;"><div style="height:165px;border-radius:13px;background:linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.5)),url('https://image.tmdb.org/t/p/w342/6FfCtAuVAW8XJjZ7eWeLibRLWTw.jpg');background-size:cover;background-position:center;"></div><div style="font-size:12px;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Star Wars</div></div>
+        </div>
+
+        <div style="font-size:22px;font-weight:850;margin:12px 0 10px;">2000s</div>
+        <div style="display:flex;gap:10px;overflow:hidden;">
+          <div style="min-width:112px;"><div style="height:165px;border-radius:13px;background:linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.5)),url('https://image.tmdb.org/t/p/w342/8OKmBV5BUFzmozIC3pPWKHy17kx.jpg');background-size:cover;background-position:center;"></div><div style="font-size:12px;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Gladiator</div></div>
+          <div style="min-width:112px;"><div style="height:165px;border-radius:13px;background:linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.5)),url('https://image.tmdb.org/t/p/w342/a1yqXz6Y3GzY4Fr6q1A3QmD5Z9I.jpg');background-size:cover;background-position:center;"></div><div style="font-size:12px;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">The Dark Knight</div></div>
+          <div style="min-width:112px;"><div style="height:165px;border-radius:13px;background:linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.5)),url('https://image.tmdb.org/t/p/w342/5VTN0pR8gcqV3EPUHHfMGnJYN9L.jpg');background-size:cover;background-position:center;"></div><div style="font-size:12px;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Lord of the Rings</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="settings-global" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Global toggle in Catalog Management</h3>
+      <p>One switch: every collection folder row can expand into child rows. Decades becomes 1980s, 1990s, 2000s rows; Streaming becomes Netflix, Prime Video, etc.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="collection-toggle" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Per-collection toggle</h3>
+      <p>Each collection decides separately. Example: Decades can expand into rows, but Franchises can stay as folder tiles.</p>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle">Recommended: global toggle first, then we can add per-collection overrides later if needed.</p>

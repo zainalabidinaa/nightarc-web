@@ -138,7 +138,9 @@ export function getInitialSourceType(url: string, stream?: Pick<StreamItem, 'beh
 }
 
 export function getFallbackSourceType(currentType: VidstackSourceType): VidstackSourceType | null {
-  return currentType === 'application/x-mpegurl' ? 'video/mp4' : null;
+  if (currentType === 'application/x-mpegurl') return 'video/mp4';
+  if (currentType === 'video/mp4') return 'application/x-mpegurl';
+  return null;
 }
 
 export function streamMatchesUrl(stream: Pick<StreamItem, 'url' | 'externalUrl'>, url: string): boolean {

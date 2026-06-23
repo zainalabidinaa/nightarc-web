@@ -11,7 +11,7 @@ function MediaCard({ item }: { item: MetaPreview }) {
       params={{ type: item.type, id: item.id }}
       className="flex-shrink-0 group cursor-pointer"
     >
-      <div className="relative w-[154px] md:w-[168px] aspect-[2/3] overflow-hidden rounded-xl bg-moonlit-elevated mb-2 transition-shadow duration-300 group-hover:shadow-lg group-hover:shadow-black/30 group-hover:ring-1 group-hover:ring-white/10">
+      <div className="relative w-[172px] md:w-[196px] lg:w-[216px] aspect-[2/3] overflow-hidden rounded-xl bg-moonlit-elevated mb-2 transition-shadow duration-300 group-hover:shadow-lg group-hover:shadow-black/30 group-hover:ring-1 group-hover:ring-white/10">
         {item.poster && !imgError ? (
           <img
             src={item.poster}

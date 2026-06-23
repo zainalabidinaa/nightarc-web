@@ -12,7 +12,7 @@ export function FolderTile({ folder, showGlow = false }: FolderTileProps) {
   const [glowing, setGlowing] = useState(false);
 
   const isLandscape = (folder.tile_shape || '').toUpperCase() === 'LANDSCAPE';
-  const width = isLandscape ? 220 : 140;
+  const width = isLandscape ? 300 : 176;
   const aspectRatio = isLandscape ? '16/9' : '2/3';
 
   const canSwapGif = folder.focus_gif_enabled && folder.focus_gif;
@@ -38,7 +38,7 @@ export function FolderTile({ folder, showGlow = false }: FolderTileProps) {
         className="relative overflow-hidden rounded-xl mb-2 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-black/30 group-hover:ring-1 group-hover:ring-white/10"
         style={{
           aspectRatio,
-          boxShadow: glowing ? '0 0 28px 4px rgba(192,132,252,0.45)' : undefined,
+          boxShadow: glowing ? '0 0 28px 4px rgba(255,138,53,0.45)' : undefined,
         }}
         onMouseEnter={handleEnter}
         onMouseLeave={handleLeave}

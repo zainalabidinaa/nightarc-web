@@ -115,6 +115,22 @@ body {
   --cue-border-radius: 4px;
 }
 
+.moonlit-captions-custom {
+  bottom: var(--moonlit-subtitle-bottom, 112px);
+}
+
+.moonlit-captions-custom * {
+  color: var(--moonlit-subtitle-color, #fff) !important;
+  font-size: var(--moonlit-subtitle-font-size, 24px) !important;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 1), 0 0 2px rgba(0, 0, 0, 1) !important;
+}
+
+.moonlit-captions-custom [data-media-cue] {
+  background: var(--moonlit-subtitle-bg, rgba(0, 0, 0, 0.7)) !important;
+  border-radius: 4px !important;
+  padding: 0.08em 0.35em !important;
+}
+
 /* Vidstack base resets */
 .moonlit-player media-player {
   display: contents;

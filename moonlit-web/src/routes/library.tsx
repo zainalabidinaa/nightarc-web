@@ -8,7 +8,7 @@ import { Link } from '@tanstack/react-router';
 
 type MediaFilter = 'all' | 'movie' | 'series';
 
-const POSTER_GRID = { gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))' } as const;
+const POSTER_GRID = { gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))' } as const;
 
 // ── Shared poster card ────────────────────────────────────────────────────
 
@@ -151,6 +151,51 @@ export default function LibraryPage() {
     <Sidebar>
       <div className="px-5 pt-24 pb-16 max-w-screen-xl mx-auto">
 
+        {/* ── UPCOMING (horizontal landscape cards, matches iOS) ── */}
+        {upcomingItems.length > 0 && (
+          <>
+            <SectionHeader
+              title="Upcoming"
+              count={upcomingItems.length}
+              icon={
+                <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-moonlit-accent">
+                  <path fillRule="evenodd" d="M6.75 2.25A.75.75 0 017.5 3v1.5h9V3A.75.75 0 0118 3v1.5h.75a3 3 0 013 3v11.25a3 3 0 01-3 3H5.25a3 3 0 01-3-3V7.5a3 3 0 013-3H6V3a.75.75 0 01.75-.75zm13.5 9a1.5 1.5 0 00-1.5-1.5H5.25a1.5 1.5 0 00-1.5 1.5v7.5a1.5 1.5 0 001.5 1.5h13.5a1.5 1.5 0 001.5-1.5v-7.5z" clipRule="evenodd"/>
+                </svg>
+              }
+            />
+            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1 mb-2">
+              {upcomingItems.map(item => {
+                const info = upcoming[item.mediaId];
+                const img = info?.backdrop || item.poster;
+                return (
+                  <Link key={item.id} to="/browse/$type/$id" params={{ type: item.mediaType, id: item.mediaId }}
+                    className="group flex-shrink-0" style={{ width: 248 }}>
+                    <div className="relative rounded-xl overflow-hidden bg-moonlit-elevated" style={{ aspectRatio: '16/9' }}>
+                      {img
+                        ? <img src={img} alt={item.name} loading="lazy"
+                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                        : <div className="absolute inset-0 bg-white/5" />}
+                      <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+                      {/* Release-date capsule (top-right) */}
+                      <div className="absolute top-2 right-2 flex items-center gap-1 px-2 py-1 rounded-full bg-moonlit-accent text-white text-[10px] font-bold shadow-lg max-w-[85%]">
+                        <svg viewBox="0 0 24 24" fill="currentColor" className="w-3 h-3 shrink-0">
+                          <path d="M6.75 2.25A.75.75 0 017.5 3v1.5h9V3a.75.75 0 011.5 0v1.5h.75a3 3 0 013 3v9.75a3 3 0 01-3 3H5.25a3 3 0 01-3-3V7.5a3 3 0 013-3H6V3a.75.75 0 01.75-.75zM18.75 9H5.25a1.5 1.5 0 00-1.5 1.5v.75h16.5V10.5a1.5 1.5 0 00-1.5-1.5z"/>
+                        </svg>
+                        <span className="truncate">{info?.badge}</span>
+                      </div>
+                      {/* Title (bottom-left) */}
+                      <div className="absolute inset-x-0 bottom-0 p-3">
+                        <p className="text-sm font-semibold text-white truncate drop-shadow">{item.name}</p>
+                        <p className="text-[11px] text-white/60 mt-0.5">{item.mediaType === 'series' ? 'Series' : 'Movie'}</p>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </>
+        )}
+
         {/* ── WATCHLIST ── */}
         <SectionHeader
           title="Watchlist"
@@ -244,47 +289,6 @@ export default function LibraryPage() {
           </>
         )}
 
-        {/* ── UPCOMING ── */}
-        {upcomingItems.length > 0 && (
-          <>
-            <SectionHeader
-              title="Upcoming"
-              count={upcomingItems.length}
-              icon={
-                <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-moonlit-accent">
-                  <path fillRule="evenodd" d="M6.75 2.25A.75.75 0 017.5 3v1.5h9V3A.75.75 0 0118 3v1.5h.75a3 3 0 013 3v11.25a3 3 0 01-3 3H5.25a3 3 0 01-3-3V7.5a3 3 0 013-3H6V3a.75.75 0 01.75-.75zm13.5 9a1.5 1.5 0 00-1.5-1.5H5.25a1.5 1.5 0 00-1.5 1.5v7.5a1.5 1.5 0 001.5 1.5h13.5a1.5 1.5 0 001.5-1.5v-7.5z" clipRule="evenodd"/>
-                </svg>
-              }
-            />
-            <div className="rounded-2xl bg-moonlit-surface border border-moonlit-border overflow-hidden">
-              {upcomingItems.map((item, idx) => (
-                <div key={item.id}>
-                  {idx > 0 && <div className="h-px bg-white/[0.06] ml-16" />}
-                  <Link to="/browse/$type/$id" params={{ type: item.mediaType, id: item.mediaId }}
-                    className="flex items-center gap-3 px-4 py-3 hover:bg-white/[0.03] transition-colors">
-                    <div className="w-11 h-16 rounded-lg overflow-hidden bg-moonlit-elevated shrink-0">
-                      {item.poster
-                        ? <img src={item.poster} alt={item.name} className="w-full h-full object-cover" loading="lazy" />
-                        : <div className="w-full h-full bg-white/5" />}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-white truncate">{item.name}</p>
-                      <p className="text-xs text-white/40 mt-0.5">{item.mediaType === 'series' ? 'Series' : 'Movie'}</p>
-                    </div>
-                    <div className="text-right shrink-0">
-                      <span className="text-xs font-semibold text-moonlit-accent bg-moonlit-accent/10 px-2 py-1 rounded-lg">
-                        {upcoming[item.mediaId]?.badge}
-                      </span>
-                    </div>
-                    <svg className="w-3.5 h-3.5 text-white/20 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </Link>
-                </div>
-              ))}
-            </div>
-          </>
-        )}
       </div>
     </Sidebar>
   );

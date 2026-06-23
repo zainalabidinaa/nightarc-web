@@ -315,26 +315,21 @@ export default function DetailPage() {
             {detail?.description && (
               <p className="text-sm text-white/50 leading-relaxed mb-6 line-clamp-3">{detail.description}</p>
             )}
-            <div className="flex gap-3 flex-wrap">
+            {/* Primary Play (full-width) + circular glass actions, matches iOS DetailScreen */}
+            <div className="flex items-center gap-3 max-w-xl">
               {!isSeries ? (
-                <>
-                  <button onClick={() => handleAutoPlay()}
-                    className="flex items-center gap-2 px-8 py-2.5 bg-white hover:bg-white/90 text-black font-semibold rounded-md transition-all">
-                    <PlayIcon />
-                    Play
-                  </button>
-                  <button onClick={() => loadStreams()}
-                    className="flex items-center gap-2 px-6 py-2.5 bg-white/10 hover:bg-white/15 border border-white/10 text-white font-semibold rounded-md transition-all text-sm">
-                    Sources
-                  </button>
-                </>
+                <button onClick={() => handleAutoPlay()}
+                  className="flex-1 flex items-center justify-center gap-2 px-8 py-3 bg-white hover:bg-white/90 text-black font-bold rounded-full transition-all active:scale-[0.98]">
+                  <PlayIcon />
+                  Play
+                </button>
               ) : recentEp ? (
                 (() => {
                   const parts = recentEp.mediaId.split(':');
                   const s = parts[1], e = parts[2];
                   return (
                     <button onClick={() => handleAutoPlay(recentEp.mediaId)}
-                      className="flex items-center gap-2 px-8 py-2.5 bg-white hover:bg-white/90 text-black font-semibold rounded-md transition-all">
+                      className="flex-1 flex items-center justify-center gap-2 px-8 py-3 bg-white hover:bg-white/90 text-black font-bold rounded-full transition-all active:scale-[0.98]">
                       <PlayIcon />
                       {s && e ? `Continue · S${s}E${e}` : 'Continue'}
                     </button>
@@ -342,25 +337,35 @@ export default function DetailPage() {
                 })()
               ) : detail?.seasons?.[0]?.episodes?.[0] ? (
                 <button onClick={() => handleAutoPlay(detail.seasons![0].episodes![0].id)}
-                  className="flex items-center gap-2 px-8 py-2.5 bg-white hover:bg-white/90 text-black font-semibold rounded-md transition-all">
+                  className="flex-1 flex items-center justify-center gap-2 px-8 py-3 bg-white hover:bg-white/90 text-black font-bold rounded-full transition-all active:scale-[0.98]">
                   <PlayIcon />
                   Play First Episode
                 </button>
-              ) : null}
+              ) : <div className="flex-1" />}
+
+              {/* Watchlist (circular glass) */}
               <button onClick={handleToggleLibrary}
-                className={`flex items-center gap-2 px-6 py-2.5 rounded-md font-semibold transition-all text-sm border ${inLibrary ? 'bg-moonlit-accent/20 border-moonlit-accent/40 text-moonlit-accent' : 'bg-white/10 border-white/10 text-white hover:bg-white/15'}`}>
+                aria-label={inLibrary ? 'Remove from watchlist' : 'Add to watchlist'} title={inLibrary ? 'Saved' : 'Watchlist'}
+                className={`w-12 h-12 shrink-0 flex items-center justify-center rounded-full border backdrop-blur-sm transition-all active:scale-95 ${inLibrary ? 'bg-moonlit-accent/20 border-moonlit-accent/40 text-moonlit-accent' : 'bg-white/10 border-white/15 text-white hover:bg-white/18'}`}>
                 <svg viewBox="0 0 24 24" fill={inLibrary ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
                 </svg>
-                {inLibrary ? 'Saved' : 'Watchlist'}
               </button>
+
+              {/* Sources (movie only, circular glass) */}
+              {!isSeries && (
+                <button onClick={() => loadStreams()} aria-label="Sources" title="Sources"
+                  className="w-12 h-12 shrink-0 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-white backdrop-blur-sm hover:bg-white/18 transition-all active:scale-95">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
+                </button>
+              )}
+
+              {/* Trailer (circular glass) */}
               {trailers.length > 0 && trailers[0].youtubeId && (
                 <a href={`https://www.youtube.com/watch?v=${trailers[0].youtubeId}`} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-md bg-white/8 border border-white/10 text-white font-semibold text-sm hover:bg-white/12 transition-all">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="w-4 h-4 opacity-80">
-                    <polygon points="5,3 19,12 5,21" fill="currentColor" stroke="none"/>
-                  </svg>
-                  Trailer
+                  aria-label="Trailer" title="Trailer"
+                  className="w-12 h-12 shrink-0 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-white backdrop-blur-sm hover:bg-white/18 transition-all active:scale-95">
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 ml-0.5"><polygon points="5,3 19,12 5,21"/></svg>
                 </a>
               )}
             </div>
@@ -481,7 +486,7 @@ export default function DetailPage() {
           <div className="flex gap-2 overflow-x-auto pb-2 mb-5 scrollbar-hide">
             {detail.seasons.map(s => (
               <button key={s.id} onClick={() => { setSelectedSeason(s); setShowStreams(false); setSelectedEpisodeId(null); }}
-                className={`flex-shrink-0 px-4 py-2 rounded-md text-sm font-medium transition-all ${selectedSeason?.id === s.id ? 'bg-white text-black' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'}`}>
+                className={`flex-shrink-0 px-4 py-2 rounded-full text-sm transition-all ${selectedSeason?.id === s.id ? 'bg-moonlit-accent text-white font-bold shadow-[0_0_14px_rgba(255,138,53,0.35)]' : 'bg-white/5 text-white/60 font-medium hover:bg-white/10 hover:text-white'}`}>
                 Season {s.number}
               </button>
             ))}

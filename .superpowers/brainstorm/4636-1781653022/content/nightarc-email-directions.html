@@ -1,0 +1,205 @@
+<style>
+  .email-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(260px, 1fr));
+    gap: 22px;
+    margin-top: 24px;
+  }
+  .email-card {
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 18px;
+    overflow: hidden;
+    background: rgba(255,255,255,.04);
+    cursor: pointer;
+    transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+  }
+  .email-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255,255,255,.28);
+  }
+  .email-card.selected {
+    border-color: #8b5cf6;
+    box-shadow: 0 0 0 2px rgba(139,92,246,.25), 0 20px 60px rgba(139,92,246,.18);
+  }
+  .email-preview {
+    min-height: 520px;
+    padding: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .inbox-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    font: 12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+  .mail {
+    width: 100%;
+    max-width: 330px;
+    border-radius: 18px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    box-shadow: 0 20px 70px rgba(0,0,0,.18);
+  }
+  .mail-inner {
+    padding: 34px 30px;
+  }
+  .logo {
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
+    display: grid;
+    place-items: center;
+    font-size: 19px;
+    font-weight: 800;
+    margin-bottom: 28px;
+  }
+  .mail h3 {
+    margin: 0 0 12px;
+    font-size: 23px;
+    line-height: 1.15;
+    letter-spacing: 0;
+  }
+  .mail p {
+    margin: 0 0 22px;
+    font-size: 14px;
+    line-height: 1.58;
+  }
+  .cta {
+    display: inline-block;
+    padding: 12px 17px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 650;
+    text-decoration: none;
+  }
+  .meta {
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid;
+    font-size: 11px;
+    line-height: 1.5;
+  }
+  .white-bg { background: #f5f5f7; }
+  .white-mail { background: #ffffff; color: #151517; }
+  .white-mail p { color: #68686f; }
+  .white-mail .logo { background: #111113; color: #fff; }
+  .white-mail .cta { background: #111113; color: #fff; }
+  .white-mail .meta { color: #8d8d94; border-color: #ededf0; }
+  .dark-bg { background: radial-gradient(circle at 50% 0%, #2e2147, #08080b 58%); }
+  .dark-mail { background: #101014; color: #fff; border: 1px solid rgba(255,255,255,.1); }
+  .dark-mail p { color: #b8b6c3; }
+  .dark-mail .logo { background: linear-gradient(145deg, #9f7aea, #5b21b6); color: #fff; box-shadow: 0 0 30px rgba(139,92,246,.4); }
+  .dark-mail .cta { background: #fff; color: #111113; }
+  .dark-mail .meta { color: #74717f; border-color: rgba(255,255,255,.1); }
+  .hybrid-bg { background: linear-gradient(180deg, #fbfbfc, #eceaf8); }
+  .hybrid-mail { background: #fff; color: #151517; border: 1px solid #ececf1; }
+  .hybrid-mail p { color: #62626c; }
+  .hybrid-mail .logo { background: #f1edff; color: #6d28d9; }
+  .hybrid-mail .cta { background: #6d28d9; color: #fff; }
+  .hybrid-mail .meta { color: #92919a; border-color: #eeeeF3; }
+  .email-label {
+    padding: 18px 18px 20px;
+    border-top: 1px solid rgba(255,255,255,.1);
+  }
+  .email-label h3 {
+    margin: 0 0 6px;
+    font-size: 17px;
+  }
+  .email-label p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+  @media (max-width: 980px) {
+    .email-grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+<h2>Pick the Nightarc email direction</h2>
+<p class="subtitle">These are visual mockups for the Supabase confirmation email. Click the one that feels most like the product.</p>
+
+<div class="email-grid">
+  <div class="email-card" data-choice="clean-white" onclick="toggleSelect(this)">
+    <div class="email-preview white-bg">
+      <div>
+        <div class="inbox-row" style="color:#56565d">
+          <div class="avatar" style="background:#111113;color:white">N</div>
+          <div><strong>Nightarc</strong><br>Confirm your email</div>
+        </div>
+        <div class="mail white-mail">
+          <div class="mail-inner">
+            <div class="logo">N</div>
+            <h3>Confirm your email</h3>
+            <p>Welcome to Nightarc. Confirm this address to finish setting up your private media hub.</p>
+            <a class="cta">Confirm email</a>
+            <div class="meta">This link expires soon. If you did not create an account, you can ignore this email.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="email-label">
+      <h3>A. Clean White</h3>
+      <p>Apple-like, quiet, trustworthy. Best if you want premium without looking too dark or niche.</p>
+    </div>
+  </div>
+
+  <div class="email-card" data-choice="dark-premium" onclick="toggleSelect(this)">
+    <div class="email-preview dark-bg">
+      <div>
+        <div class="inbox-row" style="color:#ddd9ec">
+          <div class="avatar" style="background:#8b5cf6;color:white">N</div>
+          <div><strong>Nightarc</strong><br>Your access is ready</div>
+        </div>
+        <div class="mail dark-mail">
+          <div class="mail-inner">
+            <div class="logo">N</div>
+            <h3>Your access is ready</h3>
+            <p>Confirm your email to unlock Nightarc and continue into your personal streaming library.</p>
+            <a class="cta">Confirm access</a>
+            <div class="meta">This secure link can only be used once. Ignore this email if you did not sign up.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="email-label">
+      <h3>B. Dark Premium</h3>
+      <p>Most aligned with the app. Cinematic and memorable, but heavier for email clients.</p>
+    </div>
+  </div>
+
+  <div class="email-card" data-choice="minimal-nightarc" onclick="toggleSelect(this)">
+    <div class="email-preview hybrid-bg">
+      <div>
+        <div class="inbox-row" style="color:#56565d">
+          <div class="avatar" style="background:#f1edff;color:#6d28d9">N</div>
+          <div><strong>Nightarc</strong><br>Complete your setup</div>
+        </div>
+        <div class="mail hybrid-mail">
+          <div class="mail-inner">
+            <div class="logo">N</div>
+            <h3>Complete your setup</h3>
+            <p>Confirm your email to connect your Nightarc account and start watching from your media hub.</p>
+            <a class="cta">Continue</a>
+            <div class="meta">Sent by Nightarc. The button opens a secure Supabase confirmation link.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="email-label">
+      <h3>C. Minimal Nightarc</h3>
+      <p>White and refined, with just enough purple identity. My recommendation for production.</p>
+    </div>
+  </div>
+</div>

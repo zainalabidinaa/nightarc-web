@@ -64,7 +64,7 @@ struct MacMainView: View {
                             detailItem = DetailItem(id: item.id, type: item.type.rawValue, name: item.name)
                         })
                     case .settings: MacSettingsView()
-                    case .admin: MacAdminView()
+                    case .admin: MacSettingsView()
                     }
                 }
             }

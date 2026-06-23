@@ -26,7 +26,7 @@ struct MacAdminView: View {
                             Spacer()
                             Stepper(value: $maxUses, in: 1...100) {
                                 Text("\(maxUses)")
-                                    .font(.system(.body, design: .rounded))
+                                    .font(.system(.body))
                                     .fontWeight(.semibold)
                                     .foregroundColor(.white)
                                     .frame(minWidth: 28)

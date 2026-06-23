@@ -3,6 +3,7 @@ import { ChevronLeft, X, Play, Pause, Maximize, Minimize } from 'lucide-react';
 import { WebCodecsPlayerEngine, WebCodecsPlayerState } from '@/lib/webcodecs-player';
 import { StreamItem } from '@/lib/types';
 import { sortStreamsForBrowserPlayback } from '@/lib/player-utils';
+import { PlaybackErrorScreen } from '@/components/player/PlaybackErrorScreen';
 
 interface WebCodecsPlayerProps {
   streamUrl: string;
@@ -28,6 +29,8 @@ export default function WebCodecsPlayer({
   });
   const [showControls, setShowControls] = useState(true);
   const [showSources, setShowSources] = useState(false);
+  const [showErrorSources, setShowErrorSources] = useState(false);
+  const [errorRetryKey, setErrorRetryKey] = useState(0);
   const hideTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const resetHide = useCallback(() => {
@@ -61,7 +64,7 @@ export default function WebCodecsPlayer({
       engine.destroy();
       engineRef.current = null;
     };
-  }, [streamUrl]);
+  }, [streamUrl, errorRetryKey]);
 
   // Keyboard shortcuts — scoped to this component
   useEffect(() => {
@@ -95,13 +98,39 @@ export default function WebCodecsPlayer({
 
   if (state.error) {
     return (
-      <div className="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center gap-4">
-        <p className="text-white text-lg font-semibold">Playback Error</p>
-        <p className="text-white/50 text-sm text-center max-w-sm px-4">{state.error}</p>
-        <div className="flex gap-3">
-          <button onClick={onBack} className="px-6 py-2.5 bg-white/10 text-white rounded-full text-sm">Back</button>
-          <button onClick={() => setShowSources(true)} className="px-6 py-2.5 bg-moonlit-accent text-white rounded-full text-sm font-semibold">Choose source</button>
-        </div>
+      <div className="fixed inset-0 bg-black z-50">
+        <PlaybackErrorScreen
+          error={{
+            message: state.error,
+            details: `URL: ${streamUrl}\nStream: ${currentStream.title || currentStream.name || currentStream.addonName || 'unknown'}`,
+            streamTitle: currentStream.title || currentStream.name,
+            streamAddon: currentStream.addonName,
+          }}
+          onBack={onBack}
+          onRetry={() => {
+            setShowErrorSources(false);
+            setErrorRetryKey(k => k + 1);
+          }}
+          onChooseSource={() => setShowErrorSources(true)}
+        />
+        {showErrorSources && (
+          <div className="absolute inset-0 z-[60] flex justify-end">
+            <div className="absolute inset-0 bg-black/60" onClick={() => setShowErrorSources(false)} />
+            <div className="relative w-[460px] max-w-[92vw] h-full bg-[#090910]/95 border-l border-white/10 overflow-y-auto shadow-2xl">
+              <div className="p-6 border-b border-white/8 flex items-center justify-between">
+                <h3 className="text-xl font-bold text-white">Sources</h3>
+                <button onClick={() => setShowErrorSources(false)} className="p-2 rounded-full hover:bg-white/10"><X size={18} className="text-white/60" /></button>
+              </div>
+              <div className="p-4 space-y-2">
+                {sortedStreams.map((s, i) => (
+                  <button key={s.url ? `${s.url}-${i}` : `stream-${i}`} onClick={() => { setShowErrorSources(false); setErrorRetryKey(k => k + 1); onSwitchStream(s); }} className="w-full text-left px-4 py-3 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 text-white/80 hover:text-white text-sm">
+                    {s.name || s.title || s.addonName || `Stream ${i + 1}`}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -178,7 +207,7 @@ export default function WebCodecsPlayer({
             </div>
             <div className="p-4 space-y-2">
               {sortedStreams.map((s, i) => (
-                <button key={s.url || i} onClick={() => { setShowSources(false); onSwitchStream(s); }} className="w-full text-left px-4 py-3 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 text-white/80 hover:text-white text-sm">
+                <button key={s.url ? `${s.url}-${i}` : `stream-${i}`} onClick={() => { setShowSources(false); onSwitchStream(s); }} className="w-full text-left px-4 py-3 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 text-white/80 hover:text-white text-sm">
                   {s.name || s.title || s.addonName || `Stream ${i + 1}`}
                 </button>
               ))}

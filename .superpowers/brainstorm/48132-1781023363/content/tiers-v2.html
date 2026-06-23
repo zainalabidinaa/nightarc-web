@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luna — User Tiers</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #07070f; color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif; padding: 40px 32px; }
+
+  h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px; }
+  .subtitle { font-size: 13px; color: rgba(255,255,255,0.4); margin-bottom: 32px; }
+
+  .tier-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 40px; }
+
+  .tier-card {
+    border-radius: 16px; padding: 22px 18px; border: 1px solid rgba(255,255,255,0.07);
+    background: rgba(255,255,255,0.03); display: flex; flex-direction: column; gap: 14px; position: relative; overflow: hidden;
+  }
+  .tier-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .tier-admin::before  { background: linear-gradient(90deg,#a78bfa,#7c3aed); }
+  .tier-family::before { background: linear-gradient(90deg,#34d399,#059669); }
+  .tier-curated::before { background: linear-gradient(90deg,#f472b6,#db2777); }
+  .tier-power::before { background: linear-gradient(90deg,#fbbf24,#d97706); }
+
+  .tier-admin  { border-color: rgba(167,139,250,0.2); background: rgba(167,139,250,0.05); }
+  .tier-family { border-color: rgba(52,211,153,0.2); background: rgba(52,211,153,0.04); }
+  .tier-curated { border-color: rgba(244,114,182,0.2); background: rgba(244,114,182,0.04); }
+  .tier-power  { border-color: rgba(251,191,36,0.2); background: rgba(251,191,36,0.04); }
+
+  .tier-icon { font-size: 24px; }
+  .tier-name { font-size: 15px; font-weight: 800; letter-spacing: -0.3px; }
+  .tier-tagline { font-size: 11px; color: rgba(255,255,255,0.4); line-height: 1.5; }
+
+  .divider { border: none; border-top: 1px solid rgba(255,255,255,0.06); }
+
+  .feature-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .feature-list li { font-size: 11.5px; color: rgba(255,255,255,0.6); display: flex; align-items: flex-start; gap: 8px; line-height: 1.45; }
+  .feature-list li .check { flex-shrink: 0; font-size: 11px; margin-top: 1px; }
+  .yes { color: #a78bfa; }
+  .yes-green { color: #34d399; }
+  .yes-pink { color: #f472b6; }
+  .yes-gold { color: #fbbf24; }
+  .no  { color: rgba(255,255,255,0.2); }
+
+  .tag { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 9px; font-weight: 700; letter-spacing: 0.5px; }
+  .tag-admin   { background: rgba(167,139,250,0.2); color: #a78bfa; }
+  .tag-family  { background: rgba(52,211,153,0.15); color: #34d399; }
+  .tag-curated { background: rgba(244,114,182,0.15); color: #f472b6; }
+  .tag-power   { background: rgba(251,191,36,0.15); color: #fbbf24; }
+
+  /* ADDON INHERITANCE DIAGRAM */
+  .inherit-section { margin-top: 8px; }
+  .inherit-title { font-size: 13px; font-weight: 700; margin-bottom: 16px; }
+  .inherit-diagram {
+    background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px; padding: 24px 28px; display: flex; align-items: center; gap: 0;
+  }
+
+  .node {
+    display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1; text-align: center;
+  }
+  .node-avatar { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; margin: 0 auto; }
+  .node-label { font-size: 11px; font-weight: 600; }
+  .node-sub { font-size: 10px; color: rgba(255,255,255,0.3); }
+
+  .arrow { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 0 8px; }
+  .arrow-line { width: 40px; height: 2px; background: rgba(255,255,255,0.12); position: relative; }
+  .arrow-line::after { content: '▶'; position: absolute; right: -8px; top: -7px; font-size: 10px; color: rgba(255,255,255,0.2); }
+  .arrow-label { font-size: 9px; color: rgba(255,255,255,0.25); white-space: nowrap; }
+  .arrow-label.highlight { color: #34d399; }
+
+  .addon-pill { padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 600; white-space: nowrap; }
+
+  /* PROFILE COUNT TABLE */
+  .profile-table { margin-top: 32px; }
+  .profile-table-title { font-size: 13px; font-weight: 700; margin-bottom: 14px; }
+  .pt-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+  .pt-cell {
+    background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px; padding: 14px 16px; text-align: center;
+  }
+  .pt-count { font-size: 28px; font-weight: 800; letter-spacing: -1px; }
+  .pt-label { font-size: 10px; color: rgba(255,255,255,0.35); margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<h2>Luna User Tiers</h2>
+<p class="subtitle">4 tiers — role lives on the user account, not the profile</p>
+
+<div class="tier-grid">
+
+  <!-- ADMIN -->
+  <div class="tier-card tier-admin">
+    <div>
+      <div class="tier-icon">👑</div>
+      <div style="margin-top:8px">
+        <span class="tag tag-admin">ADMIN</span>
+      </div>
+    </div>
+    <div>
+      <div class="tier-name">Admin</div>
+      <div class="tier-tagline">Full control over the platform, all users, and all content</div>
+    </div>
+    <hr class="divider">
+    <ul class="feature-list">
+      <li><span class="check yes">✓</span> Manage all users & roles</li>
+      <li><span class="check yes">✓</span> Full catalog CMS access</li>
+      <li><span class="check yes">✓</span> Create & revoke invite codes</li>
+      <li><span class="check yes">✓</span> Configure global addons</li>
+      <li><span class="check yes">✓</span> Unlimited profiles</li>
+      <li><span class="check yes">✓</span> View analytics dashboard</li>
+      <li><span class="check yes">✓</span> Assign roles to users</li>
+    </ul>
+  </div>
+
+  <!-- FRIENDS & FAMILY -->
+  <div class="tier-card tier-family">
+    <div>
+      <div class="tier-icon">👨‍👩‍👧</div>
+      <div style="margin-top:8px">
+        <span class="tag tag-family">FRIENDS & FAMILY</span>
+      </div>
+    </div>
+    <div>
+      <div class="tier-name">Friends & Family</div>
+      <div class="tier-tagline">Invited by admin — inherits the admin's addons automatically</div>
+    </div>
+    <hr class="divider">
+    <ul class="feature-list">
+      <li><span class="check yes-green">✓</span> Up to 5 profiles</li>
+      <li><span class="check yes-green">✓</span> <b>Inherits admin's addons</b> — no setup needed</li>
+      <li><span class="check yes-green">✓</span> Access all catalogs</li>
+      <li><span class="check yes-green">✓</span> Per-profile PIN lock</li>
+      <li><span class="check no">✗</span> Cannot add custom addons</li>
+      <li><span class="check no">✗</span> No admin panel access</li>
+      <li><span class="check no">✗</span> No catalog editing</li>
+    </ul>
+  </div>
+
+  <!-- PREMIUM CURATED (no setup) -->
+  <div class="tier-card tier-curated">
+    <div>
+      <div class="tier-icon">✨</div>
+      <div style="margin-top:8px">
+        <span class="tag tag-curated">PREMIUM</span>
+      </div>
+    </div>
+    <div>
+      <div class="tier-name">Premium</div>
+      <div class="tier-tagline">Everything works the moment you sign in — zero configuration</div>
+    </div>
+    <hr class="divider">
+    <ul class="feature-list">
+      <li><span class="check yes-pink">✓</span> Up to 3 profiles</li>
+      <li><span class="check yes-pink">✓</span> <b>Pre-configured content</b> — ready to watch instantly</li>
+      <li><span class="check yes-pink">✓</span> Curated catalog access</li>
+      <li><span class="check yes-pink">✓</span> Full playback quality</li>
+      <li><span class="check yes-pink">✓</span> Per-profile PIN lock</li>
+      <li><span class="check no">✗</span> Cannot modify content sources</li>
+      <li><span class="check no">✗</span> No addon management</li>
+    </ul>
+  </div>
+
+  <!-- PREMIUM POWER (self-managed) -->
+  <div class="tier-card tier-power">
+    <div>
+      <div class="tier-icon">⚡</div>
+      <div style="margin-top:8px">
+        <span class="tag tag-power">PREMIUM+</span>
+      </div>
+    </div>
+    <div>
+      <div class="tier-name">Premium+</div>
+      <div class="tier-tagline">Full premium access with complete control over your own setup</div>
+    </div>
+    <hr class="divider">
+    <ul class="feature-list">
+      <li><span class="check yes-gold">✓</span> Up to 5 profiles</li>
+      <li><span class="check yes-gold">✓</span> Install & manage own addons</li>
+      <li><span class="check yes-gold">✓</span> Custom content sources</li>
+      <li><span class="check yes-gold">✓</span> Full playback quality</li>
+      <li><span class="check yes-gold">✓</span> Per-profile PIN lock</li>
+      <li><span class="check no">✗</span> No admin panel access</li>
+      <li><span class="check no">✗</span> No catalog editing</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- ADDON INHERITANCE DIAGRAM -->
+<div class="inherit-section">
+  <div class="inherit-title">How Addons Flow</div>
+  <div class="inherit-diagram">
+
+    <div class="node">
+      <div class="node-avatar" style="background:linear-gradient(135deg,#a78bfa,#7c3aed)">👑</div>
+      <div class="node-label">Admin</div>
+      <div class="node-sub">Sets up addons</div>
+      <div style="margin-top:8px;display:flex;flex-direction:column;gap:4px;align-items:center">
+        <span class="addon-pill" style="background:rgba(167,139,250,0.15);color:#a78bfa">Torrentio</span>
+        <span class="addon-pill" style="background:rgba(167,139,250,0.15);color:#a78bfa">TMDB</span>
+        <span class="addon-pill" style="background:rgba(167,139,250,0.15);color:#a78bfa">OpenSubs</span>
+      </div>
+    </div>
+
+    <div class="arrow">
+      <div class="arrow-line"></div>
+      <div class="arrow-label highlight">inherits</div>
+    </div>
+
+    <div class="node">
+      <div class="node-avatar" style="background:linear-gradient(135deg,#34d399,#059669)">👨‍👩‍👧</div>
+      <div class="node-label">Friends & Family</div>
+      <div class="node-sub">Uses admin's addons</div>
+      <div style="margin-top:8px;display:flex;flex-direction:column;gap:4px;align-items:center">
+        <span class="addon-pill" style="background:rgba(52,211,153,0.12);color:#34d399">Torrentio</span>
+        <span class="addon-pill" style="background:rgba(52,211,153,0.12);color:#34d399">TMDB</span>
+        <span class="addon-pill" style="background:rgba(52,211,153,0.12);color:#34d399">OpenSubs</span>
+      </div>
+    </div>
+
+    <div class="arrow">
+      <div class="arrow-line"></div>
+      <div class="arrow-label">pre-set</div>
+    </div>
+
+    <div class="node">
+      <div class="node-avatar" style="background:linear-gradient(135deg,#f472b6,#db2777)">✨</div>
+      <div class="node-label">Premium</div>
+      <div class="node-sub">Pre-configured, locked</div>
+      <div style="margin-top:8px;display:flex;flex-direction:column;gap:4px;align-items:center">
+        <span class="addon-pill" style="background:rgba(244,114,182,0.12);color:#f472b6">Content A</span>
+        <span class="addon-pill" style="background:rgba(244,114,182,0.12);color:#f472b6">Content B</span>
+        <span class="addon-pill" style="background:rgba(244,114,182,0.12);color:#f472b6">Subtitles</span>
+      </div>
+    </div>
+
+    <div class="arrow">
+      <div class="arrow-line"></div>
+      <div class="arrow-label">self-managed</div>
+    </div>
+
+    <div class="node">
+      <div class="node-avatar" style="background:linear-gradient(135deg,#fbbf24,#d97706)">⚡</div>
+      <div class="node-label">Premium+</div>
+      <div class="node-sub">Full control</div>
+      <div style="margin-top:8px;display:flex;flex-direction:column;gap:4px;align-items:center">
+        <span class="addon-pill" style="background:rgba(251,191,36,0.12);color:#fbbf24">Custom A</span>
+        <span class="addon-pill" style="background:rgba(251,191,36,0.12);color:#fbbf24">Custom B</span>
+        <span class="addon-pill" style="background:rgba(251,191,36,0.12);color:#fbbf24">+ Add more</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PROFILE SLOTS -->
+<div class="profile-table">
+  <div class="profile-table-title">Profile Slots per Tier</div>
+  <div class="pt-grid">
+    <div class="pt-cell" style="border-color:rgba(167,139,250,0.2)">
+      <div class="pt-count" style="color:#a78bfa">∞</div>
+      <div class="pt-label">Admin</div>
+    </div>
+    <div class="pt-cell" style="border-color:rgba(52,211,153,0.2)">
+      <div class="pt-count" style="color:#34d399">5</div>
+      <div class="pt-label">Friends & Family</div>
+    </div>
+    <div class="pt-cell" style="border-color:rgba(244,114,182,0.2)">
+      <div class="pt-count" style="color:#f472b6">3</div>
+      <div class="pt-label">Premium</div>
+    </div>
+    <div class="pt-cell" style="border-color:rgba(251,191,36,0.2)">
+      <div class="pt-count" style="color:#fbbf24">5</div>
+      <div class="pt-label">Premium+</div>
+    </div>
+  </div>
+</div>
+
+<div style="height:40px"></div>
+</body>
+</html>
