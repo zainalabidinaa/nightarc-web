@@ -8,7 +8,6 @@ struct AnimatedRemoteImage: NSViewRepresentable {
 
     func makeNSView(context: Context) -> GIFImageView {
         let view = GIFImageView()
-        view.imageScaling = .scaleProportionallyUpOrDown
         return view
     }
 
@@ -61,11 +60,15 @@ final class GIFImageView: NSImageView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
+        wantsLayer = true
+        layer?.contentsGravity = .resizeAspectFill
         animates = false
     }
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
+        wantsLayer = true
+        layer?.contentsGravity = .resizeAspectFill
         animates = false
     }
 

@@ -48,16 +48,16 @@ struct MediaCard: View {
             .modifier(TileChrome(cornerRadius: cornerRadius, isHovering: isHovering, haloColor: haloColor))
             .scaleEffect(isHovering ? 1.04 : 1.0)
             .animation(.spring(response: 0.30, dampingFraction: 0.78), value: isHovering)
-            .onHover { hovering in
-                isHovering = hovering
-                if hovering { resolveHaloIfNeeded() }
-            }
 
             Text(item.name)
                 .font(.system(size: 12, weight: .regular))
                 .foregroundColor(.white)
                 .lineLimit(1)
                 .frame(width: cardWidth, alignment: .leading)
+        }
+        .onHover { hovering in
+            isHovering = hovering
+            if hovering { resolveHaloIfNeeded() }
         }
     }
 
