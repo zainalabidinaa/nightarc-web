@@ -31,19 +31,6 @@ struct HomeHero: View {
                         .id(currentItem.id)
                         .transition(.opacity)
                         .animation(.easeInOut(duration: 0.35), value: currentItem.id)
-
-                    LinearGradient(
-                        stops: [
-                            .init(color: .clear, location: 0.0),
-                            .init(color: .clear, location: 0.40),
-                            .init(color: .black.opacity(0.12), location: 0.65),
-                            .init(color: .black.opacity(0.30), location: 1.0),
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .blur(radius: 14)
-                    .frame(width: geometry.size.width, height: heroHeight)
                 }
 
                 HStack {
