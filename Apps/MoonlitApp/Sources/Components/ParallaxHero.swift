@@ -211,6 +211,9 @@ struct ParallaxHero: View {
     }
 
     private func startAutoAdvance() {
+        // Under UI automation a repeating timer keeps the run loop busy and blocks
+        // XCUITest idle sync, so leave the hero static.
+        guard !UITestMode.disableContinuousAnimations else { return }
         autoTimer = Timer.scheduledTimer(withTimeInterval: autoAdvanceSeconds, repeats: true) { _ in
             withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
                 currentIndex = (currentIndex + 1) % max(items.count, 1)

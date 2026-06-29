@@ -1,25 +1,24 @@
-import ImageIO
 import MoonlitCore
 import SwiftUI
 import AppKit
-
-struct AnimatedGIFFrame {
-    let image: CGImage
-    let duration: TimeInterval
-}
 
 struct AnimatedRemoteImage: NSViewRepresentable {
     let url: URL
     let contentMode: CALayerContentsGravity
 
-    func makeNSView(context: Context) -> AnimatedGIFView {
-        let view = AnimatedGIFView()
-        view.contentsGravity = contentMode
+    func makeNSView(context: Context) -> GIFImageView {
+        let view = GIFImageView()
+        view.imageScaling = {
+            switch contentMode {
+            case .resizeAspectFill: return .scaleAxesIndependently
+            case .resizeAspect: return .scaleProportionallyUpOrDown
+            default: return .scaleAxesIndependently
+            }
+        }()
         return view
     }
 
-    func updateNSView(_ view: AnimatedGIFView, context: Context) {
-        view.contentsGravity = contentMode
+    func updateNSView(_ view: GIFImageView, context: Context) {
         Task {
             let frames = await Self.loadFrames(from: url)
             await MainActor.run { view.setFrames(frames) }
@@ -38,7 +37,6 @@ struct AnimatedRemoteImage: NSViewRepresentable {
     private static func decodeFrames(from data: Data) -> [AnimatedGIFFrame] {
         guard let source = CGImageSourceCreateWithData(data as CFData, nil),
               CGImageSourceGetCount(source) > 1 else { return [] }
-
         var frames: [AnimatedGIFFrame] = []
         for index in 0..<CGImageSourceGetCount(source) {
             guard let cgImage = CGImageSourceCreateImageAtIndex(source, index, nil) else { continue }
@@ -49,68 +47,60 @@ struct AnimatedRemoteImage: NSViewRepresentable {
     }
 
     private static func frameDuration(source: CGImageSource, index: Int) -> TimeInterval {
-        guard let properties = CGImageSourceCopyPropertiesAtIndex(source, index, nil) as? [CFString: Any],
-              let gif = properties[kCGImagePropertyGIFDictionary] as? [CFString: Any] else {
-            return 0.08
-        }
+        guard let props = CGImageSourceCopyPropertiesAtIndex(source, index, nil) as? [CFString: Any],
+              let gif = props[kCGImagePropertyGIFDictionary] as? [CFString: Any] else { return 0.08 }
         return gif[kCGImagePropertyGIFUnclampedDelayTime] as? TimeInterval
             ?? gif[kCGImagePropertyGIFDelayTime] as? TimeInterval
             ?? 0.08
     }
 }
 
-final class AnimatedGIFView: NSView {
-    private var displayLayer: CALayer?
+struct AnimatedGIFFrame {
+    let image: CGImage
+    let duration: TimeInterval
+}
 
-    var contentsGravity: CALayerContentsGravity = .resizeAspectFill {
-        didSet { displayLayer?.contentsGravity = contentsGravity }
-    }
+final class GIFImageView: NSImageView {
+    private var frameTimer: Timer?
+    private var frames: [AnimatedGIFFrame] = []
+    private var currentFrameIndex: Int = 0
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        wantsLayer = true
-        let layer = CALayer()
-        layer.contentsGravity = contentsGravity
-        self.layer?.addSublayer(layer)
-        self.displayLayer = layer
+        animates = false
     }
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        wantsLayer = true
-        let layer = CALayer()
-        layer.contentsGravity = contentsGravity
-        self.layer?.addSublayer(layer)
-        self.displayLayer = layer
-    }
-
-    override func layout() {
-        super.layout()
-        displayLayer?.frame = bounds
+        animates = false
     }
 
     func setFrames(_ frames: [AnimatedGIFFrame]) {
-        guard let displayLayer, !frames.isEmpty else { return }
+        frameTimer?.invalidate()
+        self.frames = frames
+        currentFrameIndex = 0
 
-        var totalDuration: TimeInterval = 0
-        var cgImages: [CGImage] = []
-        var keyTimes: [NSNumber] = []
+        guard !frames.isEmpty else { return }
 
-        for frame in frames {
-            cgImages.append(frame.image)
-            keyTimes.append(NSNumber(value: totalDuration))
-            totalDuration += max(frame.duration, 0.02)
+        image = NSImage(cgImage: frames[0].image, size: .zero)
+        if frames.count > 1 {
+            startAnimating()
         }
+    }
 
-        guard totalDuration > 0 else { return }
-        let normalizedKeyTimes = keyTimes.map { NSNumber(value: $0.doubleValue / totalDuration) }
+    private func startAnimating() {
+        guard frames.count > 1 else { return }
+        let interval = max(frames[0].duration, 0.02)
+        frameTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
+            guard let self, !self.frames.isEmpty else { return }
+            self.currentFrameIndex = (self.currentFrameIndex + 1) % self.frames.count
+            DispatchQueue.main.async {
+                self.image = NSImage(cgImage: self.frames[self.currentFrameIndex].image, size: .zero)
+            }
+        }
+    }
 
-        let animation = CAKeyframeAnimation(keyPath: "contents")
-        animation.values = cgImages
-        animation.keyTimes = normalizedKeyTimes
-        animation.duration = totalDuration
-        animation.repeatCount = .infinity
-        animation.calculationMode = .discrete
-        displayLayer.add(animation, forKey: "gifAnimation")
+    deinit {
+        frameTimer?.invalidate()
     }
 }
