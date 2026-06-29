@@ -518,27 +518,21 @@ struct HomeScreen: View {
         // Retries every 30s on failure so bundled data doesn't persist indefinitely.
         Task {
             let logger = Logger(subsystem: "ai.moonlit", category: "HomeScreen")
-            var attempt = 0
-            while !Task.isCancelled {
-                attempt += 1
-                guard let refreshed = await CollectionOrganizerStore.shared.refresh(
-                    remoteURL: MoonlitConfig.homeOrganizerRemoteURL.flatMap(URL.init)
-                ) else {
-                    logger.warning("home-organizer refresh attempt \(attempt) failed, retrying in 30s")
-                    try? await Task.sleep(nanoseconds: 30_000_000_000)
-                    continue
-                }
-                let oldCount = collectionRepo.collections.count
-                collectionRepo.apply(refreshed)
-                logger.info("home-organizer applied on attempt \(attempt): \(collectionRepo.collections.count) collections (was \(oldCount))")
-                guard !collectionRepo.collections.isEmpty else { return }
-                await catalogRepo.loadFromCollections(
-                    collectionRepo: collectionRepo,
-                    addons: catalogAddonsForCurrentMode
-                )
-                logger.info("home-organizer rows loaded: \(self.catalogRepo.catalogRows.count) rows")
+            guard let refreshed = await CollectionOrganizerStore.shared.refresh(
+                remoteURL: MoonlitConfig.homeOrganizerRemoteURL.flatMap(URL.init)
+            ) else {
+                logger.warning("home-organizer background refresh failed")
                 return
             }
+            let oldCount = collectionRepo.collections.count
+            collectionRepo.apply(refreshed)
+            logger.info("home-organizer applied: \(collectionRepo.collections.count) collections (was \(oldCount))")
+            guard !collectionRepo.collections.isEmpty else { return }
+            await catalogRepo.loadFromCollections(
+                collectionRepo: collectionRepo,
+                addons: catalogAddonsForCurrentMode
+            )
+            logger.info("home-organizer rows loaded: \(self.catalogRepo.catalogRows.count) rows")
         }
         return collectionRepo.collections.count != before || !collectionRepo.collections.isEmpty
     }
