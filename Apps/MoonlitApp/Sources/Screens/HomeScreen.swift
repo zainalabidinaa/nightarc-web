@@ -511,7 +511,9 @@ struct HomeScreen: View {
             return await collectionRepo.refreshForCatalogRows()
         }
         let before = collectionRepo.collections.count
-        collectionRepo.apply(organized)
+        if collectionRepo.collections.isEmpty {
+            collectionRepo.apply(organized)
+        }
         // Background-refresh from Supabase — remote layout is authoritative.
         Task {
             let logger = Logger(subsystem: "ai.moonlit", category: "HomeScreen")

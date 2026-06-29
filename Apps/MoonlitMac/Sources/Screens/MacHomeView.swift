@@ -311,7 +311,9 @@ struct MacHomeView: View {
             return await collectionRepo.refreshForCatalogRows()
         }
         let before = collectionRepo.collections.count
-        collectionRepo.apply(organized)
+        if collectionRepo.collections.isEmpty {
+            collectionRepo.apply(organized)
+        }
         Task {
             let logger = Logger(subsystem: "ai.moonlit", category: "MacHomeView")
             guard let refreshed = await CollectionOrganizerStore.shared.refresh(
