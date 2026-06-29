@@ -28,61 +28,37 @@ struct MediaCard: View {
     // MARK: - Folder / service tile (Harbor-style: clean backdrop + overlay chrome)
 
     private var folderTile: some View {
-        ZStack(alignment: .bottomLeading) {
-            folderBackground
+        VStack(alignment: .leading, spacing: 4) {
+            ZStack(alignment: .bottomLeading) {
+                folderBackground
 
-            LinearGradient(
-                colors: [.black.opacity(0.80), .black.opacity(0.20), .clear],
-                startPoint: .bottom,
-                endPoint: .center
-            )
+                LinearGradient(
+                    colors: [.black.opacity(0.80), .black.opacity(0.20), .clear],
+                    startPoint: .bottom,
+                    endPoint: .center
+                )
 
-            if hasLogo {
-                // Branded folders (streaming services, actors): centered logo.
-                CachedAsyncImage(url: URL(string: item.logo!)!) { image in
-                    image.resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(maxWidth: cardWidth * 0.66, maxHeight: cardHeight * 0.46)
-                        .shadow(color: .black.opacity(0.55), radius: 6, y: 2)
-                } placeholder: {
-                    folderTitleLabel
+                if let count = item.itemCount {
+                    countBadge(count)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                        .padding(8)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-            } else {
-                // Curated / genre collections: crisp title bottom-left.
-                folderTitleLabel
+            }
+            .frame(width: cardWidth, height: cardHeight)
+            .modifier(TileChrome(cornerRadius: cornerRadius, isHovering: isHovering, haloColor: haloColor))
+            .scaleEffect(isHovering ? 1.04 : 1.0)
+            .animation(.spring(response: 0.30, dampingFraction: 0.78), value: isHovering)
+            .onHover { hovering in
+                isHovering = hovering
+                if hovering { resolveHaloIfNeeded() }
             }
 
-            if let count = item.itemCount {
-                countBadge(count)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                    .padding(8)
-            }
+            Text(item.name)
+                .font(.system(size: 12, weight: .regular))
+                .foregroundColor(.white)
+                .lineLimit(1)
+                .frame(width: cardWidth, alignment: .leading)
         }
-        .frame(width: cardWidth, height: cardHeight)
-        .modifier(TileChrome(cornerRadius: cornerRadius, isHovering: isHovering, haloColor: haloColor))
-        .scaleEffect(isHovering ? 1.04 : 1.0)
-        .animation(.spring(response: 0.30, dampingFraction: 0.78), value: isHovering)
-        .onHover { hovering in
-            isHovering = hovering
-            if hovering { resolveHaloIfNeeded() }
-        }
-    }
-
-    private var hasLogo: Bool {
-        if let logo = item.logo { return !logo.isEmpty }
-        return false
-    }
-
-    private var folderTitleLabel: some View {
-        Text(item.name)
-            .font(.system(size: 16, weight: .bold))
-            .foregroundColor(.white)
-            .lineLimit(2)
-            .shadow(color: .black.opacity(0.7), radius: 4, y: 1)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 12)
-            .padding(.bottom, 11)
     }
 
     private func countBadge(_ count: Int) -> some View {
@@ -144,11 +120,6 @@ struct MediaCard: View {
                 artwork(contentMode: .fill)
                     .frame(width: cardWidth, height: cardHeight)
                     .modifier(TileChrome(cornerRadius: cornerRadius, isHovering: isHovering, haloColor: haloColor))
-
-                if let rating = item.imdbRating, resolvedShape != .landscape {
-                    ratingBadge(rating)
-                        .padding(7)
-                }
             }
             .frame(width: cardWidth, height: cardHeight)
             .scaleEffect(isHovering ? 1.04 : 1.0)
@@ -163,6 +134,10 @@ struct MediaCard: View {
                 .foregroundColor(MoonlitTheme.textPrimary)
                 .lineLimit(2)
                 .frame(width: cardWidth, alignment: .leading)
+
+            if let rating = item.imdbRating, resolvedShape != .landscape {
+                ratingBadge(rating)
+            }
         }
     }
 
