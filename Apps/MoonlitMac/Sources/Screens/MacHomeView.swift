@@ -313,19 +313,22 @@ struct MacHomeView: View {
         let before = collectionRepo.collections.count
         collectionRepo.apply(organized)
         Task {
+            let logger = Logger(subsystem: "ai.moonlit", category: "MacHomeView")
             guard let refreshed = await CollectionOrganizerStore.shared.refresh(
                 remoteURL: MoonlitConfig.homeOrganizerRemoteURL.flatMap(URL.init)
             ) else {
-                Logger(subsystem: "ai.moonlit", category: "MacHomeView")
-                    .warning("home-organizer background refresh failed")
+                logger.warning("home-organizer background refresh failed")
                 return
             }
+            let oldCount = collectionRepo.collections.count
             collectionRepo.apply(refreshed)
+            logger.info("home-organizer applied: \(collectionRepo.collections.count) collections (was \(oldCount))")
             guard !collectionRepo.collections.isEmpty else { return }
             await catalogRepo.loadFromCollections(
                 collectionRepo: collectionRepo,
                 addons: addonRepo.enabledAddons
             )
+            logger.info("home-organizer rows loaded: \(self.catalogRepo.catalogRows.count) rows")
         }
         return collectionRepo.collections.count != before || !collectionRepo.collections.isEmpty
     }

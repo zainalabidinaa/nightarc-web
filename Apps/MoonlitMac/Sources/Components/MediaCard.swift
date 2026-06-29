@@ -9,18 +9,133 @@ struct MediaCard: View {
 
     @State private var primaryFailed = false
     @State private var isHovering = false
+    @State private var haloColor: Color?
 
     var body: some View {
+        Group {
+            if isFolderTile {
+                folderTile
+            } else {
+                mediaTile
+            }
+        }
+        .onChange(of: item.id) { _, _ in
+            primaryFailed = false
+            haloColor = nil
+        }
+    }
+
+    // MARK: - Folder / service tile (Harbor-style: clean backdrop + overlay chrome)
+
+    private var folderTile: some View {
+        ZStack(alignment: .bottomLeading) {
+            folderBackground
+
+            LinearGradient(
+                colors: [.black.opacity(0.80), .black.opacity(0.20), .clear],
+                startPoint: .bottom,
+                endPoint: .center
+            )
+
+            if hasLogo {
+                // Branded folders (streaming services, actors): centered logo.
+                CachedAsyncImage(url: URL(string: item.logo!)!) { image in
+                    image.resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(maxWidth: cardWidth * 0.66, maxHeight: cardHeight * 0.46)
+                        .shadow(color: .black.opacity(0.55), radius: 6, y: 2)
+                } placeholder: {
+                    folderTitleLabel
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+            } else {
+                // Curated / genre collections: crisp title bottom-left.
+                folderTitleLabel
+            }
+
+            if let count = item.itemCount {
+                countBadge(count)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                    .padding(8)
+            }
+        }
+        .frame(width: cardWidth, height: cardHeight)
+        .modifier(TileChrome(cornerRadius: cornerRadius, isHovering: isHovering, haloColor: haloColor))
+        .scaleEffect(isHovering ? 1.04 : 1.0)
+        .animation(.spring(response: 0.30, dampingFraction: 0.78), value: isHovering)
+        .onHover { hovering in
+            isHovering = hovering
+            if hovering { resolveHaloIfNeeded() }
+        }
+    }
+
+    private var hasLogo: Bool {
+        if let logo = item.logo { return !logo.isEmpty }
+        return false
+    }
+
+    private var folderTitleLabel: some View {
+        Text(item.name)
+            .font(.system(size: 16, weight: .bold))
+            .foregroundColor(.white)
+            .lineLimit(2)
+            .shadow(color: .black.opacity(0.7), radius: 4, y: 1)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 12)
+            .padding(.bottom, 11)
+    }
+
+    private func countBadge(_ count: Int) -> some View {
+        let kind = item.countKind ?? (item.type == .series ? .shows : .films)
+        let icon: String
+        let noun: String
+        switch kind {
+        case .shows: icon = "tv"; noun = "SHOWS"
+        case .collections: icon = "square.stack"; noun = "COLLECTIONS"
+        case .films: icon = "film"; noun = "FILMS"
+        }
+        return HStack(spacing: 4) {
+            Image(systemName: icon)
+                .font(.system(size: 9, weight: .bold))
+            Text(count >= 100 ? "99+" : "\(count) \(noun)")
+                .font(.system(size: 9, weight: .bold))
+        }
+        .foregroundColor(.white)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+        .background(.black.opacity(0.55), in: Capsule())
+        .overlay(Capsule().strokeBorder(Color.white.opacity(0.16), lineWidth: 0.75))
+    }
+
+    @ViewBuilder
+    private var folderBackground: some View {
+        if let url = folderArtURL {
+            CachedAsyncImage(url: url) { image in
+                image.resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: cardWidth, height: cardHeight)
+                    .clipped()
+                    .background(MoonlitTheme.surfaceElevated)
+            } placeholder: {
+                placeholder
+            }
+        } else {
+            placeholder
+        }
+    }
+
+    private var folderArtURL: URL? {
+        (item.poster ?? item.banner ?? item.backdrop).flatMap(URL.init)
+    }
+
+    // MARK: - Standard media tile (poster + caption)
+
+    private var mediaTile: some View {
         VStack(alignment: .leading, spacing: 7) {
             ZStack(alignment: .topTrailing) {
-                artwork
+                artwork(contentMode: .fill)
                     .frame(width: cardWidth, height: cardHeight)
-                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .strokeBorder(Color.white.opacity(isHovering ? 0.18 : 0.06), lineWidth: 1)
-                    )
-                    .shadow(color: .black.opacity(isHovering ? 0.38 : 0.24), radius: isHovering ? 16 : 8, y: 6)
+                    .modifier(TileChrome(cornerRadius: cornerRadius, isHovering: isHovering, haloColor: haloColor))
 
                 if let rating = item.imdbRating, resolvedShape != .landscape {
                     ratingBadge(rating)
@@ -28,9 +143,12 @@ struct MediaCard: View {
                 }
             }
             .frame(width: cardWidth, height: cardHeight)
-            .scaleEffect(isHovering ? 1.025 : 1.0)
-            .animation(.spring(response: 0.28, dampingFraction: 0.78), value: isHovering)
-            .onHover { isHovering = $0 }
+            .scaleEffect(isHovering ? 1.04 : 1.0)
+            .animation(.spring(response: 0.30, dampingFraction: 0.78), value: isHovering)
+            .onHover { hovering in
+                isHovering = hovering
+                if hovering { resolveHaloIfNeeded() }
+            }
 
             Text(item.name)
                 .font(.system(size: 13, weight: .medium))
@@ -38,19 +156,17 @@ struct MediaCard: View {
                 .lineLimit(2)
                 .frame(width: cardWidth, alignment: .leading)
         }
-        .onChange(of: item.id) { _, _ in
-            primaryFailed = false
-        }
     }
 
+    // MARK: - Artwork
+
     @ViewBuilder
-    private var artwork: some View {
+    private func artwork(contentMode: ContentMode) -> some View {
         if let url = primaryFailed ? fallbackImageURL : primaryImageURL {
             CachedAsyncImage(url: url) { image in
                 image.resizable()
-                    .aspectRatio(contentMode: usesFittedArtwork ? .fit : .fill)
+                    .aspectRatio(contentMode: contentMode)
                     .frame(width: cardWidth, height: cardHeight)
-                    .scaleEffect(groupArtworkScale)
                     .clipped()
                     .background(MoonlitTheme.surfaceElevated)
             } placeholder: {
@@ -69,19 +185,50 @@ struct MediaCard: View {
     private var placeholder: some View {
         ZStack {
             MoonlitTheme.surfaceElevated
-            VStack(spacing: 8) {
-                Image(systemName: item.id.hasPrefix("folder_") ? "folder.fill" : item.type == .series ? "tv.fill" : "film.fill")
-                    .font(.system(size: resolvedShape == .landscape ? 28 : 24))
-                    .foregroundColor(.white.opacity(0.18))
-                Text(item.name)
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundColor(.white.opacity(0.45))
-                    .lineLimit(2)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 8)
+            if !isFolderTile {
+                VStack(spacing: 8) {
+                    Image(systemName: item.type == .series ? "tv.fill" : "film.fill")
+                        .font(.system(size: resolvedShape == .landscape ? 28 : 24))
+                        .foregroundColor(.white.opacity(0.18))
+                    Text(item.name)
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(.white.opacity(0.45))
+                        .lineLimit(2)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 8)
+                }
             }
         }
         .frame(width: cardWidth, height: cardHeight)
+    }
+
+    // MARK: - Halo resolution
+
+    private func resolveHaloIfNeeded() {
+        guard haloColor == nil, let url = haloSourceURL else { return }
+        if let cached = TileHaloColorStore.shared.cached(for: url) {
+            haloColor = cached
+            return
+        }
+        Task { @MainActor in
+            if let color = await TileHaloColorStore.shared.resolve(for: url) {
+                withAnimation(.easeOut(duration: 0.35)) { haloColor = color }
+            }
+        }
+    }
+
+    private var haloSourceURL: URL? {
+        // Folder tiles sample their clean backdrop; media tiles sample the poster.
+        if isFolderTile { return folderArtURL }
+        return (item.poster ?? item.banner).flatMap(URL.init)
+    }
+
+    // MARK: - Geometry & sources
+
+    private var isFolderTile: Bool { item.id.hasPrefix("folder_") }
+
+    private var cornerRadius: CGFloat {
+        isFolderTile || resolvedShape == .landscape ? 16 : 14
     }
 
     private var resolvedShape: PosterShape? {
@@ -89,16 +236,6 @@ struct MediaCard: View {
             return PosterShape(rawValue: rowShape.lowercased())
         }
         return item.posterShape
-    }
-
-    private var usesFittedArtwork: Bool {
-        item.id.hasPrefix("folder_")
-    }
-
-    private var groupArtworkScale: CGFloat {
-        guard usesFittedArtwork else { return 1 }
-        let title = "\(row?.title ?? "") \(item.name)".lowercased()
-        return title.contains("award") ? 1.08 : 1
     }
 
     private var primaryImageURL: URL? {
@@ -161,4 +298,29 @@ struct MediaCard: View {
         .background(.black.opacity(0.45), in: Capsule())
         .overlay(Capsule().strokeBorder(Color.white.opacity(0.16), lineWidth: 0.75))
     }
+}
+
+// MARK: - Shared tile chrome (soft borderless clip + Harbor focus halo)
+
+private struct TileChrome: ViewModifier {
+    let cornerRadius: CGFloat
+    let isHovering: Bool
+    let haloColor: Color?
+
+    func body(content: Content) -> some View {
+        content
+            .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .strokeBorder(Color.white.opacity(isHovering ? 0.14 : 0.05), lineWidth: 0.75)
+            )
+            .shadow(
+                color: glowColor.opacity(isHovering ? glowOpacity : 0.22),
+                radius: isHovering ? 22 : 8,
+                y: isHovering ? 10 : 6
+            )
+    }
+
+    private var glowColor: Color { isHovering ? (haloColor ?? .black) : .black }
+    private var glowOpacity: Double { haloColor == nil ? 0.40 : 0.55 }
 }
