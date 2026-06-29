@@ -145,6 +145,7 @@ struct MacHomeView: View {
                     Spacer().frame(height: 48)
                 }
             }
+            .ignoresSafeArea(edges: .top)
         }
         .background(MoonlitTheme.background)
         .task {

@@ -24,10 +24,9 @@ struct HomeHero: View {
     }
 
     var body: some View {
-        GeometryReader { geometry in
-            ZStack(alignment: .bottomLeading) {
+        ZStack(alignment: .bottomLeading) {
                 if let currentItem {
-                    heroImage(for: currentItem, width: geometry.size.width)
+                    heroImage(for: currentItem)
                         .id(currentItem.id)
                         .transition(.opacity)
                         .animation(.easeInOut(duration: 0.35), value: currentItem.id)
@@ -47,7 +46,7 @@ struct HomeHero: View {
                 .allowsHitTesting(items.count > 1)
 
                 Color.clear
-                    .frame(width: geometry.size.width, height: heroHeight)
+                    .frame(maxWidth: .infinity, maxHeight: heroHeight)
                 .mask(
                     LinearGradient(
                         stops: [
@@ -119,7 +118,6 @@ struct HomeHero: View {
                 pageIndicator
                     .padding(.bottom, 22)
             }
-        }
         .frame(height: heroHeight)
         .onAppear {
             artwork.prefetch(items: items)
@@ -179,7 +177,7 @@ struct HomeHero: View {
         .animation(.easeInOut(duration: 0.25), value: currentIndex)
     }
 
-    private func heroImage(for item: MetaPreview, width: CGFloat) -> some View {
+    private func heroImage(for item: MetaPreview) -> some View {
         Group {
             if let url = artwork.heroArtURL(for: item) {
                 CachedAsyncImage(url: url) { image in
@@ -191,7 +189,7 @@ struct HomeHero: View {
                 MoonlitTheme.surfaceElevated
             }
         }
-        .frame(width: width, height: heroHeight)
+        .frame(maxWidth: .infinity, maxHeight: heroHeight)
         .clipped()
         .mask(
             LinearGradient(
