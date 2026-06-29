@@ -109,7 +109,15 @@ struct MediaCard: View {
 
     @ViewBuilder
     private var folderBackground: some View {
-        if let url = folderArtURL {
+        if isHovering,
+           let focusGif = row?.focusGif,
+           row?.focusGifEnabled == true,
+           let gifURL = URL(string: focusGif) {
+            AnimatedRemoteImage(url: gifURL, contentMode: .resizeAspectFill)
+                .frame(width: cardWidth, height: cardHeight)
+                .clipped()
+                .background(MoonlitTheme.surfaceElevated)
+        } else if let url = folderArtURL {
             CachedAsyncImage(url: url) { image in
                 image.resizable()
                     .aspectRatio(contentMode: .fill)

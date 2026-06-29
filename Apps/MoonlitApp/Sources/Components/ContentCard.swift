@@ -39,7 +39,6 @@ struct ContentCard: View {
                                     .clipped()
                                     .clipShape(RoundedRectangle(cornerRadius: 12))
                             case .failure:
-                                // Switch to fallback on first failure if we haven't already.
                                 placeholderView.onAppear {
                                     if !primaryFailed { primaryFailed = true }
                                 }
