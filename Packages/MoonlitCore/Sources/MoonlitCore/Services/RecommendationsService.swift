@@ -38,6 +38,7 @@ public final class RecommendationsService: ObservableObject {
 
     private let client = SupabaseClient.shared
     private let generateURL = "https://moonlit-web-zainalabidinaas-projects.vercel.app/api/recommendations/generate"
+    private var didAutoGenerate = false
 
     private init() {}
 
@@ -55,6 +56,11 @@ public final class RecommendationsService: ObservableObject {
             if dbRows.isEmpty {
                 rows = []
                 generatedAt = nil
+                // Auto-trigger generation if never done for this profile
+                if !didAutoGenerate {
+                    didAutoGenerate = true
+                    Task { _ = await triggerRegeneration(profileId: profileId) }
+                }
                 return
             }
 

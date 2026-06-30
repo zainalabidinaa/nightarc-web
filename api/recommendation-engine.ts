@@ -3,9 +3,12 @@ import { createClient } from '@supabase/supabase-js';
 
 const TMDB_API_KEY = process.env.TMDB_API_KEY || '1e818317d3086727eceecf0571621527';
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://hvfsntdyowapjxobtyli.supabase.co';
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+if (!SUPABASE_SERVICE_KEY) {
+  console.error('[recommendation-engine] SUPABASE_SERVICE_ROLE_KEY is not set');
+}
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY || '');
 
 interface MetaPreview {
   id: string;
@@ -59,12 +62,6 @@ const ROW_TITLES: Record<string, string> = {
   ai_recommendations: 'Worth the Risk',
 };
 
-function getProxyBase(): string {
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
-  if (process.env.VERCEL_BRANCH_URL) return `https://${process.env.VERCEL_BRANCH_URL}`;
-  return 'http://localhost:3000';
-}
-
 async function getWatchHistory(profileId: string): Promise<WatchEntry[]> {
   const { data } = await supabase
     .from('watch_progress')
@@ -100,10 +97,14 @@ async function fetchStremioCatalog(
   catalogId: string,
   extras?: Record<string, string>
 ): Promise<MetaPreview[]> {
-  const params = new URLSearchParams({ url: baseUrl, type, id: catalogId });
-  if (extras) params.set('extras', JSON.stringify(extras));
-  const proxyBase = getProxyBase();
-  const res = await fetch(`${proxyBase}/api/stremio/catalog?${params}`);
+  let url = `${baseUrl}/catalog/${type}/${catalogId}.json`;
+  if (extras) {
+    const extraParts = Object.entries(extras)
+      .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+      .join('&');
+    url = `${baseUrl}/catalog/${type}/${catalogId}/${extraParts}.json`;
+  }
+  const res = await fetch(url);
   if (!res.ok) return [];
   const json = await res.json();
   return (json.metas || []).map((m: any) => ({
@@ -150,13 +151,11 @@ async function buildGenreProfileFromWatchHistory(
   transportUrl: string
 ): Promise<GenreProfile[]> {
   const genreCounts = new Map<string, number>();
-  const proxyBase = getProxyBase();
 
   for (const entry of entries) {
     const [baseId] = entry.media_id.split(':');
     try {
-      const params = new URLSearchParams({ url: transportUrl, type: entry.media_type, id: baseId });
-      const res = await fetch(`${proxyBase}/api/stremio/meta?${params}`);
+      const res = await fetch(`${transportUrl}/meta/${entry.media_type}/${baseId}.json`);
       if (res.ok) {
         const json = await res.json();
         const genres: string[] = json.meta?.genres || [];
@@ -225,16 +224,21 @@ async function generateBecauseYouWatchedRows(
   transportUrl: string,
   watchedIds: Set<string>
 ): Promise<Array<{ rowTitle: string; items: MetaPreview[] }>> {
-  const candidates = entries
-    .sort(
-      (a, b) =>
-        b.position_seconds / Math.max(1, b.duration_seconds) -
-        a.position_seconds / Math.max(1, a.duration_seconds)
-    )
-    .slice(0, 3);
+  const seenBases = new Set<string>();
+  const candidates: WatchEntry[] = [];
+  for (const entry of entries.sort(
+    (a, b) =>
+      b.position_seconds / Math.max(1, b.duration_seconds) -
+      a.position_seconds / Math.max(1, a.duration_seconds)
+  )) {
+    const [baseId] = entry.media_id.split(':');
+    if (!baseId.startsWith('tt') || seenBases.has(baseId)) continue;
+    seenBases.add(baseId);
+    candidates.push(entry);
+    if (candidates.length >= 3) break;
+  }
 
   const rows: Array<{ rowTitle: string; items: MetaPreview[] }> = [];
-  const proxyBase = getProxyBase();
 
   for (const entry of candidates) {
     const [baseId] = entry.media_id.split(':');
@@ -243,8 +247,7 @@ async function generateBecauseYouWatchedRows(
     let sourceName = baseId;
     let tmdbId: number | null = null;
     try {
-      const params = new URLSearchParams({ url: transportUrl, type: entry.media_type, id: baseId });
-      const res = await fetch(`${proxyBase}/api/stremio/meta?${params}`);
+      const res = await fetch(`${transportUrl}/meta/${entry.media_type}/${baseId}.json`);
       if (res.ok) {
         const json = await res.json();
         sourceName = json.meta?.name || baseId;
@@ -425,8 +428,13 @@ export async function generateRecommendations(profileId: string): Promise<{
     }
 
     if (rows.length > 0) {
-      await supabase.from('profile_recommendations').delete().eq('profile_id', profileId);
-      await supabase.from('profile_recommendations').insert(rows);
+      const { error: delErr } = await supabase.from('profile_recommendations').delete().eq('profile_id', profileId);
+      if (delErr) console.error('[recommendation-engine] delete error:', delErr);
+      const { error: insErr } = await supabase.from('profile_recommendations').upsert(rows, { onConflict: 'profile_id,row_type,row_title' });
+      if (insErr) {
+        console.error('[recommendation-engine] insert error:', insErr);
+        return { success: false, rowsGenerated: 0, error: insErr.message };
+      }
     }
 
     return { success: true, rowsGenerated: rows.length };
