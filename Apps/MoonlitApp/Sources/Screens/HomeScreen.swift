@@ -28,6 +28,30 @@ struct HomeScreen: View {
     @State private var showAwards = false
     @State private var selectedRecRow: CatalogRow? = nil
     @State private var showRecFolder = false
+
+    /// Display rows with because_you_watched merged into one folder tile
+    private var recsDisplayRows: [RecommendationRow] {
+        var result: [RecommendationRow] = []
+        var becauseRows: [RecommendationRow] = []
+        for row in recsService.rows {
+            if row.rowType == "because_you_watched" {
+                becauseRows.append(row)
+            } else {
+                result.append(row)
+            }
+        }
+        if !becauseRows.isEmpty {
+            let first = becauseRows[0]
+            result.append(RecommendationRow(
+                rowType: "because_you_watched",
+                rowTitle: "Because You Watched...",
+                coverImage: first.coverImage,
+                sortOrder: first.sortOrder,
+                items: becauseRows.flatMap { $0.items }
+            ))
+        }
+        return result
+    }
     @State private var playerLaunch: PlayerLaunch?
     @State private var streamSelectionLaunch: PlayerLaunch?
     @State private var showFreeUpgradeAlert = false
@@ -217,7 +241,7 @@ struct HomeScreen: View {
 
                             ScrollView(.horizontal, showsIndicators: false) {
                                 LazyHStack(spacing: 10) {
-                                    ForEach(recsService.rows) { row in
+                                    ForEach(recsDisplayRows) { row in
                                         Button {
                                             let catalogRow = CatalogRow(
                                                 id: row.id,

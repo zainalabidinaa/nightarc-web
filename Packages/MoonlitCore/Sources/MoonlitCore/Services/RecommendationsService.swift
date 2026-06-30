@@ -9,6 +9,14 @@ public struct RecommendationRow: Codable, Identifiable, Sendable {
 
     public var id: String { "\(rowType)_\(rowTitle)" }
 
+    public init(rowType: String, rowTitle: String, coverImage: String?, sortOrder: Int, items: [MetaPreview]) {
+        self.rowType = rowType
+        self.rowTitle = rowTitle
+        self.coverImage = coverImage
+        self.sortOrder = sortOrder
+        self.items = items
+    }
+
     enum CodingKeys: String, CodingKey {
         case rowType = "row_type"
         case rowTitle = "row_title"
@@ -66,18 +74,13 @@ public final class RecommendationsService: ObservableObject {
 
             generatedAt = dbRows.first?.generatedAt
 
-            let isoFormatter = ISO8601DateFormatter()
-            isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-
-            rows = dbRows.compactMap { db in
-                guard let itemsData = db.items.data(using: .utf8) else { return nil }
-                guard let items = try? JSONDecoder().decode([MetaPreview].self, from: itemsData) else { return nil }
-                return RecommendationRow(
+            rows = dbRows.map { db in
+                RecommendationRow(
                     rowType: db.rowType,
                     rowTitle: db.rowTitle,
                     coverImage: db.coverImage,
                     sortOrder: db.sortOrder,
-                    items: items
+                    items: db.items
                 )
             }
         } catch {
@@ -115,7 +118,7 @@ private struct DBRecommendationRow: Codable, Sendable {
     let rowType: String
     let rowTitle: String
     let coverImage: String?
-    let items: String
+    let items: [MetaPreview]
     let sortOrder: Int
     let generatedAt: String
 

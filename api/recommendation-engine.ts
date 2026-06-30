@@ -202,7 +202,9 @@ async function generateLatestRow(
   for (const catalog of relevantCatalogs) {
     const items = await fetchStremioCatalog(transportUrl, type, catalog.id);
     for (const item of items) {
-      if (!seen.has(item.id) && !watchedIds.has(item.id)) {
+      if (!seen.has(item.id) && !watchedIds.has(item.id)
+          && item.poster  // must have poster
+          && (parseFloat(item.imdbRating || '0') >= 5.5)) {  // skip low-rated
         seen.add(item.id);
         item.popularity = item.popularity ?? 0;
         candidates.push(item);
@@ -223,6 +225,7 @@ async function generateLatestRow(
 async function generateBecauseYouWatchedRows(
   entries: WatchEntry[],
   transportUrl: string,
+  catalogs: any[],
   watchedIds: Set<string>
 ): Promise<Array<{ rowTitle: string; items: MetaPreview[] }>> {
   const seenBases = new Set<string>();
@@ -243,41 +246,55 @@ async function generateBecauseYouWatchedRows(
 
   for (const entry of candidates) {
     const [baseId] = entry.media_id.split(':');
-    if (!baseId.startsWith('tt')) continue;
 
+    // Get the source item's genres from Stremio meta
     let sourceName = baseId;
-    let tmdbId: number | null = null;
+    let sourceGenres: string[] = [];
     try {
-      const res = await fetch(`${transportUrl}/meta/${entry.media_type}/${baseId}.json`);
+      const metaUrl = `${transportUrl}/meta/${entry.media_type}/${baseId}.json`;
+      const res = await fetch(metaUrl);
       if (res.ok) {
         const json = await res.json();
         sourceName = json.meta?.name || baseId;
-        if (json.meta?.moviedb_id) tmdbId = Number(json.meta.moviedb_id);
+        sourceGenres = json.meta?.genres || [];
       }
     } catch {}
 
-    if (!tmdbId) tmdbId = await resolveTmdbId(baseId, entry.media_type);
-    if (!tmdbId) continue;
+    // Get up to 3 relevant catalogs for this media type and find genre-matched items
+    const relevantCatalogs = (catalogs || [])
+      .filter((c: any) => c.type === entry.media_type)
+      .slice(0, 4);
 
-    const similar = await fetchTmdbSimilar(tmdbId, entry.media_type, 20);
-    const items: MetaPreview[] = similar
-      .filter((r: any) => !watchedIds.has(r.imdb_id || String(r.id)))
-      .filter((r: any) => (r.vote_count ?? 0) >= 50)
+    const matched: Array<{ item: MetaPreview; score: number }> = [];
+    const seen = new Set<string>();
+
+    for (const catalog of relevantCatalogs) {
+      const items = await fetchStremioCatalog(transportUrl, entry.media_type, catalog.id);
+      for (const item of items) {
+        if (seen.has(item.id) || watchedIds.has(item.id)) continue;
+        if (!item.poster) continue;
+        const rating = parseFloat(item.imdbRating || '0');
+        if (rating < 5.5) continue;
+        seen.add(item.id);
+
+        let score = 0;
+        if (item.genres && sourceGenres.length > 0) {
+          for (const g of item.genres) {
+            if (sourceGenres.includes(g)) score += 1;
+          }
+        }
+        score += (item.popularity ?? 0) / 1000;
+        matched.push({ item, score });
+      }
+    }
+
+    const topItems = matched
+      .sort((a, b) => b.score - a.score)
       .slice(0, 10)
-      .map((r: any) => ({
-        id: r.imdb_id || String(r.id),
-        type: entry.media_type,
-        name: r.title || r.name || 'Unknown',
-        poster: r.poster_path ? `https://image.tmdb.org/t/p/w500${r.poster_path}` : undefined,
-        releaseInfo: r.release_date || r.first_air_date,
-        imdbRating: r.vote_average ? String(r.vote_average) : undefined,
-        genres: undefined,
-        popularity: r.popularity ?? 0,
-        voteCount: r.vote_count ?? 0,
-      }));
+      .map(({ item }) => item);
 
-    if (items.length > 0) {
-      rows.push({ rowTitle: `Because You Watched ${sourceName}`, items });
+    if (topItems.length > 0) {
+      rows.push({ rowTitle: `Because You Watched ${sourceName}`, items: topItems });
     }
   }
   return rows;
@@ -296,7 +313,9 @@ async function generateListForYou(
   for (const catalog of topCatalogs) {
     const items = await fetchStremioCatalog(transportUrl, catalog.type, catalog.id);
     for (const item of items) {
-      if (!seen.has(item.id) && !watchedIds.has(item.id)) {
+      if (!seen.has(item.id) && !watchedIds.has(item.id)
+          && item.poster
+          && (parseFloat(item.imdbRating || '0') >= 6.0)) {
         seen.add(item.id);
         candidates.push(item);
       }
@@ -323,7 +342,9 @@ async function generateAiRecommendations(
   for (const catalog of topCatalogs) {
     const items = await fetchStremioCatalog(transportUrl, catalog.type, catalog.id);
     for (const item of items) {
-      if (!seen.has(item.id) && !watchedIds.has(item.id)) {
+      if (!seen.has(item.id) && !watchedIds.has(item.id)
+          && item.poster
+          && (parseFloat(item.imdbRating || '0') >= 6.0)) {
         seen.add(item.id);
         candidates.push(item);
       }
@@ -394,25 +415,16 @@ export async function generateRecommendations(profileId: string): Promise<{
       });
     }
 
-    const becauseRows = await generateBecauseYouWatchedRows(history, transportUrl, watchedIds);
-    let allBecauseItems: MetaPreview[] = [];
-    const seenBecause = new Set<string>();
+    const becauseRows = await generateBecauseYouWatchedRows(history, transportUrl, catalogs, watchedIds);
+    let sortOrder = ROW_ORDER.because_you_watched;
     for (const br of becauseRows) {
-      for (const item of br.items) {
-        if (!seenBecause.has(item.id)) {
-          seenBecause.add(item.id);
-          allBecauseItems.push(item);
-        }
-      }
-    }
-    if (allBecauseItems.length > 0) {
       rows.push({
         profile_id: profileId,
         row_type: 'because_you_watched',
-        row_title: 'Because You Watched...',
+        row_title: br.rowTitle,
         cover_image: COVER_IMAGES.because_you_watched,
-        items: allBecauseItems.slice(0, 30),
-        sort_order: ROW_ORDER.because_you_watched,
+        items: br.items,
+        sort_order: sortOrder++,
       });
     }
 

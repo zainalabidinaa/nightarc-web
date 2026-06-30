@@ -73,6 +73,30 @@ struct MacHomeView: View {
             ?? (item.banner ?? item.poster).flatMap(URL.init)
     }
 
+    /// Display rows with because_you_watched merged into one folder tile
+    private var recsDisplayRows: [RecommendationRow] {
+        var result: [RecommendationRow] = []
+        var becauseRows: [RecommendationRow] = []
+        for row in recsService.rows {
+            if row.rowType == "because_you_watched" {
+                becauseRows.append(row)
+            } else {
+                result.append(row)
+            }
+        }
+        if !becauseRows.isEmpty {
+            let merged = becauseRows[0]
+            result.append(RecommendationRow(
+                rowType: "because_you_watched",
+                rowTitle: "Because You Watched...",
+                coverImage: merged.coverImage,
+                sortOrder: merged.sortOrder,
+                items: becauseRows.flatMap { $0.items }
+            ))
+        }
+        return result
+    }
+
     var body: some View {
         ZStack(alignment: .top) {
             FusionAmbientBackground(
@@ -130,16 +154,28 @@ struct MacHomeView: View {
 
                             ScrollView(.horizontal, showsIndicators: false) {
                                 LazyHStack(spacing: 12) {
-                                    ForEach(recsService.rows) { row in
+                                    ForEach(recsDisplayRows) { displayRow in
                                         Button {
-                                            let catalogRow = CatalogRow(
-                                                id: row.id,
-                                                title: row.rowTitle,
-                                                items: row.items,
-                                                tileShape: "landscape",
-                                                coverImage: row.coverImage
-                                            )
-                                            onSelectFolder?(catalogRow)
+                                            if displayRow.rowType == "because_you_watched" {
+                                                let subRows = recsService.rows.filter { $0.rowType == "because_you_watched" }
+                                                let catalogRow = CatalogRow(
+                                                    id: "because_you_watched_all",
+                                                    title: "Because You Watched...",
+                                                    items: subRows.flatMap { $0.items },
+                                                    tileShape: "landscape",
+                                                    coverImage: displayRow.coverImage
+                                                )
+                                                onSelectFolder?(catalogRow)
+                                            } else {
+                                                let catalogRow = CatalogRow(
+                                                    id: displayRow.id,
+                                                    title: displayRow.rowTitle,
+                                                    items: displayRow.items,
+                                                    tileShape: "landscape",
+                                                    coverImage: displayRow.coverImage
+                                                )
+                                                onSelectFolder?(catalogRow)
+                                            }
                                         } label: {
                                             VStack(alignment: .center, spacing: 8) {
                                                 ZStack {
@@ -147,7 +183,7 @@ struct MacHomeView: View {
                                                         .fill(MoonlitTheme.surfaceElevated)
                                                         .frame(width: 220, height: 124)
 
-                                                    if let url = row.coverImage.flatMap(URL.init) {
+                                                    if let url = displayRow.coverImage.flatMap(URL.init) {
                                                         CachedAsyncImage(url: url) { image in
                                                             image.resizable().scaledToFill()
                                                         } placeholder: {
@@ -158,7 +194,7 @@ struct MacHomeView: View {
                                                     }
                                                 }
 
-                                                Text(row.rowTitle)
+                                                Text(displayRow.rowTitle)
                                                     .font(.system(size: 12, weight: .semibold))
                                                     .foregroundColor(.white.opacity(0.85))
                                                     .lineLimit(2)
