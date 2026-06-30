@@ -23,6 +23,7 @@ interface MetaPreview {
   imdbRating?: string;
   genres?: string[];
   popularity?: number;
+  voteCount?: number;
 }
 
 interface WatchEntry {
@@ -258,9 +259,10 @@ async function generateBecauseYouWatchedRows(
     if (!tmdbId) tmdbId = await resolveTmdbId(baseId, entry.media_type);
     if (!tmdbId) continue;
 
-    const similar = await fetchTmdbSimilar(tmdbId, entry.media_type, 10);
+    const similar = await fetchTmdbSimilar(tmdbId, entry.media_type, 20);
     const items: MetaPreview[] = similar
-      .filter((r: any) => !watchedIds.has(r.id))
+      .filter((r: any) => !watchedIds.has(r.imdb_id || String(r.id)))
+      .filter((r: any) => (r.vote_count ?? 0) >= 50)
       .slice(0, 10)
       .map((r: any) => ({
         id: r.imdb_id || String(r.id),
@@ -268,8 +270,10 @@ async function generateBecauseYouWatchedRows(
         name: r.title || r.name || 'Unknown',
         poster: r.poster_path ? `https://image.tmdb.org/t/p/w500${r.poster_path}` : undefined,
         releaseInfo: r.release_date || r.first_air_date,
+        imdbRating: r.vote_average ? String(r.vote_average) : undefined,
         genres: undefined,
         popularity: r.popularity ?? 0,
+        voteCount: r.vote_count ?? 0,
       }));
 
     if (items.length > 0) {
