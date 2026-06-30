@@ -140,6 +140,16 @@ const adminRoute = createRoute({
   component: lazily(() => import('@/routes/admin')),
 });
 
+const forYouRowRoute = createRoute({
+  getParentRoute: () => protectedLayout,
+  path: '/for-you/$rowType',
+  component: lazily(() => import('@/routes/for-you-row')),
+  validateSearch: (search: Record<string, unknown>) => ({
+    items: (search.items as string) || '[]',
+    title: (search.title as string) || '',
+  }),
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   authRoute,
@@ -153,6 +163,7 @@ const routeTree = rootRoute.addChildren([
     settingsRoute,
     collectionsRoute,
     adminRoute,
+    forYouRowRoute,
   ]),
 ]);
 

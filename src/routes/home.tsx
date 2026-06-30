@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/app/AuthProvider';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, Link } from '@tanstack/react-router';
 import { Sidebar } from '@/components/Sidebar';
 import { HomeHero } from '@/components/HomeHero';
 import { MediaRow } from '@/components/MediaRow';
@@ -13,6 +13,7 @@ import { TMDB_API_KEY } from '@/lib/supabase';
 import { cacheStreams } from '@/lib/stream-cache';
 import { formatContinueWatchingTitle, getPlayableStreamUrl, sortStreamsForBrowserPlayback } from '@/lib/player-utils';
 import { buildHomeRows, pickFeaturedItems } from './home-data';
+import { fetchRecommendations, triggerRegeneration } from '@/lib/recommendations';
 
 const MAIN_NAMES = ['Popular Movies', 'Popular TV Shows', 'Trending Movies', 'Trending TV Shows'];
 
@@ -70,6 +71,22 @@ export default function HomePage() {
     },
     enabled: !!currentProfile,
     staleTime: 5 * 60 * 1000,
+  });
+
+  // ── Recommendations ───────────────────────────────────────────────────────
+  const { data: recommendations } = useQuery({
+    queryKey: ['recommendations', currentProfile?.id],
+    queryFn: () => fetchRecommendations(currentProfile!.id),
+    enabled: !!currentProfile,
+    staleTime: 30 * 60 * 1000,
+  });
+
+  const queryClient = useQueryClient();
+  const recMutation = useMutation({
+    mutationFn: () => triggerRegeneration(currentProfile!.id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['recommendations', currentProfile?.id] });
+    },
   });
 
   // ── Manifest ──────────────────────────────────────────────────────────────
@@ -419,6 +436,55 @@ export default function HomePage() {
                   </button>
                 );
               })}
+            </div>
+          </section>
+        )}
+
+        {/* For You — Personalized Recommendations */}
+        {recommendations && recommendations.rows.length > 0 && (
+          <section className="mb-10">
+            <div className="flex items-baseline justify-between mb-4 pr-1">
+              <h2 className="text-[17px] font-bold tracking-tight text-white">For You</h2>
+              <button
+                onClick={() => recMutation.mutate()}
+                disabled={recMutation.isPending}
+                className="text-xs text-nightarc-accent hover:text-white transition-colors"
+              >
+                {recMutation.isPending ? '...' : 'Refresh'}
+              </button>
+            </div>
+            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+              {recommendations.rows.map(row => (
+                <Link
+                  key={`${row.row_type}_${row.row_title}`}
+                  to="/for-you/$rowType"
+                  params={{ rowType: encodeURIComponent(row.row_title) }}
+                  search={{ items: JSON.stringify(row.items), title: row.row_title }}
+                  className="flex-shrink-0 group cursor-pointer"
+                  style={{ width: '140px' }}
+                >
+                  <div className="relative overflow-hidden rounded-xl mb-2 aspect-[2/3]">
+                    {row.cover_image ? (
+                      <img src={row.cover_image} alt={row.row_title} loading="lazy"
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                    ) : (
+                      <div className="w-full h-full bg-nightarc-elevated flex items-center justify-center">
+                        <span className="text-xs font-bold text-white/40 text-center px-2">{row.row_title}</span>
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/25 transition-colors duration-300 flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                        <svg viewBox="0 0 24 24" fill="white" className="w-4 h-4 ml-0.5">
+                          <polygon points="6,4 20,12 6,20" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-sm font-semibold text-white/80 truncate group-hover:text-white transition-colors duration-200">
+                    {row.row_title}
+                  </p>
+                </Link>
+              ))}
             </div>
           </section>
         )}

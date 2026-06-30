@@ -16,6 +16,7 @@ struct HomeScreen: View {
     @StateObject private var rowStyleStore = CollectionRowDisplayStyleStore.shared
     @StateObject private var heroStore = HeroPreferenceStore.shared
     @StateObject private var libraryRepo = LibraryRepository.shared
+    @StateObject private var recsService = RecommendationsService.shared
     @State private var selectedMedia: MetaPreview?
     @State private var showDetail = false
     @State private var cwDetailTarget: MetaPreview? = nil
@@ -25,6 +26,8 @@ struct HomeScreen: View {
     @State private var selectedGenre: String? = nil
     @State private var showGenre = false
     @State private var showAwards = false
+    @State private var selectedRecRow: CatalogRow? = nil
+    @State private var showRecFolder = false
     @State private var playerLaunch: PlayerLaunch?
     @State private var streamSelectionLaunch: PlayerLaunch?
     @State private var showFreeUpgradeAlert = false
@@ -204,6 +207,45 @@ struct HomeScreen: View {
                         .padding(.top, 16)
                     }
 
+                    // For You — Personalized Recommendations
+                    if !recsService.rows.isEmpty {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("For You")
+                                .font(.system(size: 20, weight: .semibold))
+                                .foregroundColor(.white)
+                                .padding(.horizontal)
+
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                LazyHStack(spacing: 10) {
+                                    ForEach(recsService.rows) { row in
+                                        Button {
+                                            let catalogRow = CatalogRow(
+                                                id: row.id,
+                                                title: row.rowTitle,
+                                                items: row.items,
+                                                tileShape: "poster",
+                                                coverImage: row.coverImage
+                                            )
+                                            selectedRecRow = catalogRow
+                                            showRecFolder = true
+                                        } label: {
+                                            FolderCell(row: CatalogRow(
+                                                id: row.id,
+                                                title: row.rowTitle,
+                                                items: row.items,
+                                                tileShape: "poster",
+                                                coverImage: row.coverImage
+                                            ), onTap: { _ in })
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
+                                }
+                                .padding(.horizontal)
+                            }
+                        }
+                        .padding(.top, 16)
+                    }
+
                     if !catalogRepo.catalogRows.isEmpty {
                         LazyVStack(spacing: 28) {
                             ForEach(catalogRepo.catalogRows) { row in
@@ -324,6 +366,11 @@ struct HomeScreen: View {
             .navigationDestination(isPresented: $showAwards) {
                 AwardsHubScreen()
             }
+            .navigationDestination(isPresented: $showRecFolder) {
+                if let folder = selectedRecRow {
+                    FolderScreen(row: folder)
+                }
+            }
             .fullScreenCover(item: $playerLaunch) { launch in
                 PlayerScreen(launch: launch, onDismiss: { playerLaunch = nil })
             }
@@ -364,6 +411,7 @@ struct HomeScreen: View {
                     return
                 }
                 async let continueWatching: Void = homeRepo.loadContinueWatching(profileId: profile.id)
+                Task { await recsService.load(profileId: profile.id) }
                 _ = await loadGlobalOrganizer()
                 await libraryRepo.loadLibrary(profileId: profile.id)
                 if catalogRepo.catalogRows.isEmpty {
@@ -396,7 +444,8 @@ struct HomeScreen: View {
             .onChange(of: scenePhase) { _, phase in
                 guard phase == .active, let profile = profileManager.currentProfile else { return }
                 Task {
-                    await homeRepo.loadContinueWatching(profileId: profile.id)
+                await homeRepo.loadContinueWatching(profileId: profile.id)
+                await recsService.load(profileId: profile.id)
                     warmupContinueWatching()
                 }
             }
