@@ -73,10 +73,12 @@ struct MacFolderView: View {
                     .buttonStyle(.plain)
                     .padding(.top, 18)
 
-                    Text(displayRow.title)
-                        .font(.system(size: 36, weight: .black))
-                        .foregroundColor(.white)
-                        .padding(.top, 16)
+                    if displayRow.titleLogo == nil {
+                        Text(displayRow.title)
+                            .font(.system(size: 36, weight: .black))
+                            .foregroundColor(.white)
+                            .padding(.top, 16)
+                    }
                 }
                 .padding(.horizontal, 28)
 
@@ -128,17 +130,34 @@ struct MacFolderView: View {
                 image.resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(maxWidth: .infinity)
-                    .frame(height: 260)
+                    .frame(height: 300)
                     .clipped()
                     .overlay(
                         LinearGradient(
-                            colors: [.clear, MoonlitTheme.background],
-                            startPoint: .center,
+                            stops: [
+                                .init(color: .clear, location: 0.0),
+                                .init(color: MoonlitTheme.background.opacity(0.35), location: 0.55),
+                                .init(color: MoonlitTheme.background.opacity(0.85), location: 0.82),
+                                .init(color: MoonlitTheme.background, location: 1.0),
+                            ],
+                            startPoint: .top,
                             endPoint: .bottom
                         )
                     )
+                    .overlay(alignment: .bottom) {
+                        if let logo = displayRow.titleLogo, let logoURL = URL(string: logo) {
+                            CachedAsyncImage(url: logoURL) { logoImage in
+                                logoImage.resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(maxWidth: 360, maxHeight: 96)
+                                    .shadow(color: .black.opacity(0.5), radius: 8, y: 3)
+                            } placeholder: { Color.clear }
+                            .padding(.bottom, 22)
+                            .padding(.horizontal, 28)
+                        }
+                    }
             } placeholder: {
-                MoonlitTheme.surfaceElevated.frame(height: 180)
+                MoonlitTheme.surfaceElevated.frame(height: 200)
             }
         }
     }
@@ -218,6 +237,12 @@ struct MacFolderView: View {
     private func loadInitialIfNeeded() async {
         isLoadingInitial = displayRow.items.isEmpty
         unavailableReason = nil
+
+        guard displayRow.items.isEmpty else {
+            isLoadingInitial = false
+            return
+        }
+
         await ensureOrganizerAndAddonsLoaded()
 
         if let reason = CatalogRepository.folderLoadUnavailableReason(
@@ -229,11 +254,6 @@ struct MacFolderView: View {
             addons: addonRepo.enabledAddons
         ) {
             unavailableReason = reason
-            isLoadingInitial = false
-            return
-        }
-
-        guard displayRow.items.isEmpty else {
             isLoadingInitial = false
             return
         }

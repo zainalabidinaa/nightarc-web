@@ -391,15 +391,24 @@ export async function generateRecommendations(profileId: string): Promise<{
     }
 
     const becauseRows = await generateBecauseYouWatchedRows(history, transportUrl, watchedIds);
-    let sortOrder = ROW_ORDER.because_you_watched;
+    let allBecauseItems: MetaPreview[] = [];
+    const seenBecause = new Set<string>();
     for (const br of becauseRows) {
+      for (const item of br.items) {
+        if (!seenBecause.has(item.id)) {
+          seenBecause.add(item.id);
+          allBecauseItems.push(item);
+        }
+      }
+    }
+    if (allBecauseItems.length > 0) {
       rows.push({
         profile_id: profileId,
         row_type: 'because_you_watched',
-        row_title: br.rowTitle,
+        row_title: 'Because You Watched...',
         cover_image: COVER_IMAGES.because_you_watched,
-        items: br.items,
-        sort_order: sortOrder++,
+        items: allBecauseItems.slice(0, 30),
+        sort_order: ROW_ORDER.because_you_watched,
       });
     }
 
